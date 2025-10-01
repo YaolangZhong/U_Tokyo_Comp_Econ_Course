@@ -41,20 +41,20 @@ By the end of the course, students will:
 
 # 3. Syllabus
 
-## Week 1  
-### Theory: Introduction & Markov Decision Processes (MDP)  
+## Week 1 (Oct 1)
+### Course 1: Introduction to Some Computational Concepts
+### Lab 1: Introduction to Python, VS Code
+
+## Week 2 (Oct 8)
+### Course 2: Introduction to Markov Decision Processes (MDP)  
 - Definition of MDP  
-- Bellman equation and recursive representation  
+- Bellman equation
+
+### Lab 2: TBD
 
 
-### Lab: Programming Environment Setup  
-- Installation of Python, VS Code, Git  
-- Python virtual environment setup  
-- Basic Python syntax and packages (`numpy`, `jax`)  
 
----
-
-## Week 2  
+## Week 3  
 ### Theory: Solution Algorithms I  
 - Value function iteration  
 - Policy function iteration  
@@ -67,7 +67,7 @@ By the end of the course, students will:
 
 ---
 
-## Week 3  
+## Week 4  
 ### Theory: Computational Complexity  
 - Big-O notation in economics problems  
 - Curse of dimensionality  
@@ -80,7 +80,7 @@ By the end of the course, students will:
 
 ---
 
-## Week 4  
+## Week 5 
 ### Theory: Simulation Methods  
 - Monte Carlo simulation  
 - Law of large numbers and central limit theorem in practice  
@@ -93,7 +93,7 @@ By the end of the course, students will:
 
 ---
 
-## Week 5  
+## Week 6  
 ### Theory: Parameterization and Calibration  
 - Functional forms and parameter choices  
 - Calibration vs. estimation  
@@ -105,7 +105,7 @@ By the end of the course, students will:
 
 ---
 
-## Week 6  
+## Week 7  
 ### Theory: Heterogeneous Agent Models I  
 - Basic Aiyagari model  
 - Distributional dynamics and wealth heterogeneity  
@@ -116,14 +116,6 @@ By the end of the course, students will:
 
 ---
 
-## Week 7  
-### Theory: Heterogeneous Agent Models II  
-- Extensions: incomplete markets, borrowing constraints  
-- Policy experiments and welfare analysis  
-
-### Lab: Extensions of the Aiyagari Model  
-- Adding credit constraints  
-- Simulation of wealth inequality  
 
 ---
 
