@@ -42,141 +42,87 @@ By the end of the course, students will:
 # 3. Syllabus
 
 ## Week 1 (Oct 1)
-### Course 1: Introduction to Some Computational Concepts
-### Lab 1: Introduction to Python, VS Code
+
+### Lecture 1: Introduction to Computational Concepts
+- Round-off error and truncation error
+- Conditioning and stability
+- Rates of convergence and Big-O notation
+- Direct vs. iterative methods
+
+**Supplementary Reading**  
+- Kenneth Judd, *Numerical Methods in Economics*, Chapter 2
+
+### Lab 1: Introduction to Python and VS Code
+- Installing Python and VS Code
+- Python basics
+
+**Supplementary Online Resources**  
+- [Getting Started with Python in VS Code (Official Video)](https://www.youtube.com/watch?v=D2cwvpJSBX4)
+- [VSCode Tutorial For Beginners - Getting Started With VSCode](https://www.youtube.com/watch?v=ORrELERGIHs)
+- [Coding for Economists](https://aeturrell.github.io/coding-for-economists/intro.html)
+- [QuantEcon - Python Programming for Economics and Finance](https://python-programming.quantecon.org/intro.html)
 
 ## Week 2 (Oct 8)
-### Course 2: Introduction to Markov Decision Processes (MDP)  
-- Definition of MDP  
+### Lecture 2: Introduction to Markov Decision Processes (MDP) 
+- Deterministic, Stochastic, Finite horizon and Infinite horizon MDP
 - Bellman equation
 
-### Lab 2: TBD
-
+### Lab 2: Introduction to Git, Economics Modeling with Python
+- Git installation, Git command, synergy with Github
+- Using Python to construct economics models
 
 
 ## Week 3  
-### Theory: Solution Algorithms I  
+### Lecture 3: Solution Algorithms I  
 - Value function iteration  
 - Policy function iteration  
-- Time iteration  
-- Endogenous Grid Method  
 
-### Lab: Implementing Solution Algorithms  
+### Lab 3: Implementing Solution Algorithms  
 - Hands-on coding of value and policy iteration  
-- Numerical experiments with convergence  
+
+## Week 4 
+### Lecture 4: Solution Algorithms II  
+- Time iteration  
+- Endogenous Grid Method (EGM)
+
+### Lab 4: Implementing Solution Algorithms  
+- Hands-on coding of time iteration and EGM
 
 ---
 
-## Week 4  
-### Theory: Computational Complexity  
-- Big-O notation in economics problems  
-- Curse of dimensionality  
-- Trade-off between accuracy and speed  
-
-### Lab: Profiling and Optimization  
-- Measuring runtime and memory in Python  
-- Vectorization vs. loops  
-- Use of `jax.jit` for acceleration  
-
----
-
-## Week 5 
-### Theory: Simulation Methods  
-- Monte Carlo simulation  
-- Law of large numbers and central limit theorem in practice  
-- Quasi–Monte Carlo and low-discrepancy sequences  
-
-### Lab: Simulation in Practice  
-- Random number generation in Python  
-- Monte Carlo integration exercises  
-- Quasi–Monte Carlo with Sobol sequences  
-
----
+## Week 5  
+### Lecture 5: TBD
+### Lab 5: TBD
 
 ## Week 6  
-### Theory: Parameterization and Calibration  
-- Functional forms and parameter choices  
-- Calibration vs. estimation  
-- Benchmarking with empirical data  
-
-### Lab: Parameterization Exercises  
-- Calibrating a simple RBC model  
-- Using Python dictionaries/config files for parameters  
-
----
+### Lecture 6: TBD
+### Lab 6: TBD
 
 ## Week 7  
-### Theory: Heterogeneous Agent Models I  
-- Basic Aiyagari model  
-- Distributional dynamics and wealth heterogeneity  
-
-### Lab: Solving the Aiyagari Model  
-- Coding household decision problems  
-- Computing stationary distributions  
-
----
-
-
----
+### Lecture 7: TBD
+### Lab 7: TBD
 
 ## Week 8  
-### Theory: Machine Learning Methods in Economics  
-- Function approximation (polynomials, splines, neural nets)  
-- Reinforcement learning vs. dynamic programming  
-- When ML is useful in economic models  
+### Lecture 8: TBD
+### Lab 8: TBD
 
-### Lab: Machine Learning Tools  
-- Using `jax` for neural networks  
-- Approximating value functions with neural nets  
-
----
 
 ## Week 9  
-### Theory: Model Estimation with Data  
-- Method of moments, GMM  
-- Maximum likelihood estimation  
-- Bayesian approaches  
+### Lecture 9: TBD
+### Lab 9: TBD
 
-### Lab: Estimation in Practice  
-- Implementing simple GMM in Python  
-- Using `statsmodels` and `jax` autodiff for optimization  
-
----
 
 ## Week 10  
-### Theory: Dynamic General Equilibrium Models  
-- Representative agent vs. heterogeneous agents  
-- Numerical methods for equilibrium prices  
-- Computation of transition dynamics  
-
-### Lab: Solving Equilibrium Models  
-- Coding a simple RBC model equilibrium  
-- Using fixed-point iterations for prices  
-
----
+### Lecture 10: TBD
+### Lab 10: TBD
 
 ## Week 11  
-### Theory: Research Applications and Frontiers  
-- Innovation, trade, and macro-finance examples  
-- Linking micro data with structural models  
-- Current computational challenges  
-
-### Lab: Mini-Project Workshop  
-- Students start small projects (e.g., replication of a published model)  
-- Peer discussion and debugging practice  
-
----
+### Lecture 11: TBD
+### Lab 11: TBD
 
 ## Week 12  
-### Theory: Course Wrap-Up and Outlook  
-- Review of methods learned  
-- Computational economics in research and policy  
-- Directions for further study  
-
-### Lab: Vibe Coding & Project Management with LLMs  
-- Pair programming with LLMs  
-- Code documentation and version control with Git  
-- Final project presentations  
+### Lecture 12: TBD
+### Lab 12: TBD
 
 ---
 
