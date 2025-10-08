@@ -63,44 +63,40 @@ By the end of the course, students will:
 - [QuantEcon - Python Programming for Economics and Finance](https://python-programming.quantecon.org/intro.html)
 
 ## Week 2 (Oct 8)
-### Lecture 2: Introduction to Markov Decision Processes (MDP) 
-- Deterministic, Stochastic, Finite horizon and Infinite horizon MDP
-- Bellman equation
-
-### Lab 2: Introduction to Git, Economics Modeling with Python
-- Git installation, Git command, synergy with Github
-- Using Python to construct economics models
-
+### Lecture 2: Introduction to Markov Decision Processes (MDP)
+### Lab 2: Economics Modeling with Python
+- virtual environment and package installation
 
 ## Week 3  
-### Lecture 3: Solution Algorithms I  
-- Value function iteration  
-- Policy function iteration  
+### Lecture 3: Bellman Equation and Value Function Iteration (VFI)
+### Lab 3: Implementing VFI
+- Git: version control
 
-### Lab 3: Implementing Solution Algorithms  
-- Hands-on coding of value and policy iteration  
+## Week 4  
+### Lecture 4: Policy Function Iteration (PFI)
 
-## Week 4 
-### Lecture 4: Solution Algorithms II  
-- Time iteration  
-- Endogenous Grid Method (EGM)
+### Lab 4: Implementing PFI 
+- Git: Github synergy
 
-### Lab 4: Implementing Solution Algorithms  
-- Hands-on coding of time iteration and EGM
+## Week 5 
+### Lecture 5: Time Iteration and Endogenous Grid Method (EGM)
 
----
-
-## Week 5  
-### Lecture 5: TBD
-### Lab 5: TBD
+### Lab 5: Implementing Time Iteration and EGM 
+- Vibe coding with LLMs
 
 ## Week 6  
-### Lecture 6: TBD
-### Lab 6: TBD
+### Lecture 6: Heterogeneous Agent Model - Aiyagari Model
+### Lab 6: Solving Aiyagari Model
+- Vibe coding with LLMs
 
 ## Week 7  
-### Lecture 7: TBD
-### Lab 7: TBD
+### Lecture 7: Heterogeneous Agent Model - Krusell Smith Model
+### Lab 7: Solving Krusell Smith Model
+- Vibe coding with LLMs
+
+## Week 7  
+### Lecture 7: Introduction to Neural Network
+### Lab 7: Construction and Application of Neural Network
 
 ## Week 8  
 ### Lecture 8: TBD
