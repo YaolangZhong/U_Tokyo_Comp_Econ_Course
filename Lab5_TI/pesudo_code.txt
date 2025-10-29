@@ -1,0 +1,120 @@
+# Consumption saving model
+
+  \item The representative household chooses $\{c_t,k_{t+1}\}$ to maximize lifetime utility:
+  \[
+    \max_{\{c_t,k_{t+1}\}_{t\ge0}}
+    \sum_{t=0}^{\infty}\beta^t u(c_t)
+    \quad\text{s.t.}\quad
+    c_t + k_{t+1} = (1+r_t)k_t, \quad k_{t+1}\ge\underline{k}.
+  \]
+
+- u(c) = log(c)
+- z is lognormal
+- use common parameter value in the literature
+
+
+
+
+# Time iteration pesudo-code
+
+\begin{frame}{Time iteration pseudocode (consumption–saving model)}
+\small
+\begin{enumerate}
+  \item \textbf{Inputs:} parameters $\beta,r,\sigma$, grid $\{k_j,z_m\}$,
+        utility $u(c)=\frac{c^{1-\sigma}}{1-\sigma}$, tolerance $\varepsilon$.
+  \item \textbf{Initialize:} feasible policy $\pi^{(0)}(k,z)$ (e.g. constant savings rate).
+  \item \textbf{Iterate:}
+  \begin{itemize}
+    \item For each $(k_j,z_m)$:
+      \begin{align*}
+        c &= (1+r)k_j - \pi^{(i)}(k_j,z_m), \\
+        \text{RHS}(k_j,z_m)
+        &= \beta\,\E_{z'}\!\Big[
+            u_c\!\big((1+r)\pi^{(i)}(k_j,z_m)-\pi^{(i)}(\pi^{(i)}(k_j,z_m),z')\big)
+            (1+r)
+          \Big],\\
+        c^{\text{new}} &= u_c^{-1}\!\big(\text{RHS}(k_j,z_m)\big),\\
+        \pi^{(i+1)}(k_j,z_m)
+        &= (1+r)k_j - c^{\text{new}}.
+      \end{align*}
+      Enforce feasibility:
+      \(\pi^{(i+1)}(k_j,z_m) \in [\underline{k}, (1+r)k_j]\).
+  \end{itemize}
+  \item \textbf{Convergence:}
+        if $\max_{j,m}|\pi^{(i+1)}(k_j,z_m)-\pi^{(i)}(k_j,z_m)|<\varepsilon$, stop.
+\end{enumerate}
+\end{frame}
+
+
+
+
+
+# VFI peesudo-code
+
+\begin{frame}{Value Function Iteration (time-homogeneous, infinite horizon)}
+\small
+\begin{itemize}
+  \item Step 0 (inputs): state space \(\mathcal{S}\); actions \(\mathcal{A}(s)\); reward \(r(s,a)\); transition \(P(\cdot\mid s,a)\); discount \(\beta\in(0,1)\); tolerance \(\varepsilon>0\).
+  \item Step 1 (Bellman operator): for any \(V:\mathcal{S}\to\mathbb{R}\),
+  \[
+    (T V)(s) \;=\; \max_{a\in\mathcal{A}(s)} \Big\{ r(s,a) + \beta\,\mathbb{E}\!\left[ V(S') \mid s,a \right] \Big\}.
+  \]
+  \item Step 2 (initialize value): choose \(V^{(0)}\) (e.g., \(V^{(0)}\equiv 0\)); set \(k\leftarrow 0\).
+  \item Step 3 (value update): for each state \(s\),
+  \[
+    Q_{V^{(k)}}(s,a) \;=\; r(s,a) + \beta\,\mathbb{E}\!\left[ V^{(k)}(S') \mid s,a \right] \quad \text{for all } a\in\mathcal{A}(s),
+  \]
+  \[
+    V^{(k+1)}(s) \;\leftarrow\; \max_{a\in\mathcal{A}(s)} Q_{V^{(k)}}(s,a).
+  \]
+  \item Step 4 (convergence check): compute \(\Delta_{k+1}=\lVert V^{(k+1)}-V^{(k)}\rVert_\infty\).
+        If \(\Delta_{k+1}\le \varepsilon\), go to Step 5; else set \(k\leftarrow k+1\) and return to Step 3.
+
+  \item Step 5 (policy extraction): greedy w.r.t.\ \(Q_{V^{(k+1)}}\),
+  \[
+    \pi^\ast(s) \;\in\; \arg\max_{a\in\mathcal{A}(s)} \Big\{ r(s,a) + \beta\,\mathbb{E}\!\left[ V^{(k+1)}(S') \mid s,a \right] \Big\}.
+  \]
+\end{itemize}
+\end{frame}
+
+
+
+# PFI pesudo-code
+
+\begin{frame}{Policy Function Iteration (time-homogeneous, infinite horizon)}
+\small
+\begin{itemize}
+  \item Step 0 (inputs): state space \(\mathcal{S}\); actions \(\mathcal{A}(s)\); reward \(r(s,a)\); transition \(P(\cdot\mid s,a)\); discount \(\beta\in(0,1)\); tolerances \(\varepsilon_{\text{eval}},\varepsilon_{\text{imp}}>0\).
+  \item Step 1 (policy Bellman operator): for a stationary policy \(\pi\) and any \(V:\mathcal{S}\to\mathbb{R}\),
+  \[
+    (T^{\pi}V)(s)\;=\; r\!\big(s,\pi(s)\big)\;+\;\beta\,\mathbb{E}\!\left[V(S')\mid s,\pi(s)\right].
+  \]
+  \item Step 2 (initialize policy): choose any feasible stationary policy \(\pi^{(0)}\); set \(k\leftarrow 0\).
+  \item Step 3 (policy evaluation): compute \(V^{\pi^{(k)}}\) as the fixed point of \(T^{\pi^{(k)}}\),
+  \[
+    V^{\pi^{(k)}} \;=\; T^{\pi^{(k)}} V^{\pi^{(k)}},
+  \]
+  either \emph{exactly} (linear solve in finite MDPs) or \emph{iteratively} until
+  \(\lVert T^{\pi^{(k)}}V - V\rVert_\infty \le \varepsilon_{\text{eval}}\).
+  \item Step 4 (policy improvement): for each \(s\in\mathcal{S}\),
+  \[
+    \pi^{(k+1)}(s)\;\in\;\arg\max_{a\in\mathcal{A}(s)}
+    \Big\{ r(s,a) + \beta\,\mathbb{E}\!\left[V^{\pi^{(k)}}(S')\mid s,a\right] \Big\}.
+  \]
+  \item Step 5 (convergence check): if \(\pi^{(k+1)}=\pi^{(k)}\) (or the improvement gain \(\le \varepsilon_{\text{imp}}\)), go to Step 6; else set \(k\leftarrow k+1\) and return to Step 3.
+  \item Step 6 (outputs): optimal policy \(\pi^\ast=\pi^{(k)}\) and value \(V^\ast=V^{\pi^{(k)}}\).
+\end{itemize}
+\end{frame}
+
+
+
+use the information about the eocnonics model as well as the pesudo-code for time iteration, VFI, PFI, write me a script:
+
+- a consumption saving model class 
+- the TI, VFI, PFI solver class
+
+write me another script:
+
+- create an instance of model
+- create an instance of each solver to solve the model
+- compare the solutions
