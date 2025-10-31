@@ -10,6 +10,7 @@
 
 - u(c) = log(c)
 - z is lognormal
+- r is determined by z via the firm FOC where production Function is cobb douglas form with k as the sole input
 - use common parameter value in the literature
 
 

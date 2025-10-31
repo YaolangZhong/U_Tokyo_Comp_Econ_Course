@@ -12,6 +12,11 @@ class VFI:
         self.tol = tol
         self.max_iter = max_iter
 
+    def f(x):
+        return x
+    
+    
+
     def bellman_value_update(self, V: np.ndarray) -> np.ndarray:
         """One Bellman optimality update on V; no policy returned here."""
         S, A = self.mdp.S, self.mdp.A

@@ -37,7 +37,7 @@ By the end of the course, students will:
 
   - **Paper Selection**: Students may propose a paper to replicate, subject to instructor approval. The paper may be published or unpublished and does not need to come directly from computational economics, as long as it is prominent in the student’s field of interest. If source code is available, students must demonstrate novelty by improving upon the existing work—for example, by developing an alternative algorithm, redesigning the code pipeline, or conducting robustness checks. The instructor will also provide a list of suggested candidate papers midway through the term.
 
-  - **Sharing**: After grading is completed, replication projects will be compiled and shared in two stages: (1) internally among the registered students of this module; and (2) optionally in a publicly viewable GitHub repository, with the possibility of notifying the original paper’s author for comments. Each level of sharing will take place only with the approval of the student group involved.
+  - **Sharing**: After grading is completed, replication projects will be compiled and shared in two stages: (1) internally among the registered students of this module; and (2) optionally in a publicly viewable GitHub repository. Each level of sharing will take place only with the approval of the student group involved.
 
 # 3. Syllabus
 
@@ -74,43 +74,35 @@ By the end of the course, students will:
 
 ## Week 4  
 ### Lecture 4: Policy Function Iteration (PFI)
-
 ### Lab 4: Implementing PFI 
 - Git: Github synergy
 
 ## Week 5 
-### Lecture 5: Time Iteration and Endogenous Grid Method (EGM)
+### Lecture 5: Time Iteration (TI)
+### Lab 5: Introduction to Vide Coding with LLMs
 
-### Lab 5: Implementing Time Iteration and EGM 
-- Vibe coding with LLMs
 
 ## Week 6  
-### Lecture 6: Heterogeneous Agent Model - Aiyagari Model
+### Lecture 6: Endogenous Grid Method (EGM) and Heterogeneous Agent (HA) Model
 ### Lab 6: Solving Aiyagari Model
-- Vibe coding with LLMs
+
 
 ## Week 7  
-### Lecture 7: Heterogeneous Agent Model - Krusell Smith Model
-### Lab 7: Solving Krusell Smith Model
-- Vibe coding with LLMs
+### Lecture 7: Expectation: Quadrate, Simulation, All-in-One 
+### Lab 6: Solving Krusell Smith Model I
 
-## Week 7  
-### Lecture 7: Introduction to Neural Network
-### Lab 7: Construction and Application of Neural Network
 
 ## Week 8  
-### Lecture 8: TBD
-### Lab 8: TBD
-
+### Lecture 8: Parametrization
+### Lab 8: Solving Krusell Smith Model II
 
 ## Week 9  
-### Lecture 9: TBD
-### Lab 9: TBD
+### Lecture 9: Introduction to Machine Learning
+### Lab 9: Machine Learning Workflows with Jax/Pytorch
 
-
-## Week 10  
-### Lecture 10: TBD
-### Lab 10: TBD
+## Week 10
+### Lecture 10: Neural Network, Actor-Critic Framework
+### Lab 10: Implementation of Neural Network
 
 ## Week 11  
 ### Lecture 11: TBD
@@ -120,6 +112,9 @@ By the end of the course, students will:
 ### Lecture 12: TBD
 ### Lab 12: TBD
 
+## Week 13  
+### Lecture 13: TBD
+### Lab 13: TBD
 ---
 
 # 3. Reference Textbooks and Courses
