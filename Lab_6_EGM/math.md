@@ -20,6 +20,7 @@ Inputs to the algorithms:
 - Parameters $\beta, R, \sigma, b$; transition matrix $P=(P_{nn'})$
 - Grids: $\mathbf{\bar{k}}=\{\bar{k}_1,\ldots,\bar{k}_M\}$ with $\bar{k}_1=b$, and $\mathbf{\bar{w}}=\{\bar{w}_1,\ldots,\bar{w}_N\}$.
 
+
 ---
 
 # Algorithms

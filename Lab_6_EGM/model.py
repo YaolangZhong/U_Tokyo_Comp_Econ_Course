@@ -1,21 +1,9 @@
 import numpy as np
-from typing import Tuple, Callable, Union
-from scipy.interpolate import interp1d
 
 class ConsumptionSavingModel:
-    """
-    A class representing the consumption-saving model with borrowing constraints.
-    """
-    def __init__(self, 
-                 beta: float,
-                 R: float,
-                 sigma: float,
-                 b: float,
-                 k_grid: np.ndarray,
-                 w_grid: np.ndarray,
-                 P: np.ndarray):
+    def __init__(self, beta, R, sigma, b, k_grid, w_grid, P):
         """
-        Initialize the consumption-saving model.
+        Initialize the consumption-savings model
         
         Parameters:
         -----------
@@ -27,12 +15,12 @@ class ConsumptionSavingModel:
             Risk aversion parameter
         b : float
             Borrowing constraint
-        k_grid : np.ndarray
-            Grid for capital
-        w_grid : np.ndarray
-            Grid for wage
-        P : np.ndarray
-            Transition matrix for wage states
+        k_grid : array
+            Grid for capital/assets
+        w_grid : array
+            Grid for income
+        P : array (N x N)
+            Transition matrix for income
         """
         self.beta = beta
         self.R = R
@@ -42,67 +30,22 @@ class ConsumptionSavingModel:
         self.w_grid = w_grid
         self.P = P
         
-        # Derived quantities
         self.M = len(k_grid)
         self.N = len(w_grid)
         
-        # Pre-compute borrowing caps
+        # Compute borrowing caps: pi_cap = R*k + w - b
+        # This represents the maximum feasible consumption (next k = b)
         self.pi_cap = np.zeros((self.M, self.N))
         for m in range(self.M):
             for n in range(self.N):
-                self.pi_cap[m, n] = self.R * self.k_grid[m] + self.w_grid[n] - self.b
+                self.pi_cap[m,n] = R * k_grid[m] + w_grid[n] - b
     
-    def utility(self, c: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
-        """Compute utility for given consumption level."""
-        if self.sigma == 1:
-            return np.log(c)
-        return (c**(1 - self.sigma) - 1) / (1 - self.sigma)
+    def u_prime(self, c):
+        """Marginal utility: c^(-sigma)"""
+        # Safeguard against c <= 0 is handled by solvers or here if needed
+        # relying on numpy to handle arrays; for scalar <=0 it raises warning/error or returns inf
+        return c ** (-self.sigma)
     
-    def marginal_utility(self, c: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
-        """Compute marginal utility for given consumption level."""
-        return c**(-self.sigma)
-    
-    def inverse_marginal_utility(self, mu: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
-        """Compute inverse of marginal utility."""
-        return mu**(-1/self.sigma)
-    
-    def interpolate_policy(self, k: Union[float, np.ndarray], w: float, k_grid: np.ndarray, 
-                          policy: np.ndarray, w_index: int) -> Union[float, np.ndarray]:
-        """
-        Interpolate policy function for given capital and wage state.
-        
-        Parameters:
-        -----------
-        k : float or np.ndarray
-            Capital value(s) to interpolate at
-        w : float
-            Current wage state
-        k_grid : np.ndarray
-            Grid points for capital
-        policy : np.ndarray
-            Policy values on the grid
-        w_index : int
-            Index of current wage state
-            
-        Returns:
-        --------
-        float or np.ndarray
-            Interpolated policy values
-        """
-        # Create interpolation function (use linear interpolation with fill value)
-        interp = interp1d(k_grid, policy[:, w_index], 
-                         bounds_error=False, 
-                         fill_value=(policy[0, w_index], policy[-1, w_index]))
-        
-        # Handle both scalar and array inputs
-        if np.isscalar(k):
-            return float(interp(k))
-        return interp(k)
-    
-    def next_capital(self, k: float, w: float, c: float) -> float:
-        """Compute next period capital given current state and consumption."""
-        return self.R * k + w - c
-    
-    def state_constraint(self, k: float, w: float) -> float:
-        """Compute maximum consumption given current state (borrowing cap)."""
-        return self.R * k + w - self.b
+    def u_prime_inv(self, uc):
+        """Inverse marginal utility: uc^(-1/sigma)"""
+        return uc ** (-1/self.sigma)

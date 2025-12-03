@@ -1,0 +1,490 @@
+\documentclass[aspectratio=169]{beamer}
+% \useoutertheme[subsection=false]{miniframes}
+\mode<presentation> {
+\usetheme{default}
+}
+\usepackage{algorithm,algorithmic}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{threeparttable}
+\usepackage{natbib}
+% \hypersetup{
+%     colorlinks=true,
+%     citecolor=blue
+% }
+\bibliographystyle{aer}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{alphabeta}
+\usepackage{multirow,array}
+\usepackage{subfig}
+% \usepackage{hyperref} % Beamer loads this automatically
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{caption}
+\usepackage{pifont} %cross: \ding{55}
+\usepackage{booktabs,tabularx}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,decorations.pathreplacing}
+\graphicspath{{figures/}}
+\tikzset{
+  >=Stealth,
+  st/.style={circle,draw,inner sep=1pt,minimum size=5mm}, % state
+  tr/.style={-Stealth, line width=0.4pt},                  % transition edge
+  faint/.style={draw=black!35, -Stealth, line width=0.3pt},
+  optedge/.style={-Stealth, line width=1.2pt, draw=blue!70},
+  note/.style={align=center, inner sep=2pt, fill=black!5, rounded corners, draw=black!40},
+  lbl/.style={font=\footnotesize, inner sep=1pt}
+}
+
+% Convenience coordinates
+\newcommand{\StageX}[1]{2.2*#1}  % horizontal spacing
+\newcommand{\RowY}[1]{1.6-1.6*#1} % three rows: 0=top,1=mid,2=bot
+
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\1}{\mathbf{1}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\setbeamertemplate{caption}[numbered]
+
+
+\usefonttheme{professionalfonts}
+% remove the navigation symbols in the bottom of the slides
+\setbeamertemplate{navigation symbols}{}
+% command to add red underline to text
+\usepackage{ulem}
+
+\makeatletter
+\g@addto@macro\normalsize{%
+    \setlength\belowdisplayskip{-0pt}
+}
+
+\makeatletter
+
+\makeatother
+\setbeamertemplate{footline}[frame number]
+
+
+\title{Lecture 7: Approximating Expectations (Quadrature \& Monte Carlo Integration)}
+\author{Yasuyuki Sawada, Yaolang Zhong}
+
+\institute{University of Tokyo\\
+  \small \texttt{\href{mailto:yaolang.zhong@e.u-tokyo.ac.jp}{yaolang.zhong@e.u-tokyo.ac.jp}}}
+\date{\today}
+
+\begin{document}
+\begin{frame}
+\titlepage  
+\end{frame}
+
+
+%%%%%%%% Recep %%%%%%%%%%%
+\begin{frame}{Recap: Markov Decision Process (MDP)}
+  \begin{itemize}
+    \item 
+      An MDP is defined by the tuple  
+      \[
+        (\mathcal{S},\, \mathcal{A},\, P,\, r,\, \beta)
+      \]
+      where:
+
+      \begin{itemize}
+        \item \textcolor{red}{State space \(\mathcal{S}\)}: Possible system states.
+        \item \textcolor{red}{Action space \(\mathcal{A}(s)\)}: Feasible actions when in state \(s\).
+        \item \textcolor{red}{Transition kernel \(P_t(s' \mid s, a)\)}: Probability of moving from \(s\) to \(s'\) given action \(a\).
+        \item \textcolor{red}{Reward function \(r_t(s, a)\)}: Instantaneous payoff from taking action \(a\) in state \(s\).  
+              (Sometimes expressed as a \textit{cost} \(-r(s, a)\).)
+        \item \textcolor{red}{Discount factor \(\beta \in (0,1)\)}: Weights future rewards relative to current ones.
+      \end{itemize}
+    \item Objective:
+      Choose a policy \(\pi: \mathcal{S} \to \mathcal{A}\) to maximize expected discounted rewards:
+      \[
+        \mathbb{E}_\pi \!\left[\sum_{t=0}^T \beta^t r_t(s_t, a_t) + \beta^TR_T(s_T)\right].
+      \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Recap: Algorithms and Key Equations}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Value Function Iteration (VFI):
+    \[
+        V^{(k+1)}(s)
+        = \max_{a \in \mathcal{A}(s)}
+        \left\{ r(s,a) + \beta\,\mathbb{E}\left[ V^{(k)}(S') \mid s,a \right] \right\}
+    \]
+
+    \item Policy Function Iteration (PFI):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Policy Evaluation:
+        \[
+            V^{(k)}(s)
+            = r\big(s,\pi^{(k)}(s)\big)
+            + \beta\,\mathbb{E}\left[ V^{(k)}(S') \mid s,\pi^{(k)}(s) \right]
+        \]
+        \item Policy Improvement:
+        \[
+            \pi^{(k+1)}(s)
+            \in \arg\max_{a \in \mathcal{A}(s)}
+            \left\{ r(s,a) + \beta\,\mathbb{E}\left[ V^{(k)}(S') \mid s,a \right] \right\}
+        \]
+    \end{itemize}
+
+    \item Time Iteration (TI) / Endogenous Grid Method (EGM): \\
+    (consumption–saving problem as example)
+    \[
+        u_c(c^{(k+1)}_t)
+        = \beta \,\mathbb{E}\left[
+            u_c(c^{(k)}_{t+1}) \, (1 + r_{t+1})
+        \right]
+    \]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Approximating the Expectation Operator $\mathbb{E}[\cdot]$}
+\small
+In dynamic programming, we must evaluate the expected continuation value:
+\[
+    \mathbb{E}[V(S')\mid s,a] = \int V(s')\,P(ds'\mid s,a).
+\]
+Analytic evaluation is rarely possible. We rely on two numerical strategies:
+
+\vspace{2mm}
+\begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+        1. Deterministic (Quadrature)
+        \[ \int f(x)p(x)dx \approx \sum_{i=1}^N w_i f(x_i) \]
+        \begin{itemize}\setlength{\itemsep}{0.5mm}
+            \item Requires: Explicit PDF $p(s'|s,a)$.
+            \item Pros: Very accurate (exponential convergence) for smooth functions.
+            \item Cons: Suffers from Curse of Dimensionality ($N^d$).
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+        2. Stochastic (Monte Carlo)
+        \[ \mathbb{E}[f(x)] \approx \frac{1}{M}\sum_{m=1}^M f(x_m) \]
+        \begin{itemize}\setlength{\itemsep}{0.5mm}
+            \item Requires: Ability to \textit{sample} from $P$.
+            \item Pros: Error independent of dimension ($O(M^{-1/2})$); works without explicit PDF.
+            \item Cons: Slow convergence (requires many samples).
+        \end{itemize}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Which Method to Use? Three Scenarios}
+\small
+The choice depends on our \textit{knowledge of the transition kernel} $P(s'|s,a)$ and the \textit{dimensionality} $d$:
+
+\vspace{2mm}
+Case 1: Closed-Form Density $p(s'|s,a)$ Available
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item We know the formula for $p(s'|s,a)$ (e.g., AR(1) with Gaussian shocks).
+    \item Low dimension ($d \le 3$): Use Quadrature. It is far more efficient.
+    \item High dimension ($d > 4$): Quadrature becomes infeasible ($N^d$ nodes). Must switch to Monte Carlo or Sparse Grids.
+\end{itemize}
+
+\vspace{2mm}
+Case 2: Simulator Available (Generative Model)
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item No closed-form density $p(s'|s,a)$, but we can simulate $s'$ given any $(s,a)$.
+    \item Example: Complex structural models, or bootstrap resampling from data.
+    \item Method: Monte Carlo. We cannot use quadrature because we cannot evaluate weights $w_i$ based on $p(x_i)$.
+\end{itemize}
+
+\vspace{2mm}
+Case 3: Unknown Model (Data Only)
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item We cannot even simulate arbitrary transitions; we only observe one historical trajectory $(s_t, a_t, r_t, s_{t+1})$.
+    \item Method: Simulation-based Learning (RL). (Topic of Lecture 8).
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Deterministic Approximation: Quadrature}
+\small
+Quadrature approximates the expectation integral by a weighted sum of function evaluations at specific discrete points:
+\[
+    \mathbb{E}[f(x)] = \int f(x)\,p(x)\,dx \;\approx\; \sum_{i=1}^{N} w_i\, f(x_i).
+\]
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Interpretation:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item choose a small set of representative points (nodes) $x_i$,
+        \item assign probability mass (weights) $w_i$,
+        \item evaluate $f(\cdot)$ only at those nodes.
+    \end{itemize}
+    \item The core problem is how to optimally choose the nodes $x_i$ and weights $w_i$ to minimize approximation error for a given class of functions (e.g., polynomials).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{1. Gauss--Hermite Quadrature (The Macro Workhorse)}
+\small
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Mathematical Basis: Designed for the specific integral $\int_{-\infty}^{\infty} g(x) e^{-x^2} dx$.
+    \item Standard Output (e.g., from Python/Matlab):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Input: $N$.
+        \item Output: Nodes $x_i$ and weights $w_i$ that satisfy $\sum w_i g(x_i) \approx \int g(x)e^{-x^2}dx$.
+    \end{itemize}
+    \item Recipe for $\mathcal{N}(\mu, \sigma^2)$:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Goal: Compute $\mathbb{E}[f(y)] = \int f(y) \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(y-\mu)^2}{2\sigma^2}} dy$.
+        \item Transformation: Define $x = \frac{y-\mu}{\sqrt{2}\sigma}$ so that $y = \sqrt{2}\sigma x + \mu$.
+        \item Algorithm:
+        \begin{enumerate}
+            \item Get standard GH nodes $x_i$ and weights $w_i$ (inputs: $N$).
+            \item Transform nodes back to $y$: $y_i = \sqrt{2}\sigma x_i + \mu$.
+            \item Approximate: $\mathbb{E}[f(y)] \approx \frac{1}{\sqrt{\pi}} \sum_{i=1}^N w_i f(y_i)$.
+        \end{enumerate}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{2. Gauss--Legendre Quadrature (Bounded Shocks)}
+\small
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Mathematical Basis: Designed for integrals on $[-1, 1]$ with uniform weight.
+    \[ \int_{-1}^{1} g(x) dx \approx \sum_{i=1}^N w_i g(x_i) \]
+    \item Recipe for Integral on $[a, b]$ (e.g., Uniform Shock):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Transformation: Linear map $y = \frac{b-a}{2}x + \frac{a+b}{2}$.
+        \item Algorithm:
+        \begin{enumerate}
+            \item Get standard GL nodes $x_i$ and weights $w_i$ (inputs: $N$).
+            \item Transform nodes: $y_i = \frac{b-a}{2}x_i + \frac{a+b}{2}$.
+            \item Approximate: $\int_a^b f(y) dy \approx \frac{b-a}{2} \sum_{i=1}^N w_i f(y_i)$.
+        \end{enumerate}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{3. Handling Higher Dimensions: The Curse and Smolyak's Solution}
+\small
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item The ``Curse of Dimensionality'': Full tensor grids grow exponentially ($N^d$).
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item $N=5, d=2 \Rightarrow 25$ points (Easy).
+        \item $N=5, d=6 \Rightarrow 15,625$ points (Slow).
+        \item $N=5, d=10 \Rightarrow \sim 9.7 \text{ million}$ points (Impossible).
+    \end{itemize}
+    \item Solution: Smolyak's algorithm (sparse grids) selects a ``smart subset'' of grid points.
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Insight: Most accuracy comes from individual dimensions and low-order interactions. Points representing complex interactions of all $d$ variables (corners) contribute little.
+        \item Result: Cost grows polynomially ($\sim d^k$) rather than exponentially, making $d \approx 10$ feasible.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{3. Sparse Grid Integration: Recipe}
+\small
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Context: Compute $\int_S f(\mathbf{s}) \, d\mathbf{s}$ over $S = [a_1, b_1] \times \dots \times [a_d, b_d]$.
+    \item Algorithm Steps:
+    \begin{enumerate}\setlength{\itemsep}{1.5mm}
+        \item Generate $d$-dimensional sparse grid nodes $\mathbf{x}_j$ and weights $w_j$ (on reference domain $[-1, 1]^d$).
+        \item Transform each node $\mathbf{x}_j$ to the actual domain $\mathbf{s}_j$:
+        \[ s_{j,n} = \frac{b_n-a_n}{2}x_{j,n} + \frac{a_n+b_n}{2} \quad \text{for } n=1, \dots, d \]
+        \item Evaluate and sum: $\text{Approx} = \sum_{j=1}^M w_j \, f(\mathbf{s}_j)$.
+        \item Scale by Jacobian (change of variables):
+        \[ \text{Final Result} = \text{Approx} \times \prod_{n=1}^d \frac{b_n-a_n}{2} \]
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+%===================================================
+% SIMULATION METHODS: MONTE CARLO INTEGRATION
+%===================================================
+\begin{frame}{4. Monte Carlo Integration: The Basic Idea}
+\small
+Recall our goal: approximate $\mathbb{E}[f(x)] = \int f(x)p(x)dx$.
+
+Monte Carlo Integration: Draw i.i.d.\ samples $x_1, \dots, x_M$ from $p(x)$, then:
+\[
+    \mathbb{E}[f(x)] \approx \hat{\mu}_M = \frac{1}{M}\sum_{m=1}^{M} f(x_m)
+\]
+Why it works:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Law of Large Numbers: $\hat{\mu}_M \to \mathbb{E}[f(x)]$ as $M \to \infty$ (almost surely).
+    \item Central Limit Theorem: $\sqrt{M}(\hat{\mu}_M - \mu) \xrightarrow{d} N(0, \sigma^2)$, where $\sigma^2 = \text{Var}(f(x))$.
+    \item Key property: Error rate $O(1/\sqrt{M})$ is independent of dimension $d$.
+\end{itemize}
+
+Application to Bellman Equation: Given $V^{(k)}$, approximate $\mathbb{E}[V^{(k)}(S') \mid s]$ by:
+\[
+    \text{Draw } s'_1, \dots, s'_M \sim P(\cdot \mid s, a), \quad \text{compute } \frac{1}{M}\sum_{m=1}^M V^{(k)}(s'_m)
+\]
+\end{frame}
+
+\begin{frame}{4. Monte Carlo: The Slow Convergence Problem}
+\small
+The $O(1/\sqrt{M})$ convergence rate is slow:
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Samples $M$ & Relative Error & Improvement \\
+\midrule
+100 & $\sim 10\%$ & baseline \\
+10,000 & $\sim 1\%$ & 100$\times$ samples for 10$\times$ accuracy \\
+1,000,000 & $\sim 0.1\%$ & 10,000$\times$ samples for 100$\times$ accuracy \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Compare to quadrature:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Gauss quadrature with $N$ nodes is exact for polynomials up to degree $2N-1$.
+    \item For smooth functions, error $\sim O(e^{-cN})$ (exponential convergence!).
+    \item But: cost grows as $N^d$ in $d$ dimensions (curse of dimensionality).
+\end{itemize}
+Rule of thumb: For $d \leq 3$, quadrature is usually faster. For $d > 5$, MC wins.
+\end{frame}
+
+\begin{frame}{4. Variance Reduction: The Key to Faster MC}
+\small
+The MC error depends on $\text{Var}(f(x))$. Can we reduce it?
+Recall: $\text{Std Error} = \frac{\sigma}{\sqrt{M}}$, where $\sigma = \sqrt{\text{Var}(f(x))}$.
+
+Two ways to reduce error:
+\begin{enumerate}\setlength{\itemsep}{1mm}
+    \item Increase $M$ (brute force---expensive)
+    \item Reduce $\sigma$ (smart sampling---free lunch!)
+\end{enumerate}
+
+Main variance reduction techniques:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Antithetic variates: Use negatively correlated samples.
+    \item Control variates: Subtract a known-mean random variable.
+    \item Importance sampling: Sample from a better distribution.
+    \item Quasi-Monte Carlo: Replace random samples with low-discrepancy sequences.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{4. Antithetic Variates}
+\small
+Idea: If $x$ and $x'$ are negatively correlated, then $\text{Var}(\frac{f(x)+f(x')}{2}) < \text{Var}(f(x))$.
+
+For symmetric distributions (e.g., $\varepsilon \sim N(0, \sigma^2)$):
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Draw $\varepsilon_1, \dots, \varepsilon_{M/2}$ from $N(0, \sigma^2)$.
+    \item Use pairs: $(\varepsilon_m, -\varepsilon_m)$ for $m = 1, \dots, M/2$.
+    \item Estimate: $\hat{\mu} = \frac{1}{M}\sum_{m=1}^{M/2} [f(\varepsilon_m) + f(-\varepsilon_m)]$.
+\end{itemize}
+
+Why it works:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item $\varepsilon$ and $-\varepsilon$ are perfectly negatively correlated.
+    \item If $f$ is monotonic, $f(\varepsilon)$ and $f(-\varepsilon)$ are also negatively correlated.
+    \item Variance reduction can be up to 50\% (often 20--40\% in practice).
+\end{itemize}
+Cost: Free! Same number of function evaluations, just pair them smartly.
+\end{frame}
+
+\begin{frame}{4. Control Variates}
+\small
+Idea: Use a correlated variable with known mean to reduce variance.
+
+Suppose we want $\mathbb{E}[f(x)]$ and we know $\mathbb{E}[g(x)] = \mu_g$ exactly.
+
+Control variate estimator:
+\[
+    \hat{\mu}_{CV} = \frac{1}{M}\sum_{m=1}^M f(x_m) - c \left( \frac{1}{M}\sum_{m=1}^M g(x_m) - \mu_g \right)
+\]
+Optimal $c^* = \frac{\text{Cov}(f, g)}{\text{Var}(g)}$ minimizes variance.
+
+Economics example:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Want: $\mathbb{E}[V(a', z')]$ where $z' = \rho z + \varepsilon$.
+    \item Know: $\mathbb{E}[\varepsilon] = 0$ exactly.
+    \item Control variate: Use $g = \varepsilon$ to correct for sampling error in $\varepsilon$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{4. Importance Sampling: Using $P(\cdot)$ Smartly}
+\small
+Idea: Sample from a ``better'' distribution $q(x)$ instead of $p(x)$.
+
+Key identity:
+\[
+    \mathbb{E}_p[f(x)] = \int f(x) p(x) dx = \int f(x) \frac{p(x)}{q(x)} q(x) dx = \mathbb{E}_q\left[ f(x) \frac{p(x)}{q(x)} \right]
+\]
+Importance sampling estimator:
+\[
+    \hat{\mu}_{IS} = \frac{1}{M}\sum_{m=1}^M f(x_m) \cdot \underbrace{\frac{p(x_m)}{q(x_m)}}_{\text{importance weight}}, \qquad x_m \sim q(x)
+\]
+
+When is this useful?
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item When $f(x) \cdot p(x)$ is concentrated in regions where $p(x)$ is small.
+    \item Choose $q(x)$ to sample more from ``important'' regions.
+    \item Optimal $q^*(x) \propto |f(x)| \cdot p(x)$ (but often unknown).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{4. Importance Sampling: Application to Rare Events}
+\small
+Example: Estimating probability of extreme losses.
+
+Want: $P(Z > k) = \mathbb{E}[\mathbf{1}_{Z > k}]$ where $Z \sim N(0,1)$ and $k = 4$.
+
+Problem with naive MC:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item $P(Z > 4) \approx 3 \times 10^{-5}$ (very rare).
+    \item Need $\sim 10^6$ samples to see even $\sim 30$ events.
+    \item Estimate has huge relative error.
+\end{itemize}
+
+Importance sampling solution:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Sample $Z \sim N(k, 1)$ (shifted to the tail).
+    \item Reweight: $w(z) = \frac{\phi(z)}{\phi(z-k)} = e^{-kz + k^2/2}$.
+    \item Now most samples are in the region of interest!
+\end{itemize}
+
+Economics application: Pricing deep out-of-the-money options, stress testing.
+\end{frame}
+
+\begin{frame}{4. Quasi-Monte Carlo: Deterministic ``Random'' Numbers}
+\small
+Idea: Replace random samples with low-discrepancy sequences that fill the space more evenly.
+
+\begin{center}
+\begin{tabular}{cc}
+Random (MC) & Low-discrepancy (QMC) \\
+\hline
+Clumpy, gaps & Even coverage \\
+Error $O(1/\sqrt{M})$ & Error $O((\log M)^d / M)$ \\
+\end{tabular}
+\end{center}
+
+Common sequences:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Halton sequence
+    \item Sobol sequence (most popular in finance/economics)
+    \item Niederreiter sequence
+\end{itemize}
+
+When to use:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Works best for smooth integrands in moderate dimensions ($d \lesssim 20$).
+    \item Very popular in option pricing, portfolio optimization.
+    \item Easy to implement: just replace \texttt{rand()} with \texttt{sobol()}.
+\end{itemize}
+\end{frame}
+
+
+
+% \bibliography{bibliography/references.bib} 
+
+\end{document}
+
+

@@ -1,0 +1,649 @@
+\documentclass[aspectratio=169]{beamer}
+% \useoutertheme[subsection=false]{miniframes}
+\mode<presentation> {
+\usetheme{default}
+}
+\usepackage{algorithm,algorithmic}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{threeparttable}
+\usepackage{natbib}
+\hypersetup{
+    colorlinks=true,
+    citecolor=blue
+}
+\bibliographystyle{aer}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{alphabeta}
+\usepackage{multirow,array}
+\usepackage{subfig}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{caption}
+\usepackage{pifont} %cross: \ding{55}
+\usepackage{booktabs,tabularx}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,decorations.pathreplacing}
+\graphicspath{{../figures/}}
+\tikzset{
+  >=Stealth,
+  st/.style={circle,draw,inner sep=1pt,minimum size=5mm}, % state
+  tr/.style={-Stealth, line width=0.4pt},                  % transition edge
+  faint/.style={draw=black!35, -Stealth, line width=0.3pt},
+  optedge/.style={-Stealth, line width=1.2pt, draw=blue!70},
+  note/.style={align=center, inner sep=2pt, fill=black!5, rounded corners, draw=black!40},
+  lbl/.style={font=\footnotesize, inner sep=1pt}
+}
+
+% Convenience coordinates
+\newcommand{\StageX}[1]{2.2*#1}  % horizontal spacing
+\newcommand{\RowY}[1]{1.6-1.6*#1} % three rows: 0=top,1=mid,2=bot
+
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\1}{\mathbf{1}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\setbeamertemplate{caption}[numbered]
+
+
+\usefonttheme{professionalfonts}
+% remove the navigation symbols in the bottom of the slides
+\setbeamertemplate{navigation symbols}{}
+% command to add red underline to text
+\usepackage{ulem}
+
+\makeatletter
+\g@addto@macro\normalsize{%
+    \setlength\belowdisplayskip{-0pt}
+}
+
+\makeatletter
+
+\makeatother
+\setbeamertemplate{footline}[frame number]
+
+
+\begin{document}
+
+\title{Lecture 7: Expectation, Quadrate, Simulation}
+\author{Yasuyuki Sawada, Yaolang Zhong}
+
+\institute{University of Tokyo\\
+  \small \texttt{\href{mailto:yaolang.zhong@e.u-tokyo.ac.jp}{yaolang.zhong@e.u-tokyo.ac.jp}}}
+\date{\today}
+\begin{frame}
+\titlepage  
+\end{frame}
+
+
+%%%%%%%% Recep %%%%%%%%%%%
+\begin{frame}{Recap: Markov Decision Process (MDP)}
+  \begin{itemize}
+    \item 
+      An MDP is defined by the tuple  
+      \[
+        (\mathcal{S},\, \mathcal{A},\, P,\, r,\, \beta)
+      \]
+      where:
+
+      \begin{itemize}
+        \item \textcolor{red}{State space \(\mathcal{S}\)}: Possible system states.
+        \item \textcolor{red}{Action space \(\mathcal{A}(s)\)}: Feasible actions when in state \(s\).
+        \item \textcolor{red}{Transition kernel \(P_t(s' \mid s, a)\)}: Probability of moving from \(s\) to \(s'\) given action \(a\).
+        \item \textcolor{red}{Reward function \(r_t(s, a)\)}: Instantaneous payoff from taking action \(a\) in state \(s\).  
+              (Sometimes expressed as a \textit{cost} \(-r(s, a)\).)
+        \item \textcolor{red}{Discount factor \(\beta \in (0,1)\)}: Weights future rewards relative to current ones.
+      \end{itemize}
+    \item Objective:
+      Choose a policy \(\pi: \mathcal{S} \to \mathcal{A}\) to maximize expected discounted rewards:
+      \[
+        \mathbb{E}_\pi \!\left[\sum_{t=0}^T \beta^t r_t(s_t, a_t) + \beta^TR_T(s_T)\right].
+      \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Recap: Algorithms and Key Equations}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Value Function Iteration (VFI):
+    \[
+        V^{(k+1)}(s)
+        = \max_{a \in \mathcal{A}(s)}
+        \left\{ r(s,a) + \beta\,\mathbb{E}\left[ V^{(k)}(S') \mid s,a \right] \right\}
+    \]
+
+    \item Policy Function Iteration (PFI):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Policy Evaluation:
+        \[
+            V^{(k)}(s)
+            = r\big(s,\pi^{(k)}(s)\big)
+            + \beta\,\mathbb{E}\left[ V^{(k)}(S') \mid s,\pi^{(k)}(s) \right]
+        \]
+        \item Policy Improvement:
+        \[
+            \pi^{(k+1)}(s)
+            \in \arg\max_{a \in \mathcal{A}(s)}
+            \left\{ r(s,a) + \beta\,\mathbb{E}\left[ V^{(k)}(S') \mid s,a \right] \right\}
+        \]
+    \end{itemize}
+
+    \item Time Iteration (TI) / Endogenous Grid Method (EGM): \\
+    (consumption–saving problem as example)
+    \[
+        u_c(c^{(k+1)}_t)
+        = \beta \,\mathbb{E}\left[
+            u_c(c^{(k)}_{t+1}) \, (1 + r_{t+1})
+        \right]
+    \]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Approximate $\mathbb{E}[\cdot]$: Motivation (I)}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item In dynamic models, expectations enter through a conditional integral:
+    \[
+        \mathbb{E}[g(S')\mid s,a] = \int g(s')\,P(ds'\mid s,a).
+    \]
+    \item Computing this integral exactly is often infeasible. Two common reasons in economics:
+
+    \begin{enumerate}\setlength{\itemsep}{2mm}
+        \item no convenient closed form for the shock distribution or transition
+        \begin{itemize}\setlength{\itemsep}{1mm}
+            \item data-driven transition (estimated from regression):
+            \[
+                y_{t+1} = \hat\rho\,y_t + \hat\varepsilon_{t+1}.
+            \]
+            \item equilibrium objects require $\mathbb{E}[g(y_{t+1})\mid y_t]$, but $\hat\varepsilon$ may be non-Gaussian (skewness, fat tails), so analytic integration is unavailable.
+        \end{itemize}
+
+        \item continuous and high-dimensional states/actions (curse of dimensionality)
+        \begin{itemize}\setlength{\itemsep}{1mm}
+            \item even a basic savings problem evaluates expectations on a grid:
+            \[
+                a'=(1+r)a+y-c,\qquad y'=\rho y+\varepsilon'
+                \Rightarrow \mathbb{E}[V(a',y')\mid a,y,c].
+            \]
+            \item with multiple continuous states/shocks, grid-based integration scales poorly:
+            \[
+                \text{if each dimension has } n \text{ points and there are } d \text{ dimensions, nodes } \sim n^d.
+            \]
+            \item this exponential growth is the curse of dimensionality, motivating alternatives to full-grid integration.
+        \end{itemize}
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Approximate $\mathbb{E}[\cdot]$: Motivation (II)}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item A third reason is common in RL and control problems:
+
+    \begin{enumerate}\setcounter{enumi}{2}\setlength{\itemsep}{2mm}
+        \item unknown transition law (model-free learning)
+        \begin{itemize}\setlength{\itemsep}{1mm}
+            \item in many RL problems, the agent does not know $P(s'|s,a)$ and learns from experience (samples).
+            \item example (autonomous driving): the state includes camera/LiDAR inputs and traffic configuration; the action is steering/braking; the next state is generated by physics and other drivers, which is not written down as a known $P(\cdot)$.
+            \item contrast (model-based vs model-free):
+            \begin{itemize}\setlength{\itemsep}{1mm}
+                \item economics DP is typically model-based: the analyst specifies $P(s'|s,a)$ and solves the Bellman equation,
+                \item RL is often model-free: the agent updates values/policies using observed transitions $(s_t,a_t,r_t,s_{t+1})$ without estimating a full $P(\cdot)$.
+            \end{itemize}
+        \end{itemize}
+    \end{enumerate}
+
+    \item These motivate two families of approximations:
+    \[
+        \text{quadrature (deterministic)} \qquad \text{and} \qquad \text{simulation (Monte Carlo)}.
+    \]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Takeaway: Two Main Approximation Families}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Whenever exact integration is hard, we approximate:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item deterministic methods (quadrature): pick carefully chosen nodes and weights,
+        \item stochastic methods (simulation): replace expectations by sample averages.
+    \end{itemize}
+    \item Rule of thumb:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item low-dimensional, known shock distribution $\rightarrow$ quadrature can be fast and accurate,
+        \item high-dimensional or unknown transition $\rightarrow$ simulation is often the default.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Implication: Approximation is Built into Computation}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item If $d$ is small and the shock distribution is known, deterministic integration can be accurate and fast.
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Example: one Gaussian shock in RBC $\Rightarrow$ Gauss--Hermite works well.
+    \end{itemize}
+    \item If $d$ is large or $P(\cdot)$ is unknown, simulation is often the default choice.
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Example: heterogeneous-agent models and model-free RL typically rely on Monte Carlo.
+    \end{itemize}
+    \item We will compare:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item quadrature: replace $p(x)$ by carefully chosen nodes and weights,
+        \item simulation: replace $p(x)$ by empirical draws and use LLN/ergodicity.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+%===================================================
+% QUADRATURE METHODS (3-slide deeper intro, no \textbf)
+%===================================================
+
+\begin{frame}{Deterministic Approximation: Quadrature (Core Idea)}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Goal: compute an expectation when exact integration is costly
+    \[
+        \mathbb{E}[f(x)] = \int f(x)\,p(x)\,dx .
+    \]
+    \item Quadrature replaces a continuous distribution by a discrete approximation:
+    \[
+        \int f(x)\,p(x)\,dx \;\approx\; \sum_{i=1}^{N} w_i\, f(x_i).
+    \]
+    \item Interpretation:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item choose a small set of representative points (nodes) $x_i$,
+        \item assign probability mass (weights) $w_i$,
+        \item evaluate $f(\cdot)$ only at those nodes.
+    \end{itemize}
+    \item Advantage over random sampling: nodes are chosen to minimize integration error for smooth functions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Where Quadrature Fits in Economic Dynamic Problems}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Example (Bellman / Euler equation): expectations appear in every state update.
+    \[
+        V(s) = \max_{a\in\mathcal{A}(s)}\left\{ r(s,a) + \beta \int V(s')\,P(ds'|s,a) \right\}.
+    \]
+    \item If the shock is low-dimensional and its density is known, we can integrate deterministically.
+    
+    \item Typical macro shock process:
+    \[
+        z_{t+1} = \rho z_t + \varepsilon_{t+1}, \qquad \varepsilon_{t+1}\sim \mathcal{N}(0,\sigma^2).
+    \]
+    \item Why quadrature is attractive here:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item the innovation is Gaussian (well-studied weights/nodes),
+        \item the mapping from shock to next state is smooth in many models,
+        \item dimension is often 1 (TFP) or 2 (TFP + preference).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Common Quadrature Rules and When Economists Use Them}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Gauss--Hermite: designed for Gaussian-type integrals; widely used when shocks are normal
+    \[
+        \int_{-\infty}^{\infty} f(x)\,e^{-x^2}\,dx \;\approx\; \sum_{i=1}^{N} w_i f(x_i),
+    \]
+    where $x_i$ are roots of the Hermite polynomial $H_N(\cdot)$.
+
+    \item How to apply to $x\sim \mathcal{N}(0,1)$:
+    \[
+        \mathbb{E}[f(x)] = \int f(x)\,\phi(x)\,dx
+        \;\approx\; \sum_{i=1}^{N} \tilde w_i\, f(\tilde x_i),
+    \]
+    with a rescaling from the Hermite form to the standard normal density.
+
+    \item Gauss--Legendre: for bounded support $x\in[a,b]$ (e.g., uniform or truncated shocks).
+
+    \item Sparse grid / Smolyak: combines 1D rules to reduce node growth when dimension is moderate.
+
+    \item Practical boundary:
+    \[
+        \text{small } d \Rightarrow \text{quadrature works well},\qquad
+        \text{large } d \Rightarrow \text{simulation becomes preferable}.
+    \]
+\end{itemize}
+\end{frame}
+
+
+%===================================================
+% SIMULATION METHODS (deeper, more detailed; no \textbf)
+%===================================================
+
+\begin{frame}{Simulation-Based Approximation (Core Idea)}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item When integration is hard, approximate the expectation by a sample average.
+    \[
+        \mathbb{E}[f(x)] = \int f(x)\,p(x)\,dx
+        \;\approx\;
+        \frac{1}{M}\sum_{m=1}^{M} f(x_m),
+        \qquad x_m \sim p(x).
+    \]
+    \item Interpretation: replace the distribution by the empirical distribution of draws $\{x_m\}_{m=1}^M$.
+    \item Two key advantages:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item works well in high dimension (no exponential node explosion),
+        \item works even if $p(\cdot)$ is not available in closed form, as long as we can simulate from it.
+    \end{itemize}
+    \item Typical economic context: simulate shocks and/or next-period states in dynamic models.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Why Simulation Helps: High Dimension and Unknown Transitions}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item High-dimensional state:
+    \[
+        s = (k,z,a,\ldots) \in \mathbb{R}^d,\quad d \text{ large } \Rightarrow \int V(s')P(ds'|s,a) \text{ is costly.}
+    \]
+    \item Unknown transition (typical in RL and empirical settings):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item we do not know $P(s'|s,a)$ analytically,
+        \item but we observe data or can interact with an environment producing samples $s' \sim P(\cdot|s,a)$.
+    \end{itemize}
+    \item Examples:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Monte Carlo simulation of firm dynamics under idiosyncratic shocks,
+        \item simulation-based estimation (SMM/indirect inference),
+        \item policy evaluation in RL using trajectories generated by a policy.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Law of Large Numbers: The Key Convergence Result}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item If $x_1,\dots,x_M$ are i.i.d. from $p(x)$ and $\mathbb{E}[|f(x)|]<\infty$:
+    \[
+        \frac{1}{M}\sum_{m=1}^{M} f(x_m)
+        \xrightarrow{\text{a.s.}}
+        \mathbb{E}[f(x)]
+        \qquad \text{as } M\to\infty .
+    \]
+    \item This is why sample averages can replace expectations asymptotically.
+    \item In time series / Markov settings, we often use an ergodic theorem:
+    \[
+        \frac{1}{M}\sum_{m=1}^{M} f(x_m)
+        \to
+        \mathbb{E}_{\mu}[f(x)]
+        \quad \text{for a stationary distribution } \mu,
+    \]
+    under stationarity and mixing conditions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Monte Carlo Error: Rate and Interpretation}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Under mild conditions (Central Limit Theorem):
+    \[
+        \sqrt{M}\left(
+        \frac{1}{M}\sum_{m=1}^{M} f(x_m) - \mathbb{E}[f(x)]
+        \right)
+        \Rightarrow
+        \mathcal{N}\!\left(0,\; \mathrm{Var}(f(x))\right).
+    \]
+    \item Hence the typical error magnitude is $O(M^{-1/2})$.
+    \item Important contrast with quadrature:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Monte Carlo convergence rate does not deteriorate with dimension $d$,
+        \item but variance may rise when $f(x)$ is noisy or heavy-tailed.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Monte Carlo in Dynamic Programming: Approximating $\mathbb{E}[V(S')|s,a]$}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Bellman update with expectation:
+    \[
+        V(s) = \max_{a\in\mathcal{A}(s)}
+        \left\{
+        r(s,a) + \beta\,\mathbb{E}\left[V(S')\mid s,a\right]
+        \right\}.
+    \]
+    \item Monte Carlo approximation:
+    \[
+        \mathbb{E}\left[V(S')\mid s,a\right]
+        \approx
+        \frac{1}{M}\sum_{m=1}^{M} V\!\left(s'_m\right),
+        \qquad s'_m \sim P(\cdot|s,a).
+    \]
+    \item Resulting approximate Bellman operator:
+    \[
+        (T_M V)(s)
+        =
+        \max_{a\in\mathcal{A}(s)}
+        \left\{
+        r(s,a) + \beta\,\frac{1}{M}\sum_{m=1}^{M} V(s'_m)
+        \right\}.
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Practical Issues in Monte Carlo Bellman Updates}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Sampling noise:
+    \[
+        T_M V \neq TV \quad \Rightarrow \quad the update is stochastic.
+    \]
+    \item Two common strategies:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item fixed draws (common random numbers): use the same shock draws across iterations to stabilize updates,
+        \item increasing $M$: start small for speed, increase for accuracy as the algorithm converges.
+    \end{itemize}
+    \item Variance reduction (examples):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item antithetic sampling: pair $\varepsilon$ with $-\varepsilon$ (works well for symmetric shocks),
+        \item control variates: subtract something with known expectation to reduce variance.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+%===================================================
+% TD LEARNING (deeper)
+%===================================================
+
+\begin{frame}{From Monte Carlo to Temporal Difference Learning}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item In RL, we often do not know $P(s'|s,a)$ or cannot compute $\mathbb{E}[\cdot]$ directly.
+    \item Instead, we observe a trajectory generated by interacting with the environment:
+    \[
+        (s_0,a_0,r_0,s_1,a_1,r_1,\ldots)
+        \quad \text{under a policy } \pi.
+    \]
+    \item Aim of policy evaluation: estimate
+    \[
+        V^\pi(s)=\mathbb{E}_\pi\!\left[\sum_{t=0}^{\infty}\beta^t r_t \,\big|\, s_0=s\right].
+    \]
+    \item Key idea: replace conditional expectations by realized samples along the trajectory.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{TD(0): One-Step Sample-Based Bellman Update}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Bellman equation under policy $\pi$:
+    \[
+        V^\pi(s) = \mathbb{E}\left[r(s,\pi(s)) + \beta V^\pi(S') \mid s \right].
+    \]
+    \item Using a single observed transition $(s_t,r_t,s_{t+1})$:
+    \[
+        \delta_t \equiv r_t + \beta V(s_{t+1}) - V(s_t)
+        \qquad \text{(TD error)}.
+    \]
+    \item TD(0) update:
+    \[
+        V(s_t) \leftarrow V(s_t) + \alpha_t\,\delta_t.
+    \]
+    \item Interpretation: stochastic approximation to the Bellman fixed point.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{TD(1): Monte Carlo (Full Return) Policy Evaluation}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Define the realized discounted return from time $t$:
+    \[
+        G_t \equiv \sum_{\tau=0}^{T-t}\beta^\tau r_{t+\tau}
+        \quad \text{(finite horizon } T\text{)},\qquad
+        G_t \equiv \sum_{\tau=0}^{\infty}\beta^\tau r_{t+\tau}
+        \quad \text{(infinite horizon)}.
+    \]
+    \item TD(1) update (Monte Carlo update):
+    \[
+        V(s_t) \leftarrow V(s_t) + \alpha_t\big(G_t - V(s_t)\big).
+    \]
+    \item Unbiasedness under $\pi$:
+    \[
+        \mathbb{E}_\pi[G_t \mid s_t=s] = V^\pi(s).
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{LLN Link: Why TD(1) Recovers the Expectation}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Fix a state $s$. Consider repeated visits to $s$ under policy $\pi$.
+    \item Let $\{G^{(j)}(s)\}_{j=1}^{M}$ be the realized returns starting from state $s$ on those visits.
+    \item By LLN (i.i.d. case) or ergodic theorem (Markov case),
+    \[
+        \frac{1}{M}\sum_{j=1}^{M} G^{(j)}(s)
+        \;\to\;
+        \mathbb{E}_\pi[G \mid s_0=s]
+        \;=\;
+        V^\pi(s).
+    \]
+    \item Therefore TD(1) is a sample-based approximation to the expectation operator in the Bellman equation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Connecting Back to the Recap Equations}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item In the recap, the key object is the conditional expectation:
+    \[
+        \mathbb{E}\left[V(S')\mid s,a\right].
+    \]
+    \item Quadrature replaces it by a weighted sum over deterministic nodes.
+    \item Simulation replaces it by a sample average of next states:
+    \[
+        \mathbb{E}\left[V(S')\mid s,a\right]
+        \approx
+        \frac{1}{M}\sum_{m=1}^{M} V(s'_m).
+    \]
+    \item TD(1) goes one step further: it replaces the entire discounted expectation
+    \[
+        V^\pi(s) = \mathbb{E}_\pi\!\left[\sum_{t=0}^{\infty}\beta^t r_t \mid s_0=s\right]
+    \]
+    by sample-path returns and uses LLN to justify convergence.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{When Simulation is Especially Useful (Economic Examples)}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Heterogeneous-agent models (many states): simulate cross-sectional distribution and compute aggregates.
+    \item Firm dynamics with rich shocks: simulate productivity, innovation, entry/exit.
+    \item Models with rare disasters / fat tails: simulation captures tail realizations better than coarse grids.
+    \item Empirical moments: simulated method of moments relies on Monte Carlo to approximate model-implied expectations.
+\end{itemize}
+\end{frame}
+
+%===================================================
+% COMPARISON
+%===================================================
+\begin{frame}{Quadrature vs Simulation}
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Method & Accuracy & High Dimensional \\
+\midrule
+Quadrature & High (small $d$) & Poor \\
+Simulation & Moderate & \textbf{Excellent} \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Which Method to Use?}
+\begin{itemize}
+    \item Quadrature: small number of shocks, smooth density.
+    \item Simulation: unknown transition, reinforcement learning, high $d$.
+    \item Hybrids: Gaussian linearization + Monte Carlo (e.g. Tauchen–Hussey).
+\end{itemize}
+\end{frame}
+
+%===================================================
+% PRACTICAL CONSIDERATIONS
+%===================================================
+\begin{frame}{Practical Tips}
+\begin{itemize}
+    \item Set random seeds for reproducibility.
+    \item Variance reduction: antithetic draws, control variates.
+    \item Number of samples $M$: trade-off speed vs accuracy.
+    \item Adaptive quadrature / sparse grid if $d$ moderately large.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Stochastic Growth Model}
+\[
+z_{t+1} = \rho z_t + \varepsilon_t,\quad \varepsilon_t\sim\mathcal{N}(0,\sigma^2)
+\]
+\begin{itemize}
+    \item Quadrature: use 3–5 Gauss–Hermite nodes.
+    \item Simulation: sample 1,000 shocks → Monte Carlo expectation.
+\end{itemize}
+\end{frame}
+
+%===================================================
+% CONCLUSION
+%===================================================
+\begin{frame}{Summary}
+\begin{itemize}
+    \item Expectation operator central to DP, MDP, RL.
+    \item Continuous state → integration required.
+    \item Quadrature: deterministic, fast for small $d$.
+    \item Simulation: scalable, robust, supports TD-learning.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Next Lecture}
+\begin{itemize}
+    \item Monte Carlo methods in value function approximation
+    \item Simulation-based estimation (SMC, particle filters)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\centering \Large Questions?
+\end{frame}
+
+
+
+\bibliography{../bibliography/references.bib} 
+
+\end{document}
+

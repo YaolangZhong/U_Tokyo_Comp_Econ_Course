@@ -1,0 +1,491 @@
+\documentclass[aspectratio=169]{beamer}
+% \useoutertheme[subsection=false]{miniframes}
+\mode<presentation> {
+\usetheme{default}
+}
+\usepackage{algorithm,algorithmic}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{threeparttable}
+\usepackage{natbib}
+% \hypersetup{
+%     colorlinks=true,
+%     citecolor=blue
+% }
+\bibliographystyle{aer}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{alphabeta}
+\usepackage{multirow,array}
+\usepackage{subfig}
+% \usepackage{hyperref} % Beamer loads this automatically
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{caption}
+\usepackage{pifont} %cross: \ding{55}
+\usepackage{booktabs,tabularx}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,decorations.pathreplacing}
+\graphicspath{{figures/}}
+\tikzset{
+  >=Stealth,
+  st/.style={circle,draw,inner sep=1pt,minimum size=5mm}, % state
+  tr/.style={-Stealth, line width=0.4pt},                  % transition edge
+  faint/.style={draw=black!35, -Stealth, line width=0.3pt},
+  optedge/.style={-Stealth, line width=1.2pt, draw=blue!70},
+  note/.style={align=center, inner sep=2pt, fill=black!5, rounded corners, draw=black!40},
+  lbl/.style={font=\footnotesize, inner sep=1pt}
+}
+
+% Convenience coordinates
+\newcommand{\StageX}[1]{2.2*#1}  % horizontal spacing
+\newcommand{\RowY}[1]{1.6-1.6*#1} % three rows: 0=top,1=mid,2=bot
+
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\1}{\mathbf{1}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\setbeamertemplate{caption}[numbered]
+
+
+\usefonttheme{professionalfonts}
+% remove the navigation symbols in the bottom of the slides
+\setbeamertemplate{navigation symbols}{}
+% command to add red underline to text
+\usepackage{ulem}
+
+\makeatletter
+\g@addto@macro\normalsize{%
+    \setlength\belowdisplayskip{-0pt}
+}
+
+\makeatletter
+
+\makeatother
+\setbeamertemplate{footline}[frame number]
+
+
+\title{Lecture 8: Simulation-Based Learning (MC, TD)}
+\author{Yasuyuki Sawada, Yaolang Zhong}
+
+\institute{University of Tokyo\\
+  \small \texttt{\href{mailto:yaolang.zhong@e.u-tokyo.ac.jp}{yaolang.zhong@e.u-tokyo.ac.jp}}}
+\date{\today}
+
+\begin{document}
+\begin{frame}
+\titlepage  
+\end{frame}
+
+
+%===================================================
+% RECAP AND MOTIVATION
+%===================================================
+\begin{frame}{Recap: The Value Function and Bellman Equation}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item The value function $V(s)$ represents the expected discounted sum of future rewards:
+    \[
+        V(s) = \mathbb{E}\left[ \sum_{t=0}^{\infty} \beta^t r_t \,\Big|\, s_0 = s \right]
+    \]
+    
+    \item The Bellman equation provides a recursive characterization:
+    \[
+        V(s) = r(s, \pi(s)) + \beta \, \mathbb{E}[V(S') \mid s]
+    \]
+    
+    \item Last lecture: We discussed how to approximate $\mathbb{E}[V(S') \mid s]$ using:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Quadrature (deterministic nodes and weights)
+        \item Monte Carlo integration (draw samples from $P(\cdot \mid s)$)
+    \end{itemize}
+    
+    \item Both methods require knowing the transition model $P(s' \mid s, a)$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Today's Question: What if We Don't Know $P(\cdot)$?}
+\small
+In many applications, the transition model is unknown:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item An agent learning to play a game by trial and error.
+    \item A firm learning market dynamics from actual sales data.
+    \item Estimating policy effects from observed outcomes (not a structural model).
+\end{itemize}
+
+\vspace{2mm}
+Without $P(\cdot)$, we cannot:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Use quadrature (need to know the distribution of shocks).
+    \item Draw i.i.d.\ samples from $P(\cdot \mid s, a)$ for Monte Carlo integration.
+\end{itemize}
+
+\vspace{2mm}
+But we can still:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Follow a policy $\pi$ and observe the sequence: $s_0, r_0, s_1, r_1, s_2, r_2, \dots$
+    \item Learn from these observations!
+\end{itemize}
+\end{frame}
+
+%===================================================
+% TWO TYPES OF SIMULATION
+%===================================================
+\begin{frame}{Two Ways to Use Simulation in Dynamic Models}
+\small
+Recall from last lecture: simulation can be used in two distinct ways:
+
+\vspace{3mm}
+\underline{Type 1: Cross-Sectional (Monte Carlo Integration)}
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Goal: Approximate $\mathbb{E}[V(S') \mid s]$ at a given state $s$.
+    \item Method: Draw multiple next-states $s'_1, \dots, s'_M$ from transition $P(\cdot \mid s, a)$.
+    \item Requires: Knowledge of $P(\cdot)$.
+\end{itemize}
+
+\vspace{3mm}
+\underline{Type 2: Time-Series (Episode Simulation)} $\leftarrow$ \textit{Today's focus}
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Goal: Estimate $V(s)$ by observing actual future outcomes.
+    \item Method: Simulate a trajectory $s_0 \to s_1 \to s_2 \to \dots$ and record rewards.
+    \item Requires: Only the ability to interact with the environment.
+\end{itemize}
+
+\vspace{3mm}
+Both rely on Law of Large Numbers, but sample different things.
+\end{frame}
+
+\begin{frame}{Key Insight: Value as Expectation Over Trajectories}
+\small
+The value function can be written as an expectation over \textit{trajectories}:
+\[
+    V(s) = \mathbb{E}\left[ \sum_{t=0}^{\infty} \beta^t r_t \,\Big|\, s_0 = s \right]
+    = \mathbb{E}\left[ G_0 \,\Big|\, s_0 = s \right]
+\]
+where $G_t = r_t + \beta r_{t+1} + \beta^2 r_{t+2} + \dots$ is the \textit{return} from time $t$.
+
+\vspace{3mm}
+This suggests a simple estimation strategy:
+\begin{enumerate}\setlength{\itemsep}{1.5mm}
+    \item Starting from state $s$, simulate many trajectories.
+    \item For each trajectory, compute the realized return $G$.
+    \item Average the returns: $\hat{V}(s) = \frac{1}{M}\sum_{m=1}^M G^{(m)}$.
+\end{enumerate}
+
+\vspace{2mm}
+By Law of Large Numbers: $\hat{V}(s) \to V(s)$ as $M \to \infty$.
+
+\vspace{2mm}
+This is the essence of \textit{Monte Carlo policy evaluation}.
+\end{frame}
+
+%===================================================
+% THE COMMON UPDATE RULE
+%===================================================
+\begin{frame}{The Common Update Rule: Stochastic Approximation}
+\small
+All simulation-based methods use this incremental update:
+\[
+    V_{new}(s) \leftarrow V_{old}(s) + \alpha \, \big(\text{Target} - V_{old}(s)\big)
+\]
+
+Interpretation:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Target: Our current estimate of what $V(s)$ should be (based on new data).
+    \item $\text{Target} - V_{old}(s)$: The ``error'' or ``surprise''---how much reality differs from expectation.
+    \item $\alpha \in (0,1)$: Learning rate---how much to adjust toward the new target.
+\end{itemize}
+
+\vspace{2mm}
+Equivalent form: $V_{new}(s) = (1 - \alpha) V_{old}(s) + \alpha \cdot \text{Target}$
+
+\vspace{2mm}
+The methods differ in how they construct the Target:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item MC: Target = realized return from simulating a full episode.
+    \item TD(0): Target = one-step reward + estimated continuation value.
+    \item TD($\lambda$): Target = weighted average of different horizons.
+\end{itemize}
+\end{frame}
+
+%===================================================
+% METHOD 1: MONTE CARLO
+%===================================================
+\begin{frame}{1. Monte Carlo (MC): The ``Wait and See'' Approach}
+\small
+Core Idea: To estimate the value of being in state $s$, simulate the entire future and observe the actual total return.
+
+\vspace{2mm}
+Economics Analogy: Imagine estimating the NPV of a project. Monte Carlo says: ``Don't forecast---just run the project to completion and record the realized cash flows.''
+
+\vspace{2mm}
+The Target:
+\[
+    G_t = r_t + \beta r_{t+1} + \beta^2 r_{t+2} + \dots + \beta^{T-t} r_T
+\]
+This is the \textit{realized} discounted sum of rewards from time $t$ until the end (time $T$).
+\end{frame}
+
+\begin{frame}{1. Monte Carlo: What is an ``Episode''?}
+\small
+Key Terminology: An episode is a complete sequence of states and rewards from start to finish.
+
+\vspace{2mm}
+Economics Examples:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item A firm's lifecycle from entry to exit (bankruptcy or acquisition).
+    \item A worker's employment spell from hiring to separation.
+    \item A consumer's planning horizon from today until retirement.
+\end{itemize}
+
+\vspace{2mm}
+The Procedure:
+\begin{enumerate}\setlength{\itemsep}{1mm}
+    \item Start in state $s_t$, follow some policy $\pi$.
+    \item Record all rewards: $r_t, r_{t+1}, \dots, r_T$.
+    \item Compute realized return: $G_t = \sum_{k=0}^{T-t} \beta^k r_{t+k}$.
+    \item Update: $V(s_t) \leftarrow V(s_t) + \alpha (G_t - V(s_t))$.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{1. Monte Carlo: Pros and Cons}
+\small
+Advantage -- Unbiased Estimation:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item The target $G_t$ is a \textit{direct sample} of the true value $V(s_t) = \mathbb{E}[G_t \mid s_t]$.
+    \item By Law of Large Numbers: average of many $G_t$ samples $\to$ true $V(s_t)$.
+    \item No model assumptions needed---we use actual observed outcomes.
+\end{itemize}
+
+\vspace{2mm}
+Disadvantage -- High Variance:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item $G_t$ is the sum of many random terms: $r_t + \beta r_{t+1} + \beta^2 r_{t+2} + \dots$
+    \item Each $r_{t+k}$ depends on random transitions $s_t \to s_{t+1} \to \dots$
+    \item Result: Variance accumulates. Two episodes from the same $s_t$ may yield very different $G_t$ values, so learning is slow.
+\end{itemize}
+
+\vspace{2mm}
+Practical Limitation: Must wait until episode ends---cannot update mid-episode.
+\end{frame}
+
+%===================================================
+% METHOD 2: TEMPORAL DIFFERENCE TD(0)
+%===================================================
+\begin{frame}{2. Temporal Difference TD(0): Learn Without Waiting}
+\small
+Core Idea: Instead of waiting for the entire episode, update after \textit{each single step} by combining one observed reward with an estimate of future value.
+
+\vspace{2mm}
+Economics Analogy: Estimating project NPV by observing this year's cash flow and using your \textit{current forecast model} to estimate remaining value---rather than waiting 20 years.
+
+\vspace{2mm}
+The Target:
+\[
+    \underbrace{r_t}_{\text{observed reward}} + \beta \underbrace{V(s_{t+1})}_{\text{estimated future value}}
+\]
+We observe $(s_t, r_t, s_{t+1})$ and immediately update $V(s_t)$.
+\end{frame}
+
+\begin{frame}{2. TD(0): What is ``Bootstrapping''?}
+\small
+Key Terminology: Bootstrapping means using your own current estimate as part of the target for updating.
+
+\vspace{2mm}
+The Metaphor: ``Pulling yourself up by your bootstraps''---using what you already (imperfectly) know to improve what you know.
+
+\vspace{2mm}
+Contrast with Monte Carlo:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item MC Target: $G_t = r_t + \beta r_{t+1} + \beta^2 r_{t+2} + \dots$ \\
+    $\rightarrow$ All terms are \textit{actual observed rewards}. No estimation involved.
+    
+    \item TD(0) Target: $r_t + \beta V(s_{t+1})$ \\
+    $\rightarrow$ Only $r_t$ is observed. $V(s_{t+1})$ is our \textit{current guess} about future value.
+\end{itemize}
+
+\vspace{2mm}
+Economics Parallel: In rational expectations models, agents form expectations using the model itself---a form of bootstrapping.
+\end{frame}
+
+\begin{frame}{2. TD(0): The Update Rule}
+\small
+Algorithm:
+\begin{enumerate}\setlength{\itemsep}{1.5mm}
+    \item Observe current state $s_t$.
+    \item Take action, receive reward $r_t$, transition to $s_{t+1}$.
+    \item Compute TD target: $\text{Target} = r_t + \beta V(s_{t+1})$
+    \item Compute TD error: $\delta_t = \text{Target} - V(s_t) = r_t + \beta V(s_{t+1}) - V(s_t)$
+    \item Update: $V(s_t) \leftarrow V(s_t) + \alpha \delta_t$
+\end{enumerate}
+
+\vspace{2mm}
+Interpretation of TD Error $\delta_t$:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item $\delta_t > 0$: Reality (observed $r_t$ + estimated continuation) exceeded expectation. Revise $V(s_t)$ upward.
+    \item $\delta_t < 0$: Reality fell short. Revise $V(s_t)$ downward.
+    \item At convergence: $\mathbb{E}[\delta_t] = 0$ (Bellman equation satisfied).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{2. TD(0): Pros and Cons}
+\small
+Advantage -- Low Variance:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Target involves only \textit{one} random transition: $s_t \to s_{t+1}$.
+    \item Compare to MC: variance from $T-t$ random transitions.
+    \item Result: Updates are more stable; learning can be faster.
+\end{itemize}
+
+\vspace{2mm}
+Disadvantage -- Biased (Initially):
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Target uses $V(s_{t+1})$, which is our imperfect estimate.
+    \item If $V$ is wrong, we're updating toward a wrong target.
+    \item Good news: As $V$ improves, bias shrinks. Asymptotically unbiased.
+\end{itemize}
+
+\vspace{2mm}
+Practical Advantage: Can update \textit{online}---learn during the episode, not just at the end. Essential for continuous tasks without natural endpoints.
+\end{frame}
+
+%===================================================
+% METHOD 3: TD(LAMBDA)
+%===================================================
+\begin{frame}{3. TD($\lambda$): Bridging MC and TD(0)}
+\small
+The Dilemma:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item MC: Unbiased but high variance (uses full realized return).
+    \item TD(0): Low variance but biased (uses 1-step + estimate).
+\end{itemize}
+
+\vspace{2mm}
+Natural Question: Can we get the best of both worlds?
+
+\vspace{2mm}
+The Idea: Consider $n$-step returns---observe $n$ actual rewards, then bootstrap:
+\begin{align*}
+    G_t^{(1)} &= r_t + \beta V(s_{t+1}) & \text{(1-step, TD(0))} \\
+    G_t^{(2)} &= r_t + \beta r_{t+1} + \beta^2 V(s_{t+2}) & \text{(2-step)} \\
+    G_t^{(n)} &= r_t + \dots + \beta^{n-1} r_{t+n-1} + \beta^n V(s_{t+n}) & \text{($n$-step)}
+\end{align*}
+
+As $n \to \infty$: $G_t^{(\infty)} = G_t$ (full MC return).
+\end{frame}
+
+\begin{frame}{3. TD($\lambda$): The $\lambda$-Return}
+\small
+Key Insight: Instead of choosing one $n$, take a \textit{weighted average} of all $n$-step returns.
+
+\vspace{2mm}
+The $\lambda$-Return:
+\[
+    G_t^\lambda = (1-\lambda) \sum_{n=1}^{\infty} \lambda^{n-1} G_t^{(n)}, \qquad \lambda \in [0, 1]
+\]
+
+\vspace{2mm}
+Why These Weights?
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Weights: $(1-\lambda), (1-\lambda)\lambda, (1-\lambda)\lambda^2, \dots$
+    \item They sum to 1: $(1-\lambda)(1 + \lambda + \lambda^2 + \dots) = 1$.
+    \item Geometric decay: Short-horizon returns get more weight when $\lambda$ is small.
+\end{itemize}
+
+\vspace{2mm}
+Economics Parallel: Like a weighted average of forecasts at different horizons, with exponentially decaying weights on longer horizons.
+\end{frame}
+
+\begin{frame}{3. TD($\lambda$): The Spectrum from TD(0) to MC}
+\small
+The Parameter $\lambda$ Controls the Bias-Variance Tradeoff:
+
+\vspace{3mm}
+\begin{itemize}\setlength{\itemsep}{3mm}
+    \item $\boldsymbol{\lambda = 0}$ (TD(0)): 
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item $G_t^\lambda = G_t^{(1)} = r_t + \beta V(s_{t+1})$
+        \item Full bootstrapping. Low variance, higher bias.
+    \end{itemize}
+    
+    \item $\boldsymbol{\lambda = 1}$ (Monte Carlo):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item $G_t^\lambda = G_t$ (full realized return)
+        \item No bootstrapping. Unbiased, high variance.
+    \end{itemize}
+    
+    \item $\boldsymbol{0 < \lambda < 1}$ (Intermediate):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Blends short and long horizon information.
+        \item Often $\lambda \approx 0.9$ works well in practice---mostly actual rewards, light bootstrapping.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{3. TD($\lambda$): Summary and Practical Guidance}
+\small
+Summary Table:
+
+\vspace{2mm}
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Method & Target & Bias & Variance \\
+\midrule
+MC / TD(1) & $G_t$ (full return) & None & High \\
+TD(0) & $r_t + \beta V(s_{t+1})$ & High (initially) & Low \\
+TD($\lambda$) & $G_t^\lambda$ (weighted avg) & Tunable & Tunable \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{3mm}
+Practical Guidance:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Short episodes, good data $\Rightarrow$ MC can work well.
+    \item Long/infinite horizon, need online learning $\Rightarrow$ TD(0) or small $\lambda$.
+    \item Uncertain about model accuracy $\Rightarrow$ higher $\lambda$ (trust data more).
+    \item In practice: try $\lambda \in \{0, 0.5, 0.9, 1\}$ and compare.
+\end{itemize}
+\end{frame}
+
+%===================================================
+% SUMMARY
+%===================================================
+\begin{frame}{Summary: From Model-Based to Model-Free}
+\small
+\begin{itemize}\setlength{\itemsep}{2.5mm}
+    \item Model-Based DP (Lectures 3--7):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Know the transition $P(s' \mid s, a)$ and reward $r(s, a)$.
+        \item Solve Bellman equation via VFI, PFI, TI, EGM.
+        \item Approximate $\mathbb{E}[\cdot]$ via quadrature or MC integration.
+    \end{itemize}
+    
+    \item Model-Free Learning (Today):
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Don't know $P(\cdot)$---learn from observed trajectories.
+        \item MC: Use full realized returns (unbiased, high variance).
+        \item TD: Bootstrap with current estimates (biased, low variance).
+        \item TD($\lambda$): Interpolate between MC and TD(0).
+    \end{itemize}
+    
+    \item Connection:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item All methods aim to satisfy the Bellman equation.
+        \item Differ in how they estimate $\mathbb{E}[\cdot]$ and update $V$.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+% \bibliography{bibliography/references.bib} 
+
+\end{document}
+

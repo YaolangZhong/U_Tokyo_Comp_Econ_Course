@@ -1,0 +1,428 @@
+\documentclass[aspectratio=169]{beamer}
+\mode<presentation> {
+\usetheme{default}
+}
+\usepackage{algorithm,algorithmic}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{threeparttable}
+\usepackage{natbib}
+\bibliographystyle{aer}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{alphabeta}
+\usepackage{multirow,array}
+\usepackage{subfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathabx}
+\usepackage{caption}
+\usepackage{pifont}
+\usepackage{booktabs,tabularx}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,decorations.pathreplacing}
+\graphicspath{{figures/}}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\1}{\mathbf{1}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\setbeamertemplate{caption}[numbered]
+
+\usefonttheme{professionalfonts}
+\setbeamertemplate{navigation symbols}{}
+\usepackage{ulem}
+
+\makeatletter
+\g@addto@macro\normalsize{%
+    \setlength\belowdisplayskip{-0pt}
+}
+\makeatother
+\setbeamertemplate{footline}[frame number]
+
+
+\title{Supplementary Topic: Discretizing AR(1) Processes}
+\subtitle{Tauchen (1986) and Rouwenhorst (1995)}
+\author{Yasuyuki Sawada, Yaolang Zhong}
+
+\institute{University of Tokyo\\
+  \small \texttt{\href{mailto:yaolang.zhong@e.u-tokyo.ac.jp}{yaolang.zhong@e.u-tokyo.ac.jp}}}
+\date{\today}
+
+\begin{document}
+\begin{frame}
+\titlepage  
+\end{frame}
+
+%===================================================
+% MOTIVATION
+%===================================================
+\begin{frame}{Motivation: Why Discretize?}
+\small
+Many economic models feature continuous stochastic processes:
+\[
+    z_{t+1} = \rho z_t + \varepsilon_{t+1}, \qquad \varepsilon_{t+1} \sim N(0, \sigma_\varepsilon^2)
+\]
+
+Examples:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Log income/productivity shocks in consumption-saving models
+    \item TFP shocks in firm dynamics models
+    \item Idiosyncratic labor income in heterogeneous agent models
+\end{itemize}
+
+\vspace{2mm}
+Problem: Solving the Bellman equation requires computing:
+\[
+    \mathbb{E}[V(a', z') \mid z] = \int V(a', z') \, f(z' \mid z) \, dz'
+\]
+
+Solution: Approximate the continuous process with a discrete Markov chain.
+\end{frame}
+
+\begin{frame}{Discretization vs.\ Quadrature}
+\small
+Two approaches to handle $\mathbb{E}[V(z') \mid z]$:
+
+\vspace{3mm}
+\underline{Quadrature (Lecture 7)}:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Approximate $\mathbb{E}[V(z')|z]$ by $\sum_k w_k V(\rho z + \varepsilon_k)$.
+    \item Nodes $\rho z + \varepsilon_k$ \textbf{move with} the current state $z$.
+    \item Recompute nodes each time you evaluate the expectation.
+\end{itemize}
+
+\vspace{3mm}
+\underline{Discretization (This Topic)}:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Fix a global grid $\mathcal{Z} = \{z_1, \dots, z_N\}$ once.
+    \item Build a transition matrix $\Pi$ where $\Pi_{ij} = P(z' = z_j \mid z = z_i)$.
+    \item Expectation becomes matrix-vector multiplication: $\mathbb{E}[V(z')|z_i] = \sum_j \Pi_{ij} V(z_j)$.
+\end{itemize}
+
+\vspace{3mm}
+Key difference: Discretization is a \textbf{preprocessing step}; quadrature is done \textbf{inside the loop}.
+\end{frame}
+
+\begin{frame}{The Setup: AR(1) Process}
+\small
+We focus on the standard AR(1) process:
+\[
+    z_{t+1} = \rho z_t + \varepsilon_{t+1}, \qquad \varepsilon_{t+1} \sim N(0, \sigma_\varepsilon^2)
+\]
+
+Key properties:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Unconditional mean: $\mathbb{E}[z] = 0$ (assuming mean-zero process)
+    \item Unconditional variance: $\sigma_z^2 = \frac{\sigma_\varepsilon^2}{1 - \rho^2}$
+    \item Autocorrelation: $\text{Corr}(z_t, z_{t+1}) = \rho$
+    \item Conditional distribution: $z' \mid z \sim N(\rho z, \sigma_\varepsilon^2)$
+\end{itemize}
+
+\vspace{2mm}
+Goal: Construct a discrete Markov chain $(z_1, \dots, z_N, \Pi)$ that approximates these properties.
+
+\vspace{2mm}
+Two main methods:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Tauchen (1986): Integrate conditional density over bins
+    \item Rouwenhorst (1995): Match moments exactly via clever construction
+\end{itemize}
+\end{frame}
+
+%===================================================
+% TAUCHEN'S METHOD
+%===================================================
+\begin{frame}{Tauchen's Method (1986): The Idea}
+\small
+Step 1: Choose the grid $\mathcal{Z} = \{z_1, \dots, z_N\}$
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Span the unconditional distribution: $z_1 = -m \sigma_z$, $z_N = +m \sigma_z$ (typically $m = 3$)
+    \item Equal spacing: $z_j = z_1 + (j-1) \cdot \Delta$, where $\Delta = \frac{z_N - z_1}{N-1}$
+\end{itemize}
+
+\vspace{2mm}
+Step 2: Define bins around each grid point
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Interior points: bin $j$ is $[z_j - \Delta/2, z_j + \Delta/2]$
+    \item Boundary points: extend to $\pm \infty$
+\end{itemize}
+
+\vspace{2mm}
+Step 3: Compute transition probabilities
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item $\Pi_{ij}$ = probability that $z'$ falls in bin $j$, given $z = z_i$
+    \item Use the conditional distribution: $z' \mid z_i \sim N(\rho z_i, \sigma_\varepsilon^2)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tauchen's Method: The Formula}
+\small
+The transition probability from $z_i$ to bin $j$:
+
+\vspace{2mm}
+For interior points ($1 < j < N$):
+\[
+    \Pi_{ij} = \Phi\left(\frac{z_j + \Delta/2 - \rho z_i}{\sigma_\varepsilon}\right) - \Phi\left(\frac{z_j - \Delta/2 - \rho z_i}{\sigma_\varepsilon}\right)
+\]
+
+For boundary points:
+\[
+    \Pi_{i1} = \Phi\left(\frac{z_1 + \Delta/2 - \rho z_i}{\sigma_\varepsilon}\right), \qquad
+    \Pi_{iN} = 1 - \Phi\left(\frac{z_N - \Delta/2 - \rho z_i}{\sigma_\varepsilon}\right)
+\]
+
+where $\Phi(\cdot)$ is the standard normal CDF.
+
+\vspace{3mm}
+Interpretation: We're computing the probability mass that lands in each bin, given the conditional normal distribution centered at $\rho z_i$.
+\end{frame}
+
+\begin{frame}{Tauchen's Method: Pros and Cons}
+\small
+Advantages:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Simple and intuitive---just ``bin the probability mass''
+    \item Easy to implement (only needs the normal CDF)
+    \item Generalizable to non-Gaussian shocks (if you have the CDF)
+    \item Can be extended to VAR processes
+\end{itemize}
+
+\vspace{3mm}
+Disadvantages:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Struggles with high persistence ($\rho \to 1$)
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item When $\rho$ is high, the conditional distribution $N(\rho z_i, \sigma_\varepsilon^2)$ is a narrow spike
+        \item Fixed grid may miss the spike or fail to capture the mass accurately
+        \item Approximated variance can be significantly off
+    \end{itemize}
+    \item Requires many grid points for accurate approximation when $\rho > 0.9$
+\end{itemize}
+\end{frame}
+
+%===================================================
+% ROUWENHORST'S METHOD
+%===================================================
+\begin{frame}{Rouwenhorst's Method (1995): The Idea}
+\small
+Key insight: Instead of integrating density areas, construct a Markov chain that \textbf{matches moments exactly}.
+
+\vspace{2mm}
+The method matches:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Mean: $\mathbb{E}[z] = 0$ (by symmetric grid construction)
+    \item Variance: $\text{Var}(z) = \sigma_z^2$ (by grid spacing)
+    \item Autocorrelation: $\text{Corr}(z_t, z_{t+1}) = \rho$ (by transition matrix construction)
+\end{itemize}
+
+\vspace{2mm}
+Building block: Start with a simple 2-state chain, then recursively build larger chains.
+
+\vspace{2mm}
+Intuition: The process $z$ can be thought of as a sum of independent Bernoulli shocks. As $N \to \infty$, the stationary distribution (Binomial) approximates the Normal by CLT.
+\end{frame}
+
+\begin{frame}{Rouwenhorst: Step 1 --- The Grid}
+\small
+The grid is symmetric around zero:
+\[
+    z_j = -\psi + \frac{2\psi(j-1)}{N-1}, \qquad j = 1, \dots, N
+\]
+
+where $\psi = \sqrt{N-1} \cdot \sigma_z = \sqrt{N-1} \cdot \frac{\sigma_\varepsilon}{\sqrt{1-\rho^2}}$.
+
+\vspace{3mm}
+So: $z_1 = -\psi$, $z_N = +\psi$, equally spaced.
+
+\vspace{3mm}
+Why this spacing?
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item The stationary distribution of a Rouwenhorst chain is Binomial
+    \item Binomial$(N-1, 0.5)$ has variance $\frac{N-1}{4}$ (in terms of ``steps'')
+    \item Scaling by $\frac{2\psi}{N-1}$ gives variance $\sigma_z^2$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Rouwenhorst: Step 2 --- Base Case ($N=2$)}
+\small
+For a 2-state chain, the transition matrix is:
+\[
+    \Pi_2 = \begin{bmatrix} p & 1-p \\ 1-p & p \end{bmatrix}
+\]
+
+What autocorrelation does this produce?
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item States: $z_1 = -\psi$, $z_2 = +\psi$
+    \item Stationary distribution: $(0.5, 0.5)$ (symmetric)
+    \item Autocorrelation: $\text{Corr}(z_t, z_{t+1}) = 2p - 1$
+\end{itemize}
+
+\vspace{2mm}
+To match the AR(1) autocorrelation $\rho$:
+\[
+    p = \frac{1 + \rho}{2}
+\]
+
+Example: If $\rho = 0.9$, then $p = 0.95$ (high persistence = high probability of staying).
+\end{frame}
+
+\begin{frame}{Rouwenhorst: Step 3 --- Recursive Construction}
+\small
+Given $\Pi_{N-1}$, build $\Pi_N$ by:
+\[
+    \Pi_N = p \begin{bmatrix} \Pi_{N-1} & \mathbf{0} \\ \mathbf{0}^\top & 0 \end{bmatrix}
+    + (1-p) \begin{bmatrix} \mathbf{0} & \Pi_{N-1} \\ 0 & \mathbf{0}^\top \end{bmatrix}
+    + (1-p) \begin{bmatrix} 0 & \mathbf{0}^\top \\ \Pi_{N-1} & \mathbf{0} \end{bmatrix}
+    + p \begin{bmatrix} \mathbf{0}^\top & 0 \\ \mathbf{0} & \Pi_{N-1} \end{bmatrix}
+\]
+
+Then normalize all rows except the first and last to sum to 1.
+
+\vspace{3mm}
+Intuition:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Think of $z$ as a sum of $N-1$ independent Bernoulli random variables
+    \item Each recursion adds one more Bernoulli shock
+    \item By CLT: sum of Bernoullis $\to$ Normal distribution
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Rouwenhorst: Pros and Cons}
+\small
+Advantages:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Matches moments (mean, variance, autocorrelation) \textbf{exactly}
+    \item Works well for \textbf{any} level of persistence, including $\rho \to 1$
+    \item Requires fewer grid points than Tauchen for same accuracy
+    \item Simple recursive construction
+\end{itemize}
+
+\vspace{3mm}
+Disadvantages:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item Specifically designed for AR(1) with Gaussian innovations
+    \item Hard to extend to:
+    \begin{itemize}\setlength{\itemsep}{1mm}
+        \item Non-Gaussian shocks
+        \item VAR processes (multivariate)
+        \item Non-linear dynamics
+    \end{itemize}
+    \item The construction is less intuitive than Tauchen
+\end{itemize}
+\end{frame}
+
+%===================================================
+% COMPARISON AND PRACTICAL GUIDANCE
+%===================================================
+\begin{frame}{Tauchen vs.\ Rouwenhorst: Summary}
+\small
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+ & Tauchen & Rouwenhorst \\
+\midrule
+Approach & Integrate density over bins & Match moments exactly \\
+AR(1) Gaussian & \checkmark & \checkmark \\
+High persistence ($\rho > 0.9$) & Poor & Excellent \\
+Non-Gaussian shocks & \checkmark (if CDF known) & $\times$ \\
+VAR extension & \checkmark & $\times$ \\
+Simplicity & Very simple & Simple (recursive) \\
+Grid points needed & More & Fewer \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{3mm}
+Rule of thumb:
+\begin{itemize}\setlength{\itemsep}{1.5mm}
+    \item AR(1) with $\rho < 0.9$: Either method works; Tauchen is simpler
+    \item AR(1) with $\rho \geq 0.9$: Use Rouwenhorst
+    \item Non-AR(1) or non-Gaussian: Use Tauchen (or simulation-based methods)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Practical Implementation}
+\small
+Both methods are implemented in standard libraries:
+
+\vspace{2mm}
+Python:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item \texttt{quantecon.markov.approximation.tauchen()}
+    \item \texttt{quantecon.markov.approximation.rouwenhorst()}
+\end{itemize}
+
+\vspace{2mm}
+Julia:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item \texttt{QuantEcon.tauchen()}
+    \item \texttt{QuantEcon.rouwenhorst()}
+\end{itemize}
+
+\vspace{2mm}
+Matlab:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Various community implementations (e.g., on GitHub)
+\end{itemize}
+
+\vspace{3mm}
+Typical usage:
+\begin{enumerate}\setlength{\itemsep}{1mm}
+    \item Call the function with $(\rho, \sigma_\varepsilon, N)$
+    \item Get back: grid $\mathcal{Z}$ and transition matrix $\Pi$
+    \item Use in your VFI/PFI loop: $\mathbb{E}[V(z')|z_i] = \sum_j \Pi_{ij} V(z_j)$
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Beyond AR(1): Brief Overview}
+\small
+What if your process is more complex?
+
+\vspace{2mm}
+\underline{AR(p) processes}:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Rewrite as VAR(1) in companion form, then use Tauchen
+    \item Or approximate by AR(1) (often ``good enough'')
+\end{itemize}
+
+\vspace{2mm}
+\underline{Non-Gaussian shocks}:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Tauchen works if you can compute the conditional CDF
+    \item Simulation-based methods: estimate $\Pi$ from simulated paths
+\end{itemize}
+
+\vspace{2mm}
+\underline{Modern alternatives}:
+\begin{itemize}\setlength{\itemsep}{1mm}
+    \item Farmer \& Toda (2017): Maximum entropy discretization
+    \item More general, can handle various distributions
+\end{itemize}
+
+\vspace{2mm}
+\underline{Key takeaway}: For most applications, AR(1) + Rouwenhorst is the workhorse. Use more sophisticated methods only when needed.
+\end{frame}
+
+%===================================================
+% REFERENCES
+%===================================================
+\begin{frame}{References}
+\small
+\begin{itemize}\setlength{\itemsep}{2mm}
+    \item Tauchen, G. (1986). ``Finite State Markov-Chain Approximations to Univariate and Vector Autoregressions.'' \textit{Economics Letters}, 20(2), 177--181.
+    
+    \item Rouwenhorst, K.G. (1995). ``Asset Pricing Implications of Equilibrium Business Cycle Models.'' In \textit{Frontiers of Business Cycle Research}, ed. T. Cooley. Princeton University Press.
+    
+    \item Kopecky, K.A. and Suen, R.M.H. (2010). ``Finite State Markov-chain Approximations to Highly Persistent Processes.'' \textit{Review of Economic Dynamics}, 13(3), 701--714.
+    
+    \item Farmer, L.E. and Toda, A.A. (2017). ``Discretizing Nonlinear, Non-Gaussian Markov Processes with Exact Conditional Moments.'' \textit{Quantitative Economics}, 8(2), 651--683.
+\end{itemize}
+\end{frame}
+
+\end{document}
+
