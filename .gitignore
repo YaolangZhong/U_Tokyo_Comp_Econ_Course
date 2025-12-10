@@ -7,7 +7,7 @@
 !Lecture_*.pdf
 !readme.md
 !.gitignore
-
+!Paper_List/
 # Still ignore build artifacts inside Lab folders
 **/__pycache__/
 **/*.py[cod]
