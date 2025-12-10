@@ -1,12 +1,27 @@
+# Ignore everything
+*
 
-# LaTeX build artifacts
-build/
+# But not these directories and files
+!Lab_*/
+!Lab_*/**
+!Lecture_*.pdf
+!readme.md
+!.gitignore
 
-# Python artifacts
-__pycache__/
-*.py[cod]
-*.ipynb_checkpoints/
+# Still ignore build artifacts inside Lab folders
+**/__pycache__/
+**/*.py[cod]
+**/.ipynb_checkpoints/
+**/build/
+**/*.aux
+**/*.log
+**/*.out
+**/*.synctex.gz
+**/*.fls
+**/*.fdb_latexmk
+**/temp.ipynb
+**/temp.md
 
-# Temporary files
-temp.md
-temp.ipynb
+# Ignore system files
+.DS_Store
+**/.DS_Store
