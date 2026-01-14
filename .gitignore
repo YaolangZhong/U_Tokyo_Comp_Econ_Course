@@ -11,6 +11,8 @@
 !compile_lecture.sh
 !Paper_List/
 !Paper_List/**
+!Final_Project/
+!Final_Project/**
 !figures/
 !figures/**
 !bibliography/
