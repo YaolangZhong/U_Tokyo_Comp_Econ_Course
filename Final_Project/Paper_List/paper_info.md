@@ -15,6 +15,11 @@
 | `HZAL_2018_ICML_SAC.pdf` | Haarnoja, T. et al. (2018). Soft Actor-Critic: Off-Policy Maximum Entropy Deep RL. *ICML*. |
 | `Melitz_2003_EMTA.pdf` | Melitz, M. J. (2003). The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity. *Econometrica*, 71(6), 1695-1725. |
 | `Sutton_1988_ML.pdf` | Sutton, R. S. (1988). Learning to Predict by the Methods of Temporal Differences. *Machine Learning*, 3(1), 9-44. |
+| `KW_1997_JPE.pdf` | Keane, M. P., & Wolpin, K. I. (1997). The Career Decisions of Young Men. *Journal of Political Economy*, 105(3), 473-522. |
+| `KK_2004_JPE.pdf` | Klette, T. J., & Kortum, S. (2004). Innovating Firms and Aggregate Innovation. *Journal of Political Economy*, 112(5), 986-1018. |
+| `AM_2011_EMTA.pdf` | Arcidiacono, P., & Miller, R. A. (2011). Conditional Choice Probability Estimation of Dynamic Discrete Choice Models With Unobserved Heterogeneity. *Econometrica*, 79(6), 1823-1867. |
+| `BBBHP_2015_AER.pdf` | Bajari, P., Nekipelov, D., Ryan, S. P., & Yang, M. (2015). Machine Learning Methods for Demand Estimation. *American Economic Review P&P*, 105(5), 481-485. |
+| `AK_2018_JPE.pdf` | Akcigit, U., & Kerr, W. R. (2018). Growth through Heterogeneous Innovations. *Journal of Political Economy*, 126(4), 1374-1443. |
 
 ---
 
@@ -59,6 +64,44 @@ Deep learning for solving dynamic economic models with high-dimensional state sp
 **Journal**: Econometrica, 2003
 
 Seminal paper on heterogeneous firms and trade. Shows how trade liberalization reallocates resources toward more productive firms.
+
+### KK_2004_JPE - Innovating Firms and Aggregate Innovation
+**Authors**: Tor Jakob Klette, Samuel Kortum  
+**Journal**: Journal of Political Economy, 2004
+
+Parsimonious model unifying firm dynamics and technological change. Firms acquire products via innovation and lose them to competitors.
+
+### AK_2018_JPE - Growth through Heterogeneous Innovations
+**Authors**: Ufuk Akcigit, William R. Kerr  
+**Journal**: Journal of Political Economy, 2018
+
+Endogenous growth model with multiproduct firms and two innovation types: internal (improving existing products) and external (acquiring new lines).
+
+---
+
+## Dynamic Discrete Choice
+
+### KW_1997_JPE - Career Decisions of Young Men
+**Authors**: Michael P. Keane, Kenneth I. Wolpin  
+**Journal**: Journal of Political Economy, 1997
+
+Structural estimation of dynamic model for schooling, work, and occupational choices using NLSY data. Foundational work in structural labor economics.
+
+### AM_2011_EMTA - CCP Estimation with Unobserved Heterogeneity
+**Authors**: Peter Arcidiacono, Robert A. Miller  
+**Journal**: Econometrica, 2011
+
+Incorporates unobserved heterogeneity into conditional choice probability (CCP) estimators using EM algorithm. Computationally efficient alternative to nested fixed-point.
+
+---
+
+## Machine Learning in Economics
+
+### BBBHP_2015_AER - Machine Learning for Demand
+**Authors**: Patrick Bajari, Denis Nekipelov, Stephen P. Ryan, Minjung Yang  
+**Journal**: American Economic Review P&P, 2015
+
+Applies ML methods (LASSO, SVM, bagging, random forests) to demand estimation with model combination for improved predictions.
 
 ---
 
@@ -111,6 +154,8 @@ Format: `AuthorInitials_Year_Venue.pdf`
 | EMTA | Econometrica |
 | JEDC | Journal of Economic Dynamics and Control |
 | JME | Journal of Monetary Economics |
+| JPE | Journal of Political Economy |
+| AER | American Economic Review |
 | ICLR | International Conference on Learning Representations |
 | ICML | International Conference on Machine Learning |
 | ML | Machine Learning (journal) |
