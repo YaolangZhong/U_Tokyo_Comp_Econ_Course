@@ -1,24 +1,17 @@
-# Week 01: Computational Concepts
+# Week 01: Course introduction and Markov decision processes
 
-Existing materials, to be rebuilt and updated.
+Status: Week 1 structure confirmed; slide content to follow.
 
-## Lecture
+- [Weekly content](index.qmd)
+- [Lecture sources](lecture/slides/tex/) and [handouts](lecture/slides/pdf/)
+- [Lab plan](lab/README.md), [lab slide sources](lab/slides/tex/), and [handouts](lab/slides/pdf/)
+- [Homework reading placeholder](homework/readings.md)
+- [Homework exercise placeholder](homework/exercises.md)
 
-- [TEX slides](lecture/slides/tex/)
-- [PDF slides](lecture/slides/pdf/)
+Folders are week-based. Slide filenames, titles, and internal references are topic-based. A week may contain several topics, and a topic may span several weeks; its assignment is controlled in [course_plan.json](../../course_plan.json).
 
-## Lab
+Build from the repository root with `./compile_lecture.sh --week 1`. This builds TeX sources physically stored here; `.placeholder.md` files are not compiled. For a reused deck stored in another week, compile its canonical source path. Preview the website with `./site.sh preview`.
 
-- [TEX slides](lab/slides/tex/)
-- [PDF slides](lab/slides/pdf/)
-- [Lab_1_Python_Basics.ipynb](lab/Lab_1_Python_Basics.ipynb)
+**Include in commits:** topic TeX and assets, published PDFs, weekly `.qmd`, homework files, lab plans/code, and changed shared dependencies. **Ignore:** `build/`, `_site/`, `downloads/`, generated includes, environments, caches, and `results/` / `local/`.
 
-## Build and Git upload
-
-From the repository root, run `./compile_lecture.sh --week 1` (add `--list` to preview or `--part lecture` / `--part lab` to select one section).
-
-- **Include:** slide TeX and assets, published PDFs, lab notebooks/code/teaching data, and this README.
-- **Ignore:** root `build/`, lab `results/` and `local/`, Python/Jupyter caches, environments, and LaTeX auxiliary files. Embedded notebook outputs are included unless cleared.
-- **Upload:** `git add -- weeks/week_01`, review `git diff --cached`, then commit and push. Include any changed shared dependencies explicitly.
-
-See [build and upload instructions](../../docs/MAINTENANCE.md) for prerequisites, exclusions, and the initial reorganization commit.
+See [maintenance](../../docs/MAINTENANCE.md) and [website editing](../../docs/WEBSITE.md).

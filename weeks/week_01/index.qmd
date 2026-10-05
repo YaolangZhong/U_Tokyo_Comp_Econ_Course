@@ -1,20 +1,20 @@
 ---
-title: "Computational Concepts"
-subtitle: "Week 01"
+title: "Course introduction and Markov decision processes"
+subtitle: "Week 01 · course framework"
 ---
 
-This week covers computational concepts. Use the lecture handout for the conceptual material and the lab files for implementation.
+The opening session introduces the course and Markov decision processes. The course-introduction deck is a placeholder; the existing MDP handout is available below.
 
 ## Learning objectives
 
-Detailed learning objectives and exercises will be added when this week is revised.
+To be specified when the content for this session is developed.
 
 {{< include _materials.qmd >}}
 
-## Exercises
+## Lab plan
 
-Work through the available lab notebook cells. Additional exercises will be added as this week's material is revised.
+The lab will focus on **LLM-agent tools for research**, alongside Git and other regular research tools. The specific workflow, tools, activities, and deliverables remain to be decided. Python is supporting infrastructure rather than the principal lab subject.
 
-## Readings
+{{< include homework/readings.md >}}
 
-Read Chapter 2 of @judd1998. For Python preparation, use @quantecon-python and @coding-economists.
+{{< include homework/exercises.md >}}

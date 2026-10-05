@@ -13,7 +13,7 @@ From economic models to working algorithms. Learn the numerical methods and comp
 :::
 
 [Explore the course](syllabus.qmd){.btn .btn-primary}
-[Set up Python](getting-started.qmd){.btn .btn-outline-primary}
+[Research tools labs](getting-started.qmd){.btn .btn-outline-primary}
 :::
 
 ::: {.grid}
@@ -26,7 +26,7 @@ Lecture slides introduce the ideas behind dynamic programming, numerical approxi
 ::: {.g-col-12 .g-col-md-4}
 ::: {.course-card}
 ### Implement
-Read labs online, download complete lab folders, and work through the algorithms in Python.
+Develop research workflows with LLM agents, Git, and conventional tools; use Python where the research task needs it.
 :::
 :::
 ::: {.g-col-12 .g-col-md-4}
@@ -39,12 +39,14 @@ Bring the methods together in a replication project built around a research pape
 
 ## Learning path
 
-1. **Foundations · Weeks 1–2:** computational concepts, Python, and Markov decision processes.
-2. **Solving models · Weeks 3–8:** value and policy iteration, Euler equations, endogenous grids, and simulation.
-3. **Learning and applications · Weeks 9–13:** approximation, machine learning, reinforcement learning, and heterogeneous-agent models.
+1. **Opening:** course introduction and Markov decision processes.
+2. **Core methods:** an accelerated, provisionally scheduled sequence of computational methods and machine-learning foundations.
+3. **Research literature:** several closing sessions on recent computational economics using ML, with papers still to be chosen.
+
+Each week includes a lecture, a research-tools lab, and placeholders for reading and exercise homework. Topic decks can span sessions.
 
 [Start with Week 1](weeks/week_01/index.qmd) · [View all 13 weeks](syllabus.qmd)
 
 ## Course updates
 
-The course materials are being revised week by week. Existing lecture handouts and labs are available through the sidebar. Weekly pages indicate where material is still being prepared. Dates and deadlines for the next offering will be announced separately.
+The course materials are being revised week by week. Existing topic handouts are available through the sidebar. The research-agent labs, weekly homework, and literature selections are being redesigned; placeholders are not assignments. Dates and deadlines for the next offering will be announced separately.

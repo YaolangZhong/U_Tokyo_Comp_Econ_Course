@@ -44,31 +44,31 @@ website:
       - section: Weekly materials
         contents:
           - href: weeks/week_01/index.qmd
-            text: "01 · Computational Concepts"
+            text: "Week 01"
           - href: weeks/week_02/index.qmd
-            text: "02 · Markov Decision Processes"
+            text: "Week 02"
           - href: weeks/week_03/index.qmd
-            text: "03 · Value Function Iteration"
+            text: "Week 03"
           - href: weeks/week_04/index.qmd
-            text: "04 · Policy Function Iteration"
+            text: "Week 04"
           - href: weeks/week_05/index.qmd
-            text: "05 · Time Iteration"
+            text: "Week 05"
           - href: weeks/week_06/index.qmd
-            text: "06 · Endogenous Grid Method"
+            text: "Week 06"
           - href: weeks/week_07/index.qmd
-            text: "07 · Quadrature and Monte Carlo"
+            text: "Week 07"
           - href: weeks/week_08/index.qmd
-            text: "08 · Simulation-Based Learning"
+            text: "Week 08"
           - href: weeks/week_09/index.qmd
-            text: "09 · Parameterization and Neural Networks"
+            text: "Week 09"
           - href: weeks/week_10/index.qmd
-            text: "10 · Supervised Learning"
+            text: "Week 10"
           - href: weeks/week_11/index.qmd
-            text: "11 · Unsupervised Learning"
+            text: "Week 11"
           - href: weeks/week_12/index.qmd
-            text: "12 · Reinforcement Learning"
+            text: "Week 12"
           - href: weeks/week_13/index.qmd
-            text: "13 · Heterogeneous Agent Models"
+            text: "Week 13"
       - href: topics.qmd
         text: Supplementary topics
   page-footer:

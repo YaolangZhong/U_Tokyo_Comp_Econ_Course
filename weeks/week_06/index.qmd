@@ -1,20 +1,20 @@
 ---
-title: "Endogenous Grid Method"
-subtitle: "Week 06"
+title: "Function approximation and neural networks"
+subtitle: "Week 06 · course framework"
 ---
 
-This week covers endogenous grid method. Use the lecture handout for the conceptual material and the lab files for implementation.
+This is a provisional place in the accelerated methods sequence. Topic coverage and duration will be adjusted as the course is developed. Existing handouts below are reusable material, not a commitment to finish every topic in one session.
 
 ## Learning objectives
 
-Detailed learning objectives and exercises will be added when this week is revised.
+To be specified when the content for this session is developed.
 
 {{< include _materials.qmd >}}
 
-## Exercises
+## Lab plan
 
-Work through the available lab notebook cells. Additional exercises will be added as this week's material is revised.
+The lab will focus on **LLM-agent tools for research**, alongside Git and other regular research tools. The specific workflow, tools, activities, and deliverables remain to be decided. Python is supporting infrastructure rather than the principal lab subject.
 
-## Readings
+{{< include homework/readings.md >}}
 
-See the [course reference collection](../../references.qmd) for textbooks and external courses.
+{{< include homework/exercises.md >}}

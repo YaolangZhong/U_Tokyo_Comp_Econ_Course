@@ -2,6 +2,7 @@
 """Generate download bundles and material links from existing weekly files."""
 from pathlib import Path
 import shutil
+import json
 from urllib.parse import quote
 import zipfile
 
@@ -23,22 +24,37 @@ def main():
     if DOWNLOADS.exists():
         shutil.rmtree(DOWNLOADS)
     DOWNLOADS.mkdir()
+    plan = json.loads((ROOT / 'course_plan.json').read_text())
+    schedules = {f"week_{item['number']:02}": item for item in plan['weeks']}
     for week in sorted((ROOT / 'weeks').glob('week_*')):
         lines = []
         for part in ['lecture', 'lab']:
             lines += [f'## {part.title()} materials', '']
+            if part == 'lecture':
+                for topic_id in schedules[week.name]['lecture_topics']:
+                    topic = plan['topics'][topic_id]
+                    title = topic['title']
+                    pdf = ROOT / topic['slides_dir'] / 'pdf' / (topic['stem'] + '.pdf')
+                    lines += [f"### {title}", '']
+                    if topic['status'] == 'placeholder':
+                        lines += ['Slide deck placeholder — content and length to be discussed.', '']
+                    elif not pdf.is_file():
+                        raise FileNotFoundError(f"Missing assigned topic PDF: {pdf}")
+                    else:
+                        url = copy_download(pdf, Path(week.name) / part / pdf.name)
+                        lines += [f'[Download {title} (PDF)](../../downloads/{url}){{.btn .btn-outline-primary}}', '']
+                continue
             pdfs = sorted((week / part / 'slides/pdf').glob('*.pdf'))
             for pdf in pdfs:
                 url = copy_download(pdf, Path(week.name) / part / pdf.name)
-                lines += [f'[Download {part} slides (PDF)](../../downloads/{url}){{.btn .btn-outline-primary}}', '']
+                title = pdf.stem.replace('_', ' ')
+                lines += [f'[Download {title} (PDF)](../../downloads/{url}){{.btn .btn-outline-primary}}', '']
             if not pdfs:
-                lines += [f'{part.title()} slide handouts are being prepared.', '']
-            if part != 'lab':
-                continue
+                lines += ['Research-agent/tools slide deck placeholder — topic and activity to be decided.', '']
             lab = week / 'lab'
             files = sorted(p for p in lab.rglob('*') if p.is_file() and p.suffix in ALLOWED
                            and not any(x in EXCLUDED or x.startswith('.') for x in p.relative_to(lab).parts))
-            if files:
+            if any(p.name != 'README.md' and not p.name.endswith('.placeholder.md') for p in files):
                 bundle = DOWNLOADS / week.name / f'{week.name}-lab.zip'
                 bundle.parent.mkdir(parents=True, exist_ok=True)
                 with zipfile.ZipFile(bundle, 'w', zipfile.ZIP_DEFLATED) as z:
@@ -51,8 +67,8 @@ def main():
                     label = 'Lab notebook'
                 url = copy_download(nb, Path(week.name) / 'lab' / nb.name)
                 lines += [f'- **{label}** — [Read online](lab/{quote(nb.name)}) · [Download notebook](../../downloads/{url})']
-            if not files:
-                lines += ['Lab exercises will be added here.']
+            if not list(lab.glob('*.ipynb')):
+                lines += ['The new lab activity has not been assigned yet.']
             lines += ['']
         (week / '_materials.qmd').write_text('\n'.join(lines))
     lines = []

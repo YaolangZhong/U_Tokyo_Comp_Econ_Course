@@ -1,0 +1,230 @@
+{
+  "status": "provisional framework; topic durations and assignments to be discussed",
+  "topics": {
+    "course_introduction": {
+      "title": "Course Introduction",
+      "status": "placeholder",
+      "slides_dir": "weeks/week_01/lecture/slides",
+      "stem": "course_introduction"
+    },
+    "mdp": {
+      "title": "Introduction to Markov Decision Processes",
+      "status": "existing",
+      "slides_dir": "weeks/week_01/lecture/slides",
+      "stem": "Introduction_to_Markov_Decision_Processes"
+    },
+    "vfi": {
+      "title": "Bellman Equation and Value Function Iteration",
+      "status": "existing",
+      "slides_dir": "weeks/week_02/lecture/slides",
+      "stem": "Bellman_Equation_and_Value_Function_Iteration"
+    },
+    "pfi": {
+      "title": "Policy Function Iteration",
+      "status": "existing",
+      "slides_dir": "weeks/week_02/lecture/slides",
+      "stem": "Policy_Function_Iteration"
+    },
+    "time_iteration": {
+      "title": "KKT Conditions, Euler Equation and Time Iteration",
+      "status": "existing",
+      "slides_dir": "weeks/week_03/lecture/slides",
+      "stem": "KKT_Conditions_Euler_Equation_and_Time_Iteration"
+    },
+    "egm": {
+      "title": "Endogenous Grid Method",
+      "status": "existing",
+      "slides_dir": "weeks/week_03/lecture/slides",
+      "stem": "Endogenous_Grid_Method"
+    },
+    "expectations": {
+      "title": "Approximating Expectations",
+      "status": "existing",
+      "slides_dir": "weeks/week_04/lecture/slides",
+      "stem": "Approximating_Expectations"
+    },
+    "simulation": {
+      "title": "Simulation-Based Learning",
+      "status": "existing",
+      "slides_dir": "weeks/week_05/lecture/slides",
+      "stem": "Simulation_Based_Learning"
+    },
+    "approximation": {
+      "title": "Parameterization and Neural Networks",
+      "status": "existing",
+      "slides_dir": "weeks/week_06/lecture/slides",
+      "stem": "Parameterization_and_Neural_Networks"
+    },
+    "supervised": {
+      "title": "Supervised Learning",
+      "status": "existing",
+      "slides_dir": "weeks/week_07/lecture/slides",
+      "stem": "Supervised_Learning"
+    },
+    "unsupervised": {
+      "title": "Unsupervised Learning",
+      "status": "existing",
+      "slides_dir": "weeks/week_07/lecture/slides",
+      "stem": "Unsupervised_Learning"
+    },
+    "reinforcement": {
+      "title": "Reinforcement Learning",
+      "status": "existing",
+      "slides_dir": "weeks/week_08/lecture/slides",
+      "stem": "Reinforcement_Learning"
+    },
+    "heterogeneous": {
+      "title": "Heterogeneous-Agent Models",
+      "status": "existing",
+      "slides_dir": "weeks/week_09/lecture/slides",
+      "stem": "Heterogeneous_Agent_Models"
+    },
+    "synthesis": {
+      "title": "Methods Synthesis",
+      "status": "placeholder",
+      "slides_dir": "weeks/week_10/lecture/slides",
+      "stem": "synthesis"
+    },
+    "ml_literature_reading": {
+      "title": "ML Computational Literature",
+      "status": "placeholder",
+      "slides_dir": "weeks/week_11/lecture/slides",
+      "stem": "ml_literature_reading"
+    },
+    "ml_literature_methods": {
+      "title": "ML Computational Literature",
+      "status": "placeholder",
+      "slides_dir": "weeks/week_12/lecture/slides",
+      "stem": "ml_literature_methods"
+    },
+    "ml_literature_discussion": {
+      "title": "ML Computational Literature",
+      "status": "placeholder",
+      "slides_dir": "weeks/week_13/lecture/slides",
+      "stem": "ml_literature_discussion"
+    }
+  },
+  "weeks": [
+    {
+      "number": 1,
+      "title": "Course introduction and Markov decision processes",
+      "lecture_topics": [
+        "course_introduction",
+        "mdp"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "Week 1 structure confirmed; content to be developed"
+    },
+    {
+      "number": 2,
+      "title": "Dynamic programming methods",
+      "lecture_topics": [
+        "vfi",
+        "pfi"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 3,
+      "title": "Euler equations and endogenous grids",
+      "lecture_topics": [
+        "time_iteration",
+        "egm"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 4,
+      "title": "Approximating expectations",
+      "lecture_topics": [
+        "expectations"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 5,
+      "title": "Simulation-based methods",
+      "lecture_topics": [
+        "simulation"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 6,
+      "title": "Function approximation and neural networks",
+      "lecture_topics": [
+        "approximation"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 7,
+      "title": "Machine-learning foundations",
+      "lecture_topics": [
+        "supervised",
+        "unsupervised"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 8,
+      "title": "Reinforcement learning",
+      "lecture_topics": [
+        "reinforcement"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 9,
+      "title": "Heterogeneous-agent applications",
+      "lecture_topics": [
+        "heterogeneous"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 10,
+      "title": "Methods synthesis / pacing buffer",
+      "lecture_topics": [
+        "synthesis"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 11,
+      "title": "ML computational literature — reading session",
+      "lecture_topics": [
+        "ml_literature_reading"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 12,
+      "title": "ML computational literature — methods session",
+      "lecture_topics": [
+        "ml_literature_methods"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    },
+    {
+      "number": 13,
+      "title": "ML computational literature — discussion session",
+      "lecture_topics": [
+        "ml_literature_discussion"
+      ],
+      "lab": "LLM agents and research tools",
+      "status": "provisional"
+    }
+  ]
+}

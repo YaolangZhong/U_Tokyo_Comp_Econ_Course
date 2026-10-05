@@ -1,0 +1,306 @@
+[
+  {
+    "from": "weeks/week_01/lab/slides",
+    "to": "archive/legacy_labs/week_01/slides"
+  },
+  {
+    "from": "weeks/week_01/lab/Lab_1_Python_Basics.ipynb",
+    "to": "archive/legacy_labs/week_01/Lab_1_Python_Basics.ipynb"
+  },
+  {
+    "from": "weeks/week_02/lab/slides",
+    "to": "archive/legacy_labs/week_02/slides"
+  },
+  {
+    "from": "weeks/week_02/lab/Lab_2_Economics_Modelling_with_Python.ipynb",
+    "to": "archive/legacy_labs/week_02/Lab_2_Economics_Modelling_with_Python.ipynb"
+  },
+  {
+    "from": "weeks/week_03/lab/lab_vfi_compact.ipynb",
+    "to": "archive/legacy_labs/week_03/lab_vfi_compact.ipynb"
+  },
+  {
+    "from": "weeks/week_03/lab/slides",
+    "to": "archive/legacy_labs/week_03/slides"
+  },
+  {
+    "from": "weeks/week_03/lab/Lab_3_Value_Function_Iteration.ipynb",
+    "to": "archive/legacy_labs/week_03/Lab_3_Value_Function_Iteration.ipynb"
+  },
+  {
+    "from": "weeks/week_04/lab/algos.py",
+    "to": "archive/legacy_labs/week_04/algos.py"
+  },
+  {
+    "from": "weeks/week_04/lab/slides",
+    "to": "archive/legacy_labs/week_04/slides"
+  },
+  {
+    "from": "weeks/week_04/lab/temp.ipynb",
+    "to": "archive/legacy_labs/week_04/temp.ipynb"
+  },
+  {
+    "from": "weeks/week_04/lab/mdp.py",
+    "to": "archive/legacy_labs/week_04/mdp.py"
+  },
+  {
+    "from": "weeks/week_05/lab/slides",
+    "to": "archive/legacy_labs/week_05/slides"
+  },
+  {
+    "from": "weeks/week_05/lab/pesudo_code.txt",
+    "to": "archive/legacy_labs/week_05/pesudo_code.txt"
+  },
+  {
+    "from": "weeks/week_06/lab/algos.py",
+    "to": "archive/legacy_labs/week_06/algos.py"
+  },
+  {
+    "from": "weeks/week_06/lab/plot.py",
+    "to": "archive/legacy_labs/week_06/plot.py"
+  },
+  {
+    "from": "weeks/week_06/lab/math.md",
+    "to": "archive/legacy_labs/week_06/math.md"
+  },
+  {
+    "from": "weeks/week_06/lab/slides",
+    "to": "archive/legacy_labs/week_06/slides"
+  },
+  {
+    "from": "weeks/week_06/lab/model.py",
+    "to": "archive/legacy_labs/week_06/model.py"
+  },
+  {
+    "from": "weeks/week_06/lab/temp.ipynb",
+    "to": "archive/legacy_labs/week_06/temp.ipynb"
+  },
+  {
+    "from": "weeks/week_07/lab/Lab_7_Quadrature_and_Monte_Carlo.ipynb",
+    "to": "archive/legacy_labs/week_07/Lab_7_Quadrature_and_Monte_Carlo.ipynb"
+  },
+  {
+    "from": "weeks/week_07/lab/slides",
+    "to": "archive/legacy_labs/week_07/slides"
+  },
+  {
+    "from": "weeks/week_08/lab/algos.py",
+    "to": "archive/legacy_labs/week_08/algos.py"
+  },
+  {
+    "from": "weeks/week_08/lab/Lab_8_Simulation_Based_Learning.ipynb",
+    "to": "archive/legacy_labs/week_08/Lab_8_Simulation_Based_Learning.ipynb"
+  },
+  {
+    "from": "weeks/week_08/lab/slides",
+    "to": "archive/legacy_labs/week_08/slides"
+  },
+  {
+    "from": "weeks/week_08/lab/model.py",
+    "to": "archive/legacy_labs/week_08/model.py"
+  },
+  {
+    "from": "weeks/week_09/lab/slides",
+    "to": "archive/legacy_labs/week_09/slides"
+  },
+  {
+    "from": "weeks/week_09/lab/draw_basis_functions.ipynb",
+    "to": "archive/legacy_labs/week_09/draw_basis_functions.ipynb"
+  },
+  {
+    "from": "weeks/week_10/lab/Lab_10_ML_Classification.ipynb",
+    "to": "archive/legacy_labs/week_10/Lab_10_ML_Classification.ipynb"
+  },
+  {
+    "from": "weeks/week_10/lab/slides",
+    "to": "archive/legacy_labs/week_10/slides"
+  },
+  {
+    "from": "weeks/week_10/lab/Lab_10_ML_Regression.ipynb",
+    "to": "archive/legacy_labs/week_10/Lab_10_ML_Regression.ipynb"
+  },
+  {
+    "from": "weeks/week_11/lab/slides",
+    "to": "archive/legacy_labs/week_11/slides"
+  },
+  {
+    "from": "weeks/week_11/lab/Lab_11_Clustering.ipynb",
+    "to": "archive/legacy_labs/week_11/Lab_11_Clustering.ipynb"
+  },
+  {
+    "from": "weeks/week_11/lab/Lab_11_Density_Estimation.ipynb",
+    "to": "archive/legacy_labs/week_11/Lab_11_Density_Estimation.ipynb"
+  },
+  {
+    "from": "weeks/week_11/lab/Lab_11_Dimensionality_Reduction.ipynb",
+    "to": "archive/legacy_labs/week_11/Lab_11_Dimensionality_Reduction.ipynb"
+  },
+  {
+    "from": "weeks/week_12/lab/algos.py",
+    "to": "archive/legacy_labs/week_12/algos.py"
+  },
+  {
+    "from": "weeks/week_12/lab/plot.py",
+    "to": "archive/legacy_labs/week_12/plot.py"
+  },
+  {
+    "from": "weeks/week_12/lab/Lab_12_Actor_Critic_Aiyagari.ipynb",
+    "to": "archive/legacy_labs/week_12/Lab_12_Actor_Critic_Aiyagari.ipynb"
+  },
+  {
+    "from": "weeks/week_12/lab/slides",
+    "to": "archive/legacy_labs/week_12/slides"
+  },
+  {
+    "from": "weeks/week_12/lab/model.py",
+    "to": "archive/legacy_labs/week_12/model.py"
+  },
+  {
+    "from": "weeks/week_13/lab/simulation.py",
+    "to": "archive/legacy_labs/week_13/simulation.py"
+  },
+  {
+    "from": "weeks/week_13/lab/shock.py",
+    "to": "archive/legacy_labs/week_13/shock.py"
+  },
+  {
+    "from": "weeks/week_13/lab/equilibrium.py",
+    "to": "archive/legacy_labs/week_13/equilibrium.py"
+  },
+  {
+    "from": "weeks/week_13/lab/config.py",
+    "to": "archive/legacy_labs/week_13/config.py"
+  },
+  {
+    "from": "weeks/week_13/lab/slides",
+    "to": "archive/legacy_labs/week_13/slides"
+  },
+  {
+    "from": "weeks/week_13/lab/results",
+    "to": "archive/legacy_labs/week_13/results"
+  },
+  {
+    "from": "weeks/week_13/lab/plots.py",
+    "to": "archive/legacy_labs/week_13/plots.py"
+  },
+  {
+    "from": "weeks/week_13/lab/Lab_13_Krusell_Smith.ipynb",
+    "to": "archive/legacy_labs/week_13/Lab_13_Krusell_Smith.ipynb"
+  },
+  {
+    "from": "weeks/week_13/lab/utils.py",
+    "to": "archive/legacy_labs/week_13/utils.py"
+  },
+  {
+    "from": "weeks/week_13/lab/household.py",
+    "to": "archive/legacy_labs/week_13/household.py"
+  },
+  {
+    "from": "weeks/week_11/lecture/slides/tex/Lecture_11_Unsupervised_Learning.tex",
+    "to": "weeks/week_07/lecture/slides/tex/Unsupervised_Learning.tex"
+  },
+  {
+    "from": "weeks/week_11/lecture/slides/pdf/Lecture_11_Unsupervised_Learning.pdf",
+    "to": "weeks/week_07/lecture/slides/pdf/Unsupervised_Learning.pdf"
+  },
+  {
+    "from": "weeks/week_10/lecture/slides/tex/Lecture_10_Supervised_Learning.tex",
+    "to": "weeks/week_07/lecture/slides/tex/Supervised_Learning.tex"
+  },
+  {
+    "from": "weeks/week_10/lecture/slides/pdf/Lecture_10_Supervised_Learning.pdf",
+    "to": "weeks/week_07/lecture/slides/pdf/Supervised_Learning.pdf"
+  },
+  {
+    "from": "weeks/week_04/lecture/slides/pdf/Lecture_4_Policy_Function_Iteration.pdf",
+    "to": "weeks/week_02/lecture/slides/pdf/Policy_Function_Iteration.pdf"
+  },
+  {
+    "from": "weeks/week_03/lecture/slides/pdf/Lecture_3_Bellman_Equation_and_Value_Function_Iteration.pdf",
+    "to": "weeks/week_02/lecture/slides/pdf/Bellman_Equation_and_Value_Function_Iteration.pdf"
+  },
+  {
+    "from": "weeks/week_02/lecture/slides/pdf/Lecture_2_Introduction_to_Markov_Decision_Process.pdf",
+    "to": "weeks/week_01/lecture/slides/pdf/Introduction_to_Markov_Decision_Processes.pdf"
+  },
+  {
+    "from": "weeks/week_05/lecture/slides/pdf/Lecture_5_KKT_Condition__Euler_Equation_and_Time_Iteration.pdf",
+    "to": "weeks/week_03/lecture/slides/pdf/KKT_Conditions_Euler_Equation_and_Time_Iteration.pdf"
+  },
+  {
+    "from": "weeks/week_12/lecture/slides/tex/Lecture_12_Reinforcement_Learning.tex",
+    "to": "weeks/week_08/lecture/slides/tex/Reinforcement_Learning.tex"
+  },
+  {
+    "from": "weeks/week_12/lecture/slides/pdf/Lecture_12_Reinforcement_Learning.pdf",
+    "to": "weeks/week_08/lecture/slides/pdf/Reinforcement_Learning.pdf"
+  },
+  {
+    "from": "weeks/week_13/lecture/slides/tex/Lecture_13_Heterogeneous_Agent_Model.tex",
+    "to": "weeks/week_09/lecture/slides/tex/Heterogeneous_Agent_Models.tex"
+  },
+  {
+    "from": "weeks/week_13/lecture/slides/pdf/Lecture_13_Heterogeneous_Agent_Model.pdf",
+    "to": "weeks/week_09/lecture/slides/pdf/Heterogeneous_Agent_Models.pdf"
+  },
+  {
+    "from": "weeks/week_07/lecture/slides/tex/Lecture_7_Expectation_Quadrate_Simulation.tex",
+    "to": "weeks/week_04/lecture/slides/tex/Approximating_Expectations.tex"
+  },
+  {
+    "from": "weeks/week_07/lecture/slides/pdf/Lecture_7_Expectation_Quadrate_Simulation.pdf",
+    "to": "weeks/week_04/lecture/slides/pdf/Approximating_Expectations.pdf"
+  },
+  {
+    "from": "weeks/week_09/lecture/slides/tex/Lecture_9_Parameterization_and_Neural_Network.tex",
+    "to": "weeks/week_06/lecture/slides/tex/Parameterization_and_Neural_Networks.tex"
+  },
+  {
+    "from": "weeks/week_09/lecture/slides/pdf/Lecture_9_Parameterization_and_Neural_Network.pdf",
+    "to": "weeks/week_06/lecture/slides/pdf/Parameterization_and_Neural_Networks.pdf"
+  },
+  {
+    "from": "weeks/week_08/lecture/slides/tex/Lecture_8_Simulation_Based_Learning.tex",
+    "to": "weeks/week_05/lecture/slides/tex/Simulation_Based_Learning.tex"
+  },
+  {
+    "from": "weeks/week_08/lecture/slides/pdf/Lecture_8_Simulation_Based_Learning.pdf",
+    "to": "weeks/week_05/lecture/slides/pdf/Simulation_Based_Learning.pdf"
+  },
+  {
+    "from": "weeks/week_06/lecture/slides/pdf/Lecture_6__Endogenous_Grid_Method__EGM_.pdf",
+    "to": "weeks/week_03/lecture/slides/pdf/Endogenous_Grid_Method.pdf"
+  },
+  {
+    "from": "weeks/week_01/lecture/slides/pdf/Lecture_1_Introduction_to_Some_Computational_Concepts.pdf",
+    "to": "archive/retired_slides/Lecture_1_Introduction_to_Some_Computational_Concepts.pdf"
+  },
+  {
+    "from": "figures/Lecture_9_Cubic_BSpline_Basis.png",
+    "to": "figures/Approximation_Cubic_BSpline_Basis.png"
+  },
+  {
+    "from": "figures/Lecture_9_NN_Activations.png",
+    "to": "figures/Approximation_NN_Activations.png"
+  },
+  {
+    "from": "figures/Lecture_9_Chebyshev_Basis.png",
+    "to": "figures/Approximation_Chebyshev_Basis.png"
+  },
+  {
+    "from": "figures/Lecture_9_Ordinary_Multicollinearity.png",
+    "to": "figures/Approximation_Ordinary_Multicollinearity.png"
+  },
+  {
+    "from": "figures/Lecture_9_Cubic_BSpline_Kinks.png",
+    "to": "figures/Approximation_Cubic_BSpline_Kinks.png"
+  },
+  {
+    "from": "figures/Lecture_9_Ordinary_Basis.png",
+    "to": "figures/Approximation_Ordinary_Basis.png"
+  },
+  {
+    "from": "figures/Lecture_9_Ordinary_Runge.png",
+    "to": "figures/Approximation_Ordinary_Runge.png"
+  }
+]

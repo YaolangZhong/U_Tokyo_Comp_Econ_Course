@@ -1,37 +1,43 @@
 ---
-title: Course guide
+title: Course framework
 ---
 
-## Format
+## Course direction
 
-Each class combines approximately **50 minutes of theory** and **50 minutes of programming practice**. The emphasis is on intuition, economic applications, and tools useful for independent research. Python is the main language.
+The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students' use of LLM agents for research, alongside Git and other regular tools. Python supports the work; teaching Python syntax is not the main lab objective.
 
-## Learning outcomes
+## Topic decks and weekly sessions
 
-By the end of the course, students should be able to implement numerical methods for dynamic economic models, use approximation and machine-learning tools, and document reproducible computational research.
+The schedule is organized by week, while slides are organized by topic. A topic may occupy part of a week or continue across several weeks. The proposed allocation below is a planning frame, not finalized pacing. Weeks 11–13 are provisional literature slots; papers and readings have not been chosen.
 
-## Weekly sequence
+The old standalone introduction to computational concepts is retired. Selected numerical ideas may be integrated into later lectures when they become relevant; this integration is still to be planned.
 
-The sequence below follows the available materials. Calendar dates will be announced for the next offering.
+## Provisional sequence
 
-| Week | Topic |
-| --- | --- |
-| 01 | [Computational Concepts](weeks/week_01/index.qmd) |
-| 02 | [Markov Decision Processes](weeks/week_02/index.qmd) |
-| 03 | [Value Function Iteration](weeks/week_03/index.qmd) |
-| 04 | [Policy Function Iteration](weeks/week_04/index.qmd) |
-| 05 | [Time Iteration](weeks/week_05/index.qmd) |
-| 06 | [Endogenous Grid Method](weeks/week_06/index.qmd) |
-| 07 | [Quadrature and Monte Carlo](weeks/week_07/index.qmd) |
-| 08 | [Simulation-Based Learning](weeks/week_08/index.qmd) |
-| 09 | [Parameterization and Neural Networks](weeks/week_09/index.qmd) |
-| 10 | [Supervised Learning](weeks/week_10/index.qmd) |
-| 11 | [Unsupervised Learning](weeks/week_11/index.qmd) |
-| 12 | [Reinforcement Learning](weeks/week_12/index.qmd) |
-| 13 | [Heterogeneous Agent Models](weeks/week_13/index.qmd) |
+| Week | Lecture frame | Lab | Homework |
+| --- | --- | --- | --- |
+| [Week 01](weeks/week_01/index.qmd) | Course introduction and Markov decision processes | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 02](weeks/week_02/index.qmd) | Dynamic programming methods | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 03](weeks/week_03/index.qmd) | Euler equations and endogenous grids | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 04](weeks/week_04/index.qmd) | Approximating expectations | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 05](weeks/week_05/index.qmd) | Simulation-based methods | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 06](weeks/week_06/index.qmd) | Function approximation and neural networks | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 07](weeks/week_07/index.qmd) | Machine-learning foundations | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 08](weeks/week_08/index.qmd) | Reinforcement learning | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 09](weeks/week_09/index.qmd) | Heterogeneous-agent applications | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 10](weeks/week_10/index.qmd) | Methods synthesis / pacing buffer | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 11](weeks/week_11/index.qmd) | ML computational literature — reading session | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 12](weeks/week_12/index.qmd) | ML computational literature — methods session | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 13](weeks/week_13/index.qmd) | ML computational literature — discussion session | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+
+Week 1 has two lecture components: a **Course Introduction** placeholder and the topic-based **Introduction to Markov Decision Processes** deck moved from the previous Week 2. Week 10 provides space for synthesis or slower topic pacing. Exact allocations for Weeks 2–13 remain open for discussion.
+
+## Weekly homework
+
+Each week has a reading component and an exercise component. Paper selection, reading questions, exercise tasks, workload, submission arrangements, and due dates are placeholders. Nothing is assigned by a placeholder.
 
 ## Assessment
 
-The **replication project accounts for 100%** of the grade. Students may work in teams of 2–3; teams replicate as many papers as there are members. Evaluation emphasizes understanding, implementation, and reproducibility; exact reproduction of published results is not required.
+The existing replication-project policy remains in force pending a separate assessment decision: the project accounts for 100% of the grade; teams of 2–3 replicate as many papers as there are members. Adding homework placeholders does not assign new grading weights.
 
-See the [final project guide](project.qmd) for requirements and submission details.
+See the [project guide](project.qmd) and [literature framework](references.qmd).

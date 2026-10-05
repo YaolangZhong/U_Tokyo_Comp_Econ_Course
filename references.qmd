@@ -1,21 +1,31 @@
 ---
-title: References and further learning
+title: Literature and reading framework
 nocite: '@*'
 ---
 
-This collection brings together the main textbooks, external courses, and online resources named in the course materials. Individual weekly pages point to relevant readings.
+## Weekly readings
 
-## Where to begin
+Every week will have a reading assignment and an exercise. The assigned reading, sections, guiding questions, and deadline belong on that week's page. The slots currently say **not assigned yet**.
 
-- **Numerical methods:** @judd1998.
-- **Python and computational economics:** @quantecon-python, @coding-economists, and @quantecon.
-- **Dynamic programming and reinforcement learning:** @bertsekas-course.
-- **Computational macroeconomics:** @fernandez-villaverde-courses.
-- **Machine learning:** @islp2023 and @feng-notes.
+## ML computational-economics literature
 
-For replication-project papers, consult the [existing paper catalog](https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/Final_Project/Paper_List/paper_info.md).
+The final part of the course is provisionally reserved for recent computational literature using machine-learning methods. Specific papers and session lengths will be discussed later. No list of "latest papers" is being assigned at this stage.
 
-## Reference list
+For each selected paper, we will prepare:
+
+- The economic question and model.
+- The computational bottleneck and proposed ML method.
+- Benchmarks, accuracy checks, and limitations.
+- Available code/data and a possible small replication exercise.
+- Reading questions and a topic-based slide deck.
+
+## Research-agent and tool readings
+
+Lab readings will support research workflows using LLM agents and regular tools such as Git. Tool choices, documentation links, and hands-on tasks remain to be selected. These resources will be recorded alongside the academic literature so that each assignment has a clear source.
+
+## Background collection
+
+The references below are retained background resources, **not the current weekly reading list**. Python tutorials are optional support. The previous suggested-paper catalog is available in the [repository](https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/Final_Project/Paper_List/paper_info.md); it has not yet been curated for the new literature sessions.
 
 ::: {#refs}
 :::
