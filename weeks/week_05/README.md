@@ -1,4 +1,4 @@
-# Week 05: Simulation-based methods
+# Week 5 (Nov 4): Simulation-based methods
 
 **[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_05/)**
 

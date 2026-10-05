@@ -1,4 +1,4 @@
-# Week 09: Heterogeneous-agent applications
+# Week 9 (Dec 16): Heterogeneous-agent applications
 
 **[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_09/)**
 

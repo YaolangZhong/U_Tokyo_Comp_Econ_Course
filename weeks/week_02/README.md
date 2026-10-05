@@ -1,4 +1,4 @@
-# Week 02: Dynamic programming methods
+# Week 2 (Oct 14): Dynamic programming methods
 
 **[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_02/)**
 

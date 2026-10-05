@@ -1,4 +1,4 @@
-# Week 04: Approximating expectations
+# Week 4 (Oct 28): Approximating expectations
 
 **[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_04/)**
 

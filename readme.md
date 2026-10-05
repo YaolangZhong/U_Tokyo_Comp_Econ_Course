@@ -23,7 +23,7 @@ Materials are organized by **week**, while slide decks are named by **topic**, a
 
 ## For students
 
-Start with the course website for the current schedule, handouts, and announcements. The repository contains the source materials used to build it.
+Start with the course website for the current schedule, handouts, and announcements. This repository provides lecture slides, lab materials, readings, and exercises.
 
 Visit the weekly pages for materials and assignment announcements. Registration opens soon. Course materials are freely accessible.
 

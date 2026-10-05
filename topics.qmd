@@ -1,7 +1,0 @@
----
-title: Supplementary topics
----
-
-These handouts support work across several weeks.
-
-{{< include _topic-materials.qmd >}}

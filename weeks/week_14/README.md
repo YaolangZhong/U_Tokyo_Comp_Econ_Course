@@ -1,6 +1,6 @@
-# Week 6 (Nov 11): Function approximation and neural networks
+# Week 14 (Jan 27): Course session
 
-**[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_06/)**
+**[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_14/)**
 
 - [Lecture handouts](lecture/slides/pdf/)
 - [Lab materials](lab/)

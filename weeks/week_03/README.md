@@ -1,4 +1,4 @@
-# Week 03: Euler equations and endogenous grids
+# Week 3 (Oct 21): Euler equations and endogenous grids
 
 **[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_03/)**
 

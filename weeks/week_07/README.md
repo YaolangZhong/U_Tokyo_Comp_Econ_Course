@@ -1,4 +1,4 @@
-# Week 07: Machine-learning foundations
+# Week 7 (Nov 18): Machine-learning foundations
 
 **[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_07/)**
 

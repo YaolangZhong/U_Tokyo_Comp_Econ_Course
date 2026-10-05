@@ -1,4 +1,4 @@
-# Week 01: Course introduction and Markov decision processes
+# Week 1 (Oct 7): Course introduction and Markov decision processes
 
 **[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_01/)**
 
