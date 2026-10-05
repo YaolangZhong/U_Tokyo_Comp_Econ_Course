@@ -170,7 +170,7 @@
   {
     "objectID": "weeks/week_10/index.html",
     "href": "weeks/week_10/index.html",
-    "title": "Methods synthesis / pacing buffer",
+    "title": "Methods synthesis",
     "section": "",
     "text": "Use the lecture materials below to explore this week’s topics.",
     "crumbs": [
@@ -182,7 +182,7 @@
   {
     "objectID": "weeks/week_10/index.html#learning-objectives",
     "href": "weeks/week_10/index.html#learning-objectives",
-    "title": "Methods synthesis / pacing buffer",
+    "title": "Methods synthesis",
     "section": "Learning objectives",
     "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
     "crumbs": [
@@ -194,7 +194,7 @@
   {
     "objectID": "weeks/week_10/index.html#lecture-materials",
     "href": "weeks/week_10/index.html#lecture-materials",
-    "title": "Methods synthesis / pacing buffer",
+    "title": "Methods synthesis",
     "section": "Lecture materials",
     "text": "Lecture materials\n\nMethods Synthesis\nSlides will be available here.",
     "crumbs": [
@@ -206,7 +206,7 @@
   {
     "objectID": "weeks/week_10/index.html#lab-materials",
     "href": "weeks/week_10/index.html#lab-materials",
-    "title": "Methods synthesis / pacing buffer",
+    "title": "Methods synthesis",
     "section": "Lab materials",
     "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
     "crumbs": [
@@ -218,7 +218,7 @@
   {
     "objectID": "weeks/week_10/index.html#lab-plan",
     "href": "weeks/week_10/index.html#lab-plan",
-    "title": "Methods synthesis / pacing buffer",
+    "title": "Methods synthesis",
     "section": "Lab plan",
     "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
     "crumbs": [
@@ -230,7 +230,7 @@
   {
     "objectID": "weeks/week_10/index.html#homework-reading",
     "href": "weeks/week_10/index.html#homework-reading",
-    "title": "Methods synthesis / pacing buffer",
+    "title": "Methods synthesis",
     "section": "Homework: reading",
     "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
     "crumbs": [
@@ -242,7 +242,7 @@
   {
     "objectID": "weeks/week_10/index.html#homework-exercises",
     "href": "weeks/week_10/index.html#homework-exercises",
-    "title": "Methods synthesis / pacing buffer",
+    "title": "Methods synthesis",
     "section": "Homework: exercises",
     "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
     "crumbs": [
@@ -748,7 +748,7 @@
     "href": "syllabus.html#schedule-20262027",
     "title": "Course syllabus",
     "section": "Schedule · 2026–2027",
-    "text": "Schedule · 2026–2027\n\n\n\nWeek\nLecture\nLab\nHomework\n\n\n\n\nWeek 1 (Oct 7)\nCourse introduction and Markov decision processes\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 2 (Oct 14)\nDynamic programming methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 3 (Oct 21)\nEuler equations and endogenous grids\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 4 (Oct 28)\nApproximating expectations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 5 (Nov 4)\nSimulation-based methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 6 (Nov 11)\nFunction approximation and neural networks\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 7 (Nov 18)\nMachine-learning foundations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 8 (Dec 9)\nReinforcement learning\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 9 (Dec 16)\nHeterogeneous-agent applications\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 10 (Dec 23)\nMethods synthesis\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 11 (Jan 6)\nML computational literature — reading session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 12 (Jan 13)\nML computational literature — methods session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 13 (Jan 20)\nML computational literature — discussion session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\n\nWeek 14 (Jan 27) | Course session — details to be announced | Research-tools lab — to be announced | Reading + exercise — to be announced |\nWeek 1 introduces the course and Markov decision processes. Week 10 brings together the computational methods covered in earlier sessions."
+    "text": "Schedule · 2026–2027\n\n\n\nWeek\nLecture\nLab\nHomework\n\n\n\n\nWeek 1 (Oct 7)\nCourse introduction and Markov decision processes\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 2 (Oct 14)\nDynamic programming methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 3 (Oct 21)\nEuler equations and endogenous grids\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 4 (Oct 28)\nApproximating expectations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 5 (Nov 4)\nSimulation-based methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 6 (Nov 11)\nFunction approximation and neural networks\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 7 (Nov 18)\nMachine-learning foundations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 8 (Dec 9)\nReinforcement learning\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 9 (Dec 16)\nHeterogeneous-agent applications\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 10 (Dec 23)\nMethods synthesis\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 11 (Jan 6)\nML computational literature — reading session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 12 (Jan 13)\nML computational literature — methods session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 13 (Jan 20)\nML computational literature — discussion session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 14 (Jan 27)\nCourse session — details to be announced\nResearch-tools lab — to be announced\nReading + exercise — to be announced\n\n\n\nWeek 1 introduces the course and Markov decision processes. Week 10 brings together the computational methods covered in earlier sessions."
   },
   {
     "objectID": "syllabus.html#weekly-homework",
