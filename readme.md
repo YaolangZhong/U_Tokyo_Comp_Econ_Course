@@ -27,6 +27,17 @@ Start with the course website for the current schedule, handouts, and announceme
 
 Visit the weekly pages for materials and assignment announcements. Registration opens soon. Course materials are freely accessible.
 
+## External course references
+
+### Prof. Feng Zhigang's course materials
+
+[Prof. Feng Zhigang — personal website](https://sites.google.com/site/zfeng202/)
+
+- [Foundations of Macroeconomics (Fall 2026)](https://vonzhg.github.io/Macro-2026Fall/index.html)
+- [AI for Economic Research: Dynamic Models, Language, and Agents](https://vonzhg.github.io/AI-ECON-2026/index.html)
+
+See the [reference catalog](bibliography/README.md) for descriptions and citation keys.
+
 ## Contact
 
 [Yaolang Zhong](mailto:yaolang.zhong@e.u-tokyo.ac.jp)
