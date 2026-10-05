@@ -1,0 +1,21 @@
+---
+title: References and further learning
+nocite: '@*'
+---
+
+This collection brings together the main textbooks, external courses, and online resources named in the course materials. Individual weekly pages point to relevant readings.
+
+## Where to begin
+
+- **Numerical methods:** @judd1998.
+- **Python and computational economics:** @quantecon-python, @coding-economists, and @quantecon.
+- **Dynamic programming and reinforcement learning:** @bertsekas-course.
+- **Computational macroeconomics:** @fernandez-villaverde-courses.
+- **Machine learning:** @islp2023 and @feng-notes.
+
+For replication-project papers, consult the [existing paper catalog](https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/Final_Project/Paper_List/paper_info.md).
+
+## Reference list
+
+::: {#refs}
+:::

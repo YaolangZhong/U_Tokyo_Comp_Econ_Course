@@ -1,0 +1,20 @@
+---
+title: "Reinforcement Learning"
+subtitle: "Week 12"
+---
+
+This week covers reinforcement learning. Use the lecture handout for the conceptual material and the lab files for implementation.
+
+## Learning objectives
+
+Detailed learning objectives and exercises will be added when this week is revised.
+
+{{< include _materials.qmd >}}
+
+## Exercises
+
+Work through the available lab notebook cells. Additional exercises will be added as this week's material is revised.
+
+## Readings
+
+See the [course reference collection](../../references.qmd) for textbooks and external courses.

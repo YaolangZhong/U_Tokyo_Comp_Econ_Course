@@ -1,0 +1,46 @@
+---
+title: Getting started
+---
+
+## Get the materials
+
+Choose a week in the sidebar. Download the **complete lab folder** and extract it before opening a notebook. This keeps supporting Python modules alongside the notebook.
+
+You can also clone the whole course repository:
+
+```bash
+git clone https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course.git
+cd U_Tokyo_Comp_Econ_Course
+```
+
+## Set up Python
+
+Use Python 3 and a separate environment for your coursework:
+
+```bash
+python3 -m venv .venv
+# macOS / Linux
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install jupyterlab numpy scipy matplotlib
+```
+
+These packages provide a starting environment, not a verified dependency lock for every lab. Later notebooks may require additional libraries, including PyTorch; consult their import cells. Lab environments will be refined as each week's content is updated.
+
+## Run a lab
+
+From the repository root, for example:
+
+```bash
+cd weeks/week_09/lab
+python -m jupyterlab
+```
+
+Open the notebook in JupyterLab and run its cells in order. Keep the notebook's working directory set to its lab folder so local Python imports resolve.
+
+## Read online or run locally
+
+The website displays the notebook's saved code and results. Reading a lab online does not execute Python. Download the lab to change parameters or reproduce the calculations yourself.
+
+For an introduction to Python, see @quantecon-python and @coding-economists.

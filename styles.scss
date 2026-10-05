@@ -1,0 +1,22 @@
+/*-- scss:defaults --*/
+$primary: #153e63;
+$link-color: #1d628d;
+$font-family-sans-serif: "Aptos", "Segoe UI", system-ui, sans-serif;
+$headings-font-weight: 650;
+$body-color: #263747;
+$body-bg: #fcfcfa;
+$navbar-bg: #fcfcfa;
+/*-- scss:rules --*/
+.navbar { border-bottom: 3px solid #bb923c; }
+h1, h2, h3 { color: #153e63; }
+.hero { padding: 1.5rem 0 2rem; border-bottom: 1px solid #dce3e7; margin-bottom: 2rem; }
+.eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: .8rem; color: #657682; }
+.hero .lead { font-size: 1.3rem; max-width: 46rem; line-height: 1.6; }
+.course-card { border: 1px solid #dce3e7; border-radius: .5rem; padding: 1.3rem; height: 100%; background: white; }
+.course-card h3 { margin-top: 0; font-size: 1.15rem; }
+.course-card p:last-child { margin-bottom: 0; }
+.sidebar-item { font-size: .9rem; }
+.btn { border-radius: .3rem; margin: .25rem .4rem .25rem 0; }
+.quarto-title-banner { background: transparent; }
+
+.grid { margin-bottom: 2rem; }

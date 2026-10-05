@@ -1,0 +1,37 @@
+---
+title: Course guide
+---
+
+## Format
+
+Each class combines approximately **50 minutes of theory** and **50 minutes of programming practice**. The emphasis is on intuition, economic applications, and tools useful for independent research. Python is the main language.
+
+## Learning outcomes
+
+By the end of the course, students should be able to implement numerical methods for dynamic economic models, use approximation and machine-learning tools, and document reproducible computational research.
+
+## Weekly sequence
+
+The sequence below follows the available materials. Calendar dates will be announced for the next offering.
+
+| Week | Topic |
+| --- | --- |
+| 01 | [Computational Concepts](weeks/week_01/index.qmd) |
+| 02 | [Markov Decision Processes](weeks/week_02/index.qmd) |
+| 03 | [Value Function Iteration](weeks/week_03/index.qmd) |
+| 04 | [Policy Function Iteration](weeks/week_04/index.qmd) |
+| 05 | [Time Iteration](weeks/week_05/index.qmd) |
+| 06 | [Endogenous Grid Method](weeks/week_06/index.qmd) |
+| 07 | [Quadrature and Monte Carlo](weeks/week_07/index.qmd) |
+| 08 | [Simulation-Based Learning](weeks/week_08/index.qmd) |
+| 09 | [Parameterization and Neural Networks](weeks/week_09/index.qmd) |
+| 10 | [Supervised Learning](weeks/week_10/index.qmd) |
+| 11 | [Unsupervised Learning](weeks/week_11/index.qmd) |
+| 12 | [Reinforcement Learning](weeks/week_12/index.qmd) |
+| 13 | [Heterogeneous Agent Models](weeks/week_13/index.qmd) |
+
+## Assessment
+
+The **replication project accounts for 100%** of the grade. Students may work in teams of 2–3; teams replicate as many papers as there are members. Evaluation emphasizes understanding, implementation, and reproducibility; exact reproduction of published results is not required.
+
+See the [final project guide](project.qmd) for requirements and submission details.

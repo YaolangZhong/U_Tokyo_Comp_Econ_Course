@@ -1,5 +1,10 @@
 # Computational Economics Module (Autumn A1A2 Term)
 
+**[Course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/)** · [Website editing guide](docs/WEBSITE.md)
+
+Edit each week's `index.qmd` for its web content. Preview with `./site.sh preview`; build and check with `./site.sh build`. Push a commit to `main` to publish through GitHub Actions.
+
+
 # 1. Overview
 This module is designed to help students understand and apply computational tools that will later facilitate their own research—covering methods from classical approaches to state-of-the-art techniques. It combines theory with hands-on programming practice. Each class is divided into two parts:  
 
@@ -39,85 +44,29 @@ By the end of the course, students will:
 
   - **Sharing**: After grading is completed, replication projects will be compiled and shared in two stages: (1) internally among the registered students of this module; and (2) optionally in a publicly viewable GitHub repository. Each level of sharing will take place only with the approval of the student group involved.
 
-# 3. Syllabus
+# 3. Weekly materials
 
-## Week 1 (Oct 1)
+Each week contains `lecture/slides/tex/`, `lecture/slides/pdf/`, `lab/slides/tex/`, and `lab/slides/pdf/`. Lab notebooks and Python modules stay together directly under `lab/`. Empty slide folders identify material to be rebuilt; existing PDFs have not been regenerated.
 
-### Lecture 1: Introduction to Computational Concepts
-- Round-off error and truncation error
-- Conditioning and stability
-- Rates of convergence and Big-O notation
-- Direct vs. iterative methods
+| Week | Existing topic | Materials |
+| --- | --- | --- |
+| 01 | Computational Concepts | [Week 01](weeks/week_01/README.md) |
+| 02 | Markov Decision Processes | [Week 02](weeks/week_02/README.md) |
+| 03 | Value Function Iteration | [Week 03](weeks/week_03/README.md) |
+| 04 | Policy Function Iteration | [Week 04](weeks/week_04/README.md) |
+| 05 | Time Iteration | [Week 05](weeks/week_05/README.md) |
+| 06 | Endogenous Grid Method | [Week 06](weeks/week_06/README.md) |
+| 07 | Quadrature and Monte Carlo | [Week 07](weeks/week_07/README.md) |
+| 08 | Simulation-Based Learning | [Week 08](weeks/week_08/README.md) |
+| 09 | Parameterization and Neural Networks | [Week 09](weeks/week_09/README.md) |
+| 10 | Supervised Learning | [Week 10](weeks/week_10/README.md) |
+| 11 | Unsupervised Learning | [Week 11](weeks/week_11/README.md) |
+| 12 | Reinforcement Learning | [Week 12](weeks/week_12/README.md) |
+| 13 | Heterogeneous Agent Models | [Week 13](weeks/week_13/README.md) |
 
-**Supplementary Reading**  
-- Kenneth Judd, *Numerical Methods in Economics*, Chapter 2
+See [course maintenance](docs/MAINTENANCE.md) for editing and building, [supplementary topics](topics/), [final project](Final_Project/), and [archived versions](archive/README.md). The [previous syllabus](docs/syllabus_previous.md) and [registration syllabus](docs/syllabus_registration.md) are retained for reference; they may differ from the existing materials.
 
-### Lab 1: Introduction to Python and VS Code
-- Installing Python and VS Code
-- Python basics
-
-**Supplementary Online Resources**  
-- [Getting Started with Python in VS Code (Official Video)](https://www.youtube.com/watch?v=D2cwvpJSBX4)
-- [VSCode Tutorial For Beginners - Getting Started With VSCode](https://www.youtube.com/watch?v=ORrELERGIHs)
-- [Coding for Economists](https://aeturrell.github.io/coding-for-economists/intro.html)
-- [QuantEcon - Python Programming for Economics and Finance](https://python-programming.quantecon.org/intro.html)
-
-## Week 2 (Oct 8)
-### Lecture 2: Introduction to Markov Decision Processes (MDP)
-### Lab 2: Economics Modeling with Python
-- virtual environment and package installation
-
-## Week 3  
-### Lecture 3: Bellman Equation and Value Function Iteration (VFI)
-### Lab 3: Implementing VFI
-- Git: version control
-
-## Week 4  
-### Lecture 4: Policy Function Iteration (PFI)
-### Lab 4: Implementing PFI 
-- Git: Github synergy
-
-## Week 5 
-### Lecture 5: Time Iteration (TI)
-### Lab 5: Introduction to Vide Coding with LLMs
-
-
-## Week 6  
-### Lecture 6: Endogenous Grid Method (EGM) and Heterogeneous Agent (HA) Model
-### Lab 6: Solving Aiyagari Model
-
-
-## Week 7  
-### Lecture 7: Expectation: Quadrate, Simulation, All-in-One 
-### Lab 6: Solving Krusell Smith Model I
-
-
-## Week 8  
-### Lecture 8: Parametrization
-### Lab 8: Solving Krusell Smith Model II
-
-## Week 9  
-### Lecture 9: Introduction to Machine Learning
-### Lab 9: Machine Learning Workflows with Jax/Pytorch
-
-## Week 10
-### Lecture 10: Neural Network, Actor-Critic Framework
-### Lab 10: Implementation of Neural Network
-
-## Week 11  
-### Lecture 11: TBD
-### Lab 11: TBD
-
-## Week 12  
-### Lecture 12: TBD
-### Lab 12: TBD
-
-## Week 13  
-### Lecture 13: TBD
-### Lab 13: TBD
----
-
-# 3. Reference Textbooks and Courses
+# 4. Reference Textbooks and Courses
 - Dimitri P. Bertsekas, **Reinforcement learning and optimal control** (textbook and 2025 Spring course at ASU): https://web.mit.edu/dimitrib/www/RLbook.html
 - Thomas J. Sargent and John Stachurski, **QuantEcon** online courses: https://quantecon.org/
 - Jesús Fernández-Villaverde, courses in computation and macroeconomics: https://www.sas.upenn.edu/~jesusfv/teaching.html

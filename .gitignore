@@ -1,30 +1,30 @@
-# Ignore everything
-*
+# UPLOADED when explicitly staged and committed:
+# weeks/**/slides/tex/    TeX sources and their assets
+# weeks/**/slides/pdf/    published PDF handouts
+# weeks/**/lab/           notebooks, Python code, intentional teaching data
+# README files, topics/, figures/, bibliography/, docs/, scripts/, build config
+# archive/alternative_slides/ and archive/migration-manifest.json are retained history.
 
-# But not these directories and files
-!Lab_*/
-!Lab_*/**
-!Lecture_*.pdf
-!readme.md
-!.gitignore
-!.latexmkrc
-!compile_lecture.sh
-!Paper_List/
-!Paper_List/**
-!Final_Project/
-!Final_Project/**
-!figures/
-!figures/**
-!bibliography/
-!bibliography/**
+# LOCAL ONLY: generated build output and archival duplicate build output
+/build/
+/archive/previous_builds/
+/archive/local_cache/
+# Use these directory names for disposable lab output or private local inputs.
+**/results/
+**/local/
 
-# Still ignore build artifacts inside Lab folders
-**/__pycache__/
-**/*.py[cod]
-**/.ipynb_checkpoints/
-**/build/
+# LOCAL ONLY: environments, Python/Jupyter caches, OS files, secrets
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.DS_Store
+.env
+.env.*
+!.env.example
 
-# LaTeX auxiliary files (in root and subdirectories)
+# LOCAL ONLY: LaTeX intermediates (also excluded if a manual build leaves them beside TeX)
 *.aux
 *.log
 *.out
@@ -38,10 +38,16 @@
 *.blg
 *.bcf
 *.run.xml
+*.vrb
+*.xdv
+*.tmp
+# PDFs and TeX are NOT globally ignored: students need PDFs and editors need sources.
 
-**/temp.ipynb
-**/temp.md
+# Quarto website: built and deployed by GitHub Actions, not committed to main
+/_site/
+/.quarto/
+/downloads/
+/weeks/week_*/_materials.qmd
+/_topic-materials.qmd
 
-# Ignore system files
-.DS_Store
-**/.DS_Store
+**/*.quarto_ipynb

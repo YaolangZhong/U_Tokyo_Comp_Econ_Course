@@ -1,0 +1,88 @@
+project:
+  type: website
+  output-dir: _site
+  pre-render:
+    - python3 scripts/prepare_site.py
+  render:
+    - index.qmd
+    - syllabus.qmd
+    - getting-started.qmd
+    - project.qmd
+    - references.qmd
+    - topics.qmd
+    - weeks/*/index.qmd
+    - weeks/*/lab/*.ipynb
+  resources:
+    - downloads/**
+website:
+  title: Computational Economics
+  site-url: https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/
+  repo-url: https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course
+  page-navigation: true
+  search: true
+  navbar:
+    background: light
+    left:
+      - href: syllabus.qmd
+        text: Course
+      - href: getting-started.qmd
+        text: Getting started
+      - href: project.qmd
+        text: Final project
+      - href: references.qmd
+        text: References
+    right:
+      - icon: github
+        href: https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course
+        aria-label: GitHub repository
+  sidebar:
+    style: docked
+    collapse-level: 2
+    contents:
+      - href: index.qmd
+        text: Overview
+      - section: Weekly materials
+        contents:
+          - href: weeks/week_01/index.qmd
+            text: "01 · Computational Concepts"
+          - href: weeks/week_02/index.qmd
+            text: "02 · Markov Decision Processes"
+          - href: weeks/week_03/index.qmd
+            text: "03 · Value Function Iteration"
+          - href: weeks/week_04/index.qmd
+            text: "04 · Policy Function Iteration"
+          - href: weeks/week_05/index.qmd
+            text: "05 · Time Iteration"
+          - href: weeks/week_06/index.qmd
+            text: "06 · Endogenous Grid Method"
+          - href: weeks/week_07/index.qmd
+            text: "07 · Quadrature and Monte Carlo"
+          - href: weeks/week_08/index.qmd
+            text: "08 · Simulation-Based Learning"
+          - href: weeks/week_09/index.qmd
+            text: "09 · Parameterization and Neural Networks"
+          - href: weeks/week_10/index.qmd
+            text: "10 · Supervised Learning"
+          - href: weeks/week_11/index.qmd
+            text: "11 · Unsupervised Learning"
+          - href: weeks/week_12/index.qmd
+            text: "12 · Reinforcement Learning"
+          - href: weeks/week_13/index.qmd
+            text: "13 · Heterogeneous Agent Models"
+      - href: topics.qmd
+        text: Supplementary topics
+  page-footer:
+    left: Graduate School of Economics · The University of Tokyo
+    right: Computational Economics · Yaolang Zhong
+format:
+  html:
+    theme: [cosmo, styles.scss]
+    toc: true
+    toc-depth: 2
+    code-copy: true
+    code-overflow: wrap
+    link-external-newwindow: true
+    lang: en
+execute:
+  enabled: false
+bibliography: bibliography/references.bib

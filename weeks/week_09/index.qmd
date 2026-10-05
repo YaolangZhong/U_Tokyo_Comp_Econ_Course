@@ -1,0 +1,22 @@
+---
+title: "Parameterization and Neural Networks"
+subtitle: "Week 09"
+---
+
+This week covers parameterization and neural networks. Use the lecture handout for the conceptual material and the lab files for implementation.
+
+## Learning objectives
+
+- Compare polynomial, spline, and neural-network approximations.
+- Recognize how basis choice affects approximation behavior.
+- Explore the supplied basis-function notebook and its figures.
+
+{{< include _materials.qmd >}}
+
+## Exercises
+
+Work through the available lab notebook cells. Additional exercises will be added as this week's material is revised.
+
+## Readings
+
+See the [course reference collection](../../references.qmd) for textbooks and external courses.

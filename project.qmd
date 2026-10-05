@@ -1,0 +1,35 @@
+---
+title: Final project
+---
+
+## Replicate a research paper
+
+Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.
+
+The project accounts for **100% of the course grade**. Teams of 2–3 are permitted; a team should replicate as many papers as it has members.
+
+## Agree on a paper
+
+Email [Yaolang Zhong](mailto:yaolang.zhong@e.u-tokyo.ac.jp) with the paper you intend to replicate. If proposing your own paper, attach it and arrange a brief discussion before proceeding.
+
+[Browse the existing suggested-paper catalog](https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/Final_Project/Paper_List/paper_info.md).
+
+## Submission checklist
+
+Submit a compressed project folder containing:
+
+- The paper being replicated.
+- A concise technical note covering the research question, equations, data, and computational approach.
+- A README explaining the workflow and mapping code to the paper's algorithms or results.
+- A `requirements.txt` describing the Python dependencies.
+- Supporting scripts and a notebook or `main.py` that reproduces the replication output.
+
+## Evaluation
+
+Technical understanding and runnable, readable code matter more than exact numerical agreement with the paper. Explain what you reproduced, how you tested it, and any remaining differences.
+
+## Deadline and submission
+
+The deadline and submission channel for the next offering will be confirmed by the instructor. The older February 7 deadline in the repository is historical and is not a newly announced deadline.
+
+Student projects will be shared only with the approval of the student group, as described in the existing course policy.

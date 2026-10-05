@@ -1,0 +1,20 @@
+---
+title: "Computational Concepts"
+subtitle: "Week 01"
+---
+
+This week covers computational concepts. Use the lecture handout for the conceptual material and the lab files for implementation.
+
+## Learning objectives
+
+Detailed learning objectives and exercises will be added when this week is revised.
+
+{{< include _materials.qmd >}}
+
+## Exercises
+
+Work through the available lab notebook cells. Additional exercises will be added as this week's material is revised.
+
+## Readings
+
+Read Chapter 2 of @judd1998. For Python preparation, use @quantecon-python and @coding-economists.
