@@ -39,7 +39,7 @@ def main():
                 target = page.parent / path
             if not target.exists():
                 errors.append(f'{page.relative_to(ROOT)}: missing {link}')
-    for forbidden in ['archive', 'build', 'Final_Project/Paper_List', '.git', 'scripts', 'docs']:
+    for forbidden in ['archive', 'build', 'Final_Project', 'backend', '.vscode', '.git', 'scripts', 'docs']:
         if (ROOT / forbidden).exists():
             errors.append(f'Non-website directory published: {forbidden}')
     for n in range(1, 14):

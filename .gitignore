@@ -2,8 +2,7 @@
 # weeks/**/slides/tex/    TeX sources and their assets
 # weeks/**/slides/pdf/    published PDF handouts
 # weeks/**/lab/           notebooks, Python code, intentional teaching data
-# README files, topics/, figures/, bibliography/, docs/, scripts/, build config
-# archive/alternative_slides/ and archive/migration-manifest.json are retained history.
+# Student-facing README files, topics/, figures/, bibliography/, scripts/, build config
 
 # LOCAL ONLY: generated build output and archival duplicate build output
 /build/
@@ -51,3 +50,10 @@ __pycache__/
 /_topic-materials.qmd
 
 **/*.quarto_ipynb
+
+# Instructor-only material: retained locally, excluded from the public repository
+/docs/
+/archive/
+/Final_Project/
+/.vscode/
+/backend/

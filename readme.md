@@ -1,41 +1,32 @@
-# Computational Economics — University of Tokyo
+# Computational Economics
+### Graduate School of Economics · The University of Tokyo
 
-**[Course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/)** · [Course design](docs/COURSE_DESIGN.md) · [Editing guide](docs/WEBSITE.md)
+## [Open the course website →](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/)
 
-The course combines computational economic methods with research workflows. Lectures cover core methods earlier and reserve a closing block for computational literature using machine learning. Labs focus on LLM-agent tools for research alongside Git and other regular tools; Python supports the research task rather than serving as the main lab subject.
-
-## Weekly framework, topic-based slides
-
-`weeks/week_01/` through `weeks/week_13/` organize the schedule. Slide decks have topic names, and their length is independent of the number of class sessions. Each week contains:
+**Bookmark this address:**
 
 ```text
-index.qmd                    weekly web content
-lecture/slides/tex/           topic sources or explicit placeholders
-lecture/slides/pdf/           published topic handouts
-lab/README.md                research-tools lab planning frame
-lab/slides/tex/               topic sources or explicit placeholders
-lab/slides/pdf/               published lab handouts
-homework/readings.md          reading-assignment placeholder
-homework/exercises.md         exercise-assignment placeholder
+https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/
 ```
 
-Week 1 contains a **Course Introduction** placeholder and **Introduction to Markov Decision Processes**, moved from the old Week 2. The old standalone computational-concepts introduction is retired.
+[Weekly materials](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/syllabus.html) · [Research tools labs](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/getting-started.html) · [References](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/references.html) · [Register / Sign in](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/registration.html)
 
-[The course plan](course_plan.json) maps topic IDs to weeks. Weeks 2–10 are provisionally allocated to core methods and synthesis; Weeks 11–13 are reserved provisionally for ML computational literature. Pacing, tools, papers, and homework will be discussed before authoring. A placeholder does not constitute an assignment.
+<a href="https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/"><img src="assets/course-qr.png" width="180" alt="Scan this QR code to open the course website"></a>
 
-## Working on content
+*Scan to open the course on your phone.*
 
-- Edit `weeks/week_NN/index.qmd`, `lab/README.md`, and the two homework files.
-- Use topic names for slide files and titles. A topic can be referenced in several weeks through `course_plan.json`, while its source is stored only once.
-- Keep shared sources in `bibliography/references.bib`; the reference page is a background collection until weekly readings are chosen.
-- Build a week's available TeX with `./compile_lecture.sh --week 1`, or build a canonical `.tex` source by path. Placeholder Markdown files are not compiled.
-- Preview with `./site.sh preview`; validate with `./site.sh build`. Push reviewed commits to `main` to rebuild the site automatically.
+## About the course
 
-See [maintenance and Git inclusion rules](docs/MAINTENANCE.md).
+This course connects economic models with computational methods and practical research workflows. Lectures cover dynamic programming, numerical approximation, machine learning, and applications in computational economics. Labs explore LLM agents alongside Git and other research tools.
 
-## Preserved material
+Materials are organized by **week**, while slide decks are named by **topic**, allowing a topic to continue across sessions. Each weekly page brings together lecture materials, lab activities, readings, and exercises.
 
-- `archive/retired_slides/`: abandoned opening lecture, retained for possible integration into later topics.
-- `archive/legacy_labs/`: previous Python-focused labs, kept for optional reuse.
-- `archive/previous_syllabi/`: historical syllabus documents, not current course requirements.
-- `Final_Project/`: existing replication-project material. The current project grading policy is unchanged; homework grading remains undecided.
+## For students
+
+Start with the course website for the current schedule, handouts, and announcements. The repository contains the source materials used to build it.
+
+Visit the weekly pages for materials and assignment announcements. Registration opens soon. Course materials are freely accessible.
+
+## Contact
+
+[Yaolang Zhong](mailto:yaolang.zhong@e.u-tokyo.ac.jp)

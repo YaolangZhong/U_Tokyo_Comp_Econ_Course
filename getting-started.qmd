@@ -6,11 +6,11 @@ title: Research tools lab
 
 The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.
 
-Python remains useful infrastructure, but learning Python syntax is no longer the central lab objective.
+Python supports the computational work throughout the labs.
 
 ## Before the first lab
 
-Tool selection and setup instructions will be added after the lab activities are agreed. No paid subscription, agent platform, or installation is required by this placeholder.
+Setup instructions and tool requirements will be announced before the first lab.
 
 ## Weekly structure
 
@@ -18,4 +18,4 @@ Each week's lab will specify the research task, the tools and workflow, an in-cl
 
 ## Optional background
 
-Students who need Python background can consult @quantecon-python and @coding-economists. Previous Python-focused labs are preserved in the [repository archive](https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/tree/main/archive/legacy_labs) for potential reuse; they are not the new lab schedule.
+Students who need Python background can consult @quantecon-python and @coding-economists. Any optional programming exercises will be linked from the relevant weekly page when available.

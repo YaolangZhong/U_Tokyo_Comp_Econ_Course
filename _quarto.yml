@@ -10,10 +10,12 @@ project:
     - project.qmd
     - references.qmd
     - topics.qmd
+    - registration.qmd
     - weeks/*/index.qmd
     - weeks/*/lab/*.ipynb
   resources:
     - downloads/**
+    - assets/**
 website:
   title: Computational Economics
   site-url: https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/
@@ -31,6 +33,8 @@ website:
         text: Final project
       - href: references.qmd
         text: References
+      - href: registration.qmd
+        text: Register / Sign in
     right:
       - icon: github
         href: https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course

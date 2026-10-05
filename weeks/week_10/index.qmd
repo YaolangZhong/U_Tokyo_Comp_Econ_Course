@@ -1,19 +1,19 @@
 ---
 title: "Methods synthesis / pacing buffer"
-subtitle: "Week 10 · course framework"
+subtitle: "Week 10 · Computational Economics"
 ---
 
-This is a provisional place in the accelerated methods sequence. Topic coverage and duration will be adjusted as the course is developed. Existing handouts below are reusable material, not a commitment to finish every topic in one session.
+Use the lecture materials below to explore this week’s topics.
 
 ## Learning objectives
 
-To be specified when the content for this session is developed.
+Learning objectives will be announced with the session materials.
 
 {{< include _materials.qmd >}}
 
 ## Lab plan
 
-The lab will focus on **LLM-agent tools for research**, alongside Git and other regular research tools. The specific workflow, tools, activities, and deliverables remain to be decided. Python is supporting infrastructure rather than the principal lab subject.
+Explore **LLM-agent tools for research**, Git, and reproducible workflows. Activities and preparation instructions will be announced here.
 
 {{< include homework/readings.md >}}
 

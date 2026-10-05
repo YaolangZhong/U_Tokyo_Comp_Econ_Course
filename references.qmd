@@ -1,17 +1,17 @@
 ---
-title: Literature and reading framework
+title: Readings and references
 nocite: '@*'
 ---
 
 ## Weekly readings
 
-Every week will have a reading assignment and an exercise. The assigned reading, sections, guiding questions, and deadline belong on that week's page. The slots currently say **not assigned yet**.
+Find readings, guiding questions, exercises, and deadlines on each weekly page.
 
 ## ML computational-economics literature
 
-The final part of the course is provisionally reserved for recent computational literature using machine-learning methods. Specific papers and session lengths will be discussed later. No list of "latest papers" is being assigned at this stage.
+The final part of the course explores recent computational-economics research using machine-learning methods. Readings will be announced on the weekly pages.
 
-For each selected paper, we will prepare:
+For each paper, we will examine:
 
 - The economic question and model.
 - The computational bottleneck and proposed ML method.
@@ -21,11 +21,11 @@ For each selected paper, we will prepare:
 
 ## Research-agent and tool readings
 
-Lab readings will support research workflows using LLM agents and regular tools such as Git. Tool choices, documentation links, and hands-on tasks remain to be selected. These resources will be recorded alongside the academic literature so that each assignment has a clear source.
+Lab readings cover research workflows using LLM agents, Git, and related tools. Each weekly page will link to the relevant documentation and activities.
 
-## Background collection
+## Further reading
 
-The references below are retained background resources, **not the current weekly reading list**. Python tutorials are optional support. The previous suggested-paper catalog is available in the [repository](https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/Final_Project/Paper_List/paper_info.md); it has not yet been curated for the new literature sessions.
+Explore the textbooks, courses, and online resources below for further study. Python tutorials provide optional programming support.
 
 ::: {#refs}
 :::

@@ -1,19 +1,19 @@
 ---
 title: "Course introduction and Markov decision processes"
-subtitle: "Week 01 · course framework"
+subtitle: "Week 01 · Computational Economics"
 ---
 
-The opening session introduces the course and Markov decision processes. The course-introduction deck is a placeholder; the existing MDP handout is available below.
+The opening session introduces the course and Markov decision processes.
 
 ## Learning objectives
 
-To be specified when the content for this session is developed.
+Learning objectives will be announced with the session materials.
 
 {{< include _materials.qmd >}}
 
 ## Lab plan
 
-The lab will focus on **LLM-agent tools for research**, alongside Git and other regular research tools. The specific workflow, tools, activities, and deliverables remain to be decided. Python is supporting infrastructure rather than the principal lab subject.
+Explore **LLM-agent tools for research**, Git, and reproducible workflows. Activities and preparation instructions will be announced here.
 
 {{< include homework/readings.md >}}
 

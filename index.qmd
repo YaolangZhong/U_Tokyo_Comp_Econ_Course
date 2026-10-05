@@ -43,10 +43,20 @@ Bring the methods together in a replication project built around a research pape
 2. **Core methods:** an accelerated, provisionally scheduled sequence of computational methods and machine-learning foundations.
 3. **Research literature:** several closing sessions on recent computational economics using ML, with papers still to be chosen.
 
-Each week includes a lecture, a research-tools lab, and placeholders for reading and exercise homework. Topic decks can span sessions.
+Each week combines lectures, a research-tools lab, readings, and exercises. Topics may span several sessions.
 
 [Start with Week 1](weeks/week_01/index.qmd) · [View all 13 weeks](syllabus.qmd)
 
 ## Course updates
 
-The course materials are being revised week by week. Existing topic handouts are available through the sidebar. The research-agent labs, weekly homework, and literature selections are being redesigned; placeholders are not assignments. Dates and deadlines for the next offering will be announced separately.
+Browse the weekly pages for lecture handouts and session details. Lab activities, readings, exercises, and deadlines will be announced on these pages.
+
+## Open the course on your phone
+
+Scan this code to open the course homepage.
+
+[![QR code linking to the course homepage](assets/course-qr.png){width=200 fig-alt="Scan to open the Computational Economics course website"}](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/)
+
+[Register / Sign in](registration.qmd){.btn .btn-primary} [Download QR code](assets/course-qr.png){.btn .btn-outline-primary}
+
+Registration is being prepared. Course materials remain available without signing in.

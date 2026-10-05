@@ -1,19 +1,19 @@
 ---
 title: "ML computational literature — methods session"
-subtitle: "Week 12 · course framework"
+subtitle: "Week 12 · Computational Economics"
 ---
 
-Reserved for recent computational-economics literature using machine-learning methods. Papers, methods, and discussion questions will be selected later.
+This session explores computational-economics research using machine-learning methods. Readings and discussion questions will be announced here.
 
 ## Learning objectives
 
-To be specified when the content for this session is developed.
+Learning objectives will be announced with the session materials.
 
 {{< include _materials.qmd >}}
 
 ## Lab plan
 
-The lab will focus on **LLM-agent tools for research**, alongside Git and other regular research tools. The specific workflow, tools, activities, and deliverables remain to be decided. Python is supporting infrastructure rather than the principal lab subject.
+Explore **LLM-agent tools for research**, Git, and reproducible workflows. Activities and preparation instructions will be announced here.
 
 {{< include homework/readings.md >}}
 

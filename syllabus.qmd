@@ -1,20 +1,18 @@
 ---
-title: Course framework
+title: Course syllabus
 ---
 
 ## Course direction
 
-The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students' use of LLM agents for research, alongside Git and other regular tools. Python supports the work; teaching Python syntax is not the main lab objective.
+The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students' use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work.
 
 ## Topic decks and weekly sessions
 
-The schedule is organized by week, while slides are organized by topic. A topic may occupy part of a week or continue across several weeks. The proposed allocation below is a planning frame, not finalized pacing. Weeks 11–13 are provisional literature slots; papers and readings have not been chosen.
-
-The old standalone introduction to computational concepts is retired. Selected numerical ideas may be integrated into later lectures when they become relevant; this integration is still to be planned.
+The schedule is organized by week, while slides are organized by topic. A topic may occupy part of a week or continue across several weeks. The provisional schedule below covers core methods followed by literature sessions in Weeks 11–13.
 
 ## Provisional sequence
 
-| Week | Lecture frame | Lab | Homework |
+| Week | Lecture | Lab | Homework |
 | --- | --- | --- | --- |
 | [Week 01](weeks/week_01/index.qmd) | Course introduction and Markov decision processes | Research-agent/tools lab — TBD | Reading + exercise — TBD |
 | [Week 02](weeks/week_02/index.qmd) | Dynamic programming methods | Research-agent/tools lab — TBD | Reading + exercise — TBD |
@@ -25,19 +23,19 @@ The old standalone introduction to computational concepts is retired. Selected n
 | [Week 07](weeks/week_07/index.qmd) | Machine-learning foundations | Research-agent/tools lab — TBD | Reading + exercise — TBD |
 | [Week 08](weeks/week_08/index.qmd) | Reinforcement learning | Research-agent/tools lab — TBD | Reading + exercise — TBD |
 | [Week 09](weeks/week_09/index.qmd) | Heterogeneous-agent applications | Research-agent/tools lab — TBD | Reading + exercise — TBD |
-| [Week 10](weeks/week_10/index.qmd) | Methods synthesis / pacing buffer | Research-agent/tools lab — TBD | Reading + exercise — TBD |
+| [Week 10](weeks/week_10/index.qmd) | Methods synthesis | Research-agent/tools lab — TBD | Reading + exercise — TBD |
 | [Week 11](weeks/week_11/index.qmd) | ML computational literature — reading session | Research-agent/tools lab — TBD | Reading + exercise — TBD |
 | [Week 12](weeks/week_12/index.qmd) | ML computational literature — methods session | Research-agent/tools lab — TBD | Reading + exercise — TBD |
 | [Week 13](weeks/week_13/index.qmd) | ML computational literature — discussion session | Research-agent/tools lab — TBD | Reading + exercise — TBD |
 
-Week 1 has two lecture components: a **Course Introduction** placeholder and the topic-based **Introduction to Markov Decision Processes** deck moved from the previous Week 2. Week 10 provides space for synthesis or slower topic pacing. Exact allocations for Weeks 2–13 remain open for discussion.
+Week 1 introduces the course and Markov decision processes. Week 10 brings together the computational methods covered in earlier sessions.
 
 ## Weekly homework
 
-Each week has a reading component and an exercise component. Paper selection, reading questions, exercise tasks, workload, submission arrangements, and due dates are placeholders. Nothing is assigned by a placeholder.
+Weekly pages will provide readings, exercises, submission instructions, and deadlines.
 
 ## Assessment
 
-The existing replication-project policy remains in force pending a separate assessment decision: the project accounts for 100% of the grade; teams of 2–3 replicate as many papers as there are members. Adding homework placeholders does not assign new grading weights.
+The replication project accounts for 100% of the grade. Work in teams of 2–3 and replicate as many papers as there are team members.
 
-See the [project guide](project.qmd) and [literature framework](references.qmd).
+See the [project guide](project.qmd) and [reading resources](references.qmd).

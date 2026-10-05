@@ -12,7 +12,7 @@ The project accounts for **100% of the course grade**. Teams of 2–3 are permit
 
 Email [Yaolang Zhong](mailto:yaolang.zhong@e.u-tokyo.ac.jp) with the paper you intend to replicate. If proposing your own paper, attach it and arrange a brief discussion before proceeding.
 
-[Browse the existing suggested-paper catalog](https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/Final_Project/Paper_List/paper_info.md).
+Suggested project readings will be announced on the course website.
 
 ## Submission checklist
 
@@ -30,6 +30,6 @@ Technical understanding and runnable, readable code matter more than exact numer
 
 ## Deadline and submission
 
-The deadline and submission channel for the next offering will be confirmed by the instructor. The older February 7 deadline in the repository is historical and is not a newly announced deadline.
+The deadline and submission channel for the next offering will be confirmed by the instructor.
 
 Student projects will be shared only with the approval of the student group, as described in the existing course policy.
