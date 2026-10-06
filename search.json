@@ -781,20 +781,6 @@
     "text": "Schedule · 2026–2027\n\n\nWeek 1 (Oct 7)\n\nLecture\n\nCourse Introduction\nIntroduction to Markov Decision Processes (MDP)\n\nLab\n\nIntroduction to Git\nIntroduction to Python\nIntroduction to Python: Your First Notebook · Open in Colab · Notebook\nLab exercise files\n\nHomework\n\nSetting Up Git and Python\n\n\n\n\nWeek 2 (Oct 14)\n\nLecture\n\nBellman Equation and Value Function Iteration\nPolicy Function Iteration\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 3 (Oct 21)\n\nLecture\n\nKKT Conditions, Euler Equation and Time Iteration\nEndogenous Grid Method\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 4 (Oct 28)\n\nLecture\n\nApproximating Expectations\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 5 (Nov 4)\n\nLecture\n\nSimulation-Based Learning\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 6 (Nov 11)\n\nLecture\n\nParameterization and Neural Networks\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 7 (Nov 18)\n\nLecture\n\nSupervised Learning\nUnsupervised Learning\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 8 (Dec 9)\n\nLecture\n\nReinforcement Learning\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 9 (Dec 16)\n\nLecture\n\nHeterogeneous-Agent Models\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 10 (Dec 23)\n\nLecture\n\nMethods Synthesis — materials to be announced.\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 11 (Jan 6)\n\nLecture\n\nML Computational Literature — materials to be announced.\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 12 (Jan 13)\n\nLecture\n\nML Computational Literature — materials to be announced.\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 13 (Jan 20)\n\nLecture\n\nML Computational Literature — materials to be announced.\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced.\n\n\n\n\nWeek 14 (Jan 27)\n\nLecture\n\nCourse Session — materials to be announced.\n\nLab\n\nMaterials to be announced.\n\nHomework\n\nReadings and exercises to be announced."
   },
   {
-    "objectID": "syllabus.html#weekly-homework",
-    "href": "syllabus.html#weekly-homework",
-    "title": "Course syllabus",
-    "section": "Weekly homework",
-    "text": "Weekly homework\nWeekly pages will provide readings, exercises, submission instructions, and deadlines."
-  },
-  {
-    "objectID": "syllabus.html#assessment",
-    "href": "syllabus.html#assessment",
-    "title": "Course syllabus",
-    "section": "Assessment",
-    "text": "Assessment\nThe replication project accounts for 100% of the grade. Work in teams of 2–3 and replicate as many papers as there are team members.\nA 15-minute presentation of the replication work is required, during the last one or two lecture weeks, depending on the number of submissions. The presentation schedule will be announced once that number is known.\nSee the grading and project requirements and reading resources."
-  },
-  {
     "objectID": "project.html",
     "href": "project.html",
     "title": "Grading",
