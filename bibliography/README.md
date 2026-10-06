@@ -1,16 +1,25 @@
 # Readings and references
 
-See the [course references](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/references.html) for textbooks, courses, and research tools. Weekly pages provide assigned readings and exercises.
+1. [**Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. \[Book\]**](https://mitpress.mit.edu/9780262100717/numerical-methods-in-economics/)
 
-## Prof. Feng Zhigang's course materials
+2. [**Zhigang Feng, Zhigang Feng: Personal Website. \[Web resource\]**](https://sites.google.com/site/zfeng202/)
 
-[Prof. Feng Zhigang — personal website](https://sites.google.com/site/zfeng202/)
+3. [**Zhigang Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. \[Online course\]**](https://vonzhg.github.io/Macro-2026Fall/index.html)
 
-| Course | Coverage |
-| --- | --- |
-| [Foundations of Macroeconomics (ECON 282E, Fall 2026)](https://vonzhg.github.io/Macro-2026Fall/index.html) | Dynamic economic models, heterogeneous agents, numerical methods, and computational tools. |
-| [AI for Economic Research: Dynamic Models, Language, and Agents](https://vonzhg.github.io/AI-ECON-2026/index.html) | Deep learning, reinforcement learning, heterogeneous-agent models, language models, retrieval, and research agents. |
+4. [**Zhigang Feng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. \[Online course\]**](https://vonzhg.github.io/AI-ECON-2026/index.html)
 
-The linked course websites provide the original lecture slides, syllabi, and lab resources by Prof. Feng Zhigang. Please cite the relevant course and slide deck when drawing on these materials.
+5. [**QuantEcon, QuantEcon: Economics and Computational Tools. \[Web resource\]**](https://quantecon.org/)
 
-Bibliographic entries are available in [references.bib](references.bib), using the keys `feng-personal-website`, `feng-macro-2026`, and `feng-ai-econ-2026`.
+6. [**QuantEcon, Python Programming for Economics and Finance. \[Online course\]**](https://python-programming.quantecon.org/intro.html)
+
+7. [**Arthur Turrell, Coding for Economists. \[Web resource\]**](https://aeturrell.github.io/coding-for-economists/intro.html)
+
+8. [**Dimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. \[Web resource\]**](https://web.mit.edu/dimitrib/www/RLbook.html)
+
+9. [**Jesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. \[Web resource\]**](https://www.sas.upenn.edu/~jesusfv/teaching.html)
+
+10. [**Zhigang Feng, Workshop Notes on AI and Machine Learning for Economists. \[Web resource\]**](https://sites.google.com/site/zfeng202/notes)
+
+11. [**Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. \[Book\]**](https://www.statlearning.com/)
+
+[BibTeX records](references.bib)
