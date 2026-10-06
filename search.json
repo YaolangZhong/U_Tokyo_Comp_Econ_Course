@@ -84,7 +84,7 @@
     "href": "weeks/week_13/index.html#lecture-materials",
     "title": "ML computational literature — discussion session",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nML Computational Literature\nSlides will be available here.",
+    "text": "Lecture materials\n\nML Computational Literature — slides forthcoming.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -168,7 +168,7 @@
     "href": "weeks/week_11/index.html#lecture-materials",
     "title": "ML computational literature — reading session",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nML Computational Literature\nSlides will be available here.",
+    "text": "Lecture materials\n\nML Computational Literature — slides forthcoming.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -252,7 +252,7 @@
     "href": "weeks/week_09/index.html#lecture-materials",
     "title": "Heterogeneous-agent applications",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nHeterogeneous-Agent Models\nDownload Heterogeneous-Agent Models (PDF)",
+    "text": "Lecture materials\n\nHeterogeneous-Agent Models",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -336,7 +336,7 @@
     "href": "weeks/week_07/index.html#lecture-materials",
     "title": "Machine-learning foundations",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nSupervised Learning\nDownload Supervised Learning (PDF)\n\n\nUnsupervised Learning\nDownload Unsupervised Learning (PDF)",
+    "text": "Lecture materials\n\nSupervised Learning\nUnsupervised Learning",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -420,7 +420,7 @@
     "href": "weeks/week_05/index.html#lecture-materials",
     "title": "Simulation-based methods",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nSimulation-Based Learning\nDownload Simulation-Based Learning (PDF)",
+    "text": "Lecture materials\n\nSimulation-Based Learning",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -504,7 +504,7 @@
     "href": "weeks/week_03/index.html#lecture-materials",
     "title": "Euler equations and endogenous grids",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nKKT Conditions, Euler Equation and Time Iteration\nDownload KKT Conditions, Euler Equation and Time Iteration (PDF)\n\n\nEndogenous Grid Method\nDownload Endogenous Grid Method (PDF)",
+    "text": "Lecture materials\n\nKKT Conditions, Euler Equation and Time Iteration\nEndogenous Grid Method",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -588,7 +588,7 @@
     "href": "weeks/week_01/index.html#lecture-materials",
     "title": "Course introduction and Markov decision processes",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nCourse Introduction\nSlides will be available here.\n\n\nIntroduction to Markov Decision Processes\nDownload Introduction to Markov Decision Processes (PDF)",
+    "text": "Lecture materials\n\nCourse Introduction — slides forthcoming.\nIntroduction to Markov Decision Processes (MDP)",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -600,7 +600,7 @@
     "href": "weeks/week_01/index.html#lab-materials",
     "title": "Course introduction and Markov decision processes",
     "section": "Lab materials",
-    "text": "Lab materials\nDownload Introduction to Git and GitHub (PDF)\nDownload Introduction to Python (PDF)\nDownload complete lab folder\n\nIntroduction to Python: Your First Notebook\nRead online Open in Colab Download notebook\nIn Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project.",
+    "text": "Lab materials\n\nIntroduction to Git and GitHub\nIntroduction to Python\n\nDownload complete lab folder\n\nIntroduction to Python: Your First Notebook\nRead online Open in Colab Download notebook\nIn Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -683,7 +683,7 @@
     "href": "topics.html#discretizing-ar1",
     "title": "Supplementary topics",
     "section": "Discretizing Ar1",
-    "text": "Discretizing Ar1\nDownload handout (PDF)",
+    "text": "Discretizing Ar1\n\nTopic Discretizing AR1 Processes",
     "crumbs": [
       "Syllabus",
       "Supplementary topics"
@@ -694,7 +694,7 @@
     "href": "topics.html#git",
     "title": "Supplementary topics",
     "section": "Git",
-    "text": "Git\nDownload handout (PDF)",
+    "text": "Git\n\nLab Topic on Git",
     "crumbs": [
       "Syllabus",
       "Supplementary topics"
@@ -705,7 +705,7 @@
     "href": "topics.html#google-ai",
     "title": "Supplementary topics",
     "section": "Google Ai",
-    "text": "Google Ai\nDownload handout (PDF)",
+    "text": "Google Ai\n\nGoogle AI",
     "crumbs": [
       "Syllabus",
       "Supplementary topics"
@@ -966,7 +966,7 @@
     "href": "weeks/week_02/index.html#lecture-materials",
     "title": "Dynamic programming methods",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nBellman Equation and Value Function Iteration\nDownload Bellman Equation and Value Function Iteration (PDF)\n\n\nPolicy Function Iteration\nDownload Policy Function Iteration (PDF)",
+    "text": "Lecture materials\n\nBellman Equation and Value Function Iteration\nPolicy Function Iteration",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -1050,7 +1050,7 @@
     "href": "weeks/week_04/index.html#lecture-materials",
     "title": "Approximating expectations",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nApproximating Expectations\nDownload Approximating Expectations (PDF)",
+    "text": "Lecture materials\n\nApproximating Expectations",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -1134,7 +1134,7 @@
     "href": "weeks/week_06/index.html#lecture-materials",
     "title": "Function approximation and neural networks",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nParameterization and Neural Networks\nDownload Parameterization and Neural Networks (PDF)",
+    "text": "Lecture materials\n\nParameterization and Neural Networks",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -1218,7 +1218,7 @@
     "href": "weeks/week_08/index.html#lecture-materials",
     "title": "Reinforcement learning",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nReinforcement Learning\nDownload Reinforcement Learning (PDF)",
+    "text": "Lecture materials\n\nReinforcement Learning",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -1302,7 +1302,7 @@
     "href": "weeks/week_10/index.html#lecture-materials",
     "title": "Methods synthesis",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nMethods Synthesis\nSlides will be available here.",
+    "text": "Lecture materials\n\nMethods Synthesis — slides forthcoming.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -1386,7 +1386,7 @@
     "href": "weeks/week_12/index.html#lecture-materials",
     "title": "ML computational literature — methods session",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nML Computational Literature\nSlides will be available here.",
+    "text": "Lecture materials\n\nML Computational Literature — slides forthcoming.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -1470,7 +1470,7 @@
     "href": "weeks/week_14/index.html#lecture-materials",
     "title": "Course session",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nCourse Session\nSlides will be available here.",
+    "text": "Lecture materials\n\nCourse Session — slides forthcoming.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
