@@ -1,1280 +1,142 @@
 [
   {
-    "objectID": "weeks/week_14/index.html",
-    "href": "weeks/week_14/index.html",
-    "title": "Course session",
+    "objectID": "weeks/week_01/lab/starter/temperature.html",
+    "href": "weeks/week_01/lab/starter/temperature.html",
+    "title": "Introduction to Python: Your First Notebook",
     "section": "",
-    "text": "Session materials and activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 14 (Jan 27)"
-    ]
+    "text": "Convert a temperature, change an input, and check the result. This short exercise introduces code cells, text cells, and the order in which a notebook runs.\nTime: about 10–15 minutes. Requirements: Python 3; no extra packages or data files.\nOpen in Colab · Course website"
   },
   {
-    "objectID": "weeks/week_14/index.html#learning-objectives",
-    "href": "weeks/week_14/index.html#learning-objectives",
-    "title": "Course session",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 14 (Jan 27)"
-    ]
+    "objectID": "weeks/week_01/lab/starter/temperature.html#open-and-save-your-copy",
+    "href": "weeks/week_01/lab/starter/temperature.html#open-and-save-your-copy",
+    "title": "Introduction to Python: Your First Notebook",
+    "section": "1. Open and save your copy",
+    "text": "1. Open and save your copy\nIn Colab: sign in with your Google account. Choose File → Save a copy in Drive before editing, then connect to a Python runtime. A standard CPU runtime is sufficient. Use the play button beside a code cell, or press Shift+Enter, to run it. Your copy is separate from the course original.\nIn VS Code: open this notebook and select your Python environment as its kernel. Install notebook support if prompted.\nText cells explain the exercise. Code cells execute Python and display their output underneath. Run the following cells in order.\nimport sys\nprint(\"Python:\", sys.version.split()[0])"
   },
   {
-    "objectID": "weeks/week_14/index.html#lecture-materials",
-    "href": "weeks/week_14/index.html#lecture-materials",
-    "title": "Course session",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nCourse Session\nSlides will be available here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 14 (Jan 27)"
-    ]
+    "objectID": "weeks/week_01/lab/starter/temperature.html#predict-the-answer",
+    "href": "weeks/week_01/lab/starter/temperature.html#predict-the-answer",
+    "title": "Introduction to Python: Your First Notebook",
+    "section": "2. Predict the answer",
+    "text": "2. Predict the answer\nWe convert degrees Celsius, \\(C\\), to degrees Fahrenheit, \\(F\\), using\n\\[F = C \\times \\frac{9}{5} + 32.\\]\nFor \\(C=20\\), predict the result before running the code. The input cell below stores the temperature under the name celsius. It does not print anything by itself.\ncelsius = 20.0"
   },
   {
-    "objectID": "weeks/week_14/index.html#lab-materials",
-    "href": "weeks/week_14/index.html#lab-materials",
-    "title": "Course session",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 14 (Jan 27)"
-    ]
+    "objectID": "weeks/week_01/lab/starter/temperature.html#run-the-calculation",
+    "href": "weeks/week_01/lab/starter/temperature.html#run-the-calculation",
+    "title": "Introduction to Python: Your First Notebook",
+    "section": "3. Run the calculation",
+    "text": "3. Run the calculation\nThis cell uses the current value of celsius, calculates fahrenheit, and prints both values to one decimal place. The baseline result is 20.0 C = 68.0 F.\nfahrenheit = celsius * 9 / 5 + 32\nprint(f\"{celsius:.1f} C = {fahrenheit:.1f} F\")"
   },
   {
-    "objectID": "weeks/week_14/index.html#lab-plan",
-    "href": "weeks/week_14/index.html#lab-plan",
-    "title": "Course session",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 14 (Jan 27)"
-    ]
+    "objectID": "weeks/week_01/lab/starter/temperature.html#change-one-input",
+    "href": "weeks/week_01/lab/starter/temperature.html#change-one-input",
+    "title": "Introduction to Python: Your First Notebook",
+    "section": "4. Change one input",
+    "text": "4. Change one input\n\nChange 20.0 to 25.0 in the input cell above.\nPredict the new result on paper.\nRun the input cell again, then run the calculation cell.\nCheck that the result is 25.0 C = 77.0 F.\n\nEditing a cell changes the saved code. Running it updates the values held by the runtime. An output displayed below a cell can come from an earlier run.\nTry editing the input without running it, then running only the calculation cell. Explain why the result still uses the old input. Finish by running the input and calculation cells in order."
   },
   {
-    "objectID": "weeks/week_14/index.html#homework-reading",
-    "href": "weeks/week_14/index.html#homework-reading",
-    "title": "Course session",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 14 (Jan 27)"
-    ]
+    "objectID": "weeks/week_01/lab/starter/temperature.html#check-two-familiar-temperatures",
+    "href": "weeks/week_01/lab/starter/temperature.html#check-two-familiar-temperatures",
+    "title": "Introduction to Python: Your First Notebook",
+    "section": "5. Check two familiar temperatures",
+    "text": "5. Check two familiar temperatures\nThe following cell checks the same conversion rule at 0 and 100 degrees Celsius. An assert checks whether a statement is true; if it is false, Python reports an error.\nassert 0 * 9 / 5 + 32 == 32\nassert 100 * 9 / 5 + 32 == 212\nprint(\"Both checks passed: 0 C = 32 F and 100 C = 212 F.\")"
   },
   {
-    "objectID": "weeks/week_14/index.html#homework-exercises",
-    "href": "weeks/week_14/index.html#homework-exercises",
-    "title": "Course session",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 14 (Jan 27)"
-    ]
+    "objectID": "weeks/week_01/lab/starter/temperature.html#start-fresh-and-reproduce-the-result",
+    "href": "weeks/week_01/lab/starter/temperature.html#start-fresh-and-reproduce-the-result",
+    "title": "Introduction to Python: Your First Notebook",
+    "section": "6. Start fresh and reproduce the result",
+    "text": "6. Start fresh and reproduce the result\nRestart the notebook runtime/kernel to clear stored variables, then run all cells from the top. In Colab, use the Runtime menu to restart the session and run all cells. In VS Code, restart the kernel and choose Run All.\nWith the input changed to 25, the calculation should still give 77 degrees Fahrenheit. If the result changes after a restart, inspect the cell order and whether all required inputs are in the saved code."
   },
   {
-    "objectID": "weeks/week_12/index.html",
-    "href": "weeks/week_12/index.html",
-    "title": "ML computational literature — methods session",
+    "objectID": "weeks/week_01/lab/starter/temperature.html#explain-and-save-your-work",
+    "href": "weeks/week_01/lab/starter/temperature.html#explain-and-save-your-work",
+    "title": "Introduction to Python: Your First Notebook",
+    "section": "7. Explain and save your work",
+    "text": "7. Explain and save your work\nEdit the text cell below to record your answers. Save your notebook. In Colab, use File → Download → Download .ipynb to take a copy back to your local project folder. Add the completed notebook to your Git repository with your script and README, then commit and push.\nColab lets you practice online. For the setup homework, also run temperature.py and this notebook in your local Python environment and compare their results.\n\nMy observations\n\nMy prediction for 25 degrees Celsius:\nThe result I obtained:\nWhy editing an input cell alone did not update the calculation:\nWhat happened after restarting and running all cells:\nHow the notebook result compares with the Python script:\n\n\n\nFurther reading\n\nGoogle Colab: Frequently Asked Questions\nMicrosoft: Jupyter Notebooks in VS Code"
+  },
+  {
+    "objectID": "weeks/week_13/index.html",
+    "href": "weeks/week_13/index.html",
+    "title": "ML computational literature — discussion session",
     "section": "",
     "text": "This session explores computational-economics research using machine-learning methods. Readings and discussion questions will be announced here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 12 (Jan 13)"
+      "Week 13 (Jan 20)"
     ]
   },
   {
-    "objectID": "weeks/week_12/index.html#learning-objectives",
-    "href": "weeks/week_12/index.html#learning-objectives",
-    "title": "ML computational literature — methods session",
+    "objectID": "weeks/week_13/index.html#learning-objectives",
+    "href": "weeks/week_13/index.html#learning-objectives",
+    "title": "ML computational literature — discussion session",
     "section": "Learning objectives",
     "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 12 (Jan 13)"
+      "Week 13 (Jan 20)"
     ]
   },
   {
-    "objectID": "weeks/week_12/index.html#lecture-materials",
-    "href": "weeks/week_12/index.html#lecture-materials",
-    "title": "ML computational literature — methods session",
+    "objectID": "weeks/week_13/index.html#lecture-materials",
+    "href": "weeks/week_13/index.html#lecture-materials",
+    "title": "ML computational literature — discussion session",
     "section": "Lecture materials",
     "text": "Lecture materials\n\nML Computational Literature\nSlides will be available here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 12 (Jan 13)"
+      "Week 13 (Jan 20)"
     ]
   },
   {
-    "objectID": "weeks/week_12/index.html#lab-materials",
-    "href": "weeks/week_12/index.html#lab-materials",
-    "title": "ML computational literature — methods session",
+    "objectID": "weeks/week_13/index.html#lab-materials",
+    "href": "weeks/week_13/index.html#lab-materials",
+    "title": "ML computational literature — discussion session",
     "section": "Lab materials",
     "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 12 (Jan 13)"
+      "Week 13 (Jan 20)"
     ]
   },
   {
-    "objectID": "weeks/week_12/index.html#lab-plan",
-    "href": "weeks/week_12/index.html#lab-plan",
-    "title": "ML computational literature — methods session",
+    "objectID": "weeks/week_13/index.html#lab-plan",
+    "href": "weeks/week_13/index.html#lab-plan",
+    "title": "ML computational literature — discussion session",
     "section": "Lab plan",
     "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 12 (Jan 13)"
+      "Week 13 (Jan 20)"
     ]
   },
   {
-    "objectID": "weeks/week_12/index.html#homework-reading",
-    "href": "weeks/week_12/index.html#homework-reading",
-    "title": "ML computational literature — methods session",
+    "objectID": "weeks/week_13/index.html#homework-reading",
+    "href": "weeks/week_13/index.html#homework-reading",
+    "title": "ML computational literature — discussion session",
     "section": "Homework: reading",
     "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 12 (Jan 13)"
+      "Week 13 (Jan 20)"
     ]
   },
   {
-    "objectID": "weeks/week_12/index.html#homework-exercises",
-    "href": "weeks/week_12/index.html#homework-exercises",
-    "title": "ML computational literature — methods session",
+    "objectID": "weeks/week_13/index.html#homework-exercises",
+    "href": "weeks/week_13/index.html#homework-exercises",
+    "title": "ML computational literature — discussion session",
     "section": "Homework: exercises",
     "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 12 (Jan 13)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_10/index.html",
-    "href": "weeks/week_10/index.html",
-    "title": "Methods synthesis",
-    "section": "",
-    "text": "Use the lecture materials below to explore this week’s topics.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 10 (Dec 23)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_10/index.html#learning-objectives",
-    "href": "weeks/week_10/index.html#learning-objectives",
-    "title": "Methods synthesis",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 10 (Dec 23)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_10/index.html#lecture-materials",
-    "href": "weeks/week_10/index.html#lecture-materials",
-    "title": "Methods synthesis",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nMethods Synthesis\nSlides will be available here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 10 (Dec 23)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_10/index.html#lab-materials",
-    "href": "weeks/week_10/index.html#lab-materials",
-    "title": "Methods synthesis",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 10 (Dec 23)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_10/index.html#lab-plan",
-    "href": "weeks/week_10/index.html#lab-plan",
-    "title": "Methods synthesis",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 10 (Dec 23)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_10/index.html#homework-reading",
-    "href": "weeks/week_10/index.html#homework-reading",
-    "title": "Methods synthesis",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 10 (Dec 23)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_10/index.html#homework-exercises",
-    "href": "weeks/week_10/index.html#homework-exercises",
-    "title": "Methods synthesis",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 10 (Dec 23)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_08/index.html",
-    "href": "weeks/week_08/index.html",
-    "title": "Reinforcement learning",
-    "section": "",
-    "text": "Use the lecture materials below to explore this week’s topics.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 8 (Dec 9)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_08/index.html#learning-objectives",
-    "href": "weeks/week_08/index.html#learning-objectives",
-    "title": "Reinforcement learning",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 8 (Dec 9)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_08/index.html#lecture-materials",
-    "href": "weeks/week_08/index.html#lecture-materials",
-    "title": "Reinforcement learning",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nReinforcement Learning\nDownload Reinforcement Learning (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 8 (Dec 9)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_08/index.html#lab-materials",
-    "href": "weeks/week_08/index.html#lab-materials",
-    "title": "Reinforcement learning",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 8 (Dec 9)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_08/index.html#lab-plan",
-    "href": "weeks/week_08/index.html#lab-plan",
-    "title": "Reinforcement learning",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 8 (Dec 9)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_08/index.html#homework-reading",
-    "href": "weeks/week_08/index.html#homework-reading",
-    "title": "Reinforcement learning",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 8 (Dec 9)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_08/index.html#homework-exercises",
-    "href": "weeks/week_08/index.html#homework-exercises",
-    "title": "Reinforcement learning",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 8 (Dec 9)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_06/index.html",
-    "href": "weeks/week_06/index.html",
-    "title": "Function approximation and neural networks",
-    "section": "",
-    "text": "Use the lecture materials below to explore this week’s topics.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 6 (Nov 11)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_06/index.html#learning-objectives",
-    "href": "weeks/week_06/index.html#learning-objectives",
-    "title": "Function approximation and neural networks",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 6 (Nov 11)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_06/index.html#lecture-materials",
-    "href": "weeks/week_06/index.html#lecture-materials",
-    "title": "Function approximation and neural networks",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nParameterization and Neural Networks\nDownload Parameterization and Neural Networks (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 6 (Nov 11)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_06/index.html#lab-materials",
-    "href": "weeks/week_06/index.html#lab-materials",
-    "title": "Function approximation and neural networks",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 6 (Nov 11)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_06/index.html#lab-plan",
-    "href": "weeks/week_06/index.html#lab-plan",
-    "title": "Function approximation and neural networks",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 6 (Nov 11)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_06/index.html#homework-reading",
-    "href": "weeks/week_06/index.html#homework-reading",
-    "title": "Function approximation and neural networks",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 6 (Nov 11)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_06/index.html#homework-exercises",
-    "href": "weeks/week_06/index.html#homework-exercises",
-    "title": "Function approximation and neural networks",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 6 (Nov 11)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_04/index.html",
-    "href": "weeks/week_04/index.html",
-    "title": "Approximating expectations",
-    "section": "",
-    "text": "Use the lecture materials below to explore this week’s topics.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 4 (Oct 28)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_04/index.html#learning-objectives",
-    "href": "weeks/week_04/index.html#learning-objectives",
-    "title": "Approximating expectations",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 4 (Oct 28)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_04/index.html#lecture-materials",
-    "href": "weeks/week_04/index.html#lecture-materials",
-    "title": "Approximating expectations",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nApproximating Expectations\nDownload Approximating Expectations (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 4 (Oct 28)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_04/index.html#lab-materials",
-    "href": "weeks/week_04/index.html#lab-materials",
-    "title": "Approximating expectations",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 4 (Oct 28)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_04/index.html#lab-plan",
-    "href": "weeks/week_04/index.html#lab-plan",
-    "title": "Approximating expectations",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 4 (Oct 28)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_04/index.html#homework-reading",
-    "href": "weeks/week_04/index.html#homework-reading",
-    "title": "Approximating expectations",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 4 (Oct 28)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_04/index.html#homework-exercises",
-    "href": "weeks/week_04/index.html#homework-exercises",
-    "title": "Approximating expectations",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 4 (Oct 28)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_02/index.html",
-    "href": "weeks/week_02/index.html",
-    "title": "Dynamic programming methods",
-    "section": "",
-    "text": "Use the lecture materials below to explore this week’s topics.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 2 (Oct 14)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_02/index.html#learning-objectives",
-    "href": "weeks/week_02/index.html#learning-objectives",
-    "title": "Dynamic programming methods",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 2 (Oct 14)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_02/index.html#lecture-materials",
-    "href": "weeks/week_02/index.html#lecture-materials",
-    "title": "Dynamic programming methods",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nBellman Equation and Value Function Iteration\nDownload Bellman Equation and Value Function Iteration (PDF)\n\n\nPolicy Function Iteration\nDownload Policy Function Iteration (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 2 (Oct 14)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_02/index.html#lab-materials",
-    "href": "weeks/week_02/index.html#lab-materials",
-    "title": "Dynamic programming methods",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 2 (Oct 14)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_02/index.html#lab-plan",
-    "href": "weeks/week_02/index.html#lab-plan",
-    "title": "Dynamic programming methods",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 2 (Oct 14)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_02/index.html#homework-reading",
-    "href": "weeks/week_02/index.html#homework-reading",
-    "title": "Dynamic programming methods",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 2 (Oct 14)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_02/index.html#homework-exercises",
-    "href": "weeks/week_02/index.html#homework-exercises",
-    "title": "Dynamic programming methods",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 2 (Oct 14)"
-    ]
-  },
-  {
-    "objectID": "registration.html",
-    "href": "registration.html",
-    "title": "Registration and student portal",
-    "section": "",
-    "text": "Register with your email address and a one-time code. Sign in without a password. Use the same email when returning to the course portal."
-  },
-  {
-    "objectID": "registration.html#staying-signed-in",
-    "href": "registration.html#staying-signed-in",
-    "title": "Registration and student portal",
-    "section": "Staying signed in",
-    "text": "Staying signed in\nWith Keep me signed in selected, the browser will remember your session and refresh it automatically. On a shared computer, uncheck it and sign out when finished. Clearing browser storage, signing out, or an expired or revoked session may require a new email code. Private browsing may not retain your session."
-  },
-  {
-    "objectID": "registration.html#about-your-registration",
-    "href": "registration.html#about-your-registration",
-    "title": "Registration and student portal",
-    "section": "About your registration",
-    "text": "About your registration\nCourse registration will ask for your name, programme/year, and verified email. Your details will be stored privately for course administration. Please also complete the university’s official enrollment process.\nData-handling information will be available when registration opens. For course questions, contact Yaolang Zhong."
-  },
-  {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
-  },
-  {
-    "objectID": "references.html#weekly-readings",
-    "href": "references.html#weekly-readings",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
-  },
-  {
-    "objectID": "references.html#ml-computational-economics-literature",
-    "href": "references.html#ml-computational-economics-literature",
-    "title": "Readings and references",
-    "section": "ML computational-economics literature",
-    "text": "ML computational-economics literature\nThe final part of the course explores recent computational-economics research using machine-learning methods. Readings will be announced on the weekly pages.\nFor each paper, we will examine:\n\nThe economic question and model.\nThe computational bottleneck and proposed ML method.\nBenchmarks, accuracy checks, and limitations.\nAvailable code/data and a possible small replication exercise.\nReading questions and a topic-based slide deck."
-  },
-  {
-    "objectID": "references.html#research-agent-and-tool-readings",
-    "href": "references.html#research-agent-and-tool-readings",
-    "title": "Readings and references",
-    "section": "Research-agent and tool readings",
-    "text": "Research-agent and tool readings\nLab readings cover research workflows using LLM agents, Git, and related tools. Each weekly page will link to the relevant documentation and activities."
-  },
-  {
-    "objectID": "references.html#prof.-feng-zhigangs-course-materials",
-    "href": "references.html#prof.-feng-zhigangs-course-materials",
-    "title": "Readings and references",
-    "section": "Prof. Feng Zhigang’s course materials",
-    "text": "Prof. Feng Zhigang’s course materials\nProf. Feng Zhigang — personal website\n\nFoundations of Macroeconomics (ECON 282E, Fall 2026): dynamic economic models, heterogeneous agents, numerical methods, and computational tools. (Feng 2026b)\nAI for Economic Research: Dynamic Models, Language, and Agents: deep learning, reinforcement learning, heterogeneous-agent models, language models, retrieval, and research agents. (Feng 2026a)\n\nExplore the original course websites for lecture slides, syllabi, and lab resources. When using these materials, cite the relevant course and slide deck by Prof. Feng Zhigang."
-  },
-  {
-    "objectID": "references.html#further-reading",
-    "href": "references.html#further-reading",
-    "title": "Readings and references",
-    "section": "Further reading",
-    "text": "Further reading\nExplore the textbooks, courses, and online resources below for further study. Python tutorials provide optional programming support.\n\n\nBertsekas, Dimitri P. n.d. Reinforcement Learning: Books and Course Materials. https://web.mit.edu/dimitrib/www/RLbook.html.\n\n\nFeng, Zhigang. 2026a. AI for Economic Research: Dynamic Models, Language, and Agents. Course materials. https://vonzhg.github.io/AI-ECON-2026/index.html.\n\n\nFeng, Zhigang. 2026b. Foundations of Macroeconomics: ECON 282E, Fall 2026. Course materials, University of California, Riverside. https://vonzhg.github.io/Macro-2026Fall/index.html.\n\n\nFeng, Zhigang. n.d.-a. Workshop Notes on AI and Machine Learning for Economists. https://sites.google.com/site/zfeng202/notes.\n\n\nFeng, Zhigang. n.d.-b. Zhigang Feng: Personal Website. Accessed October 5, 2026. https://sites.google.com/site/zfeng202/.\n\n\nFernández-Villaverde, Jesús. n.d. Teaching: Computation and Macroeconomics. https://www.sas.upenn.edu/~jesusfv/teaching.html.\n\n\nJames, Gareth, Daniela Witten, Trevor Hastie, Robert Tibshirani, and Jonathan Taylor. 2023. An Introduction to Statistical Learning: With Applications in Python. Springer. https://www.statlearning.com/.\n\n\nJudd, Kenneth L. 1998. Numerical Methods in Economics. MIT Press.\n\n\nQuantEcon. n.d.-a. Python Programming for Economics and Finance. https://python-programming.quantecon.org/intro.html.\n\n\nQuantEcon. n.d.-b. QuantEcon: Economics and Computational Tools. https://quantecon.org/.\n\n\nTurrell, Arthur. n.d. Coding for Economists. https://aeturrell.github.io/coding-for-economists/intro.html."
-  },
-  {
-    "objectID": "getting-started.html",
-    "href": "getting-started.html",
-    "title": "Research tools lab",
-    "section": "",
-    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
-  },
-  {
-    "objectID": "getting-started.html#what-the-labs-are-for",
-    "href": "getting-started.html#what-the-labs-are-for",
-    "title": "Research tools lab",
-    "section": "",
-    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
-  },
-  {
-    "objectID": "getting-started.html#before-the-first-lab",
-    "href": "getting-started.html#before-the-first-lab",
-    "title": "Research tools lab",
-    "section": "Before the first lab",
-    "text": "Before the first lab\nSetup instructions and tool requirements will be announced before the first lab."
-  },
-  {
-    "objectID": "getting-started.html#weekly-structure",
-    "href": "getting-started.html#weekly-structure",
-    "title": "Research tools lab",
-    "section": "Weekly structure",
-    "text": "Weekly structure\nEach week’s lab will specify the research task, the tools and workflow, an in-class activity, and the expected deliverable. Each weekly page also reserves separate homework reading and exercise sections."
-  },
-  {
-    "objectID": "getting-started.html#optional-background",
-    "href": "getting-started.html#optional-background",
-    "title": "Research tools lab",
-    "section": "Optional background",
-    "text": "Optional background\nStudents who need Python background can consult QuantEcon (n.d.) and Turrell (n.d.). Any optional programming exercises will be linked from the relevant weekly page when available."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Computational Economics",
-    "section": "",
-    "text": "The University of Tokyo · Graduate School of Economics\n\n\nFrom economic models to working algorithms. Learn the numerical methods and computational tools that turn research questions into reproducible results.\n\nView syllabus Weekly materials\nOctober 7, 2026 – January 27, 2027 · Wednesdays, Period 4\nInternational Academic Research Building, Seminar Room 514. See the course schedule for all class dates.",
-    "crumbs": [
-      "Syllabus",
-      "Overview"
-    ]
-  },
-  {
-    "objectID": "index.html#syllabus",
-    "href": "index.html#syllabus",
-    "title": "Computational Economics",
-    "section": "Syllabus",
-    "text": "Syllabus\n\nOpening: course introduction and Markov decision processes.\nCore methods: computational methods and machine-learning foundations.\nResearch literature: recent computational economics using machine-learning methods.\n\nEach week combines lectures, a research-tools lab, readings, and exercises. Topics may span several sessions.\nView the full syllabus and schedule",
-    "crumbs": [
-      "Syllabus",
-      "Overview"
-    ]
-  },
-  {
-    "objectID": "index.html#course-updates",
-    "href": "index.html#course-updates",
-    "title": "Computational Economics",
-    "section": "Course updates",
-    "text": "Course updates\nBrowse the weekly pages for lecture handouts and session details. Lab activities, readings, exercises, and deadlines will be announced on these pages.",
-    "crumbs": [
-      "Syllabus",
-      "Overview"
-    ]
-  },
-  {
-    "objectID": "index.html#open-the-course-on-your-phone",
-    "href": "index.html#open-the-course-on-your-phone",
-    "title": "Computational Economics",
-    "section": "Open the course on your phone",
-    "text": "Open the course on your phone\nScan this code to open the course homepage.\n\n\n\nQR code linking to the course homepage\n\n\nDownload QR code",
-    "crumbs": [
-      "Syllabus",
-      "Overview"
-    ]
-  },
-  {
-    "objectID": "syllabus.html",
-    "href": "syllabus.html",
-    "title": "Course syllabus",
-    "section": "",
-    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
-  },
-  {
-    "objectID": "syllabus.html#course-direction",
-    "href": "syllabus.html#course-direction",
-    "title": "Course syllabus",
-    "section": "",
-    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
-  },
-  {
-    "objectID": "syllabus.html#topic-decks-and-weekly-sessions",
-    "href": "syllabus.html#topic-decks-and-weekly-sessions",
-    "title": "Course syllabus",
-    "section": "Topic decks and weekly sessions",
-    "text": "Topic decks and weekly sessions\nThe schedule is organized by week, while slides are organized by topic. A topic may occupy part of a week or continue across several weeks. Classes meet on Wednesdays in Period 4, International Academic Research Building, Seminar Room 514."
-  },
-  {
-    "objectID": "syllabus.html#schedule-20262027",
-    "href": "syllabus.html#schedule-20262027",
-    "title": "Course syllabus",
-    "section": "Schedule · 2026–2027",
-    "text": "Schedule · 2026–2027\n\n\n\nWeek\nLecture\nLab\nHomework\n\n\n\n\nWeek 1 (Oct 7)\nCourse introduction and Markov decision processes\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 2 (Oct 14)\nDynamic programming methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 3 (Oct 21)\nEuler equations and endogenous grids\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 4 (Oct 28)\nApproximating expectations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 5 (Nov 4)\nSimulation-based methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 6 (Nov 11)\nFunction approximation and neural networks\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 7 (Nov 18)\nMachine-learning foundations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 8 (Dec 9)\nReinforcement learning\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 9 (Dec 16)\nHeterogeneous-agent applications\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 10 (Dec 23)\nMethods synthesis\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 11 (Jan 6)\nML computational literature — reading session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 12 (Jan 13)\nML computational literature — methods session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 13 (Jan 20)\nML computational literature — discussion session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 14 (Jan 27)\nCourse session — details to be announced\nResearch-tools lab — to be announced\nReading + exercise — to be announced\n\n\n\nWeek 1 introduces the course and Markov decision processes. Week 10 brings together the computational methods covered in earlier sessions."
-  },
-  {
-    "objectID": "syllabus.html#weekly-homework",
-    "href": "syllabus.html#weekly-homework",
-    "title": "Course syllabus",
-    "section": "Weekly homework",
-    "text": "Weekly homework\nWeekly pages will provide readings, exercises, submission instructions, and deadlines."
-  },
-  {
-    "objectID": "syllabus.html#assessment",
-    "href": "syllabus.html#assessment",
-    "title": "Course syllabus",
-    "section": "Assessment",
-    "text": "Assessment\nThe replication project accounts for 100% of the grade. Work in teams of 2–3 and replicate as many papers as there are team members.\nSee the project guide and reading resources."
-  },
-  {
-    "objectID": "project.html",
-    "href": "project.html",
-    "title": "Final project",
-    "section": "",
-    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
-  },
-  {
-    "objectID": "project.html#replicate-a-research-paper",
-    "href": "project.html#replicate-a-research-paper",
-    "title": "Final project",
-    "section": "",
-    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
-  },
-  {
-    "objectID": "project.html#agree-on-a-paper",
-    "href": "project.html#agree-on-a-paper",
-    "title": "Final project",
-    "section": "Agree on a paper",
-    "text": "Agree on a paper\nEmail Yaolang Zhong with the paper you intend to replicate. If proposing your own paper, attach it and arrange a brief discussion before proceeding.\nSuggested project readings will be announced on the course website."
-  },
-  {
-    "objectID": "project.html#submission-checklist",
-    "href": "project.html#submission-checklist",
-    "title": "Final project",
-    "section": "Submission checklist",
-    "text": "Submission checklist\nSubmit a compressed project folder containing:\n\nThe paper being replicated.\nA concise technical note covering the research question, equations, data, and computational approach.\nA README explaining the workflow and mapping code to the paper’s algorithms or results.\nA requirements.txt describing the Python dependencies.\nSupporting scripts and a notebook or main.py that reproduces the replication output."
-  },
-  {
-    "objectID": "project.html#evaluation",
-    "href": "project.html#evaluation",
-    "title": "Final project",
-    "section": "Evaluation",
-    "text": "Evaluation\nTechnical understanding and runnable, readable code matter more than exact numerical agreement with the paper. Explain what you reproduced, how you tested it, and any remaining differences."
-  },
-  {
-    "objectID": "project.html#deadline-and-submission",
-    "href": "project.html#deadline-and-submission",
-    "title": "Final project",
-    "section": "Deadline and submission",
-    "text": "Deadline and submission\nThe deadline and submission channel for the next offering will be confirmed by the instructor.\nStudent projects will be shared only with the approval of the student group, as described in the existing course policy."
-  },
-  {
-    "objectID": "topics.html",
-    "href": "topics.html",
-    "title": "Supplementary topics",
-    "section": "",
-    "text": "These handouts support work across several weeks.",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
-  },
-  {
-    "objectID": "topics.html#discretizing-ar1",
-    "href": "topics.html#discretizing-ar1",
-    "title": "Supplementary topics",
-    "section": "Discretizing Ar1",
-    "text": "Discretizing Ar1\nDownload handout (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
-  },
-  {
-    "objectID": "topics.html#git",
-    "href": "topics.html#git",
-    "title": "Supplementary topics",
-    "section": "Git",
-    "text": "Git\nDownload handout (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
-  },
-  {
-    "objectID": "topics.html#google-ai",
-    "href": "topics.html#google-ai",
-    "title": "Supplementary topics",
-    "section": "Google Ai",
-    "text": "Google Ai\nDownload handout (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html",
-    "href": "weeks/week_01/index.html",
-    "title": "Course introduction and Markov decision processes",
-    "section": "",
-    "text": "The opening session introduces the course and Markov decision processes.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html#learning-objectives",
-    "href": "weeks/week_01/index.html#learning-objectives",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html#lecture-materials",
-    "href": "weeks/week_01/index.html#lecture-materials",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nCourse Introduction\nSlides will be available here.\n\n\nIntroduction to Markov Decision Processes\nDownload Introduction to Markov Decision Processes (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html#lab-materials",
-    "href": "weeks/week_01/index.html#lab-materials",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html#lab-plan",
-    "href": "weeks/week_01/index.html#lab-plan",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html#homework-reading",
-    "href": "weeks/week_01/index.html#homework-reading",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html#homework-exercises",
-    "href": "weeks/week_01/index.html#homework-exercises",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_03/index.html",
-    "href": "weeks/week_03/index.html",
-    "title": "Euler equations and endogenous grids",
-    "section": "",
-    "text": "Use the lecture materials below to explore this week’s topics.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 3 (Oct 21)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_03/index.html#learning-objectives",
-    "href": "weeks/week_03/index.html#learning-objectives",
-    "title": "Euler equations and endogenous grids",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 3 (Oct 21)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_03/index.html#lecture-materials",
-    "href": "weeks/week_03/index.html#lecture-materials",
-    "title": "Euler equations and endogenous grids",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nKKT Conditions, Euler Equation and Time Iteration\nDownload KKT Conditions, Euler Equation and Time Iteration (PDF)\n\n\nEndogenous Grid Method\nDownload Endogenous Grid Method (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 3 (Oct 21)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_03/index.html#lab-materials",
-    "href": "weeks/week_03/index.html#lab-materials",
-    "title": "Euler equations and endogenous grids",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 3 (Oct 21)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_03/index.html#lab-plan",
-    "href": "weeks/week_03/index.html#lab-plan",
-    "title": "Euler equations and endogenous grids",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 3 (Oct 21)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_03/index.html#homework-reading",
-    "href": "weeks/week_03/index.html#homework-reading",
-    "title": "Euler equations and endogenous grids",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 3 (Oct 21)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_03/index.html#homework-exercises",
-    "href": "weeks/week_03/index.html#homework-exercises",
-    "title": "Euler equations and endogenous grids",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 3 (Oct 21)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_05/index.html",
-    "href": "weeks/week_05/index.html",
-    "title": "Simulation-based methods",
-    "section": "",
-    "text": "Use the lecture materials below to explore this week’s topics.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 5 (Nov 4)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_05/index.html#learning-objectives",
-    "href": "weeks/week_05/index.html#learning-objectives",
-    "title": "Simulation-based methods",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 5 (Nov 4)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_05/index.html#lecture-materials",
-    "href": "weeks/week_05/index.html#lecture-materials",
-    "title": "Simulation-based methods",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nSimulation-Based Learning\nDownload Simulation-Based Learning (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 5 (Nov 4)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_05/index.html#lab-materials",
-    "href": "weeks/week_05/index.html#lab-materials",
-    "title": "Simulation-based methods",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 5 (Nov 4)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_05/index.html#lab-plan",
-    "href": "weeks/week_05/index.html#lab-plan",
-    "title": "Simulation-based methods",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 5 (Nov 4)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_05/index.html#homework-reading",
-    "href": "weeks/week_05/index.html#homework-reading",
-    "title": "Simulation-based methods",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 5 (Nov 4)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_05/index.html#homework-exercises",
-    "href": "weeks/week_05/index.html#homework-exercises",
-    "title": "Simulation-based methods",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 5 (Nov 4)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_07/index.html",
-    "href": "weeks/week_07/index.html",
-    "title": "Machine-learning foundations",
-    "section": "",
-    "text": "Use the lecture materials below to explore this week’s topics.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 7 (Nov 18)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_07/index.html#learning-objectives",
-    "href": "weeks/week_07/index.html#learning-objectives",
-    "title": "Machine-learning foundations",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 7 (Nov 18)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_07/index.html#lecture-materials",
-    "href": "weeks/week_07/index.html#lecture-materials",
-    "title": "Machine-learning foundations",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nSupervised Learning\nDownload Supervised Learning (PDF)\n\n\nUnsupervised Learning\nDownload Unsupervised Learning (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 7 (Nov 18)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_07/index.html#lab-materials",
-    "href": "weeks/week_07/index.html#lab-materials",
-    "title": "Machine-learning foundations",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 7 (Nov 18)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_07/index.html#lab-plan",
-    "href": "weeks/week_07/index.html#lab-plan",
-    "title": "Machine-learning foundations",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 7 (Nov 18)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_07/index.html#homework-reading",
-    "href": "weeks/week_07/index.html#homework-reading",
-    "title": "Machine-learning foundations",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 7 (Nov 18)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_07/index.html#homework-exercises",
-    "href": "weeks/week_07/index.html#homework-exercises",
-    "title": "Machine-learning foundations",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 7 (Nov 18)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_09/index.html",
-    "href": "weeks/week_09/index.html",
-    "title": "Heterogeneous-agent applications",
-    "section": "",
-    "text": "Use the lecture materials below to explore this week’s topics.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 9 (Dec 16)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_09/index.html#learning-objectives",
-    "href": "weeks/week_09/index.html#learning-objectives",
-    "title": "Heterogeneous-agent applications",
-    "section": "Learning objectives",
-    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 9 (Dec 16)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_09/index.html#lecture-materials",
-    "href": "weeks/week_09/index.html#lecture-materials",
-    "title": "Heterogeneous-agent applications",
-    "section": "Lecture materials",
-    "text": "Lecture materials\n\nHeterogeneous-Agent Models\nDownload Heterogeneous-Agent Models (PDF)",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 9 (Dec 16)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_09/index.html#lab-materials",
-    "href": "weeks/week_09/index.html#lab-materials",
-    "title": "Heterogeneous-agent applications",
-    "section": "Lab materials",
-    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 9 (Dec 16)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_09/index.html#lab-plan",
-    "href": "weeks/week_09/index.html#lab-plan",
-    "title": "Heterogeneous-agent applications",
-    "section": "Lab plan",
-    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 9 (Dec 16)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_09/index.html#homework-reading",
-    "href": "weeks/week_09/index.html#homework-reading",
-    "title": "Heterogeneous-agent applications",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 9 (Dec 16)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_09/index.html#homework-exercises",
-    "href": "weeks/week_09/index.html#homework-exercises",
-    "title": "Heterogeneous-agent applications",
-    "section": "Homework: exercises",
-    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 9 (Dec 16)"
+      "Week 13 (Jan 20)"
     ]
   },
   {
@@ -1362,87 +224,1305 @@
     ]
   },
   {
-    "objectID": "weeks/week_13/index.html",
-    "href": "weeks/week_13/index.html",
-    "title": "ML computational literature — discussion session",
+    "objectID": "weeks/week_09/index.html",
+    "href": "weeks/week_09/index.html",
+    "title": "Heterogeneous-agent applications",
     "section": "",
-    "text": "This session explores computational-economics research using machine-learning methods. Readings and discussion questions will be announced here.",
+    "text": "Use the lecture materials below to explore this week’s topics.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 13 (Jan 20)"
+      "Week 9 (Dec 16)"
     ]
   },
   {
-    "objectID": "weeks/week_13/index.html#learning-objectives",
-    "href": "weeks/week_13/index.html#learning-objectives",
-    "title": "ML computational literature — discussion session",
+    "objectID": "weeks/week_09/index.html#learning-objectives",
+    "href": "weeks/week_09/index.html#learning-objectives",
+    "title": "Heterogeneous-agent applications",
     "section": "Learning objectives",
     "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 13 (Jan 20)"
+      "Week 9 (Dec 16)"
     ]
   },
   {
-    "objectID": "weeks/week_13/index.html#lecture-materials",
-    "href": "weeks/week_13/index.html#lecture-materials",
-    "title": "ML computational literature — discussion session",
+    "objectID": "weeks/week_09/index.html#lecture-materials",
+    "href": "weeks/week_09/index.html#lecture-materials",
+    "title": "Heterogeneous-agent applications",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nML Computational Literature\nSlides will be available here.",
+    "text": "Lecture materials\n\nHeterogeneous-Agent Models\nDownload Heterogeneous-Agent Models (PDF)",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 13 (Jan 20)"
+      "Week 9 (Dec 16)"
     ]
   },
   {
-    "objectID": "weeks/week_13/index.html#lab-materials",
-    "href": "weeks/week_13/index.html#lab-materials",
-    "title": "ML computational literature — discussion session",
+    "objectID": "weeks/week_09/index.html#lab-materials",
+    "href": "weeks/week_09/index.html#lab-materials",
+    "title": "Heterogeneous-agent applications",
     "section": "Lab materials",
     "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 13 (Jan 20)"
+      "Week 9 (Dec 16)"
     ]
   },
   {
-    "objectID": "weeks/week_13/index.html#lab-plan",
-    "href": "weeks/week_13/index.html#lab-plan",
-    "title": "ML computational literature — discussion session",
+    "objectID": "weeks/week_09/index.html#lab-plan",
+    "href": "weeks/week_09/index.html#lab-plan",
+    "title": "Heterogeneous-agent applications",
     "section": "Lab plan",
     "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 13 (Jan 20)"
+      "Week 9 (Dec 16)"
     ]
   },
   {
-    "objectID": "weeks/week_13/index.html#homework-reading",
-    "href": "weeks/week_13/index.html#homework-reading",
-    "title": "ML computational literature — discussion session",
+    "objectID": "weeks/week_09/index.html#homework-reading",
+    "href": "weeks/week_09/index.html#homework-reading",
+    "title": "Heterogeneous-agent applications",
     "section": "Homework: reading",
     "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 13 (Jan 20)"
+      "Week 9 (Dec 16)"
     ]
   },
   {
-    "objectID": "weeks/week_13/index.html#homework-exercises",
-    "href": "weeks/week_13/index.html#homework-exercises",
-    "title": "ML computational literature — discussion session",
+    "objectID": "weeks/week_09/index.html#homework-exercises",
+    "href": "weeks/week_09/index.html#homework-exercises",
+    "title": "Heterogeneous-agent applications",
     "section": "Homework: exercises",
     "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
-      "Week 13 (Jan 20)"
+      "Week 9 (Dec 16)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_07/index.html",
+    "href": "weeks/week_07/index.html",
+    "title": "Machine-learning foundations",
+    "section": "",
+    "text": "Use the lecture materials below to explore this week’s topics.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 7 (Nov 18)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_07/index.html#learning-objectives",
+    "href": "weeks/week_07/index.html#learning-objectives",
+    "title": "Machine-learning foundations",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 7 (Nov 18)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_07/index.html#lecture-materials",
+    "href": "weeks/week_07/index.html#lecture-materials",
+    "title": "Machine-learning foundations",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nSupervised Learning\nDownload Supervised Learning (PDF)\n\n\nUnsupervised Learning\nDownload Unsupervised Learning (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 7 (Nov 18)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_07/index.html#lab-materials",
+    "href": "weeks/week_07/index.html#lab-materials",
+    "title": "Machine-learning foundations",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 7 (Nov 18)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_07/index.html#lab-plan",
+    "href": "weeks/week_07/index.html#lab-plan",
+    "title": "Machine-learning foundations",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 7 (Nov 18)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_07/index.html#homework-reading",
+    "href": "weeks/week_07/index.html#homework-reading",
+    "title": "Machine-learning foundations",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 7 (Nov 18)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_07/index.html#homework-exercises",
+    "href": "weeks/week_07/index.html#homework-exercises",
+    "title": "Machine-learning foundations",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 7 (Nov 18)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_05/index.html",
+    "href": "weeks/week_05/index.html",
+    "title": "Simulation-based methods",
+    "section": "",
+    "text": "Use the lecture materials below to explore this week’s topics.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 5 (Nov 4)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_05/index.html#learning-objectives",
+    "href": "weeks/week_05/index.html#learning-objectives",
+    "title": "Simulation-based methods",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 5 (Nov 4)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_05/index.html#lecture-materials",
+    "href": "weeks/week_05/index.html#lecture-materials",
+    "title": "Simulation-based methods",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nSimulation-Based Learning\nDownload Simulation-Based Learning (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 5 (Nov 4)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_05/index.html#lab-materials",
+    "href": "weeks/week_05/index.html#lab-materials",
+    "title": "Simulation-based methods",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 5 (Nov 4)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_05/index.html#lab-plan",
+    "href": "weeks/week_05/index.html#lab-plan",
+    "title": "Simulation-based methods",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 5 (Nov 4)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_05/index.html#homework-reading",
+    "href": "weeks/week_05/index.html#homework-reading",
+    "title": "Simulation-based methods",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 5 (Nov 4)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_05/index.html#homework-exercises",
+    "href": "weeks/week_05/index.html#homework-exercises",
+    "title": "Simulation-based methods",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 5 (Nov 4)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_03/index.html",
+    "href": "weeks/week_03/index.html",
+    "title": "Euler equations and endogenous grids",
+    "section": "",
+    "text": "Use the lecture materials below to explore this week’s topics.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 3 (Oct 21)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_03/index.html#learning-objectives",
+    "href": "weeks/week_03/index.html#learning-objectives",
+    "title": "Euler equations and endogenous grids",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 3 (Oct 21)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_03/index.html#lecture-materials",
+    "href": "weeks/week_03/index.html#lecture-materials",
+    "title": "Euler equations and endogenous grids",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nKKT Conditions, Euler Equation and Time Iteration\nDownload KKT Conditions, Euler Equation and Time Iteration (PDF)\n\n\nEndogenous Grid Method\nDownload Endogenous Grid Method (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 3 (Oct 21)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_03/index.html#lab-materials",
+    "href": "weeks/week_03/index.html#lab-materials",
+    "title": "Euler equations and endogenous grids",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 3 (Oct 21)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_03/index.html#lab-plan",
+    "href": "weeks/week_03/index.html#lab-plan",
+    "title": "Euler equations and endogenous grids",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 3 (Oct 21)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_03/index.html#homework-reading",
+    "href": "weeks/week_03/index.html#homework-reading",
+    "title": "Euler equations and endogenous grids",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 3 (Oct 21)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_03/index.html#homework-exercises",
+    "href": "weeks/week_03/index.html#homework-exercises",
+    "title": "Euler equations and endogenous grids",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 3 (Oct 21)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_01/index.html",
+    "href": "weeks/week_01/index.html",
+    "title": "Course introduction and Markov decision processes",
+    "section": "",
+    "text": "The opening session introduces the course and Markov decision processes.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 1 (Oct 7)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_01/index.html#learning-objectives",
+    "href": "weeks/week_01/index.html#learning-objectives",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 1 (Oct 7)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_01/index.html#lecture-materials",
+    "href": "weeks/week_01/index.html#lecture-materials",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nCourse Introduction\nSlides will be available here.\n\n\nIntroduction to Markov Decision Processes\nDownload Introduction to Markov Decision Processes (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 1 (Oct 7)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_01/index.html#lab-materials",
+    "href": "weeks/week_01/index.html#lab-materials",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Lab materials",
+    "text": "Lab materials\nDownload Introduction to Git and GitHub (PDF)\nDownload Introduction to Python (PDF)\nDownload complete lab folder\n\nIntroduction to Python: Your First Notebook\nRead online Open in Colab Download notebook\nIn Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 1 (Oct 7)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_01/index.html#lab-plan",
+    "href": "weeks/week_01/index.html#lab-plan",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Lab plan",
+    "text": "Lab plan\nLearn the roles of Git, GitHub, Python, and VS Code. Practice saving project history, running a script and notebook, and checking a result. The guided Python notebook can be run online in Colab or locally in VS Code.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 1 (Oct 7)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_01/index.html#homework-reading",
+    "href": "weeks/week_01/index.html#homework-reading",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 1 (Oct 7)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_01/index.html#git-and-github",
+    "href": "weeks/week_01/index.html#git-and-github",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Git and GitHub",
+    "text": "Git and GitHub\n\nInstall Git and confirm that VS Code detects it, or check git --version.\nRegister for GitHub and complete account verification.\nCreate a folder named computational-economics, open it in VS Code, and initialize a Git repository there.\nAdd a README and the supplied .gitignore. Inspect and stage the intended files, then make your first commit.\nUse Publish to GitHub in VS Code to create and connect a remote repository. Choose its visibility deliberately and review the files before publishing.\nMake a second meaningful change, commit, and push. Open the GitHub URL and confirm that both commits appear.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 1 (Oct 7)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_01/index.html#python",
+    "href": "weeks/week_01/index.html#python",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Python",
+    "text": "Python\n\nInstall a supported Python 3 release and VS Code with Microsoft’s Python and Jupyter extensions.\nCopy temperature.py and temperature.ipynb from the starter folder into your project.\nCreate a project environment with Python: Create Environment, select its interpreter, and run the script.\nOpen the notebook, select the same environment as its kernel, and install ipykernel in that environment if prompted. Restart the kernel and run all cells.\nVerify that both files give 20.0 C = 68.0 F.\nChange the input from 20 to 25 degrees Celsius in both files. Predict the new result, then verify 25.0 C = 77.0 F.\nUpdate the README with your Python version, instructions for running the files, both results, and an explanation of the change. Commit and push your work.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 1 (Oct 7)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_01/index.html#completion-checklist",
+    "href": "weeks/week_01/index.html#completion-checklist",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Completion checklist",
+    "text": "Completion checklist\n\nGitHub repository URL and two visible commit identifiers/messages.\nA working .py file and .ipynb notebook that agree on the result.\nA README with the setup, run instructions, results, interpretation, and a check you performed yourself.\nThe local environment, caches, credentials, and private data are excluded from the repository.\n\nYou may use graphical interfaces. Be ready to explain the changes and verify the output yourself. Keep the repository link and completion evidence ready for the announced submission channel and deadline.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 1 (Oct 7)"
+    ]
+  },
+  {
+    "objectID": "topics.html",
+    "href": "topics.html",
+    "title": "Supplementary topics",
+    "section": "",
+    "text": "These handouts support work across several weeks.",
+    "crumbs": [
+      "Syllabus",
+      "Supplementary topics"
+    ]
+  },
+  {
+    "objectID": "topics.html#discretizing-ar1",
+    "href": "topics.html#discretizing-ar1",
+    "title": "Supplementary topics",
+    "section": "Discretizing Ar1",
+    "text": "Discretizing Ar1\nDownload handout (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Supplementary topics"
+    ]
+  },
+  {
+    "objectID": "topics.html#git",
+    "href": "topics.html#git",
+    "title": "Supplementary topics",
+    "section": "Git",
+    "text": "Git\nDownload handout (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Supplementary topics"
+    ]
+  },
+  {
+    "objectID": "topics.html#google-ai",
+    "href": "topics.html#google-ai",
+    "title": "Supplementary topics",
+    "section": "Google Ai",
+    "text": "Google Ai\nDownload handout (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Supplementary topics"
+    ]
+  },
+  {
+    "objectID": "project.html",
+    "href": "project.html",
+    "title": "Final project",
+    "section": "",
+    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
+  },
+  {
+    "objectID": "project.html#replicate-a-research-paper",
+    "href": "project.html#replicate-a-research-paper",
+    "title": "Final project",
+    "section": "",
+    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
+  },
+  {
+    "objectID": "project.html#agree-on-a-paper",
+    "href": "project.html#agree-on-a-paper",
+    "title": "Final project",
+    "section": "Agree on a paper",
+    "text": "Agree on a paper\nEmail Yaolang Zhong with the paper you intend to replicate. If proposing your own paper, attach it and arrange a brief discussion before proceeding.\nSuggested project readings will be announced on the course website."
+  },
+  {
+    "objectID": "project.html#submission-checklist",
+    "href": "project.html#submission-checklist",
+    "title": "Final project",
+    "section": "Submission checklist",
+    "text": "Submission checklist\nSubmit a compressed project folder containing:\n\nThe paper being replicated.\nA concise technical note covering the research question, equations, data, and computational approach.\nA README explaining the workflow and mapping code to the paper’s algorithms or results.\nA requirements.txt describing the Python dependencies.\nSupporting scripts and a notebook or main.py that reproduces the replication output."
+  },
+  {
+    "objectID": "project.html#evaluation",
+    "href": "project.html#evaluation",
+    "title": "Final project",
+    "section": "Evaluation",
+    "text": "Evaluation\nTechnical understanding and runnable, readable code matter more than exact numerical agreement with the paper. Explain what you reproduced, how you tested it, and any remaining differences."
+  },
+  {
+    "objectID": "project.html#deadline-and-submission",
+    "href": "project.html#deadline-and-submission",
+    "title": "Final project",
+    "section": "Deadline and submission",
+    "text": "Deadline and submission\nThe deadline and submission channel for the next offering will be confirmed by the instructor.\nStudent projects will be shared only with the approval of the student group, as described in the existing course policy."
+  },
+  {
+    "objectID": "syllabus.html",
+    "href": "syllabus.html",
+    "title": "Course syllabus",
+    "section": "",
+    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
+  },
+  {
+    "objectID": "syllabus.html#course-direction",
+    "href": "syllabus.html#course-direction",
+    "title": "Course syllabus",
+    "section": "",
+    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
+  },
+  {
+    "objectID": "syllabus.html#topic-decks-and-weekly-sessions",
+    "href": "syllabus.html#topic-decks-and-weekly-sessions",
+    "title": "Course syllabus",
+    "section": "Topic decks and weekly sessions",
+    "text": "Topic decks and weekly sessions\nThe schedule is organized by week, while slides are organized by topic. A topic may occupy part of a week or continue across several weeks. Classes meet on Wednesdays in Period 4, International Academic Research Building, Seminar Room 514."
+  },
+  {
+    "objectID": "syllabus.html#schedule-20262027",
+    "href": "syllabus.html#schedule-20262027",
+    "title": "Course syllabus",
+    "section": "Schedule · 2026–2027",
+    "text": "Schedule · 2026–2027\n\n\n\nWeek\nLecture\nLab\nHomework\n\n\n\n\nWeek 1 (Oct 7)\nCourse introduction and Markov decision processes\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 2 (Oct 14)\nDynamic programming methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 3 (Oct 21)\nEuler equations and endogenous grids\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 4 (Oct 28)\nApproximating expectations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 5 (Nov 4)\nSimulation-based methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 6 (Nov 11)\nFunction approximation and neural networks\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 7 (Nov 18)\nMachine-learning foundations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 8 (Dec 9)\nReinforcement learning\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 9 (Dec 16)\nHeterogeneous-agent applications\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 10 (Dec 23)\nMethods synthesis\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 11 (Jan 6)\nML computational literature — reading session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 12 (Jan 13)\nML computational literature — methods session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 13 (Jan 20)\nML computational literature — discussion session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 14 (Jan 27)\nCourse session — details to be announced\nResearch-tools lab — to be announced\nReading + exercise — to be announced\n\n\n\nWeek 1 introduces the course and Markov decision processes. Week 10 brings together the computational methods covered in earlier sessions."
+  },
+  {
+    "objectID": "syllabus.html#weekly-homework",
+    "href": "syllabus.html#weekly-homework",
+    "title": "Course syllabus",
+    "section": "Weekly homework",
+    "text": "Weekly homework\nWeekly pages will provide readings, exercises, submission instructions, and deadlines."
+  },
+  {
+    "objectID": "syllabus.html#assessment",
+    "href": "syllabus.html#assessment",
+    "title": "Course syllabus",
+    "section": "Assessment",
+    "text": "Assessment\nThe replication project accounts for 100% of the grade. Work in teams of 2–3 and replicate as many papers as there are team members.\nSee the project guide and reading resources."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Computational Economics",
+    "section": "",
+    "text": "The University of Tokyo · Graduate School of Economics\n\n\nFrom economic models to working algorithms. Learn the numerical methods and computational tools that turn research questions into reproducible results.\n\nView syllabus Weekly materials\nOctober 7, 2026 – January 27, 2027 · Wednesdays, Period 4\nInternational Academic Research Building, Seminar Room 514. See the course schedule for all class dates.",
+    "crumbs": [
+      "Syllabus",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#syllabus",
+    "href": "index.html#syllabus",
+    "title": "Computational Economics",
+    "section": "Syllabus",
+    "text": "Syllabus\n\nOpening: course introduction and Markov decision processes.\nCore methods: computational methods and machine-learning foundations.\nResearch literature: recent computational economics using machine-learning methods.\n\nEach week combines lectures, a research-tools lab, readings, and exercises. Topics may span several sessions.\nView the full syllabus and schedule",
+    "crumbs": [
+      "Syllabus",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#course-updates",
+    "href": "index.html#course-updates",
+    "title": "Computational Economics",
+    "section": "Course updates",
+    "text": "Course updates\nBrowse the weekly pages for lecture handouts and session details. Lab activities, readings, exercises, and deadlines will be announced on these pages.",
+    "crumbs": [
+      "Syllabus",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#open-the-course-on-your-phone",
+    "href": "index.html#open-the-course-on-your-phone",
+    "title": "Computational Economics",
+    "section": "Open the course on your phone",
+    "text": "Open the course on your phone\nScan this code to open the course homepage.\n\n\n\nQR code linking to the course homepage\n\n\nDownload QR code",
+    "crumbs": [
+      "Syllabus",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "getting-started.html",
+    "href": "getting-started.html",
+    "title": "Research tools lab",
+    "section": "",
+    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
+  },
+  {
+    "objectID": "getting-started.html#what-the-labs-are-for",
+    "href": "getting-started.html#what-the-labs-are-for",
+    "title": "Research tools lab",
+    "section": "",
+    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
+  },
+  {
+    "objectID": "getting-started.html#before-the-first-lab",
+    "href": "getting-started.html#before-the-first-lab",
+    "title": "Research tools lab",
+    "section": "Before the first lab",
+    "text": "Before the first lab\nSetup instructions and tool requirements will be announced before the first lab."
+  },
+  {
+    "objectID": "getting-started.html#weekly-structure",
+    "href": "getting-started.html#weekly-structure",
+    "title": "Research tools lab",
+    "section": "Weekly structure",
+    "text": "Weekly structure\nEach week’s lab will specify the research task, the tools and workflow, an in-class activity, and the expected deliverable. Each weekly page also reserves separate homework reading and exercise sections."
+  },
+  {
+    "objectID": "getting-started.html#optional-background",
+    "href": "getting-started.html#optional-background",
+    "title": "Research tools lab",
+    "section": "Optional background",
+    "text": "Optional background\nStudents who need Python background can consult QuantEcon (n.d.) and Turrell (n.d.). Any optional programming exercises will be linked from the relevant weekly page when available."
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
+  },
+  {
+    "objectID": "references.html#weekly-readings",
+    "href": "references.html#weekly-readings",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
+  },
+  {
+    "objectID": "references.html#ml-computational-economics-literature",
+    "href": "references.html#ml-computational-economics-literature",
+    "title": "Readings and references",
+    "section": "ML computational-economics literature",
+    "text": "ML computational-economics literature\nThe final part of the course explores recent computational-economics research using machine-learning methods. Readings will be announced on the weekly pages.\nFor each paper, we will examine:\n\nThe economic question and model.\nThe computational bottleneck and proposed ML method.\nBenchmarks, accuracy checks, and limitations.\nAvailable code/data and a possible small replication exercise.\nReading questions and a topic-based slide deck."
+  },
+  {
+    "objectID": "references.html#research-agent-and-tool-readings",
+    "href": "references.html#research-agent-and-tool-readings",
+    "title": "Readings and references",
+    "section": "Research-agent and tool readings",
+    "text": "Research-agent and tool readings\nLab readings cover research workflows using LLM agents, Git, and related tools. Each weekly page will link to the relevant documentation and activities."
+  },
+  {
+    "objectID": "references.html#prof.-feng-zhigangs-course-materials",
+    "href": "references.html#prof.-feng-zhigangs-course-materials",
+    "title": "Readings and references",
+    "section": "Prof. Feng Zhigang’s course materials",
+    "text": "Prof. Feng Zhigang’s course materials\nProf. Feng Zhigang — personal website\n\nFoundations of Macroeconomics (ECON 282E, Fall 2026): dynamic economic models, heterogeneous agents, numerical methods, and computational tools. (Feng 2026b)\nAI for Economic Research: Dynamic Models, Language, and Agents: deep learning, reinforcement learning, heterogeneous-agent models, language models, retrieval, and research agents. (Feng 2026a)\n\nExplore the original course websites for lecture slides, syllabi, and lab resources. When using these materials, cite the relevant course and slide deck by Prof. Feng Zhigang."
+  },
+  {
+    "objectID": "references.html#further-reading",
+    "href": "references.html#further-reading",
+    "title": "Readings and references",
+    "section": "Further reading",
+    "text": "Further reading\nExplore the textbooks, courses, and online resources below for further study. Python tutorials provide optional programming support.\n\n\nBertsekas, Dimitri P. n.d. Reinforcement Learning: Books and Course Materials. https://web.mit.edu/dimitrib/www/RLbook.html.\n\n\nFeng, Zhigang. 2026a. AI for Economic Research: Dynamic Models, Language, and Agents. Course materials. https://vonzhg.github.io/AI-ECON-2026/index.html.\n\n\nFeng, Zhigang. 2026b. Foundations of Macroeconomics: ECON 282E, Fall 2026. Course materials, University of California, Riverside. https://vonzhg.github.io/Macro-2026Fall/index.html.\n\n\nFeng, Zhigang. n.d.-a. Workshop Notes on AI and Machine Learning for Economists. https://sites.google.com/site/zfeng202/notes.\n\n\nFeng, Zhigang. n.d.-b. Zhigang Feng: Personal Website. Accessed October 5, 2026. https://sites.google.com/site/zfeng202/.\n\n\nFernández-Villaverde, Jesús. n.d. Teaching: Computation and Macroeconomics. https://www.sas.upenn.edu/~jesusfv/teaching.html.\n\n\nJames, Gareth, Daniela Witten, Trevor Hastie, Robert Tibshirani, and Jonathan Taylor. 2023. An Introduction to Statistical Learning: With Applications in Python. Springer. https://www.statlearning.com/.\n\n\nJudd, Kenneth L. 1998. Numerical Methods in Economics. MIT Press.\n\n\nQuantEcon. n.d.-a. Python Programming for Economics and Finance. https://python-programming.quantecon.org/intro.html.\n\n\nQuantEcon. n.d.-b. QuantEcon: Economics and Computational Tools. https://quantecon.org/.\n\n\nTurrell, Arthur. n.d. Coding for Economists. https://aeturrell.github.io/coding-for-economists/intro.html."
+  },
+  {
+    "objectID": "registration.html",
+    "href": "registration.html",
+    "title": "Registration and student portal",
+    "section": "",
+    "text": "Register with your email address and a one-time code. Sign in without a password. Use the same email when returning to the course portal."
+  },
+  {
+    "objectID": "registration.html#staying-signed-in",
+    "href": "registration.html#staying-signed-in",
+    "title": "Registration and student portal",
+    "section": "Staying signed in",
+    "text": "Staying signed in\nWith Keep me signed in selected, the browser will remember your session and refresh it automatically. On a shared computer, uncheck it and sign out when finished. Clearing browser storage, signing out, or an expired or revoked session may require a new email code. Private browsing may not retain your session."
+  },
+  {
+    "objectID": "registration.html#about-your-registration",
+    "href": "registration.html#about-your-registration",
+    "title": "Registration and student portal",
+    "section": "About your registration",
+    "text": "About your registration\nCourse registration will ask for your name, programme/year, and verified email. Your details will be stored privately for course administration. Please also complete the university’s official enrollment process.\nData-handling information will be available when registration opens. For course questions, contact Yaolang Zhong."
+  },
+  {
+    "objectID": "weeks/week_02/index.html",
+    "href": "weeks/week_02/index.html",
+    "title": "Dynamic programming methods",
+    "section": "",
+    "text": "Use the lecture materials below to explore this week’s topics.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 2 (Oct 14)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_02/index.html#learning-objectives",
+    "href": "weeks/week_02/index.html#learning-objectives",
+    "title": "Dynamic programming methods",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 2 (Oct 14)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_02/index.html#lecture-materials",
+    "href": "weeks/week_02/index.html#lecture-materials",
+    "title": "Dynamic programming methods",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nBellman Equation and Value Function Iteration\nDownload Bellman Equation and Value Function Iteration (PDF)\n\n\nPolicy Function Iteration\nDownload Policy Function Iteration (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 2 (Oct 14)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_02/index.html#lab-materials",
+    "href": "weeks/week_02/index.html#lab-materials",
+    "title": "Dynamic programming methods",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 2 (Oct 14)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_02/index.html#lab-plan",
+    "href": "weeks/week_02/index.html#lab-plan",
+    "title": "Dynamic programming methods",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 2 (Oct 14)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_02/index.html#homework-reading",
+    "href": "weeks/week_02/index.html#homework-reading",
+    "title": "Dynamic programming methods",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 2 (Oct 14)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_02/index.html#homework-exercises",
+    "href": "weeks/week_02/index.html#homework-exercises",
+    "title": "Dynamic programming methods",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 2 (Oct 14)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_04/index.html",
+    "href": "weeks/week_04/index.html",
+    "title": "Approximating expectations",
+    "section": "",
+    "text": "Use the lecture materials below to explore this week’s topics.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 4 (Oct 28)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_04/index.html#learning-objectives",
+    "href": "weeks/week_04/index.html#learning-objectives",
+    "title": "Approximating expectations",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 4 (Oct 28)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_04/index.html#lecture-materials",
+    "href": "weeks/week_04/index.html#lecture-materials",
+    "title": "Approximating expectations",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nApproximating Expectations\nDownload Approximating Expectations (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 4 (Oct 28)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_04/index.html#lab-materials",
+    "href": "weeks/week_04/index.html#lab-materials",
+    "title": "Approximating expectations",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 4 (Oct 28)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_04/index.html#lab-plan",
+    "href": "weeks/week_04/index.html#lab-plan",
+    "title": "Approximating expectations",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 4 (Oct 28)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_04/index.html#homework-reading",
+    "href": "weeks/week_04/index.html#homework-reading",
+    "title": "Approximating expectations",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 4 (Oct 28)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_04/index.html#homework-exercises",
+    "href": "weeks/week_04/index.html#homework-exercises",
+    "title": "Approximating expectations",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 4 (Oct 28)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_06/index.html",
+    "href": "weeks/week_06/index.html",
+    "title": "Function approximation and neural networks",
+    "section": "",
+    "text": "Use the lecture materials below to explore this week’s topics.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 6 (Nov 11)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_06/index.html#learning-objectives",
+    "href": "weeks/week_06/index.html#learning-objectives",
+    "title": "Function approximation and neural networks",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 6 (Nov 11)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_06/index.html#lecture-materials",
+    "href": "weeks/week_06/index.html#lecture-materials",
+    "title": "Function approximation and neural networks",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nParameterization and Neural Networks\nDownload Parameterization and Neural Networks (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 6 (Nov 11)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_06/index.html#lab-materials",
+    "href": "weeks/week_06/index.html#lab-materials",
+    "title": "Function approximation and neural networks",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 6 (Nov 11)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_06/index.html#lab-plan",
+    "href": "weeks/week_06/index.html#lab-plan",
+    "title": "Function approximation and neural networks",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 6 (Nov 11)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_06/index.html#homework-reading",
+    "href": "weeks/week_06/index.html#homework-reading",
+    "title": "Function approximation and neural networks",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 6 (Nov 11)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_06/index.html#homework-exercises",
+    "href": "weeks/week_06/index.html#homework-exercises",
+    "title": "Function approximation and neural networks",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 6 (Nov 11)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_08/index.html",
+    "href": "weeks/week_08/index.html",
+    "title": "Reinforcement learning",
+    "section": "",
+    "text": "Use the lecture materials below to explore this week’s topics.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 8 (Dec 9)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_08/index.html#learning-objectives",
+    "href": "weeks/week_08/index.html#learning-objectives",
+    "title": "Reinforcement learning",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 8 (Dec 9)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_08/index.html#lecture-materials",
+    "href": "weeks/week_08/index.html#lecture-materials",
+    "title": "Reinforcement learning",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nReinforcement Learning\nDownload Reinforcement Learning (PDF)",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 8 (Dec 9)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_08/index.html#lab-materials",
+    "href": "weeks/week_08/index.html#lab-materials",
+    "title": "Reinforcement learning",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 8 (Dec 9)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_08/index.html#lab-plan",
+    "href": "weeks/week_08/index.html#lab-plan",
+    "title": "Reinforcement learning",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 8 (Dec 9)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_08/index.html#homework-reading",
+    "href": "weeks/week_08/index.html#homework-reading",
+    "title": "Reinforcement learning",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 8 (Dec 9)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_08/index.html#homework-exercises",
+    "href": "weeks/week_08/index.html#homework-exercises",
+    "title": "Reinforcement learning",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 8 (Dec 9)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_10/index.html",
+    "href": "weeks/week_10/index.html",
+    "title": "Methods synthesis",
+    "section": "",
+    "text": "Use the lecture materials below to explore this week’s topics.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 10 (Dec 23)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_10/index.html#learning-objectives",
+    "href": "weeks/week_10/index.html#learning-objectives",
+    "title": "Methods synthesis",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 10 (Dec 23)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_10/index.html#lecture-materials",
+    "href": "weeks/week_10/index.html#lecture-materials",
+    "title": "Methods synthesis",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nMethods Synthesis\nSlides will be available here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 10 (Dec 23)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_10/index.html#lab-materials",
+    "href": "weeks/week_10/index.html#lab-materials",
+    "title": "Methods synthesis",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 10 (Dec 23)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_10/index.html#lab-plan",
+    "href": "weeks/week_10/index.html#lab-plan",
+    "title": "Methods synthesis",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 10 (Dec 23)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_10/index.html#homework-reading",
+    "href": "weeks/week_10/index.html#homework-reading",
+    "title": "Methods synthesis",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 10 (Dec 23)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_10/index.html#homework-exercises",
+    "href": "weeks/week_10/index.html#homework-exercises",
+    "title": "Methods synthesis",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 10 (Dec 23)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_12/index.html",
+    "href": "weeks/week_12/index.html",
+    "title": "ML computational literature — methods session",
+    "section": "",
+    "text": "This session explores computational-economics research using machine-learning methods. Readings and discussion questions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 12 (Jan 13)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_12/index.html#learning-objectives",
+    "href": "weeks/week_12/index.html#learning-objectives",
+    "title": "ML computational literature — methods session",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 12 (Jan 13)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_12/index.html#lecture-materials",
+    "href": "weeks/week_12/index.html#lecture-materials",
+    "title": "ML computational literature — methods session",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nML Computational Literature\nSlides will be available here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 12 (Jan 13)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_12/index.html#lab-materials",
+    "href": "weeks/week_12/index.html#lab-materials",
+    "title": "ML computational literature — methods session",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 12 (Jan 13)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_12/index.html#lab-plan",
+    "href": "weeks/week_12/index.html#lab-plan",
+    "title": "ML computational literature — methods session",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 12 (Jan 13)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_12/index.html#homework-reading",
+    "href": "weeks/week_12/index.html#homework-reading",
+    "title": "ML computational literature — methods session",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 12 (Jan 13)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_12/index.html#homework-exercises",
+    "href": "weeks/week_12/index.html#homework-exercises",
+    "title": "ML computational literature — methods session",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 12 (Jan 13)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_14/index.html",
+    "href": "weeks/week_14/index.html",
+    "title": "Course session",
+    "section": "",
+    "text": "Session materials and activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 14 (Jan 27)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_14/index.html#learning-objectives",
+    "href": "weeks/week_14/index.html#learning-objectives",
+    "title": "Course session",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nLearning objectives will be announced with the session materials.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 14 (Jan 27)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_14/index.html#lecture-materials",
+    "href": "weeks/week_14/index.html#lecture-materials",
+    "title": "Course session",
+    "section": "Lecture materials",
+    "text": "Lecture materials\n\nCourse Session\nSlides will be available here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 14 (Jan 27)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_14/index.html#lab-materials",
+    "href": "weeks/week_14/index.html#lab-materials",
+    "title": "Course session",
+    "section": "Lab materials",
+    "text": "Lab materials\nLab slides will be available here.\nLab activities will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 14 (Jan 27)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_14/index.html#lab-plan",
+    "href": "weeks/week_14/index.html#lab-plan",
+    "title": "Course session",
+    "section": "Lab plan",
+    "text": "Lab plan\nExplore LLM-agent tools for research, Git, and reproducible workflows. Activities and preparation instructions will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 14 (Jan 27)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_14/index.html#homework-reading",
+    "href": "weeks/week_14/index.html#homework-reading",
+    "title": "Course session",
+    "section": "Homework: reading",
+    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 14 (Jan 27)"
+    ]
+  },
+  {
+    "objectID": "weeks/week_14/index.html#homework-exercises",
+    "href": "weeks/week_14/index.html#homework-exercises",
+    "title": "Course session",
+    "section": "Homework: exercises",
+    "text": "Homework: exercises\nExercises, submission instructions, and deadlines will be announced here.",
+    "crumbs": [
+      "Syllabus",
+      "Weekly materials",
+      "Week 14 (Jan 27)"
     ]
   }
 ]

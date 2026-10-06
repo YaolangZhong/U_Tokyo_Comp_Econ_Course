@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Course introduction and Markov decision processes – Computational Economics</title>
+<title>Introduction to Python: Your First Notebook – Computational Economics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,28 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<link href="../../weeks/week_02/index.html" rel="next">
-<link href="../../index.html" rel="prev">
-<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-68b58ecc4236a074dbb50a29a668ce9d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<script src="../../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap-68b58ecc4236a074dbb50a29a668ce9d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -76,6 +109,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -86,7 +148,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Computational Economics</span>
     </a>
   </div>
@@ -97,21 +159,21 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../syllabus.html"> 
+    <a class="nav-link" href="../../../../syllabus.html"> 
 <span class="menu-text">Syllabus</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../project.html"> 
+    <a class="nav-link" href="../../../../project.html"> 
 <span class="menu-text">Final project</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../references.html"> 
+    <a class="nav-link" href="../../../../references.html"> 
 <span class="menu-text">References</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../registration.html"> 
+    <a class="nav-link" href="../../../../registration.html"> 
 <span class="menu-text">Register / Sign in</span></a>
   </li>  
   <li class="nav-item compact">
@@ -130,7 +192,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../weeks/week_01/index.html">Weekly materials</a></li><li class="breadcrumb-item"><a href="../../weeks/week_01/index.html">Week 1 (Oct 7)</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Introduction to Python: Your First Notebook</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -144,7 +206,7 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
@@ -159,85 +221,85 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_01/index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../../../weeks/week_01/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 1 (Oct 7)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_02/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_02/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 2 (Oct 14)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_03/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_03/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 3 (Oct 21)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_04/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_04/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 4 (Oct 28)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_05/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_05/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 5 (Nov 4)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_06/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_06/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 6 (Nov 11)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_07/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_07/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 7 (Nov 18)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_08/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_08/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 8 (Dec 9)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_09/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_09/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 9 (Dec 16)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_10/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_10/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 10 (Dec 23)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_11/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_11/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 11 (Jan 6)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_12/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_12/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 12 (Jan 13)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_13/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_13/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 13 (Jan 20)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../weeks/week_14/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../weeks/week_14/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 14 (Jan 27)</span></a>
   </div>
 </li>
@@ -245,7 +307,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../topics.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../topics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Supplementary topics</span></a>
   </div>
 </li>
@@ -259,27 +321,22 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning objectives</a></li>
-  <li><a href="#lecture-materials" id="toc-lecture-materials" class="nav-link" data-scroll-target="#lecture-materials">Lecture materials</a></li>
-  <li><a href="#lab-materials" id="toc-lab-materials" class="nav-link" data-scroll-target="#lab-materials">Lab materials</a></li>
-  <li><a href="#lab-plan" id="toc-lab-plan" class="nav-link" data-scroll-target="#lab-plan">Lab plan</a></li>
-  <li><a href="#homework-reading" id="toc-homework-reading" class="nav-link" data-scroll-target="#homework-reading">Homework: reading</a></li>
-  <li><a href="#homework-set-up-a-project-with-git-and-python" id="toc-homework-set-up-a-project-with-git-and-python" class="nav-link" data-scroll-target="#homework-set-up-a-project-with-git-and-python">Homework: Set up a project with Git and Python</a>
-  <ul class="collapse">
-  <li><a href="#git-and-github" id="toc-git-and-github" class="nav-link" data-scroll-target="#git-and-github">Git and GitHub</a></li>
-  <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
-  <li><a href="#completion-checklist" id="toc-completion-checklist" class="nav-link" data-scroll-target="#completion-checklist">Completion checklist</a></li>
-  </ul></li>
+  <li><a href="#open-and-save-your-copy" id="toc-open-and-save-your-copy" class="nav-link active" data-scroll-target="#open-and-save-your-copy">1. Open and save your copy</a></li>
+  <li><a href="#predict-the-answer" id="toc-predict-the-answer" class="nav-link" data-scroll-target="#predict-the-answer">2. Predict the answer</a></li>
+  <li><a href="#run-the-calculation" id="toc-run-the-calculation" class="nav-link" data-scroll-target="#run-the-calculation">3. Run the calculation</a></li>
+  <li><a href="#change-one-input" id="toc-change-one-input" class="nav-link" data-scroll-target="#change-one-input">4. Change one input</a></li>
+  <li><a href="#check-two-familiar-temperatures" id="toc-check-two-familiar-temperatures" class="nav-link" data-scroll-target="#check-two-familiar-temperatures">5. Check two familiar temperatures</a></li>
+  <li><a href="#start-fresh-and-reproduce-the-result" id="toc-start-fresh-and-reproduce-the-result" class="nav-link" data-scroll-target="#start-fresh-and-reproduce-the-result">6. Start fresh and reproduce the result</a></li>
+  <li><a href="#explain-and-save-your-work" id="toc-explain-and-save-your-work" class="nav-link" data-scroll-target="#explain-and-save-your-work">7. Explain and save your work</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../weeks/week_01/index.html">Weekly materials</a></li><li class="breadcrumb-item"><a href="../../weeks/week_01/index.html">Week 1 (Oct 7)</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Course introduction and Markov decision processes</h1>
-<p class="subtitle lead">Week 1 (Oct 7) · 2026</p>
+<h1 class="title">Introduction to Python: Your First Notebook</h1>
 </div>
 
 
@@ -296,76 +353,73 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>The opening session introduces the course and Markov decision processes.</p>
-<section id="learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="learning-objectives">Learning objectives</h2>
-<p>Learning objectives will be announced with the session materials.</p>
+<p>Convert a temperature, change an input, and check the result. This short exercise introduces code cells, text cells, and the order in which a notebook runs.</p>
+<p><strong>Time:</strong> about 10–15 minutes. <strong>Requirements:</strong> Python 3; no extra packages or data files.</p>
+<p><a href="https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/temperature.ipynb">Open in Colab</a> · <a href="https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_01/index.html">Course website</a></p>
+<section id="open-and-save-your-copy" class="level2">
+<h2 class="anchored" data-anchor-id="open-and-save-your-copy">1. Open and save your copy</h2>
+<p><strong>In Colab:</strong> sign in with your Google account. Choose <strong>File → Save a copy in Drive</strong> before editing, then connect to a Python runtime. A standard CPU runtime is sufficient. Use the play button beside a code cell, or press <strong>Shift+Enter</strong>, to run it. Your copy is separate from the course original.</p>
+<p><strong>In VS Code:</strong> open this notebook and select your Python environment as its kernel. Install notebook support if prompted.</p>
+<p>Text cells explain the exercise. Code cells execute Python and display their output underneath. Run the following cells in order.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Python:"</span>, sys.version.split()[<span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="lecture-materials" class="level2">
-<h2 class="anchored" data-anchor-id="lecture-materials">Lecture materials</h2>
-<section id="course-introduction" class="level3">
-<h3 class="anchored" data-anchor-id="course-introduction">Course Introduction</h3>
-<p>Slides will be available here.</p>
+<section id="predict-the-answer" class="level2">
+<h2 class="anchored" data-anchor-id="predict-the-answer">2. Predict the answer</h2>
+<p>We convert degrees Celsius, <span class="math inline">\(C\)</span>, to degrees Fahrenheit, <span class="math inline">\(F\)</span>, using</p>
+<p><span class="math display">\[F = C \times \frac{9}{5} + 32.\]</span></p>
+<p>For <span class="math inline">\(C=20\)</span>, predict the result before running the code. The input cell below stores the temperature under the name <code>celsius</code>. It does not print anything by itself.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>celsius <span class="op">=</span> <span class="fl">20.0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="introduction-to-markov-decision-processes" class="level3">
-<h3 class="anchored" data-anchor-id="introduction-to-markov-decision-processes">Introduction to Markov Decision Processes</h3>
-<p><a href="../../downloads/week_01/lecture/Introduction_to_Markov_Decision_Processes.pdf" class="btn btn-outline-primary">Download Introduction to Markov Decision Processes (PDF)</a></p>
+<section id="run-the-calculation" class="level2">
+<h2 class="anchored" data-anchor-id="run-the-calculation">3. Run the calculation</h2>
+<p>This cell uses the current value of <code>celsius</code>, calculates <code>fahrenheit</code>, and prints both values to one decimal place. The baseline result is <strong>20.0 C = 68.0 F</strong>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fahrenheit <span class="op">=</span> celsius <span class="op">*</span> <span class="dv">9</span> <span class="op">/</span> <span class="dv">5</span> <span class="op">+</span> <span class="dv">32</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>celsius<span class="sc">:.1f}</span><span class="ss"> C = </span><span class="sc">{</span>fahrenheit<span class="sc">:.1f}</span><span class="ss"> F"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-</section>
-<section id="lab-materials" class="level2">
-<h2 class="anchored" data-anchor-id="lab-materials">Lab materials</h2>
-<p><a href="../../downloads/week_01/lab/Introduction_to_Git_and_GitHub.pdf" class="btn btn-outline-primary">Download Introduction to Git and GitHub (PDF)</a></p>
-<p><a href="../../downloads/week_01/lab/Introduction_to_Python.pdf" class="btn btn-outline-primary">Download Introduction to Python (PDF)</a></p>
-<p><a href="../../downloads/week_01/week_01-lab.zip" class="btn btn-primary">Download complete lab folder</a></p>
-<section id="introduction-to-python-your-first-notebook" class="level3">
-<h3 class="anchored" data-anchor-id="introduction-to-python-your-first-notebook">Introduction to Python: Your First Notebook</h3>
-<p><a href="../../weeks/week_01/lab/starter/temperature.html" class="btn btn-outline-primary">Read online</a> <a href="https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/temperature.ipynb" class="btn btn-primary">Open in Colab</a> <a href="../../downloads/week_01/lab/starter/temperature.ipynb" class="btn btn-outline-primary">Download notebook</a></p>
-<p>In Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project.</p>
-</section>
-</section>
-<section id="lab-plan" class="level2">
-<h2 class="anchored" data-anchor-id="lab-plan">Lab plan</h2>
-<p>Learn the roles of Git, GitHub, Python, and VS Code. Practice saving project history, running a script and notebook, and checking a result. The guided Python notebook can be run online in Colab or locally in VS Code.</p>
-</section>
-<section id="homework-reading" class="level2">
-<h2 class="anchored" data-anchor-id="homework-reading">Homework: reading</h2>
-<p>Readings, guiding questions, and deadlines will be announced here.</p>
-</section>
-<section id="homework-set-up-a-project-with-git-and-python" class="level1">
-<h1>Homework: Set up a project with Git and Python</h1>
-<p>Use the two lab decks, <a href="https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/slides/pdf/Introduction_to_Git_and_GitHub.pdf">Introduction to Git and GitHub</a> and <a href="https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/slides/pdf/Introduction_to_Python.pdf">Introduction to Python</a>. Start from the <a href="https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/tree/main/weeks/week_01/lab/starter/">exercise files</a>.</p>
-<section id="git-and-github" class="level2">
-<h2 class="anchored" data-anchor-id="git-and-github">Git and GitHub</h2>
+<section id="change-one-input" class="level2">
+<h2 class="anchored" data-anchor-id="change-one-input">4. Change one input</h2>
 <ol type="1">
-<li>Install Git and confirm that VS Code detects it, or check <code>git --version</code>.</li>
-<li>Register for GitHub and complete account verification.</li>
-<li>Create a folder named <code>computational-economics</code>, open it in VS Code, and initialize a Git repository there.</li>
-<li>Add a README and the supplied <code>.gitignore</code>. Inspect and stage the intended files, then make your first commit.</li>
-<li>Use <strong>Publish to GitHub</strong> in VS Code to create and connect a remote repository. Choose its visibility deliberately and review the files before publishing.</li>
-<li>Make a second meaningful change, commit, and push. Open the GitHub URL and confirm that both commits appear.</li>
+<li>Change <code>20.0</code> to <code>25.0</code> in the input cell above.</li>
+<li>Predict the new result on paper.</li>
+<li>Run the input cell again, then run the calculation cell.</li>
+<li>Check that the result is <strong>25.0 C = 77.0 F</strong>.</li>
 </ol>
+<p>Editing a cell changes the saved code. Running it updates the values held by the runtime. An output displayed below a cell can come from an earlier run.</p>
+<p>Try editing the input without running it, then running only the calculation cell. Explain why the result still uses the old input. Finish by running the input and calculation cells in order.</p>
 </section>
-<section id="python" class="level2">
-<h2 class="anchored" data-anchor-id="python">Python</h2>
-<ol type="1">
-<li>Install a supported Python 3 release and VS Code with Microsoft’s Python and Jupyter extensions.</li>
-<li>Copy <code>temperature.py</code> and <code>temperature.ipynb</code> from the starter folder into your project.</li>
-<li>Create a project environment with <strong>Python: Create Environment</strong>, select its interpreter, and run the script.</li>
-<li>Open the notebook, select the same environment as its kernel, and install <code>ipykernel</code> in that environment if prompted. Restart the kernel and run all cells.</li>
-<li>Verify that both files give <strong>20.0 C = 68.0 F</strong>.</li>
-<li>Change the input from 20 to 25 degrees Celsius in both files. Predict the new result, then verify <strong>25.0 C = 77.0 F</strong>.</li>
-<li>Update the README with your Python version, instructions for running the files, both results, and an explanation of the change. Commit and push your work.</li>
-</ol>
+<section id="check-two-familiar-temperatures" class="level2">
+<h2 class="anchored" data-anchor-id="check-two-familiar-temperatures">5. Check two familiar temperatures</h2>
+<p>The following cell checks the same conversion rule at 0 and 100 degrees Celsius. An <code>assert</code> checks whether a statement is true; if it is false, Python reports an error.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="dv">0</span> <span class="op">*</span> <span class="dv">9</span> <span class="op">/</span> <span class="dv">5</span> <span class="op">+</span> <span class="dv">32</span> <span class="op">==</span> <span class="dv">32</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="dv">100</span> <span class="op">*</span> <span class="dv">9</span> <span class="op">/</span> <span class="dv">5</span> <span class="op">+</span> <span class="dv">32</span> <span class="op">==</span> <span class="dv">212</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Both checks passed: 0 C = 32 F and 100 C = 212 F."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="completion-checklist" class="level2">
-<h2 class="anchored" data-anchor-id="completion-checklist">Completion checklist</h2>
+<section id="start-fresh-and-reproduce-the-result" class="level2">
+<h2 class="anchored" data-anchor-id="start-fresh-and-reproduce-the-result">6. Start fresh and reproduce the result</h2>
+<p>Restart the notebook runtime/kernel to clear stored variables, then run all cells from the top. In Colab, use the <strong>Runtime</strong> menu to restart the session and run all cells. In VS Code, restart the kernel and choose <strong>Run All</strong>.</p>
+<p>With the input changed to 25, the calculation should still give <strong>77 degrees Fahrenheit</strong>. If the result changes after a restart, inspect the cell order and whether all required inputs are in the saved code.</p>
+</section>
+<section id="explain-and-save-your-work" class="level2">
+<h2 class="anchored" data-anchor-id="explain-and-save-your-work">7. Explain and save your work</h2>
+<p>Edit the text cell below to record your answers. Save your notebook. In Colab, use <strong>File → Download → Download .ipynb</strong> to take a copy back to your local project folder. Add the completed notebook to your Git repository with your script and README, then commit and push.</p>
+<p>Colab lets you practice online. For the setup homework, also run <code>temperature.py</code> and this notebook in your local Python environment and compare their results.</p>
+<section id="my-observations" class="level3">
+<h3 class="anchored" data-anchor-id="my-observations">My observations</h3>
 <ul>
-<li>GitHub repository URL and two visible commit identifiers/messages.</li>
-<li>A working <code>.py</code> file and <code>.ipynb</code> notebook that agree on the result.</li>
-<li>A README with the setup, run instructions, results, interpretation, and a check you performed yourself.</li>
-<li>The local environment, caches, credentials, and private data are excluded from the repository.</li>
+<li>My prediction for 25 degrees Celsius:</li>
+<li>The result I obtained:</li>
+<li>Why editing an input cell alone did not update the calculation:</li>
+<li>What happened after restarting and running all cells:</li>
+<li>How the notebook result compares with the Python script:</li>
 </ul>
-<p>You may use graphical interfaces. Be ready to explain the changes and verify the output yourself. Keep the repository link and completion evidence ready for the announced submission channel and deadline.</p>
+</section>
+<section id="further-reading" class="level3">
+<h3 class="anchored" data-anchor-id="further-reading">Further reading</h3>
+<ul>
+<li><a href="https://research.google.com/colaboratory/faq.html">Google Colab: Frequently Asked Questions</a></li>
+<li><a href="https://code.visualstudio.com/docs/datascience/jupyter-notebooks">Microsoft: Jupyter Notebooks in VS Code</a></li>
+</ul>
 
 
 </section>
@@ -777,18 +831,6 @@ ul.task-list li input[type="checkbox"] {
     }
   });
   </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="../../index.html" class="pagination-link" aria-label="Overview">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="../../weeks/week_02/index.html" class="pagination-link" aria-label="Week 2 (Oct 14)">
-        <span class="nav-page-text">Week 2 (Oct 14)</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
