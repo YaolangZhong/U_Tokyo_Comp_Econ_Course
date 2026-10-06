@@ -122,59 +122,15 @@ Exchange commits with your partner through a shared repository.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{One Small Change, One Clear Commit}
-\courseexample{Case: Improve the README}\par
+\begin{frame}{Homework: Your First Git Repository}
 \begin{enumerate}
-\item Open the project folder in VS Code and inspect its Source Control panel.
-\item Add a sentence explaining how to run the program.
-\item Inspect the \term{diff}: the comparison between old and new content.
-\item Follow the new instructions to check that they work.
-\item Stage the intended files and commit with a useful message, such as ``Add instructions for running the program.''
+\item Download and install \term{Git} on your computer.
+\item Create a working folder and \term{initialize} it as a Git \term{repository}.
+\item Create a \term{README} describing your project. Edit it, \term{stage} the changes, and make a \term{commit} with a short message.
+\item Register for a \term{GitHub} account.
+\item Create an empty GitHub repository, then link it to your local folder by adding its address as a \term{remote}. Keep it empty when creating it online; your README is already in the local repository.
+\item \term{Push} your commit to the GitHub repository. Open its webpage and check that your README and commit message appear.
 \end{enumerate}
-\medskip
-Before committing, check that the diff contains only the changes you intended.
-\end{frame}
-
-\begin{frame}{Choose What Belongs in the Repository}
-\small
-\begin{tabularx}{\linewidth}{@{}YY@{}}
-\toprule\textbf{Track and share} & \textbf{Keep outside the shared history}\\\midrule
-Source code: \texttt{.py} and \texttt{.ipynb} & Local environment: \texttt{.venv/}\\
-A README explaining how to run the work & Caches and notebook checkpoints\\
-A list of required packages & Passwords, access tokens, and private data\\
-Small, relevant results when requested & Large generated files that can be recreated\\\bottomrule
-\end{tabularx}
-\par\medskip
-\begin{itemize}
-\item A \term{.gitignore} file lists patterns for files Git should leave untracked.
-\item Ignoring an already tracked file does not remove it from the repository or its history.
-\item Check notebook outputs as well as code before pushing. A public repository makes its tracked content accessible to others.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Connect Your Folder to GitHub}
-\small
-\begin{enumerate}
-\item Install Git, register for GitHub, and open your project folder in VS Code.
-\item In Source Control, initialize the folder as a Git repository. Set your commit name and email when prompted.
-\item Add a README and a \texttt{.gitignore}; inspect, stage, and commit them.
-\item Choose \textbf{Publish to GitHub}, sign in through the browser, choose a repository name and visibility, and check which files are included.
-\item Open the resulting GitHub URL and confirm that your commit and files appear.
-\end{enumerate}
-\medskip
-This workflow creates the GitHub repository and connects the local folder. If you already have a GitHub repository, clone it first and work in that local folder.
-\end{frame}
-
-\begin{frame}{Practice: Is the Change on GitHub Yet?}
-\courseexample{Case: A Missing README Update}\par
-You edit and save the README, make a local commit, and open GitHub. The website still shows the old README.
-\begin{itemize}
-\item Which steps have completed: save, stage, commit, push?
-\item What would you check before trying again?
-\item After pushing, where can you verify the commit message and changed file?
-\end{itemize}
-\medskip
-Repeat with a second small edit. Explain the difference between the local history and the remote history to a partner.
 \end{frame}
 
 % BEGIN MANAGED READINGS: lab_git
