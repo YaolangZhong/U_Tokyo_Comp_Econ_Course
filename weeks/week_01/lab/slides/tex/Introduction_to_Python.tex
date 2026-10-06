@@ -1,123 +1,78 @@
 \newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
 \input{\CourseTemplatePath course_preamble.tex}
 \title[Introduction to Python]{Lab: Introduction to Python}
-\subtitle{Development tools, scripts, notebooks, and reproducible results}
+\subtitle{Python, development tools, environments, and notebooks}
 \begin{document}
 \makecoursetitle
 
-\begin{frame}{Run a Small Program and Check Its Result}
-\courseexample{Example: Convert a Temperature}\par
-You want to convert a temperature from Celsius to Fahrenheit.
+\begin{frame}{What Is Python?}
+\term{Python} is a programming language: a way to write instructions that a computer can carry out. We use it to work with data, perform calculations, and automate tasks.
+\par\medskip
 \begin{itemize}
-\item What information does the program need as input?
-\item Can you run the same calculation from a script and a notebook?
-\item If the input changes from 20 to 25 degrees Celsius, what should happen to the output?
+\item You write instructions as \term{code}, saved in files that you can edit and share.
+\item The \term{Python interpreter} is the software that executes those instructions. Installing Python gives you an interpreter.
+\item A \term{script} is a text file containing Python code, usually with the extension \texttt{.py}. Running the script asks the interpreter to execute it.
 \end{itemize}
 \medskip
-Today's goal: run, explain, modify, and verify a small program in both file formats.
+Writing code and running code are separate steps: editing a file does not execute it.
 \end{frame}
 
-\begin{frame}{What Is an IDE?}
+\begin{frame}{Where Do You Write Code?}
+An \term{integrated development environment (IDE)} brings together tools for writing, running, and inspecting code in one workspace.
+\par\medskip
 \begin{itemize}
-\item An \term{integrated development environment (IDE)} brings together tools for writing, running, and debugging programs.
-\item Typical features include a file explorer, code editor, completion suggestions, debugger, terminal, and version-control tools.
-\item We use \href{https://code.visualstudio.com/}{VS Code}: an extensible editor that provides an integrated Python workspace through its Python and Jupyter extensions.
-\item Other options include \href{https://www.jetbrains.com/pycharm/}{PyCharm}, a Python-focused IDE, and \href{https://cursor.com/}{Cursor}, another code editor.
+\item Open a project folder, browse its files, edit code, and see the output when you run it.
+\item We use \href{https://code.visualstudio.com/}{\term{VS Code}}. Its Python and Jupyter extensions add support for Python scripts and notebooks.
+\item Other options include \href{https://www.jetbrains.com/pycharm/}{PyCharm} and \href{https://cursor.com/}{Cursor}.
+\item Select a \term{Python interpreter} for the project. The editor is your workspace; the selected interpreter runs your code.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Python Versions and Environments}
+\begin{itemize}
+\item A \term{Python version} identifies a release of the language and interpreter. Projects may need a particular release to work with their code and tools.
+\item A project's \term{environment} is its Python setup: the interpreter it uses and the packages installed for it.
+\item A \term{virtual environment} gives a project its own set of installed packages. Changing one project's setup can then leave other projects' setups alone.
+\item When creating an environment, choose the Python interpreter it will use. In VS Code, select that environment when running the project.
 \end{itemize}
 \medskip
-The editor helps you work with code; a separately selected Python interpreter executes it.
+To reproduce someone else's work, check both their Python version and their package versions.
 \end{frame}
 
-\begin{frame}{Find Your Way around VS Code}
-\begin{tabularx}{\linewidth}{@{}lY@{}}
-\toprule\textbf{Part of the interface} & \textbf{What you use it for}\\\midrule
-Explorer & Open the project folder and find its files\\
-Editor & Read and edit a script or notebook\\
-Terminal & Run commands and inspect their output\\
-Run and Debug & Execute code and inspect it step by step\\
-Source Control & Review changes and create Git commits\\
-Extensions & Add Python and Jupyter support\\\bottomrule
-\end{tabularx}
+\begin{frame}{What Is a Package?}
+A \term{package} provides reusable code written by others, so you can use existing tools without writing everything yourself.
 \par\medskip
-Open the project folder first. Then open a file and select its Python interpreter or notebook kernel.
-\end{frame}
-
-\begin{frame}{Know Which Tool Does the Work}
-\small
-\begin{tabularx}{\linewidth}{@{}lY@{}}
-\toprule\textbf{Tool or component} & \textbf{Role}\\\midrule
-Python & The language in which we express the calculation\\
-Interpreter & The program that executes Python code\\
-VS Code & An editor for files, projects, and notebooks\\
-Package & Additional reusable code, such as NumPy or pandas\\
-Environment & A project-specific Python setup and installed packages\\
-Notebook kernel & The running process that executes notebook cells\\\bottomrule
-\end{tabularx}
-\par\medskip
-Installing an editor does not install every interpreter or package. Check which Python your editor and notebook are using.
-\end{frame}
-
-\begin{frame}{Two File Formats, One Calculation}
-\begin{tabularx}{\linewidth}{@{}YY@{}}
-\toprule\textbf{Script: \texttt{.py}} & \textbf{Notebook: \texttt{.ipynb}}\\\midrule
-Plain-text Python source & A document with code cells, text, and saved outputs\\
-Run the file from the beginning & Run cells through a selected kernel\\
-Useful for repeatable tasks & Useful for explanations and exploration\\
-Check the printed result & Restart the kernel and run all cells to verify\\\bottomrule
-\end{tabularx}
-\par\medskip
-Use the supplied \texttt{temperature.py} and \texttt{temperature.ipynb}. Both should produce the same converted temperature.
-\end{frame}
-
-\begin{frame}{Understand the Input, Calculation, and Output}
-\courseexample{Example: Celsius to Fahrenheit}\par
-\[F=\frac95 C+32.\]
 \begin{itemize}
-\item \textbf{Input:} a temperature \(C\) in degrees Celsius.
-\item \textbf{Calculation:} multiply by \(9/5\), then add 32.
-\item \textbf{Output:} the corresponding temperature \(F\) in degrees Fahrenheit.
-\item \textbf{Check:} \(20\times9/5+32=68\). At \(25\) degrees Celsius, the result should be \(77\) degrees Fahrenheit.
+\item Common tools include \term{NumPy} for numerical arrays, \term{pandas} for data tables, and \term{Matplotlib} for plots.
+\item \term{Install} a package into the environment where you will run your code. \term{pip} is a tool for installing Python packages.
+\item \term{Import} makes a package's tools available to your code. Installing and importing are separate steps.
+\item Packages have versions too. A project's \term{dependencies} are the packages it needs; a file such as \texttt{requirements.txt} can list them and their versions.
 \end{itemize}
-\medskip
-The starter uses Python's standard library; no additional calculation package is required.
 \end{frame}
 
-\begin{frame}{Set Up and Run the Script}
+\begin{frame}{What Is a Notebook?}
+A \term{Jupyter notebook} is a document that combines explanations, executable code, and results. It is saved as an \texttt{.ipynb} file.
+\par\medskip
+\begin{itemize}
+\item \term{Text cells} contain instructions, notes, and equations. \term{Code cells} contain Python instructions that you can run one cell at a time.
+\item A \term{kernel} is the running program that executes the cells. For Python, it uses a Python interpreter and its environment.
+\item The kernel remembers values between cell runs. Run cells from top to bottom so later cells receive the inputs they need.
+\item You can open a notebook in VS Code or use an online notebook service such as Google Colab.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Exercise: Open the Notebook in Colab}
+\term{Google Colab} lets you edit notebooks in your browser and run Python on a computer provided by Google. You can start this exercise without installing Python locally.
+\par\medskip
+\href{https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/temperature.ipynb}{\textbf{Open the course notebook in Colab}}
+\par\medskip
 \begin{enumerate}
-\item Install a supported Python 3 release, VS Code, and Microsoft's Python and Jupyter extensions.
-\item Open your \texttt{computational-economics} folder in VS Code. Copy the starter files into it.
-\item Use \textbf{Python: Create Environment} to create a \texttt{.venv} environment, then select its interpreter.
-\item Open \texttt{temperature.py} and choose \textbf{Run Python File in Terminal}.
-\item Check the displayed interpreter path, Python version, and result: 20.0 C = 68.0 F.
+\item Sign in with your Google account and save your own copy in Drive.
+\item Connect to a \term{runtime}: the computer session that runs your notebook. A standard CPU runtime is sufficient.
+\item Read the notebook instructions and run its cells in order. The first code cell displays the Python version being used.
+\item Complete the exercises: change an input, rerun the relevant cells, and record your observations.
+\item Restart the runtime and run all cells. Save your completed notebook and download the \texttt{.ipynb} file to keep with your project.
 \end{enumerate}
-\medskip
-Follow the linked setup guide for your operating system. The terminal displays commands and their output; the selected interpreter executes the script.
-\end{frame}
-
-\begin{frame}{Run a Notebook from a Fresh Kernel}
-\begin{enumerate}
-\item Open \texttt{temperature.ipynb} and select the Python environment you created.
-\item Install notebook execution support, such as \texttt{ipykernel}, in that environment when prompted.
-\item Read the explanation and run the cells in order.
-\item Restart the kernel, run all cells, and check that the result is still 68 degrees Fahrenheit.
-\end{enumerate}
-\medskip
-\courseexample{Example: An Old Output Can Be Misleading}\par
-A notebook can display a result saved during an earlier run. A fresh kernel clears stored variables; running all cells checks whether the saved code can recreate the result.
-\end{frame}
-
-\begin{frame}{Read the Error and Check the Setup}
-\small
-\begin{tabularx}{\linewidth}{@{}lY@{}}
-\toprule\textbf{What you observe} & \textbf{First check}\\\midrule
-Python is not found & Installation and the interpreter selected in VS Code\\
-A package cannot be imported & Whether it is installed in that interpreter's environment\\
-A notebook variable is undefined & Cell order; restart and run all cells\\
-A file cannot be found & The project folder and the file path\\
-The script runs but the answer is wrong & Inputs, calculation, units, and expected result\\\bottomrule
-\end{tabularx}
-\par\medskip
-When asking for help, include the exact error, the relevant code, your operating system, and the selected interpreter. Check one possible cause at a time.
 \end{frame}
 
 % BEGIN MANAGED READINGS: lab_python
@@ -135,11 +90,20 @@ When asking for help, include the exact error, the relevant code, your operating
 \item \href{https://code.visualstudio.com/docs/python/python-tutorial}{Getting Started with Python in VS Code}
 \item \href{https://code.visualstudio.com/docs/datascience/jupyter-notebooks}{Jupyter Notebooks in VS Code}
 \end{itemize}}
+\end{frame}
+\begin{frame}{References and Further Reading}
 \coursereading{3}
-  {Python Software Foundation, Python.org. [Webpage]}
+  {Python Software Foundation, Python.org and Python Documentation. [Webpages]}
   {https://www.python.org/}
   {\begin{itemize}
 \item \href{https://www.python.org/downloads/}{Download Python}
+\item \href{https://docs.python.org/3/tutorial/venv.html}{Virtual Environments and Packages}
+\end{itemize}}
+\coursereading{4}
+  {Google, Colaboratory. [Online notebook service]}
+  {https://colab.research.google.com/}
+  {\begin{itemize}
+\item \href{https://research.google.com/colaboratory/faq.html}{Frequently Asked Questions}
 \end{itemize}}
 \end{frame}
 % END MANAGED READINGS: lab_python
