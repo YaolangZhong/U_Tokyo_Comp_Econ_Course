@@ -9,7 +9,7 @@
 https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/
 ```
 
-[Weekly materials](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/syllabus.html) · [Research tools labs](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/getting-started.html) · [References](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/references.html) · [Register / Sign in](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/registration.html)
+[Weekly materials](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/syllabus.html) · [Research tools labs](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/getting-started.html) · [References](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/references.html)
 
 <a href="https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/"><img src="assets/course-qr.png" width="180" alt="Scan this QR code to open the course website"></a>
 
@@ -25,7 +25,7 @@ Materials are organized by **week**, while slide decks are named by **topic**, a
 
 Start with the course website for the current schedule, handouts, and announcements. This repository provides lecture slides, lab materials, readings, and exercises.
 
-Visit the weekly pages for materials and assignment announcements. Registration opens soon. Course materials are freely accessible.
+Visit the weekly pages for materials and assignment announcements. Course materials are freely accessible.
 
 ## External course references
 
