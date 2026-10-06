@@ -5,17 +5,17 @@
 \begin{document}
 \makecoursetitle
 
-\begin{frame}{Three Examples}
+\begin{frame}{Three Cases}
 \begin{itemize}
-\item \courseexample{Example: Keep earlier versions}\\
+\item \courseexample{Case: Keep earlier versions}\\
 You keep revising a file but worry that saving your latest edits will erase useful earlier work. Soon you have \texttt{v1}, \texttt{v2}, \texttt{v3}, \ldots\ What changed, and which version should you use?\\
 \textbf{With Git:} record versions in one project and revisit earlier work.
 \medskip
-\item \courseexample{Example: Work with others}\\
+\item \courseexample{Case: Work with others}\\
 You and a partner edit the same project. You exchange files and explain each change in messages or meetings, then try to combine your edits without losing either person's work.\\
 \textbf{With Git:} compare changes, see who made them, and merge contributions.
 \medskip
-\item \courseexample{Example: Build on an existing project}\\
+\item \courseexample{Case: Build on an existing project}\\
 You find a useful project online and want to try it or adapt it. After downloading a copy, its author releases improvements. How do you bring those updates into your own copy?\\
 \textbf{With Git:} clone the repository and fetch later updates to integrate.
 \end{itemize}
@@ -24,18 +24,22 @@ You find a useful project online and want to try it or adapt it. After downloadi
 \begin{frame}{What Is Git?}
 \term{Git} is a distributed version-control system: software that records changes to project files over time, so you can compare versions, recover earlier work, and combine contributions.
 \par\medskip
-``Distributed'' means that each full clone contains the repository's history, allowing you to record and inspect changes locally, even offline.
+\begin{itemize}
+\item A \term{repository} stores the project's recorded versions and the information needed to manage them.
+\item You edit files in a working folder and record selected changes as \term{commits}: snapshots with an author and a message explaining the change.
+\item ``Distributed'' means that each full clone contains the repository's history. You can record and inspect changes locally, even offline.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What Is GitHub?}
+\term{GitHub} is an online platform that hosts Git repositories and provides tools for sharing projects and collaborating on them.
 \par\medskip
-\small
-\begin{tabularx}{\linewidth}{@{}lYY@{}}
-\toprule & \textbf{Git} & \textbf{GitHub}\\\midrule
-What is it? & Version-control software & A service that hosts Git repositories\\
-Where? & Your computer & An online account\\
-What does it do? & Records and compares commits & Shares code and supports collaboration\\
-When needed? & While working locally, including offline & When publishing or exchanging changes\\\bottomrule
-\end{tabularx}
-\par\medskip
-A \term{repository} combines project files with Git's history and metadata. A \term{remote} is a configured connection to another repository, often on GitHub.
+\begin{itemize}
+\item Upload a repository to make its files and history available to collaborators, or publish it for anyone to access.
+\item Browse changes, discuss tasks through issues, and review proposed contributions through pull requests.
+\item Connect your local repository to the hosted one through a \term{remote}: a named connection to another repository.
+\item Exchange changes with that remote, or \term{clone} an existing repository to start working with a local copy.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{From an Edit to a Shared Version}
@@ -61,7 +65,7 @@ A \term{repository} combines project files with Git's history and metadata. A \t
 \end{frame}
 
 \begin{frame}{One Small Change, One Clear Commit}
-\courseexample{Example: Improve the README}\par
+\courseexample{Case: Improve the README}\par
 \begin{enumerate}
 \item Open the project folder in VS Code and inspect its Source Control panel.
 \item Add a sentence explaining how to run the program.
@@ -104,7 +108,7 @@ This workflow creates the GitHub repository and connects the local folder. If yo
 \end{frame}
 
 \begin{frame}{Practice: Is the Change on GitHub Yet?}
-\courseexample{Example: A Missing README Update}\par
+\courseexample{Case: A Missing README Update}\par
 You edit and save the README, make a local commit, and open GitHub. The website still shows the old README.
 \begin{itemize}
 \item Which steps have completed: save, stage, commit, push?
