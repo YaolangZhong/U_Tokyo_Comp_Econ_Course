@@ -21,14 +21,50 @@ You find a useful project online and want to try it or adapt it. After downloadi
 \end{itemize}
 \end{frame}
 
-\begin{frame}{What Is Git?}
-\term{Git} is a distributed version-control system: software that records changes to project files over time, so you can compare versions, recover earlier work, and combine contributions.
+\begin{frame}{Git: Start with a Working Folder}
+\term{Git} is software you install on your computer to keep a history of your work. It helps you record versions, revisit earlier work, and combine changes.
+\par\medskip
+\begin{enumerate}
+\item Start with an ordinary working folder containing your files.
+\item \term{Initialize} Git in that folder (\texttt{git init}). The folder becomes a \term{repository}: a project whose history Git can record.
+\item Keep editing your files as usual. Choose which changes to record and when to record them; initializing alone does not save a first version.
+\end{enumerate}
+\medskip
+To start from an existing project, \term{clone} its repository: make a local copy of its files and history instead of initializing an empty one.
+\end{frame}
+
+\begin{frame}{Git: Record Your Changes}
+\centering
+\begin{tikzpicture}[node distance=12mm,font=\sffamily\small,
+ box/.style={draw=SessionLine,fill=SessionPaper,rounded corners,minimum width=3.1cm,minimum height=1cm,align=center},
+ arr/.style={-{Stealth},thick,SessionMuted}]
+\node[box] (w) {Working files\\Your saved edits};
+\node[box,right=of w] (s) {Staging area\\Your selection};
+\node[box,right=of s] (h) {Project history\\Recorded versions};
+\draw[arr] (w)--node[above=3mm]{\term{stage}}(s);
+\draw[arr] (s)--node[above=3mm]{\term{commit}}(h);
+\end{tikzpicture}
 \par\medskip
 \begin{itemize}
-\item A \term{repository} stores the project's recorded versions and the information needed to manage them.
-\item You edit files in a working folder and record selected changes as \term{commits}: snapshots with an author and a message explaining the change.
-\item ``Distributed'' means that each full clone contains the repository's history. You can record and inspect changes locally, even offline.
+\item Edit and save a file as usual. Use \term{status} to see which files have changed and \term{diff} to inspect the changes.
+\item \term{Stage}: select the changes you want to include in the next recorded version.
+\item \term{Commit}: record that selection in the project's history, with a short message explaining what changed.
+\item Use the \term{log} to browse earlier commits. You can compare versions and recover earlier content when needed.
 \end{itemize}
+\medskip
+Saving a file updates your working copy; committing records a version in Git.
+\end{frame}
+
+\begin{frame}{Git: Combine and Share Changes}
+\begin{itemize}
+\item A \term{branch} lets you develop a change separately, such as trying a new idea while keeping the main version available.
+\item \term{Merge}: bring changes from another branch into your current branch. If edits clash, Git flags a \term{conflict}; you decide how to combine them.
+\item A \term{remote} is a saved connection to another copy of the repository, for example one shared with your collaborators online.
+\item \term{Push}: send your local commits to that remote so others can access them.
+\item \term{Pull}: get changes from the remote and combine them with your current branch. Conflicts may need your attention.
+\end{itemize}
+\medskip
+Commits stay on your computer until you share them. Git can record your work even when you are offline.
 \end{frame}
 
 \begin{frame}{What Is GitHub?}
@@ -39,28 +75,6 @@ You find a useful project online and want to try it or adapt it. After downloadi
 \item Browse changes, discuss tasks through issues, and review proposed contributions through pull requests.
 \item Connect your local repository to the hosted one through a \term{remote}: a named connection to another repository.
 \item Exchange changes with that remote, or \term{clone} an existing repository to start working with a local copy.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{From an Edit to a Shared Version}
-\centering
-\begin{tikzpicture}[node distance=7mm,font=\sffamily\small,
- box/.style={draw=SessionLine,fill=SessionPaper,rounded corners,minimum width=2.8cm,minimum height=1.1cm,align=center},
- arr/.style={-{Stealth},thick,SessionMuted}]
-\node[box] (w) {Working files\\Your edits};
-\node[box,right=of w] (s) {Staging area\\Selected changes};
-\node[box,right=of s] (l) {Local history\\Saved commits};
-\node[box,right=of l] (r) {GitHub\\Remote repository};
-\draw[arr] (w)--node[above=3mm,font=\sffamily\footnotesize]{stage}(s);
-\draw[arr] (s)--node[above=3mm,font=\sffamily\footnotesize]{commit}(l);
-\draw[arr] (l)--node[above=3mm,font=\sffamily\footnotesize]{push}(r);
-\end{tikzpicture}
-\medskip
-\begin{itemize}
-\item Saving a file updates the working copy.
-\item A \term{commit} records a snapshot of the staged content in local history, with an author and message.
-\item A \term{push} sends local commits to the remote. A local commit alone does not update GitHub.
-\item A \term{pull} fetches remote changes and integrates them into the current branch; conflicts may need attention.
 \end{itemize}
 \end{frame}
 
