@@ -3,33 +3,29 @@
 
 ## [Open the course website →](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/)
 
-**Bookmark this address:**
-
 ```text
 https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/
 ```
 
-[Weekly materials](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/syllabus.html) · [Research tools labs](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/getting-started.html) · [References](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/references.html)
+[Overview](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/) · [Syllabus](weeks/README.md) · [Grading](grading.md) · [References](bibliography/README.md)
 
-<a href="https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/"><img src="assets/course-qr.png" width="180" alt="Scan this QR code to open the course website"></a>
+<a href="https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/"><img src="assets/course-qr.png" width="180" alt="Scan to open the course website"></a>
 
-*Scan to open the course on your phone.*
+From economic models to working algorithms: computational methods, numerical approximation, machine learning, and practical research tools.
 
-## About the course
+**October 7, 2026 – January 27, 2027 · Wednesdays, Period 4**
 
-This course connects economic models with computational methods and practical research workflows. Lectures cover dynamic programming, numerical approximation, machine learning, and applications in computational economics. Labs explore LLM agents alongside Git and other research tools.
+International Academic Research Building, Seminar Room 514.
 
-Materials are organized by **week**, while slide decks are named by **topic**, allowing a topic to continue across sessions. Each weekly page brings together lecture materials, lab activities, readings, and exercises.
+## Course materials
 
-## For students
+The [syllabus](weeks/README.md) lists each week with **Lecture**, **Lab**, and **Homework** subsections. Click a topic title to open its slides or related materials. Slides are named by topic, allowing a topic to continue across sessions.
 
-Start with the course website for the current schedule, handouts, and announcements. This repository provides lecture slides, lab materials, readings, and exercises.
+[Start with Week 1](weeks/week_01/README.md): course introduction, Markov decision processes, Git, Python, an online notebook, and setup homework.
 
-Visit the weekly pages for materials and assignment announcements. Course materials are freely accessible.
+Notebooks can be read on GitHub, downloaded for VS Code, or opened in Colab through their links. Homework instructions are provided in separate slide decks.
 
-## Readings and references
-
-See the [reference list](bibliography/README.md) for textbooks, online courses, and other resources.
+See [Grading](grading.md) for replication requirements and the 15-minute presentation, and [References](bibliography/README.md) for books, online courses, lecture notes, websites, and papers.
 
 ## Contact
 

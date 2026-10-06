@@ -1,10 +1,15 @@
 # Week 12 (Jan 13): ML computational literature — methods session
 
-**[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_12/)**
+[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_12/)
 
-- [Lecture handouts](lecture/slides/pdf/)
-- [Lab materials](lab/)
-- [Reading assignment](homework/readings.md)
-- [Exercises](homework/exercises.md)
+- **Lecture**
 
-Check the weekly page for materials, preparation instructions, and deadlines.
+    - ML Computational Literature — materials to be announced.
+
+- **Lab**
+
+    - Materials to be announced.
+
+- **Homework**
+
+    - Materials to be announced.

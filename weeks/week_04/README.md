@@ -1,10 +1,15 @@
 # Week 4 (Oct 28): Approximating expectations
 
-**[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_04/)**
+[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_04/)
 
-- [Lecture handouts](lecture/slides/pdf/)
-- [Lab materials](lab/)
-- [Reading assignment](homework/readings.md)
-- [Exercises](homework/exercises.md)
+- **Lecture**
 
-Check the weekly page for materials, preparation instructions, and deadlines.
+    - [Approximating Expectations](lecture/slides/pdf/Approximating_Expectations.pdf)
+
+- **Lab**
+
+    - Materials to be announced.
+
+- **Homework**
+
+    - Materials to be announced.
