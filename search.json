@@ -600,7 +600,7 @@
     "href": "weeks/week_01/index.html#lab-materials",
     "title": "Course introduction and Markov decision processes",
     "section": "Lab materials",
-    "text": "Lab materials\n\nIntroduction to Git and GitHub\nIntroduction to Python\n\nDownload complete lab folder\n\nIntroduction to Python: Your First Notebook\nRead online Open in Colab Download notebook\nIn Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project.",
+    "text": "Lab materials\n\nIntroduction to Git\nIntroduction to Python\n\nDownload complete lab folder\n\nIntroduction to Python: Your First Notebook\nRead online Open in Colab Download notebook\nIn Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project.",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -620,47 +620,11 @@
     ]
   },
   {
-    "objectID": "weeks/week_01/index.html#homework-reading",
-    "href": "weeks/week_01/index.html#homework-reading",
+    "objectID": "weeks/week_01/index.html#homework",
+    "href": "weeks/week_01/index.html#homework",
     "title": "Course introduction and Markov decision processes",
-    "section": "Homework: reading",
-    "text": "Homework: reading\nReadings, guiding questions, and deadlines will be announced here.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html#git-and-github",
-    "href": "weeks/week_01/index.html#git-and-github",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Git and GitHub",
-    "text": "Git and GitHub\n\nInstall Git and confirm that VS Code detects it, or check git --version.\nRegister for GitHub and complete account verification.\nCreate a folder named computational-economics, open it in VS Code, and initialize a Git repository there.\nAdd a README and the supplied .gitignore. Inspect and stage the intended files, then make your first commit.\nUse Publish to GitHub in VS Code to create and connect a remote repository. Choose its visibility deliberately and review the files before publishing.\nMake a second meaningful change, commit, and push. Open the GitHub URL and confirm that both commits appear.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html#python",
-    "href": "weeks/week_01/index.html#python",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Python",
-    "text": "Python\n\nInstall a supported Python 3 release and VS Code with Microsoft’s Python and Jupyter extensions.\nCopy temperature.py and temperature.ipynb from the starter folder into your project.\nCreate a project environment with Python: Create Environment, select its interpreter, and run the script.\nOpen the notebook, select the same environment as its kernel, and install ipykernel in that environment if prompted. Restart the kernel and run all cells.\nVerify that both files give 20.0 C = 68.0 F.\nChange the input from 20 to 25 degrees Celsius in both files. Predict the new result, then verify 25.0 C = 77.0 F.\nUpdate the README with your Python version, instructions for running the files, both results, and an explanation of the change. Commit and push your work.",
-    "crumbs": [
-      "Syllabus",
-      "Weekly materials",
-      "Week 1 (Oct 7)"
-    ]
-  },
-  {
-    "objectID": "weeks/week_01/index.html#completion-checklist",
-    "href": "weeks/week_01/index.html#completion-checklist",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Completion checklist",
-    "text": "Completion checklist\n\nGitHub repository URL and two visible commit identifiers/messages.\nA working .py file and .ipynb notebook that agree on the result.\nA README with the setup, run instructions, results, interpretation, and a check you performed yourself.\nThe local environment, caches, credentials, and private data are excluded from the repository.\n\nYou may use graphical interfaces. Be ready to explain the changes and verify the output yourself. Keep the repository link and completion evidence ready for the announced submission channel and deadline.",
+    "section": "Homework",
+    "text": "Homework\nSetting Up Git and Python",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
