@@ -10,9 +10,9 @@
 
 ## Online courses
 
-4. [**Zhigang Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. \[Online course\]**](https://vonzhg.github.io/Macro-2026Fall/index.html)
+4. [**Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. \[Online course\]**](https://vonzhg.github.io/Macro-2026Fall/index.html)
 
-5. [**Zhigang Feng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. \[Online course\]**](https://vonzhg.github.io/AI-ECON-2026/index.html)
+5. [**Feng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. \[Online course\]**](https://vonzhg.github.io/AI-ECON-2026/index.html)
 
 6. [**QuantEcon, Python Programming for Economics and Finance. \[Online course\]**](https://python-programming.quantecon.org/intro.html)
 
@@ -22,11 +22,11 @@
 
 8. [**Jesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. \[Web resource\]**](https://www.sas.upenn.edu/~jesusfv/teaching.html)
 
-9. [**Zhigang Feng, Workshop Notes on AI and Machine Learning for Economists. \[Web resource\]**](https://sites.google.com/site/zfeng202/notes)
+9. [**Feng, Workshop Notes on AI and Machine Learning for Economists. \[Web resource\]**](https://sites.google.com/site/zfeng202/notes)
 
 ## Websites and tools
 
-10. [**Zhigang Feng, Zhigang Feng: Personal Website. \[Web resource\]**](https://sites.google.com/site/zfeng202/)
+10. [**Feng, Personal Website. \[Web resource\]**](https://sites.google.com/site/zfeng202/)
 
 11. [**QuantEcon, QuantEcon: Economics and Computational Tools. \[Web resource\]**](https://quantecon.org/)
 
