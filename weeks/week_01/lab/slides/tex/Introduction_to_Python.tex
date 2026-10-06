@@ -1,0 +1,159 @@
+\newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
+\input{\CourseTemplatePath course_preamble.tex}
+\title[Introduction to Python]{Lab: Introduction to Python}
+\subtitle{Development tools, scripts, notebooks, and reproducible results}
+\begin{document}
+\makecoursetitle
+
+\begin{frame}{Run a Small Program and Check Its Result}
+\courseexample{Example: Convert a Temperature}\par
+You want to convert a temperature from Celsius to Fahrenheit.
+\begin{itemize}
+\item What information does the program need as input?
+\item Can you run the same calculation from a script and a notebook?
+\item If the input changes from 20 to 25 degrees Celsius, what should happen to the output?
+\end{itemize}
+\medskip
+Today's goal: run, explain, modify, and verify a small program in both file formats.
+\end{frame}
+
+\begin{frame}{What Is an IDE?}
+\begin{itemize}
+\item An \term{integrated development environment (IDE)} brings together tools for writing, running, and debugging programs.
+\item Typical features include a file explorer, code editor, completion suggestions, debugger, terminal, and version-control tools.
+\item We use \href{https://code.visualstudio.com/}{VS Code}: an extensible editor that provides an integrated Python workspace through its Python and Jupyter extensions.
+\item Other options include \href{https://www.jetbrains.com/pycharm/}{PyCharm}, a Python-focused IDE, and \href{https://cursor.com/}{Cursor}, another code editor.
+\end{itemize}
+\medskip
+The editor helps you work with code; a separately selected Python interpreter executes it.
+\end{frame}
+
+\begin{frame}{Find Your Way around VS Code}
+\begin{tabularx}{\linewidth}{@{}lY@{}}
+\toprule\textbf{Part of the interface} & \textbf{What you use it for}\\\midrule
+Explorer & Open the project folder and find its files\\
+Editor & Read and edit a script or notebook\\
+Terminal & Run commands and inspect their output\\
+Run and Debug & Execute code and inspect it step by step\\
+Source Control & Review changes and create Git commits\\
+Extensions & Add Python and Jupyter support\\\bottomrule
+\end{tabularx}
+\par\medskip
+Open the project folder first. Then open a file and select its Python interpreter or notebook kernel.
+\end{frame}
+
+\begin{frame}{Know Which Tool Does the Work}
+\small
+\begin{tabularx}{\linewidth}{@{}lY@{}}
+\toprule\textbf{Tool or component} & \textbf{Role}\\\midrule
+Python & The language in which we express the calculation\\
+Interpreter & The program that executes Python code\\
+VS Code & An editor for files, projects, and notebooks\\
+Package & Additional reusable code, such as NumPy or pandas\\
+Environment & A project-specific Python setup and installed packages\\
+Notebook kernel & The running process that executes notebook cells\\\bottomrule
+\end{tabularx}
+\par\medskip
+Installing an editor does not install every interpreter or package. Check which Python your editor and notebook are using.
+\end{frame}
+
+\begin{frame}{Two File Formats, One Calculation}
+\begin{tabularx}{\linewidth}{@{}YY@{}}
+\toprule\textbf{Script: \texttt{.py}} & \textbf{Notebook: \texttt{.ipynb}}\\\midrule
+Plain-text Python source & A document with code cells, text, and saved outputs\\
+Run the file from the beginning & Run cells through a selected kernel\\
+Useful for repeatable tasks & Useful for explanations and exploration\\
+Check the printed result & Restart the kernel and run all cells to verify\\\bottomrule
+\end{tabularx}
+\par\medskip
+Use the supplied \texttt{temperature.py} and \texttt{temperature.ipynb}. Both should produce the same converted temperature.
+\end{frame}
+
+\begin{frame}{Understand the Input, Calculation, and Output}
+\courseexample{Example: Celsius to Fahrenheit}\par
+\[F=\frac95 C+32.\]
+\begin{itemize}
+\item \textbf{Input:} a temperature \(C\) in degrees Celsius.
+\item \textbf{Calculation:} multiply by \(9/5\), then add 32.
+\item \textbf{Output:} the corresponding temperature \(F\) in degrees Fahrenheit.
+\item \textbf{Check:} \(20\times9/5+32=68\). At \(25\) degrees Celsius, the result should be \(77\) degrees Fahrenheit.
+\end{itemize}
+\medskip
+The starter uses Python's standard library; no additional calculation package is required.
+\end{frame}
+
+\begin{frame}{Set Up and Run the Script}
+\begin{enumerate}
+\item Install a supported Python 3 release, VS Code, and Microsoft's Python and Jupyter extensions.
+\item Open your \texttt{computational-economics} folder in VS Code. Copy the starter files into it.
+\item Use \textbf{Python: Create Environment} to create a \texttt{.venv} environment, then select its interpreter.
+\item Open \texttt{temperature.py} and choose \textbf{Run Python File in Terminal}.
+\item Check the displayed interpreter path, Python version, and result: 20.0 C = 68.0 F.
+\end{enumerate}
+\medskip
+Follow the linked setup guide for your operating system. The terminal displays commands and their output; the selected interpreter executes the script.
+\end{frame}
+
+\begin{frame}{Run a Notebook from a Fresh Kernel}
+\begin{enumerate}
+\item Open \texttt{temperature.ipynb} and select the Python environment you created.
+\item Install notebook execution support, such as \texttt{ipykernel}, in that environment when prompted.
+\item Read the explanation and run the cells in order.
+\item Restart the kernel, run all cells, and check that the result is still 68 degrees Fahrenheit.
+\end{enumerate}
+\medskip
+\courseexample{Example: An Old Output Can Be Misleading}\par
+A notebook can display a result saved during an earlier run. A fresh kernel clears stored variables; running all cells checks whether the saved code can recreate the result.
+\end{frame}
+
+\begin{frame}{Read the Error and Check the Setup}
+\small
+\begin{tabularx}{\linewidth}{@{}lY@{}}
+\toprule\textbf{What you observe} & \textbf{First check}\\\midrule
+Python is not found & Installation and the interpreter selected in VS Code\\
+A package cannot be imported & Whether it is installed in that interpreter's environment\\
+A notebook variable is undefined & Cell order; restart and run all cells\\
+A file cannot be found & The project folder and the file path\\
+The script runs but the answer is wrong & Inputs, calculation, units, and expected result\\\bottomrule
+\end{tabularx}
+\par\medskip
+When asking for help, include the exact error, the relevant code, your operating system, and the selected interpreter. Check one possible cause at a time.
+\end{frame}
+
+\begin{frame}{Homework: Run, Modify, and Explain}
+\small
+\begin{enumerate}
+\item Install Python and set up your project environment.
+\item Run the supplied \texttt{temperature.py}; record the Python version and baseline result.
+\item Run \texttt{temperature.ipynb} from a fresh kernel and reproduce the baseline result.
+\item Change the input from 20 to 25 degrees Celsius in both files. Predict and verify the new result: 77 degrees Fahrenheit.
+\item Explain in your README what changed and why. Commit the code and notebook to the Git repository from the other lab, then push.
+\end{enumerate}
+\medskip
+\textbf{Completion evidence:} both files run successfully, their results agree, the README describes how to run them, and the latest version is visible in your GitHub repository.
+\par Record one check you performed to verify the result.
+\end{frame}
+% BEGIN MANAGED READINGS: lab_python
+\begin{frame}{References and Further Reading}
+\coursereading{1}
+  {Prof. Feng Zhigang (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]}
+  {https://vonzhg.github.io/AI-ECON-2026/index.html}
+  {\begin{itemize}
+\item \href{https://vonzhg.github.io/AI-ECON-2026/slides/Session01_Deck5_Workbench_Python_Git_GitHub.pdf}{Session 1.5: The Workbench: Python, VS Code, Git and GitHub}
+\end{itemize}}
+\coursereading{2}
+  {Microsoft, Visual Studio Code Documentation. [Webpages]}
+  {https://code.visualstudio.com/docs}
+  {\begin{itemize}
+\item \href{https://code.visualstudio.com/docs/python/python-tutorial}{Getting Started with Python in VS Code}
+\item \href{https://code.visualstudio.com/docs/datascience/jupyter-notebooks}{Jupyter Notebooks in VS Code}
+\end{itemize}}
+\coursereading{3}
+  {Python Software Foundation, Python.org. [Webpage]}
+  {https://www.python.org/}
+  {\begin{itemize}
+\item \href{https://www.python.org/downloads/}{Download Python}
+\end{itemize}}
+\end{frame}
+% END MANAGED READINGS: lab_python
+\end{document}

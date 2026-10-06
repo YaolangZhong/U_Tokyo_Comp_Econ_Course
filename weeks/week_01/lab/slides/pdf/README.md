@@ -1,3 +1,6 @@
-# Lab PDF slides
+# Lab slides
 
-Lecture slides will be available here. See the weekly page for session details.
+- [Introduction to Git and GitHub](Introduction_to_Git_and_GitHub.pdf)
+- [Introduction to Python](Introduction_to_Python.pdf)
+
+See the lab folder for starter files and the weekly homework for setup exercises.
