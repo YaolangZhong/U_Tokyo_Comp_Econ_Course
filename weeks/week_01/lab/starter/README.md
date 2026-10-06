@@ -1,15 +1,15 @@
-# Temperature conversion exercise
+# First Steps in Python: Markov Processes and Decisions
 
-[Open in Colab](https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/temperature.ipynb) · [Read online](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_01/lab/starter/temperature.html)
+[Open in Colab](https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/markov_processes.ipynb) · [Read online](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_01/lab/starter/markov_processes.html)
 
-For online practice, open the notebook in Colab, sign in, save a copy in Drive, and run the cells in order. Download your completed `.ipynb` from the File menu to keep it in your Git project. No additional packages or data are required.
+Start with the employment/unemployment chain from the lecture: lists, NumPy arrays, probability vectors, transition matrices, and a `MarkovProcess` class with a `simulate` method. A smaller maze introduces state vectors, an MDP class, and policies. Finish with the independent cake-eating MDP exercise.
+
+Save a copy in Drive before editing in Colab. Run the cells in order, complete the exercise, then restart the runtime and run all cells. Download your completed notebook to keep in your project. The final `CakeMDP` class and policies are student exercises; replace their `pass` placeholders and activate the supplied checks.
 
 ## Run locally
 
-Copy `temperature.py`, `temperature.ipynb`, and `.gitignore` into your project folder.
+Copy `markov_processes.ipynb`, `markov_processes.py`, `requirements.txt`, and `.gitignore` into your project. Create and select a Python environment in VS Code. Install the dependencies into it with `python -m pip install -r requirements.txt`, then select the same environment as the notebook kernel.
 
-Open the folder in VS Code. Select your project interpreter and run the script with **Run Python File in Terminal**. Open the notebook, select the same environment as its kernel, restart it, and run all cells. Install `ipykernel` in that environment if prompted.
+Run the notebook and the companion script. The script contains the supplied code cells in notebook order. The baseline next-month probability vector is `[0.50, 0.50]`; changing the job-finding probability to `0.40` gives `[0.38, 0.62]`. The guided maze policy reaches the goal in four moves and then remains there.
 
-Baseline: **20.0 C = 68.0 F**. Change the Celsius input to 25 in both files and verify **25.0 C = 77.0 F**.
-
-Record your Python version, run instructions, both results, and an explanation of the calculation. Commit the files and push them to GitHub. Keep the local environment folder out of the repository.
+Record your Python/package versions, run instructions, results, and completed exercise in your README. Commit and push the files; exclude local environments and caches.

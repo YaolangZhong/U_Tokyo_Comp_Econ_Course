@@ -13,8 +13,8 @@
 
     - [Introduction to Git](week_01/lab/slides/pdf/Introduction_to_Git.pdf)
     - [Introduction to Python](week_01/lab/slides/pdf/Introduction_to_Python.pdf)
-    - [Introduction to Python: Your First Notebook](week_01/lab/starter/temperature.ipynb)
-    - [Open in Colab](https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/temperature.ipynb)
+    - [First Steps in Python: Markov Processes and Decisions](week_01/lab/starter/markov_processes.ipynb)
+    - [Open in Colab](https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/markov_processes.ipynb)
     - [Lab exercise files](week_01/lab/starter)
 
 - **Homework**

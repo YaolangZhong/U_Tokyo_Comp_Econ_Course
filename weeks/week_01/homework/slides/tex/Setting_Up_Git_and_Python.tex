@@ -8,7 +8,7 @@
 \begin{frame}{Prepare Your Project}
 \begin{itemize}
 \item Use the lab slides on \href{https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_01/lab/Introduction_to_Git.pdf}{Introduction to Git} and \href{https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_01/lab/Introduction_to_Python.pdf}{Introduction to Python}.
-\item Download the \href{https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/tree/main/weeks/week_01/lab/starter}{starter files}: \texttt{temperature.py}, \texttt{temperature.ipynb}, and \texttt{.gitignore}.
+\item Download the \href{https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/tree/main/weeks/week_01/lab/starter}{starter files}: \texttt{markov\_processes.py}, \texttt{markov\_processes.ipynb}, \texttt{requirements.txt}, and \texttt{.gitignore}.
 \item Create a project folder named \texttt{computational-economics} and open it in VS Code.
 \item You may use graphical interfaces. Be able to explain what you changed and how you checked the result.
 \end{itemize}
@@ -31,18 +31,18 @@
 \begin{enumerate}
 \item Install Python 3 and VS Code with Microsoft's Python and Jupyter extensions.
 \item Copy the starter script and notebook into your project folder.
-\item Use \textbf{Python: Create Environment}, select its interpreter, and run \texttt{temperature.py}.
-\item Open \texttt{temperature.ipynb} and select the same environment as its kernel. Install \texttt{ipykernel} there if prompted.
-\item Restart the kernel and run all cells. Check that both files give \textbf{20.0 C = 68.0 F}.
+\item Use \textbf{Python: Create Environment}, select its interpreter, install the packages in \texttt{requirements.txt}, and run \texttt{markov\_processes.py}.
+\item Open \texttt{markov\_processes.ipynb} and select the same environment as its kernel. Install \texttt{ipykernel} there if prompted.
+\item Restart the kernel and run all cells. Check that both files give the next-month probabilities \textbf{[0.50, 0.50]}.
 \end{enumerate}
 \medskip
-You can also practice with the \href{https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/temperature.ipynb}{notebook in Colab}. Complete the local setup and compare the results.
+You can also practice with the \href{https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/markov_processes.ipynb}{notebook in Colab}. Complete the local setup and compare the results.
 \end{frame}
 
 \begin{frame}{Change an Input and Check the Result}
 \begin{enumerate}
-\item Change the temperature from 20 to 25 degrees Celsius in both files.
-\item Predict the result, then verify \textbf{25.0 C = 77.0 F}.
+\item Change the job-finding probability from 0.20 to 0.40, keeping the other inputs fixed.
+\item Rebuild the transition matrix and verify next-month probabilities \textbf{[0.38, 0.62]}.
 \item Restart the notebook kernel and run all cells to check reproducibility.
 \item Update your README with the Python version, run instructions, both results, and an explanation of the change.
 \item Commit and push your work. Check the latest version on GitHub.
