@@ -636,42 +636,7 @@
     "href": "references.html",
     "title": "Readings and references",
     "section": "",
-    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
-  },
-  {
-    "objectID": "references.html#weekly-readings",
-    "href": "references.html#weekly-readings",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
-  },
-  {
-    "objectID": "references.html#ml-computational-economics-literature",
-    "href": "references.html#ml-computational-economics-literature",
-    "title": "Readings and references",
-    "section": "ML computational-economics literature",
-    "text": "ML computational-economics literature\nThe final part of the course explores recent computational-economics research using machine-learning methods. Readings will be announced on the weekly pages.\nFor each paper, we will examine:\n\nThe economic question and model.\nThe computational bottleneck and proposed ML method.\nBenchmarks, accuracy checks, and limitations.\nAvailable code/data and a possible small replication exercise.\nReading questions and a topic-based slide deck."
-  },
-  {
-    "objectID": "references.html#research-agent-and-tool-readings",
-    "href": "references.html#research-agent-and-tool-readings",
-    "title": "Readings and references",
-    "section": "Research-agent and tool readings",
-    "text": "Research-agent and tool readings\nLab readings cover research workflows using LLM agents, Git, and related tools. Each weekly page will link to the relevant documentation and activities."
-  },
-  {
-    "objectID": "references.html#prof.-feng-zhigangs-course-materials",
-    "href": "references.html#prof.-feng-zhigangs-course-materials",
-    "title": "Readings and references",
-    "section": "Prof. Feng Zhigang’s course materials",
-    "text": "Prof. Feng Zhigang’s course materials\nProf. Feng Zhigang — personal website\n\nFoundations of Macroeconomics (ECON 282E, Fall 2026): dynamic economic models, heterogeneous agents, numerical methods, and computational tools. (Feng 2026b)\nAI for Economic Research: Dynamic Models, Language, and Agents: deep learning, reinforcement learning, heterogeneous-agent models, language models, retrieval, and research agents. (Feng 2026a)\n\nExplore the original course websites for lecture slides, syllabi, and lab resources. When using these materials, cite the relevant course and slide deck by Prof. Feng Zhigang."
-  },
-  {
-    "objectID": "references.html#further-reading",
-    "href": "references.html#further-reading",
-    "title": "Readings and references",
-    "section": "Further reading",
-    "text": "Further reading\nExplore the textbooks, courses, and online resources below for further study. Python tutorials provide optional programming support.\n\n\nBertsekas, Dimitri P. n.d. Reinforcement Learning: Books and Course Materials. https://web.mit.edu/dimitrib/www/RLbook.html.\n\n\nFeng, Zhigang. 2026a. AI for Economic Research: Dynamic Models, Language, and Agents. Course materials. https://vonzhg.github.io/AI-ECON-2026/index.html.\n\n\nFeng, Zhigang. 2026b. Foundations of Macroeconomics: ECON 282E, Fall 2026. Course materials, University of California, Riverside. https://vonzhg.github.io/Macro-2026Fall/index.html.\n\n\nFeng, Zhigang. n.d.-a. Workshop Notes on AI and Machine Learning for Economists. https://sites.google.com/site/zfeng202/notes.\n\n\nFeng, Zhigang. n.d.-b. Zhigang Feng: Personal Website. Accessed October 5, 2026. https://sites.google.com/site/zfeng202/.\n\n\nFernández-Villaverde, Jesús. n.d. Teaching: Computation and Macroeconomics. https://www.sas.upenn.edu/~jesusfv/teaching.html.\n\n\nJames, Gareth, Daniela Witten, Trevor Hastie, Robert Tibshirani, and Jonathan Taylor. 2023. An Introduction to Statistical Learning: With Applications in Python. Springer. https://www.statlearning.com/.\n\n\nJudd, Kenneth L. 1998. Numerical Methods in Economics. MIT Press.\n\n\nQuantEcon. n.d.-a. Python Programming for Economics and Finance. https://python-programming.quantecon.org/intro.html.\n\n\nQuantEcon. n.d.-b. QuantEcon: Economics and Computational Tools. https://quantecon.org/.\n\n\nTurrell, Arthur. n.d. Coding for Economists. https://aeturrell.github.io/coding-for-economists/intro.html."
+    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nZhigang Feng, Zhigang Feng: Personal Website. [Web resource]\nZhigang Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nZhigang Feng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, QuantEcon: Economics and Computational Tools. [Web resource]\nQuantEcon, Python Programming for Economics and Finance. [Online course]\nArthur Turrell, Coding for Economists. [Web resource]\nDimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. [Web resource]\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\nZhigang Feng, Workshop Notes on AI and Machine Learning for Economists. [Web resource]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]"
   },
   {
     "objectID": "getting-started.html",
@@ -841,44 +806,28 @@
     "href": "topics.html",
     "title": "Supplementary topics",
     "section": "",
-    "text": "These handouts support work across several weeks.",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
+    "text": "These handouts support work across several weeks."
   },
   {
     "objectID": "topics.html#discretizing-ar1",
     "href": "topics.html#discretizing-ar1",
     "title": "Supplementary topics",
     "section": "Discretizing Ar1",
-    "text": "Discretizing Ar1\n\nTopic Discretizing AR1 Processes",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
+    "text": "Discretizing Ar1\n\nTopic Discretizing AR1 Processes"
   },
   {
     "objectID": "topics.html#git",
     "href": "topics.html#git",
     "title": "Supplementary topics",
     "section": "Git",
-    "text": "Git\n\nLab Topic on Git",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
+    "text": "Git\n\nLab Topic on Git"
   },
   {
     "objectID": "topics.html#google-ai",
     "href": "topics.html#google-ai",
     "title": "Supplementary topics",
     "section": "Google Ai",
-    "text": "Google Ai\n\nGoogle AI",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
+    "text": "Google Ai\n\nGoogle AI"
   },
   {
     "objectID": "weeks/week_02/index.html",
