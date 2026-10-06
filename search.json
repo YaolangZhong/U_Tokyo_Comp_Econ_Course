@@ -588,7 +588,7 @@
     "href": "weeks/week_01/index.html#lecture-materials",
     "title": "Course introduction and Markov decision processes",
     "section": "Lecture materials",
-    "text": "Lecture materials\n\nCourse Introduction — slides forthcoming.\nIntroduction to Markov Decision Processes (MDP)",
+    "text": "Lecture materials\n\nCourse Introduction\nIntroduction to Markov Decision Processes (MDP)",
     "crumbs": [
       "Syllabus",
       "Weekly materials",
@@ -632,132 +632,81 @@
     ]
   },
   {
-    "objectID": "topics.html",
-    "href": "topics.html",
-    "title": "Supplementary topics",
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "Readings and references",
     "section": "",
-    "text": "These handouts support work across several weeks.",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
+    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
   },
   {
-    "objectID": "topics.html#discretizing-ar1",
-    "href": "topics.html#discretizing-ar1",
-    "title": "Supplementary topics",
-    "section": "Discretizing Ar1",
-    "text": "Discretizing Ar1\n\nTopic Discretizing AR1 Processes",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
-  },
-  {
-    "objectID": "topics.html#git",
-    "href": "topics.html#git",
-    "title": "Supplementary topics",
-    "section": "Git",
-    "text": "Git\n\nLab Topic on Git",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
-  },
-  {
-    "objectID": "topics.html#google-ai",
-    "href": "topics.html#google-ai",
-    "title": "Supplementary topics",
-    "section": "Google Ai",
-    "text": "Google Ai\n\nGoogle AI",
-    "crumbs": [
-      "Syllabus",
-      "Supplementary topics"
-    ]
-  },
-  {
-    "objectID": "project.html",
-    "href": "project.html",
-    "title": "Final project",
+    "objectID": "references.html#weekly-readings",
+    "href": "references.html#weekly-readings",
+    "title": "Readings and references",
     "section": "",
-    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
+    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
   },
   {
-    "objectID": "project.html#replicate-a-research-paper",
-    "href": "project.html#replicate-a-research-paper",
-    "title": "Final project",
+    "objectID": "references.html#ml-computational-economics-literature",
+    "href": "references.html#ml-computational-economics-literature",
+    "title": "Readings and references",
+    "section": "ML computational-economics literature",
+    "text": "ML computational-economics literature\nThe final part of the course explores recent computational-economics research using machine-learning methods. Readings will be announced on the weekly pages.\nFor each paper, we will examine:\n\nThe economic question and model.\nThe computational bottleneck and proposed ML method.\nBenchmarks, accuracy checks, and limitations.\nAvailable code/data and a possible small replication exercise.\nReading questions and a topic-based slide deck."
+  },
+  {
+    "objectID": "references.html#research-agent-and-tool-readings",
+    "href": "references.html#research-agent-and-tool-readings",
+    "title": "Readings and references",
+    "section": "Research-agent and tool readings",
+    "text": "Research-agent and tool readings\nLab readings cover research workflows using LLM agents, Git, and related tools. Each weekly page will link to the relevant documentation and activities."
+  },
+  {
+    "objectID": "references.html#prof.-feng-zhigangs-course-materials",
+    "href": "references.html#prof.-feng-zhigangs-course-materials",
+    "title": "Readings and references",
+    "section": "Prof. Feng Zhigang’s course materials",
+    "text": "Prof. Feng Zhigang’s course materials\nProf. Feng Zhigang — personal website\n\nFoundations of Macroeconomics (ECON 282E, Fall 2026): dynamic economic models, heterogeneous agents, numerical methods, and computational tools. (Feng 2026b)\nAI for Economic Research: Dynamic Models, Language, and Agents: deep learning, reinforcement learning, heterogeneous-agent models, language models, retrieval, and research agents. (Feng 2026a)\n\nExplore the original course websites for lecture slides, syllabi, and lab resources. When using these materials, cite the relevant course and slide deck by Prof. Feng Zhigang."
+  },
+  {
+    "objectID": "references.html#further-reading",
+    "href": "references.html#further-reading",
+    "title": "Readings and references",
+    "section": "Further reading",
+    "text": "Further reading\nExplore the textbooks, courses, and online resources below for further study. Python tutorials provide optional programming support.\n\n\nBertsekas, Dimitri P. n.d. Reinforcement Learning: Books and Course Materials. https://web.mit.edu/dimitrib/www/RLbook.html.\n\n\nFeng, Zhigang. 2026a. AI for Economic Research: Dynamic Models, Language, and Agents. Course materials. https://vonzhg.github.io/AI-ECON-2026/index.html.\n\n\nFeng, Zhigang. 2026b. Foundations of Macroeconomics: ECON 282E, Fall 2026. Course materials, University of California, Riverside. https://vonzhg.github.io/Macro-2026Fall/index.html.\n\n\nFeng, Zhigang. n.d.-a. Workshop Notes on AI and Machine Learning for Economists. https://sites.google.com/site/zfeng202/notes.\n\n\nFeng, Zhigang. n.d.-b. Zhigang Feng: Personal Website. Accessed October 5, 2026. https://sites.google.com/site/zfeng202/.\n\n\nFernández-Villaverde, Jesús. n.d. Teaching: Computation and Macroeconomics. https://www.sas.upenn.edu/~jesusfv/teaching.html.\n\n\nJames, Gareth, Daniela Witten, Trevor Hastie, Robert Tibshirani, and Jonathan Taylor. 2023. An Introduction to Statistical Learning: With Applications in Python. Springer. https://www.statlearning.com/.\n\n\nJudd, Kenneth L. 1998. Numerical Methods in Economics. MIT Press.\n\n\nQuantEcon. n.d.-a. Python Programming for Economics and Finance. https://python-programming.quantecon.org/intro.html.\n\n\nQuantEcon. n.d.-b. QuantEcon: Economics and Computational Tools. https://quantecon.org/.\n\n\nTurrell, Arthur. n.d. Coding for Economists. https://aeturrell.github.io/coding-for-economists/intro.html."
+  },
+  {
+    "objectID": "getting-started.html",
+    "href": "getting-started.html",
+    "title": "Research tools lab",
     "section": "",
-    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
+    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
   },
   {
-    "objectID": "project.html#agree-on-a-paper",
-    "href": "project.html#agree-on-a-paper",
-    "title": "Final project",
-    "section": "Agree on a paper",
-    "text": "Agree on a paper\nEmail Yaolang Zhong with the paper you intend to replicate. If proposing your own paper, attach it and arrange a brief discussion before proceeding.\nSuggested project readings will be announced on the course website."
-  },
-  {
-    "objectID": "project.html#submission-checklist",
-    "href": "project.html#submission-checklist",
-    "title": "Final project",
-    "section": "Submission checklist",
-    "text": "Submission checklist\nSubmit a compressed project folder containing:\n\nThe paper being replicated.\nA concise technical note covering the research question, equations, data, and computational approach.\nA README explaining the workflow and mapping code to the paper’s algorithms or results.\nA requirements.txt describing the Python dependencies.\nSupporting scripts and a notebook or main.py that reproduces the replication output."
-  },
-  {
-    "objectID": "project.html#evaluation",
-    "href": "project.html#evaluation",
-    "title": "Final project",
-    "section": "Evaluation",
-    "text": "Evaluation\nTechnical understanding and runnable, readable code matter more than exact numerical agreement with the paper. Explain what you reproduced, how you tested it, and any remaining differences."
-  },
-  {
-    "objectID": "project.html#deadline-and-submission",
-    "href": "project.html#deadline-and-submission",
-    "title": "Final project",
-    "section": "Deadline and submission",
-    "text": "Deadline and submission\nThe deadline and submission channel for the next offering will be confirmed by the instructor.\nStudent projects will be shared only with the approval of the student group, as described in the existing course policy."
-  },
-  {
-    "objectID": "syllabus.html",
-    "href": "syllabus.html",
-    "title": "Course syllabus",
+    "objectID": "getting-started.html#what-the-labs-are-for",
+    "href": "getting-started.html#what-the-labs-are-for",
+    "title": "Research tools lab",
     "section": "",
-    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
+    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
   },
   {
-    "objectID": "syllabus.html#course-direction",
-    "href": "syllabus.html#course-direction",
-    "title": "Course syllabus",
-    "section": "",
-    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
+    "objectID": "getting-started.html#before-the-first-lab",
+    "href": "getting-started.html#before-the-first-lab",
+    "title": "Research tools lab",
+    "section": "Before the first lab",
+    "text": "Before the first lab\nSetup instructions and tool requirements will be announced before the first lab."
   },
   {
-    "objectID": "syllabus.html#topic-decks-and-weekly-sessions",
-    "href": "syllabus.html#topic-decks-and-weekly-sessions",
-    "title": "Course syllabus",
-    "section": "Topic decks and weekly sessions",
-    "text": "Topic decks and weekly sessions\nThe schedule is organized by week, while slides are organized by topic. A topic may occupy part of a week or continue across several weeks. Classes meet on Wednesdays in Period 4, International Academic Research Building, Seminar Room 514."
+    "objectID": "getting-started.html#weekly-structure",
+    "href": "getting-started.html#weekly-structure",
+    "title": "Research tools lab",
+    "section": "Weekly structure",
+    "text": "Weekly structure\nEach week’s lab will specify the research task, the tools and workflow, an in-class activity, and the expected deliverable. Each weekly page also reserves separate homework reading and exercise sections."
   },
   {
-    "objectID": "syllabus.html#schedule-20262027",
-    "href": "syllabus.html#schedule-20262027",
-    "title": "Course syllabus",
-    "section": "Schedule · 2026–2027",
-    "text": "Schedule · 2026–2027\n\n\n\nWeek\nLecture\nLab\nHomework\n\n\n\n\nWeek 1 (Oct 7)\nCourse introduction and Markov decision processes\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 2 (Oct 14)\nDynamic programming methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 3 (Oct 21)\nEuler equations and endogenous grids\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 4 (Oct 28)\nApproximating expectations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 5 (Nov 4)\nSimulation-based methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 6 (Nov 11)\nFunction approximation and neural networks\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 7 (Nov 18)\nMachine-learning foundations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 8 (Dec 9)\nReinforcement learning\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 9 (Dec 16)\nHeterogeneous-agent applications\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 10 (Dec 23)\nMethods synthesis\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 11 (Jan 6)\nML computational literature — reading session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 12 (Jan 13)\nML computational literature — methods session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 13 (Jan 20)\nML computational literature — discussion session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 14 (Jan 27)\nCourse session — details to be announced\nResearch-tools lab — to be announced\nReading + exercise — to be announced\n\n\n\nWeek 1 introduces the course and Markov decision processes. Week 10 brings together the computational methods covered in earlier sessions."
-  },
-  {
-    "objectID": "syllabus.html#weekly-homework",
-    "href": "syllabus.html#weekly-homework",
-    "title": "Course syllabus",
-    "section": "Weekly homework",
-    "text": "Weekly homework\nWeekly pages will provide readings, exercises, submission instructions, and deadlines."
-  },
-  {
-    "objectID": "syllabus.html#assessment",
-    "href": "syllabus.html#assessment",
-    "title": "Course syllabus",
-    "section": "Assessment",
-    "text": "Assessment\nThe replication project accounts for 100% of the grade. Work in teams of 2–3 and replicate as many papers as there are team members.\nSee the project guide and reading resources."
+    "objectID": "getting-started.html#optional-background",
+    "href": "getting-started.html#optional-background",
+    "title": "Research tools lab",
+    "section": "Optional background",
+    "text": "Optional background\nStudents who need Python background can consult QuantEcon (n.d.) and Turrell (n.d.). Any optional programming exercises will be linked from the relevant weekly page when available."
   },
   {
     "objectID": "index.html",
@@ -804,102 +753,132 @@
     ]
   },
   {
-    "objectID": "getting-started.html",
-    "href": "getting-started.html",
-    "title": "Research tools lab",
+    "objectID": "syllabus.html",
+    "href": "syllabus.html",
+    "title": "Course syllabus",
     "section": "",
-    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
+    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
   },
   {
-    "objectID": "getting-started.html#what-the-labs-are-for",
-    "href": "getting-started.html#what-the-labs-are-for",
-    "title": "Research tools lab",
+    "objectID": "syllabus.html#course-direction",
+    "href": "syllabus.html#course-direction",
+    "title": "Course syllabus",
     "section": "",
-    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
+    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
   },
   {
-    "objectID": "getting-started.html#before-the-first-lab",
-    "href": "getting-started.html#before-the-first-lab",
-    "title": "Research tools lab",
-    "section": "Before the first lab",
-    "text": "Before the first lab\nSetup instructions and tool requirements will be announced before the first lab."
+    "objectID": "syllabus.html#topic-decks-and-weekly-sessions",
+    "href": "syllabus.html#topic-decks-and-weekly-sessions",
+    "title": "Course syllabus",
+    "section": "Topic decks and weekly sessions",
+    "text": "Topic decks and weekly sessions\nThe schedule is organized by week, while slides are organized by topic. A topic may occupy part of a week or continue across several weeks. Classes meet on Wednesdays in Period 4, International Academic Research Building, Seminar Room 514."
   },
   {
-    "objectID": "getting-started.html#weekly-structure",
-    "href": "getting-started.html#weekly-structure",
-    "title": "Research tools lab",
-    "section": "Weekly structure",
-    "text": "Weekly structure\nEach week’s lab will specify the research task, the tools and workflow, an in-class activity, and the expected deliverable. Each weekly page also reserves separate homework reading and exercise sections."
+    "objectID": "syllabus.html#schedule-20262027",
+    "href": "syllabus.html#schedule-20262027",
+    "title": "Course syllabus",
+    "section": "Schedule · 2026–2027",
+    "text": "Schedule · 2026–2027\n\n\n\nWeek\nLecture\nLab\nHomework\n\n\n\n\nWeek 1 (Oct 7)\nCourse introduction and Markov decision processes\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 2 (Oct 14)\nDynamic programming methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 3 (Oct 21)\nEuler equations and endogenous grids\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 4 (Oct 28)\nApproximating expectations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 5 (Nov 4)\nSimulation-based methods\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 6 (Nov 11)\nFunction approximation and neural networks\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 7 (Nov 18)\nMachine-learning foundations\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 8 (Dec 9)\nReinforcement learning\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 9 (Dec 16)\nHeterogeneous-agent applications\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 10 (Dec 23)\nMethods synthesis\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 11 (Jan 6)\nML computational literature — reading session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 12 (Jan 13)\nML computational literature — methods session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 13 (Jan 20)\nML computational literature — discussion session\nResearch-agent/tools lab — TBD\nReading + exercise — TBD\n\n\nWeek 14 (Jan 27)\nCourse session — details to be announced\nResearch-tools lab — to be announced\nReading + exercise — to be announced\n\n\n\nWeek 1 introduces the course and Markov decision processes. Week 10 brings together the computational methods covered in earlier sessions."
   },
   {
-    "objectID": "getting-started.html#optional-background",
-    "href": "getting-started.html#optional-background",
-    "title": "Research tools lab",
-    "section": "Optional background",
-    "text": "Optional background\nStudents who need Python background can consult QuantEcon (n.d.) and Turrell (n.d.). Any optional programming exercises will be linked from the relevant weekly page when available."
+    "objectID": "syllabus.html#weekly-homework",
+    "href": "syllabus.html#weekly-homework",
+    "title": "Course syllabus",
+    "section": "Weekly homework",
+    "text": "Weekly homework\nWeekly pages will provide readings, exercises, submission instructions, and deadlines."
   },
   {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "Readings and references",
+    "objectID": "syllabus.html#assessment",
+    "href": "syllabus.html#assessment",
+    "title": "Course syllabus",
+    "section": "Assessment",
+    "text": "Assessment\nThe replication project accounts for 100% of the grade. Work in teams of 2–3 and replicate as many papers as there are team members.\nSee the project guide and reading resources."
+  },
+  {
+    "objectID": "project.html",
+    "href": "project.html",
+    "title": "Final project",
     "section": "",
-    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
+    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
   },
   {
-    "objectID": "references.html#weekly-readings",
-    "href": "references.html#weekly-readings",
-    "title": "Readings and references",
+    "objectID": "project.html#replicate-a-research-paper",
+    "href": "project.html#replicate-a-research-paper",
+    "title": "Final project",
     "section": "",
-    "text": "Find readings, guiding questions, exercises, and deadlines on each weekly page."
+    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
   },
   {
-    "objectID": "references.html#ml-computational-economics-literature",
-    "href": "references.html#ml-computational-economics-literature",
-    "title": "Readings and references",
-    "section": "ML computational-economics literature",
-    "text": "ML computational-economics literature\nThe final part of the course explores recent computational-economics research using machine-learning methods. Readings will be announced on the weekly pages.\nFor each paper, we will examine:\n\nThe economic question and model.\nThe computational bottleneck and proposed ML method.\nBenchmarks, accuracy checks, and limitations.\nAvailable code/data and a possible small replication exercise.\nReading questions and a topic-based slide deck."
+    "objectID": "project.html#agree-on-a-paper",
+    "href": "project.html#agree-on-a-paper",
+    "title": "Final project",
+    "section": "Agree on a paper",
+    "text": "Agree on a paper\nEmail Yaolang Zhong with the paper you intend to replicate. If proposing your own paper, attach it and arrange a brief discussion before proceeding.\nSuggested project readings will be announced on the course website."
   },
   {
-    "objectID": "references.html#research-agent-and-tool-readings",
-    "href": "references.html#research-agent-and-tool-readings",
-    "title": "Readings and references",
-    "section": "Research-agent and tool readings",
-    "text": "Research-agent and tool readings\nLab readings cover research workflows using LLM agents, Git, and related tools. Each weekly page will link to the relevant documentation and activities."
+    "objectID": "project.html#submission-checklist",
+    "href": "project.html#submission-checklist",
+    "title": "Final project",
+    "section": "Submission checklist",
+    "text": "Submission checklist\nSubmit a compressed project folder containing:\n\nThe paper being replicated.\nA concise technical note covering the research question, equations, data, and computational approach.\nA README explaining the workflow and mapping code to the paper’s algorithms or results.\nA requirements.txt describing the Python dependencies.\nSupporting scripts and a notebook or main.py that reproduces the replication output."
   },
   {
-    "objectID": "references.html#prof.-feng-zhigangs-course-materials",
-    "href": "references.html#prof.-feng-zhigangs-course-materials",
-    "title": "Readings and references",
-    "section": "Prof. Feng Zhigang’s course materials",
-    "text": "Prof. Feng Zhigang’s course materials\nProf. Feng Zhigang — personal website\n\nFoundations of Macroeconomics (ECON 282E, Fall 2026): dynamic economic models, heterogeneous agents, numerical methods, and computational tools. (Feng 2026b)\nAI for Economic Research: Dynamic Models, Language, and Agents: deep learning, reinforcement learning, heterogeneous-agent models, language models, retrieval, and research agents. (Feng 2026a)\n\nExplore the original course websites for lecture slides, syllabi, and lab resources. When using these materials, cite the relevant course and slide deck by Prof. Feng Zhigang."
+    "objectID": "project.html#evaluation",
+    "href": "project.html#evaluation",
+    "title": "Final project",
+    "section": "Evaluation",
+    "text": "Evaluation\nTechnical understanding and runnable, readable code matter more than exact numerical agreement with the paper. Explain what you reproduced, how you tested it, and any remaining differences."
   },
   {
-    "objectID": "references.html#further-reading",
-    "href": "references.html#further-reading",
-    "title": "Readings and references",
-    "section": "Further reading",
-    "text": "Further reading\nExplore the textbooks, courses, and online resources below for further study. Python tutorials provide optional programming support.\n\n\nBertsekas, Dimitri P. n.d. Reinforcement Learning: Books and Course Materials. https://web.mit.edu/dimitrib/www/RLbook.html.\n\n\nFeng, Zhigang. 2026a. AI for Economic Research: Dynamic Models, Language, and Agents. Course materials. https://vonzhg.github.io/AI-ECON-2026/index.html.\n\n\nFeng, Zhigang. 2026b. Foundations of Macroeconomics: ECON 282E, Fall 2026. Course materials, University of California, Riverside. https://vonzhg.github.io/Macro-2026Fall/index.html.\n\n\nFeng, Zhigang. n.d.-a. Workshop Notes on AI and Machine Learning for Economists. https://sites.google.com/site/zfeng202/notes.\n\n\nFeng, Zhigang. n.d.-b. Zhigang Feng: Personal Website. Accessed October 5, 2026. https://sites.google.com/site/zfeng202/.\n\n\nFernández-Villaverde, Jesús. n.d. Teaching: Computation and Macroeconomics. https://www.sas.upenn.edu/~jesusfv/teaching.html.\n\n\nJames, Gareth, Daniela Witten, Trevor Hastie, Robert Tibshirani, and Jonathan Taylor. 2023. An Introduction to Statistical Learning: With Applications in Python. Springer. https://www.statlearning.com/.\n\n\nJudd, Kenneth L. 1998. Numerical Methods in Economics. MIT Press.\n\n\nQuantEcon. n.d.-a. Python Programming for Economics and Finance. https://python-programming.quantecon.org/intro.html.\n\n\nQuantEcon. n.d.-b. QuantEcon: Economics and Computational Tools. https://quantecon.org/.\n\n\nTurrell, Arthur. n.d. Coding for Economists. https://aeturrell.github.io/coding-for-economists/intro.html."
+    "objectID": "project.html#deadline-and-submission",
+    "href": "project.html#deadline-and-submission",
+    "title": "Final project",
+    "section": "Deadline and submission",
+    "text": "Deadline and submission\nThe deadline and submission channel for the next offering will be confirmed by the instructor.\nStudent projects will be shared only with the approval of the student group, as described in the existing course policy."
   },
   {
-    "objectID": "registration.html",
-    "href": "registration.html",
-    "title": "Registration and student portal",
+    "objectID": "topics.html",
+    "href": "topics.html",
+    "title": "Supplementary topics",
     "section": "",
-    "text": "Register with your email address and a one-time code. Sign in without a password. Use the same email when returning to the course portal."
+    "text": "These handouts support work across several weeks.",
+    "crumbs": [
+      "Syllabus",
+      "Supplementary topics"
+    ]
   },
   {
-    "objectID": "registration.html#staying-signed-in",
-    "href": "registration.html#staying-signed-in",
-    "title": "Registration and student portal",
-    "section": "Staying signed in",
-    "text": "Staying signed in\nWith Keep me signed in selected, the browser will remember your session and refresh it automatically. On a shared computer, uncheck it and sign out when finished. Clearing browser storage, signing out, or an expired or revoked session may require a new email code. Private browsing may not retain your session."
+    "objectID": "topics.html#discretizing-ar1",
+    "href": "topics.html#discretizing-ar1",
+    "title": "Supplementary topics",
+    "section": "Discretizing Ar1",
+    "text": "Discretizing Ar1\n\nTopic Discretizing AR1 Processes",
+    "crumbs": [
+      "Syllabus",
+      "Supplementary topics"
+    ]
   },
   {
-    "objectID": "registration.html#about-your-registration",
-    "href": "registration.html#about-your-registration",
-    "title": "Registration and student portal",
-    "section": "About your registration",
-    "text": "About your registration\nCourse registration will ask for your name, programme/year, and verified email. Your details will be stored privately for course administration. Please also complete the university’s official enrollment process.\nData-handling information will be available when registration opens. For course questions, contact Yaolang Zhong."
+    "objectID": "topics.html#git",
+    "href": "topics.html#git",
+    "title": "Supplementary topics",
+    "section": "Git",
+    "text": "Git\n\nLab Topic on Git",
+    "crumbs": [
+      "Syllabus",
+      "Supplementary topics"
+    ]
+  },
+  {
+    "objectID": "topics.html#google-ai",
+    "href": "topics.html#google-ai",
+    "title": "Supplementary topics",
+    "section": "Google Ai",
+    "text": "Google Ai\n\nGoogle AI",
+    "crumbs": [
+      "Syllabus",
+      "Supplementary topics"
+    ]
   },
   {
     "objectID": "weeks/week_02/index.html",
