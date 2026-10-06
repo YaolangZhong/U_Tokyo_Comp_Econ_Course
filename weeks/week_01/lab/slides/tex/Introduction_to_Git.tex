@@ -1,5 +1,12 @@
 \newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
 \input{\CourseTemplatePath course_preamble.tex}
+% Shared visual style for every workflow in this deck.
+\tikzset{
+ gitbox/.style={draw=SessionLine,fill=SessionPaper,rounded corners,text width=3.3cm,minimum height=1.2cm,align=center,font=\sffamily\small},
+ gitcommit/.style={gitbox,text width=2.1cm,minimum height=.85cm},
+ gitarr/.style={-{Stealth},thick,SessionMuted},
+ gitlabel/.style={font=\sffamily\small}
+}
 \title[Git]{Lab: Introduction to Git}
 \subtitle{Version control, project history, and collaboration}
 \begin{document}
@@ -21,60 +28,97 @@ You find a useful project online and want to try it or adapt it. After downloadi
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Git: Start with a Working Folder}
+\begin{frame}{Git: Keep Earlier Versions}
 \term{Git} is software you install on your computer to keep a history of your work. It helps you record versions, revisit earlier work, and combine changes.
 \par\medskip
-\begin{enumerate}
-\item Start with an ordinary working folder containing your files.
-\item \term{Initialize} Git in that folder (\texttt{git init}). The folder becomes a \term{repository}: a project whose history Git can record.
-\item Keep editing your files as usual. Choose which changes to record and when to record them; initializing alone does not save a first version.
-\end{enumerate}
-\medskip
-To start from an existing project, \term{clone} its repository: make a local copy of its files and history instead of initializing an empty one.
+\begin{itemize}
+\item Start with an ordinary working folder containing your files. \term{Initialize} Git with \texttt{git init}: the folder becomes a \term{repository}, a project whose history Git can record.
+\item A \term{commit} is like a snapshot of the project's recorded files at a particular point. You can return to that version or recover useful content from it.
+\item Each commit has a \term{hash}: an identifier made of letters and numbers, often displayed in a short form such as \texttt{a3f7c2d}. You also write a message, such as ``Add a plotting function.''
+\item Git keeps these snapshots in its history, so you can keep working in one folder instead of making \texttt{v1}, \texttt{v2}, \texttt{v3}, \ldots
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Git: Record Your Changes}
-\centering
-\begin{tikzpicture}[node distance=12mm,font=\sffamily\small,
- box/.style={draw=SessionLine,fill=SessionPaper,rounded corners,minimum width=3.1cm,minimum height=1cm,align=center},
- arr/.style={-{Stealth},thick,SessionMuted}]
-\node[box] (w) {Working files\\Your saved edits};
-\node[box,right=of w] (s) {Staging area\\Your selection};
-\node[box,right=of s] (h) {Project history\\Recorded versions};
-\draw[arr] (w)--node[above=3mm]{\term{stage}}(s);
-\draw[arr] (s)--node[above=3mm]{\term{commit}}(h);
+\begin{frame}{Git: Record a Version}
+\par\smallskip
+\begingroup\centering
+\begin{tikzpicture}[scale=.88,transform shape,node distance=10mm,font=\sffamily\small]
+\node[gitbox] (w) {\textbf{Working folder}\\Files you are editing};
+\node[gitbox,right=of w] (s) {\textbf{Staging area}\\Next snapshot};
+\node[gitbox,right=of s] (h) {\textbf{Commit history}\\Saved snapshots};
+\draw[gitarr] (w)--node[above=3mm]{\term{stage}}(s);
+\draw[gitarr] (s)--node[above=3mm]{\term{commit}}(h);
 \end{tikzpicture}
-\par\medskip
+\par\endgroup\smallskip
 \begin{itemize}
-\item Edit and save a file as usual. Use \term{status} to see which files have changed and \term{diff} to inspect the changes.
-\item \term{Stage}: select the changes you want to include in the next recorded version.
-\item \term{Commit}: record that selection in the project's history, with a short message explaining what changed.
-\item Use the \term{log} to browse earlier commits. You can compare versions and recover earlier content when needed.
+\item \textbf{Edit and save:} your working files change, but no new snapshot is recorded in Git yet.
+\item \term{Stage}: choose which edits go into the next snapshot. Other tracked files retain their previously recorded content in that snapshot.
+\item \term{Commit}: record the prepared snapshot in history, with your message. Later edits leave that snapshot unchanged.
 \end{itemize}
 \medskip
-Saving a file updates your working copy; committing records a version in Git.
+\courseexample{Case: Two files changed, only one is ready}\\
+You edit \texttt{code.py} and \texttt{notes.txt}, but stage only \texttt{code.py}. The commit records the code changes; your unfinished edits to \texttt{notes.txt} stay in the working folder for later.
 \end{frame}
 
-\begin{frame}{Git: Combine and Share Changes}
+\begin{frame}{Git: Branch and Merge}
+\small
+A \term{branch} lets you try an idea separately while a partner works on the main version.
+\par\smallskip
+\begingroup\centering
+\begin{tikzpicture}[scale=.88,transform shape,font=\sffamily\small]
+\node[gitcommit] (start) at (0,0) {Starting commit};
+\node[gitcommit] (main) at (4.5,0) {Partner's edit};
+\node[gitcommit] (combined) at (9,0) {Combined version};
+\node[gitcommit] (try) at (3,-1.35) {Try an idea};
+\node[gitcommit] (refine) at (6,-1.35) {Refine the idea};
+\draw[gitarr] (start)--(main);
+\draw[gitarr] (main)--(combined);
+\draw[gitarr] (start.south) to[out=-90,in=180] node[gitlabel,below left]{\term{branch}} (try.west);
+\draw[gitarr] (try)--(refine);
+\draw[gitarr] (refine.east) to[out=0,in=-90] node[gitlabel,below right]{\term{merge}} (combined.south);
+\node[gitlabel,above=2mm of main] {Main branch};
+\node[gitlabel,below=2mm of try] {Your branch};
+\end{tikzpicture}
+\par\endgroup\smallskip
 \begin{itemize}
-\item A \term{branch} lets you develop a change separately, such as trying a new idea while keeping the main version available.
-\item \term{Merge}: bring changes from another branch into your current branch. If edits clash, Git flags a \term{conflict}; you decide how to combine them.
-\item A \term{remote} is a saved connection to another copy of the repository, for example one shared with your collaborators online.
-\item \term{Push}: send your local commits to that remote so others can access them.
-\item \term{Pull}: get changes from the remote and combine them with your current branch. Conflicts may need your attention.
+\item Each box is a \term{commit}. Both branches start from the same history, then record separate changes.
+\item \term{Merge}: bring the changes from your branch into the main branch.
+\item A \term{conflict} means Git cannot combine edits automatically. Decide which content to keep, then complete the merge.
 \end{itemize}
-\medskip
-Commits stay on your computer until you share them. Git can record your work even when you are offline.
 \end{frame}
 
-\begin{frame}{What Is GitHub?}
-\term{GitHub} is an online platform that hosts Git repositories and provides tools for sharing projects and collaborating on them.
+\begin{frame}{Git: Push, Fetch, and Pull}
+\small
+Exchange commits with your partner through a shared repository.
+\par\smallskip
+\begingroup\centering
+\begin{tikzpicture}[scale=.88,transform shape,node distance=10mm,font=\sffamily\small]
+\node[gitbox] (shared) {Shared repository\\Online commits};
+\node[gitbox,right=of shared] (downloaded) {Fetched commits\\Ready to inspect};
+\node[gitbox,right=of downloaded] (current) {Your current branch\\Your working version};
+\draw[gitarr] (shared)--node[above=3mm]{\term{fetch}}(downloaded);
+\draw[gitarr] (downloaded)--node[below=3mm]{integrate}(current);
+\draw[gitarr] (current.north) -- ++(0,.75) -| node[pos=.25,above]{\term{push}: send your commits} (shared.north);
+\draw[gitarr] ([yshift=-3mm]shared.south) -- ++(0,-.45) -| ([yshift=-3mm]current.south);
+\node[gitlabel,below=8mm of downloaded] {\term{pull} = fetch + integrate};
+\end{tikzpicture}
+\par\endgroup\smallskip
+\begin{itemize}
+\item \term{Push}: send your commits to the shared repository.
+\item \term{Fetch}: download new commits to inspect. Your current branch and working files stay unchanged.
+\item \term{Pull}: fetch and integrate updates into your current branch, using a merge or replaying your commits on top, depending on your settings. Resolve conflicts if needed.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{GitHub: Start from an Existing Project}
+\term{GitHub} is an online platform for storing and sharing Git repositories. It gives a project a web address where you can browse its files and history.
 \par\medskip
 \begin{itemize}
-\item Upload a repository to make its files and history available to collaborators, or publish it for anyone to access.
-\item Browse changes, discuss tasks through issues, and review proposed contributions through pull requests.
-\item Connect your local repository to the hosted one through a \term{remote}: a named connection to another repository.
-\item Exchange changes with that remote, or \term{clone} an existing repository to start working with a local copy.
+\item Your \term{local repository} is on your computer. A repository hosted on GitHub can serve as the shared copy for a project.
+\item A \term{remote} is a saved name and address for another repository. Git uses this connection when you push, fetch, or pull.
+\item Read the project's \term{README}: the introductory file explaining what the project does and how to use it.
+\item Run \term{git clone} with the repository's address to create a local folder with its files and history. Git also sets up a remote connection to the original repository.
+\item Work in your copy, make commits, and fetch later updates. Pushing to the original repository requires permission from its owner.
 \end{itemize}
 \end{frame}
 
