@@ -636,7 +636,42 @@
     "href": "references.html",
     "title": "Readings and references",
     "section": "",
-    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nZhigang Feng, Zhigang Feng: Personal Website. [Web resource]\nZhigang Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nZhigang Feng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, QuantEcon: Economics and Computational Tools. [Web resource]\nQuantEcon, Python Programming for Economics and Finance. [Online course]\nArthur Turrell, Coding for Economists. [Web resource]\nDimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. [Web resource]\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\nZhigang Feng, Workshop Notes on AI and Machine Learning for Economists. [Web resource]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]"
+    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\n\n\n\n\n\nZhigang Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nZhigang Feng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, Python Programming for Economics and Finance. [Online course]\n\n\n\n\n\nDimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. [Web resource]\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\nZhigang Feng, Workshop Notes on AI and Machine Learning for Economists. [Web resource]\n\n\n\n\n\nZhigang Feng, Zhigang Feng: Personal Website. [Web resource]\nQuantEcon, QuantEcon: Economics and Computational Tools. [Web resource]\n\n\n\n\nResearch-paper readings will be announced here."
+  },
+  {
+    "objectID": "references.html#books-and-online-books",
+    "href": "references.html#books-and-online-books",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]"
+  },
+  {
+    "objectID": "references.html#online-courses",
+    "href": "references.html#online-courses",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Zhigang Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nZhigang Feng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, Python Programming for Economics and Finance. [Online course]"
+  },
+  {
+    "objectID": "references.html#lecture-notes-and-teaching-resources",
+    "href": "references.html#lecture-notes-and-teaching-resources",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Dimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. [Web resource]\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\nZhigang Feng, Workshop Notes on AI and Machine Learning for Economists. [Web resource]"
+  },
+  {
+    "objectID": "references.html#websites-and-tools",
+    "href": "references.html#websites-and-tools",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Zhigang Feng, Zhigang Feng: Personal Website. [Web resource]\nQuantEcon, QuantEcon: Economics and Computational Tools. [Web resource]"
+  },
+  {
+    "objectID": "references.html#papers",
+    "href": "references.html#papers",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Research-paper readings will be announced here."
   },
   {
     "objectID": "getting-started.html",
@@ -757,47 +792,54 @@
     "href": "syllabus.html#assessment",
     "title": "Course syllabus",
     "section": "Assessment",
-    "text": "Assessment\nThe replication project accounts for 100% of the grade. Work in teams of 2–3 and replicate as many papers as there are team members.\nSee the project guide and reading resources."
+    "text": "Assessment\nThe replication project accounts for 100% of the grade. Work in teams of 2–3 and replicate as many papers as there are team members.\nA 15-minute presentation of the replication work is required, during the last one or two lecture weeks, depending on the number of submissions. The presentation schedule will be announced once that number is known.\nSee the grading and project requirements and reading resources."
   },
   {
     "objectID": "project.html",
     "href": "project.html",
-    "title": "Final project",
+    "title": "Grading",
     "section": "",
     "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
   },
   {
     "objectID": "project.html#replicate-a-research-paper",
     "href": "project.html#replicate-a-research-paper",
-    "title": "Final project",
+    "title": "Grading",
     "section": "",
     "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
   },
   {
     "objectID": "project.html#agree-on-a-paper",
     "href": "project.html#agree-on-a-paper",
-    "title": "Final project",
+    "title": "Grading",
     "section": "Agree on a paper",
     "text": "Agree on a paper\nEmail Yaolang Zhong with the paper you intend to replicate. If proposing your own paper, attach it and arrange a brief discussion before proceeding.\nSuggested project readings will be announced on the course website."
   },
   {
     "objectID": "project.html#submission-checklist",
     "href": "project.html#submission-checklist",
-    "title": "Final project",
+    "title": "Grading",
     "section": "Submission checklist",
     "text": "Submission checklist\nSubmit a compressed project folder containing:\n\nThe paper being replicated.\nA concise technical note covering the research question, equations, data, and computational approach.\nA README explaining the workflow and mapping code to the paper’s algorithms or results.\nA requirements.txt describing the Python dependencies.\nSupporting scripts and a notebook or main.py that reproduces the replication output."
   },
   {
+    "objectID": "project.html#replication-presentation",
+    "href": "project.html#replication-presentation",
+    "title": "Grading",
+    "section": "Replication presentation",
+    "text": "Replication presentation\nA 15-minute presentation of the replication work is required. Present the research question, computational method, main replication results, and any differences from the original paper.\nPresentations will take place during the last one or two lecture weeks, depending on the number of submissions. The presentation schedule will be announced once that number is known."
+  },
+  {
     "objectID": "project.html#evaluation",
     "href": "project.html#evaluation",
-    "title": "Final project",
+    "title": "Grading",
     "section": "Evaluation",
     "text": "Evaluation\nTechnical understanding and runnable, readable code matter more than exact numerical agreement with the paper. Explain what you reproduced, how you tested it, and any remaining differences."
   },
   {
     "objectID": "project.html#deadline-and-submission",
     "href": "project.html#deadline-and-submission",
-    "title": "Final project",
+    "title": "Grading",
     "section": "Deadline and submission",
     "text": "Deadline and submission\nThe deadline and submission channel for the next offering will be confirmed by the instructor.\nStudent projects will be shared only with the approval of the student group, as described in the existing course policy."
   },
