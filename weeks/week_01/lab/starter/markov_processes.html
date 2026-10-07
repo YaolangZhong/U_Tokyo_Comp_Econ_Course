@@ -212,385 +212,246 @@ window.Quarto = {
 
 
 <!-- Generated from the adjacent notebook; edit the notebook. -->
-<p>We will build two small models from the first lecture, from simple to more involved:</p>
-<ol type="1">
-<li><strong>Employment/unemployment:</strong> store states and probabilities, then build a Markov-process object that simulates a worker’s path.</li>
-<li><strong>Maze navigation:</strong> represent a location as a state vector and let a policy choose an action.</li>
-</ol>
-<p>No previous Python experience is assumed. Read each explanation before running its code. Work through the first model together; use the maze for guided practice. Allow about 50–60 minutes for the guided work, followed by a separate cake-eating MDP exercise.</p>
-<p><a href="https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/markov_processes.ipynb">Open in Colab</a> · <a href="https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_01/lecture/Introduction_to_Markov_Decision_Processes.pdf">Lecture slides</a></p>
-<section id="run-your-first-cell" class="level2">
-<h2 class="anchored" data-anchor-id="run-your-first-cell">1. Run your first cell</h2>
-<p>In Colab, sign in, save a copy in Drive, and connect to a standard CPU runtime. NumPy and Matplotlib are available in the standard Colab environment; no data files or Drive mounting are needed.</p>
-<p>A <strong>text cell</strong> explains the work. A <strong>code cell</strong> contains instructions. Click its play button or press <strong>Shift+Enter</strong>. Run cells from top to bottom: later cells use values created earlier.</p>
-<p><code>import</code> loads a <strong>module</strong> (a collection of tools). <code>print(...)</code> is a <strong>function call</strong>: it performs an operation using the values inside parentheses, called <strong>arguments</strong>. Text between quotes is a <strong>string</strong>. The first cell shows the Python version in this runtime.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Python version:"</span>, sys.version.split()[<span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>sys.version</code> is version information. A dot accesses information or an operation belonging to an object. <code>.split()</code> separates the text into words; <code>[0]</code> selects the first word. Python counts positions from <strong>zero</strong>.</p>
+<p><strong>30 minutes:</strong> Python and probabilities (5 min), simulation (5 min), maze policy (10 min), cake eating (10 min).</p>
+<p>In Colab, save a copy in Drive and connect to a CPU runtime. Run cells from top to bottom with <strong>Shift+Enter</strong>. Complete the two coding exercises; double-click each solution block to reveal its code.</p>
+<p><a href="https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_01/lecture/Introduction_to_Markov_Decision_Processes.pdf">Lecture slides</a></p>
+<section id="states-and-probabilities-5-min" class="level2">
+<h2 class="anchored" data-anchor-id="states-and-probabilities-5-min">1. States and probabilities · 5 min</h2>
+<p>A <strong>variable</strong> names a value; <code>=</code> assigns it. A <strong>list</strong> stores values in order, starting at index <code>0</code>. <code>import</code> loads a package; <strong>NumPy</strong> supplies numerical arrays. <code>#</code> starts a comment, and <code>print(...)</code> displays a result.</p>
+<p>The states are unemployed (<code>U</code>) and employed (<code>E</code>). An unemployed worker finds a job with probability <span class="math inline">\(\alpha=0.20\)</span>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>states <span class="op">=</span> [<span class="st">"Unemployed"</span>, <span class="st">"Employed"</span>]   <span class="co"># A Python list</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>current_state <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.20</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>p_unemployed <span class="op">=</span> np.array([<span class="dv">1</span> <span class="op">-</span> alpha, alpha])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current state:"</span>, states[current_state])</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Next-state probabilities [U, E]:"</span>, p_unemployed)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sum:"</span>, p_unemployed.<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>An employed worker loses their job with probability <span class="math inline">\(\delta=0.05\)</span>. In the transition matrix <code>P</code>, <strong>rows are today’s state and columns are tomorrow’s</strong>, ordered <code>[U, E]</code>.</p>
+<p><code>mu0</code> describes probabilities over states, not one worker’s realized state. The next distribution is <span class="math inline">\(\mu_1=\mu_0P\)</span>: <code>@</code> means matrix multiplication. <code>assert</code> checks a condition; <code>np.allclose</code> allows small rounding differences.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>delta <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> np.array([[<span class="dv">1</span> <span class="op">-</span> alpha, alpha],</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>              [delta, <span class="dv">1</span> <span class="op">-</span> delta]])</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>mu0 <span class="op">=</span> np.array([<span class="fl">0.60</span>, <span class="fl">0.40</span>])</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>mu1 <span class="op">=</span> mu0 <span class="op">@</span> P</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"P:"</span>, P, sep<span class="op">=</span><span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"U to E probability:"</span>, P[<span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Next distribution:"</span>, mu1)       <span class="co"># [0.50, 0.50]</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.<span class="bu">all</span>(P <span class="op">&gt;=</span> <span class="dv">0</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(P.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>), <span class="dv">1</span>)   <span class="co"># Each row sums to one</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="states-names-lists-and-positions" class="level2">
-<h2 class="anchored" data-anchor-id="states-names-lists-and-positions">2. States: names, lists, and positions</h2>
-<p>The employment chain has two states, ordered as unemployed (<code>U</code>), employed (<code>E</code>), just as in the lecture.</p>
-<p>A <strong>variable</strong> gives a name to a value. <code>=</code> assigns a value; it is not an equality test. A <strong>list</strong>, written with square brackets, keeps values in order. A line starting with <code>#</code> is a <strong>comment</strong> for readers.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The ordering must be the same in every probability vector and matrix.</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>states <span class="op">=</span> [<span class="st">"Unemployed"</span>, <span class="st">"Employed"</span>]</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>current_state <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"State names:"</span>, states)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current state:"</span>, states[current_state])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>current_state</code> is an <strong>integer</strong> (<code>int</code>), used here as a state index. <code>states[0]</code> selects unemployment; <code>states[1]</code> selects employment.</p>
-<p><strong>Try it:</strong> change <code>current_state</code> to <code>1</code> and rerun the cell. Only the selected label changes; the list still contains both possible states.</p>
+<section id="a-markov-process-class-5-min" class="level2">
+<h2 class="anchored" data-anchor-id="a-markov-process-class-5-min">2. A Markov-process class · 5 min</h2>
+<p>A <strong>class</strong> groups data and functions. <code>__init__</code> sets up an object; <code>self.P</code> stores its matrix. A function inside a class is a <strong>method</strong>, defined with <code>def</code>.</p>
+<p><code>simulate</code> draws a path: <code>for</code> repeats, <code>.append</code> records a state, and <code>return</code> sends back the result. Indentation groups instructions. A fixed <strong>seed</strong> makes the random draws repeatable.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MarkovProcess:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, states, P):</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.states <span class="op">=</span> states</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.P <span class="op">=</span> np.array(P)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="va">self</span>.P.shape <span class="op">==</span> (<span class="bu">len</span>(states), <span class="bu">len</span>(states))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> np.<span class="bu">all</span>(<span class="va">self</span>.P <span class="op">&gt;=</span> <span class="dv">0</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> np.allclose(<span class="va">self</span>.P.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>), <span class="dv">1</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> simulate(<span class="va">self</span>, initial_state, periods, seed<span class="op">=</span><span class="dv">7</span>):</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        rng <span class="op">=</span> np.random.default_rng(seed)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        state <span class="op">=</span> initial_state</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        path <span class="op">=</span> [state]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> period <span class="kw">in</span> <span class="bu">range</span>(periods):</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            state <span class="op">=</span> rng.choice(<span class="bu">len</span>(<span class="va">self</span>.states), p<span class="op">=</span><span class="va">self</span>.P[state])</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>            path.append(state)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.array(path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>employment <span class="op">=</span> MarkovProcess(states, P)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> employment.simulate(initial_state<span class="op">=</span><span class="dv">0</span>, periods<span class="op">=</span><span class="dv">24</span>, seed<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Simulated states:"</span>, path)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="fl">2.5</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>plt.step(<span class="bu">range</span>(<span class="bu">len</span>(path)), path, where<span class="op">=</span><span class="st">"post"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>plt.yticks([<span class="dv">0</span>, <span class="dv">1</span>], states)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Month"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"One simulated employment path"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="op">-</span><span class="fl">0.2</span>, <span class="fl">1.2</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="one-transition-probability-vector" class="level2">
-<h2 class="anchored" data-anchor-id="one-transition-probability-vector">3. One transition-probability vector</h2>
-<p>Suppose an unemployed worker finds a job next month with probability <span class="math inline">\(\alpha=0.20\)</span>. These are illustrative probabilities, not estimates.</p>
-<p>Conditional on being unemployed today, the next-state probabilities are</p>
-<p><span class="math display">\[p_U=(1-\alpha,\alpha)=(0.80,0.20).\]</span></p>
-<p>A number with a decimal point is a <strong>float</strong>. NumPy is a <strong>package</strong> for numerical work. <code>import numpy as np</code> loads it under the shorter name <code>np</code>. <code>np.array(...)</code> turns a list into a numerical <strong>array</strong>, which we use to represent a vector.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.20</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>p_unemployed <span class="op">=</span> np.array([<span class="dv">1</span> <span class="op">-</span> alpha, alpha])</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Next-state probabilities [U, E]:"</span>, p_unemployed)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Probability of finding a job:"</span>, p_unemployed[<span class="dv">1</span>])</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sum:"</span>, p_unemployed.<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>.sum()</code> is a <strong>method</strong>: a function belonging to this array. A valid probability vector has nonnegative entries and sums to one.</p>
-<p>A <strong>Boolean</strong> is <code>True</code> or <code>False</code>. <code>np.all(...)</code> checks every entry; <code>np.allclose(...)</code> checks approximate equality, allowing tiny rounding differences. <code>assert</code> stops execution if its condition is false.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"All probabilities are nonnegative:"</span>, np.<span class="bu">all</span>(p_unemployed <span class="op">&gt;=</span> <span class="dv">0</span>))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.<span class="bu">all</span>(p_unemployed <span class="op">&gt;=</span> <span class="dv">0</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(p_unemployed.<span class="bu">sum</span>(), <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="from-a-vector-to-a-transition-matrix" class="level2">
-<h2 class="anchored" data-anchor-id="from-a-vector-to-a-transition-matrix">4. From a vector to a transition matrix</h2>
-<p>An employed worker loses their job with probability <span class="math inline">\(\delta=0.05\)</span>. Combine the probability vectors for both current states:</p>
-<p><span class="math display">\[P=\begin{pmatrix}1-\alpha&amp;\alpha\\\delta&amp;1-\delta\end{pmatrix}.\]</span></p>
-<p>Each inner list below becomes one row. <strong>Rows mean today’s state; columns mean next month’s state</strong>, ordered <code>[U, E]</code>. <code>P[0, 1]</code> selects row 0, column 1: unemployment to employment.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>delta <span class="op">=</span> <span class="fl">0.05</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> np.array([</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">1</span> <span class="op">-</span> alpha, alpha],</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    [delta, <span class="dv">1</span> <span class="op">-</span> delta]</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Transition matrix:"</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(P)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Unemployed to employed:"</span>, P[<span class="dv">0</span>, <span class="dv">1</span>])</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Employed to unemployed:"</span>, P[<span class="dv">1</span>, <span class="dv">0</span>])</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Row sums:"</span>, P.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.<span class="bu">all</span>(P <span class="op">&gt;=</span> <span class="dv">0</span>)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(P.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>), <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>axis=1</code> tells <code>.sum()</code> to add across each row. It is a <strong>keyword argument</strong>: a setting supplied by name.</p>
-<p>We now have a time-homogeneous <strong>Markov chain</strong>: next month’s probabilities depend on the current state, not on earlier states, and we use the same matrix each month. A Markov chain is a Markov process with a discrete state space.</p>
-</section>
-<section id="state-versus-state-probability-vector" class="level2">
-<h2 class="anchored" data-anchor-id="state-versus-state-probability-vector">5. State versus state-probability vector</h2>
-<p>A worker’s realized state is either <code>U</code> or <code>E</code>. A <strong>probability vector</strong> describes uncertainty about that state:</p>
-<p><span class="math display">\[\mu_0=(0.60,0.40),\qquad \mu_1=\mu_0P.\]</span></p>
-<p>The first entry of <span class="math inline">\(\mu_0\)</span> is a 60% probability of unemployment. It is not a worker who is “60% unemployed.” The same vector can describe population shares under the common transition rule.</p>
-<p>NumPy uses a one-dimensional array here. Placing it on the left in <code>mu0 @ P</code> matches the lecture’s <strong>row-vector convention</strong>. <code>@</code> means matrix multiplication; <code>*</code> means ordinary or entry-by-entry multiplication.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mu0 <span class="op">=</span> np.array([<span class="fl">0.60</span>, <span class="fl">0.40</span>])</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mu1 <span class="op">=</span> mu0 <span class="op">@</span> P</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Initial probabilities:"</span>, mu0)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Next-month probabilities:"</span>, mu1)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Two ways to end up unemployed next month.</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>unemployment_next <span class="op">=</span> mu0[<span class="dv">0</span>] <span class="op">*</span> P[<span class="dv">0</span>, <span class="dv">0</span>] <span class="op">+</span> mu0[<span class="dv">1</span>] <span class="op">*</span> P[<span class="dv">1</span>, <span class="dv">0</span>]</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Unemployment, calculated separately:"</span>, unemployment_next)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(mu1[<span class="dv">0</span>], unemployment_next)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(mu1.<span class="bu">sum</span>(), <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>With the starting inputs, the result is <code>[0.50, 0.50]</code>. Explain the two terms in the calculation before continuing.</p>
-</section>
-<section id="draw-one-next-state" class="level2">
-<h2 class="anchored" data-anchor-id="draw-one-next-state">6. Draw one next state</h2>
-<p>Updating a distribution calculates probabilities. <strong>Simulation</strong> instead draws one possible outcome using those probabilities.</p>
-<p><code>np.random.default_rng(7)</code> creates a random-number generator. The <strong>seed</strong> <code>7</code> makes the sequence repeatable in the same software setup. <code>rng.choice(2, p=...)</code> chooses state index <code>0</code> or <code>1</code> using the given probabilities.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">7</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>current_state <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>next_state <span class="op">=</span> rng.choice(<span class="dv">2</span>, p<span class="op">=</span>P[current_state])</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Today:"</span>, states[current_state])</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"One simulated next month:"</span>, states[next_state])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>P[current_state]</code> selects the entire row for today’s state. One simulated worker need not match the population probabilities.</p>
-</section>
-<section id="put-the-model-into-a-class" class="level2">
-<h2 class="anchored" data-anchor-id="put-the-model-into-a-class">7. Put the model into a class</h2>
-<p>A <strong>class</strong> is a blueprint that keeps a model’s data and operations together. A particular model created from it is an <strong>object</strong> (or instance).</p>
-<p>We will create <code>MarkovProcess</code> with:</p>
-<ul>
-<li><strong>Attributes</strong> <code>states</code> and <code>P</code>: the data stored by the object.</li>
-<li>A <strong>method</strong> <code>simulate(...)</code>: instructions that draw a state path.</li>
-</ul>
-<p>Read these Python terms before the definition:</p>
-<ul>
-<li><code>class</code> defines the blueprint; <code>def</code> defines a function or method.</li>
-<li><code>__init__</code> runs when an object is created. <code>self</code> refers to that object; <code>self.P</code> stores its matrix.</li>
-<li><code>for ... in range(periods)</code> repeats a block <code>periods</code> times. <strong>Indentation</strong> marks the instructions inside the loop or method.</li>
-<li><code>.append(...)</code> adds an item to a list. <code>return</code> sends the result back to the caller.</li>
-<li><code>seed=7</code> supplies a default value if no seed is passed.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MarkovProcess:</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, states, P):</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.states <span class="op">=</span> states</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.P <span class="op">=</span> np.array(P)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="va">self</span>.P.shape <span class="op">==</span> (<span class="bu">len</span>(states), <span class="bu">len</span>(states))</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> np.<span class="bu">all</span>(<span class="va">self</span>.P <span class="op">&gt;=</span> <span class="dv">0</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> np.allclose(<span class="va">self</span>.P.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>), <span class="dv">1</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> simulate(<span class="va">self</span>, initial_state, periods, seed<span class="op">=</span><span class="dv">7</span>):</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        rng <span class="op">=</span> np.random.default_rng(seed)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        state <span class="op">=</span> initial_state</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        path <span class="op">=</span> [state]</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> period <span class="kw">in</span> <span class="bu">range</span>(periods):</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>            state <span class="op">=</span> rng.choice(<span class="bu">len</span>(<span class="va">self</span>.states), p<span class="op">=</span><span class="va">self</span>.P[state])</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            path.append(state)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.array(path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>len(states)</code> counts the state labels; <code>.shape</code> reports an array’s dimensions. <code>==</code> tests equality. The checks require one row and column per state and valid probabilities.</p>
-<p>Running the class definition creates the blueprint. The next cell creates a model and calls its simulation method. <code>initial_state=0</code> means that this worker starts unemployed with certainty; it is different from the uncertain initial distribution <code>mu0</code> above.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>employment <span class="op">=</span> MarkovProcess(states, P)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> employment.simulate(initial_state<span class="op">=</span><span class="dv">0</span>, periods<span class="op">=</span><span class="dv">24</span>, seed<span class="op">=</span><span class="dv">7</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"State indices from month 0 to month 24:"</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(path)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Initial state:"</span>, employment.states[path[<span class="dv">0</span>]])</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Final state:"</span>, employment.states[path[<span class="op">-</span><span class="dv">1</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>path[-1]</code> selects the last entry: negative positions count backward from the end.</p>
-</section>
-<section id="see-the-simulated-path" class="level2">
-<h2 class="anchored" data-anchor-id="see-the-simulated-path">8. See the simulated path</h2>
-<p>Matplotlib is a plotting package; we give its <code>pyplot</code> module the alias <code>plt</code>. <code>range(len(path))</code> supplies month numbers. A step plot is suitable for discrete states.</p>
-<p>This line shows <strong>one worker’s realized states</strong>, not a probability vector. Its values are state labels <code>0</code> and <code>1</code>, not unemployment rates.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>plt.step(<span class="bu">range</span>(<span class="bu">len</span>(path)), path, where<span class="op">=</span><span class="st">"post"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>plt.yticks([<span class="dv">0</span>, <span class="dv">1</span>], states)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Month"</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"One simulated employment path"</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="op">-</span><span class="fl">0.2</span>, <span class="fl">1.2</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="practice-change-the-model" class="level3">
-<h3 class="anchored" data-anchor-id="practice-change-the-model">Practice: change the model</h3>
-<p>Before running, predict the effect of increasing the job-finding probability. <code>P_trial</code> is a new matrix; changing a number does not automatically rebuild previously created arrays or objects.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>alpha_trial <span class="op">=</span> <span class="fl">0.40</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>P_trial <span class="op">=</span> np.array([</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">1</span> <span class="op">-</span> alpha_trial, alpha_trial],</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    [delta, <span class="dv">1</span> <span class="op">-</span> delta]</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>employment_trial <span class="op">=</span> MarkovProcess(states, P_trial)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Baseline next-month distribution:"</span>, mu0 <span class="op">@</span> employment.P)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Higher job-finding probability:"</span>, mu0 <span class="op">@</span> employment_trial.P)</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"A new simulated path:"</span>, employment_trial.simulate(<span class="dv">0</span>, <span class="dv">24</span>, seed<span class="op">=</span><span class="dv">7</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Try changing the seed. Why can a simulated path change while <code>mu0 @ P</code> stays the same? For <code>alpha_trial = 0.40</code>, the new one-month distribution is <code>[0.38, 0.62]</code>.</p>
-</section>
-</section>
-<section id="an-mdp-a-state-vector-and-chosen-actions" class="level2">
-<h2 class="anchored" data-anchor-id="an-mdp-a-state-vector-and-chosen-actions">9. An MDP: a state vector and chosen actions</h2>
-<p>The lecture’s maze adds an <strong>action</strong> to the transition. We use a smaller <strong>3 × 3 maze</strong>, with one wall, but keep the lecture’s rules:</p>
-<ul>
-<li>State: the current free cell, represented by the vector <code>[row, column]</code>.</li>
-<li>Actions: up, down, left, right.</li>
-<li>Hitting a wall or boundary leaves the position unchanged.</li>
-<li>The goal is absorbing. Reward is <code>-1</code> for every move made outside the goal, including the move into it, and <code>0</code> thereafter.</li>
-</ul>
-<p>Rows and columns start at zero. Row 0 is the top; row 2 is the bottom. Start at <code>[2, 0]</code>, with goal <code>[0, 2]</code> and wall <code>[1, 1]</code>.</p>
-<pre class="text"><code>.  .  G
-.  #  .
+<section id="exercise-1-maze-policy-10-min" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1-maze-policy-10-min">3. Exercise 1: Maze policy · 10 min</h2>
+<p>The state vector <code>[row, column]</code> is a location, not a probability vector. A <strong>policy</strong> takes a state and returns an action.</p>
+<pre class="text"><code>.  .  G       Start [2, 0]; goal [0, 2]; wall [1, 1]
+.  #  .       Actions: up, down, left, right
 S  .  .</code></pre>
-<p>This <strong>state vector describes one location</strong>. It is not the probability vector <code>mu0</code>, and its entries need not sum to one.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> np.array([<span class="dv">2</span>, <span class="dv">0</span>])</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>move_up <span class="op">=</span> np.array([<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>])</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current location:"</span>, state)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"After moving up:"</span>, state <span class="op">+</span> move_up)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>NumPy adds these arrays entry by entry. A <strong>dictionary</strong> stores named values: <code>moves["up"]</code> looks up the displacement attached to the string <code>"up"</code>.</p>
-<p>A <strong>policy</strong> is a function that takes the current state as input and returns an action. <code>if</code> checks a condition; <code>else</code> handles the alternative. This simple policy goes up first, then right; from our chosen start it avoids the central wall. We are specifying a policy, not solving for an optimal one.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> up_then_right(state):</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> state[<span class="dv">0</span>] <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"up"</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"right"</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Action at the start:"</span>, up_then_right(np.array([<span class="dv">2</span>, <span class="dv">0</span>])))</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Action at the top-left corner:"</span>, up_then_right(np.array([<span class="dv">0</span>, <span class="dv">0</span>])))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>A wall or boundary blocks movement. Each move from outside the goal earns <code>-1</code>, including entry into the goal; at the goal, the state stays fixed and reward is <code>0</code>.</p>
+<p><strong>Run the supplied class.</strong> <code>step</code> returns the next state and reward; <code>simulate</code> calls the policy each period. <code>moves</code> is a <strong>dictionary</strong> mapping action names to displacement vectors.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MazeMDP:</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.goal <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">2</span>])</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.wall <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.beta <span class="op">=</span> <span class="fl">0.95</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.moves <span class="op">=</span> {</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">"up"</span>: np.array([<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>]),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">"down"</span>: np.array([<span class="dv">1</span>, <span class="dv">0</span>]),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">"left"</span>: np.array([<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>]),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">"right"</span>: np.array([<span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, state, action):</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> np.array_equal(state, <span class="va">self</span>.goal):</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> state.copy(), <span class="dv">0</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        next_state <span class="op">=</span> state <span class="op">+</span> <span class="va">self</span>.moves[action]</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        inside <span class="op">=</span> np.<span class="bu">all</span>(next_state <span class="op">&gt;=</span> <span class="dv">0</span>) <span class="kw">and</span> np.<span class="bu">all</span>(next_state <span class="op">&lt;</span> <span class="dv">3</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> inside <span class="kw">or</span> np.array_equal(next_state, <span class="va">self</span>.wall):</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            next_state <span class="op">=</span> state.copy()</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> next_state, <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> simulate(<span class="va">self</span>, policy, initial_state, periods):</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        state <span class="op">=</span> np.array(initial_state)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        path <span class="op">=</span> [state.copy()]</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        rewards <span class="op">=</span> []</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> period <span class="kw">in</span> <span class="bu">range</span>(periods):</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>            action <span class="op">=</span> policy(state)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>            state, reward <span class="op">=</span> <span class="va">self</span>.step(state, action)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>            path.append(state.copy())</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>            rewards.append(reward)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.array(path), np.array(rewards)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This supplied policy goes up first, then right. <code>if</code> / <code>else</code> selects an action. Pass the function to <code>simulate</code> without parentheses so it can be called at each state.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> up_then_right(state):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> state[<span class="dv">0</span>] <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"up"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"right"</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>maze <span class="op">=</span> MazeMDP()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>maze_path, rewards <span class="op">=</span> maze.simulate(up_then_right, [<span class="dv">2</span>, <span class="dv">0</span>], periods<span class="op">=</span><span class="dv">6</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Locations:"</span>, maze_path, sep<span class="op">=</span><span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Rewards:"</span>, rewards)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Your code:</strong> write <code>right_then_up(state)</code> to move right to column 2, then up. Simulate six periods from <code>[2, 0]</code>; print the path and rewards. Check that it reaches the goal after four moves and remains there.</p>
+<p>Replace <code>pass</code> (a placeholder that does nothing), then uncomment the checks.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> right_then_up(state):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># path, rewards = maze.simulate(right_then_up, [2, 0], periods=6)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(path)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(rewards)</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># assert np.array_equal(path[4:], [[0, 2], [0, 2], [0, 2]])</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># assert np.array_equal(rewards, [-1, -1, -1, -1, 0, 0])</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details>
+<summary>
+Solution 1: Maze policy
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Solution 1: Maze policy (double-click to show code)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#@markdown The code is hidden. Double-click to reveal it; run the cell to define `maze_solution()`, then call that function in a new cell to check the solution.</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> maze_solution():</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Keep this reference policy separate from your exercise code.</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> right_then_up(state):</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> state[<span class="dv">1</span>] <span class="op">&lt;</span> <span class="dv">2</span>:</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"right"</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"up"</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    maze <span class="op">=</span> MazeMDP()</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    path, rewards <span class="op">=</span> maze.simulate(right_then_up, [<span class="dv">2</span>, <span class="dv">0</span>], periods<span class="op">=</span><span class="dv">6</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Locations:"</span>, path, sep<span class="op">=</span><span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Rewards:"</span>, rewards)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.array_equal(path, [[<span class="dv">2</span>, <span class="dv">0</span>], [<span class="dv">2</span>, <span class="dv">1</span>], [<span class="dv">2</span>, <span class="dv">2</span>], [<span class="dv">1</span>, <span class="dv">2</span>],</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>                                 [<span class="dv">0</span>, <span class="dv">2</span>], [<span class="dv">0</span>, <span class="dv">2</span>], [<span class="dv">0</span>, <span class="dv">2</span>]])</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.array_equal(rewards, [<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    next_state, reward <span class="op">=</span> maze.step(np.array([<span class="dv">1</span>, <span class="dv">0</span>]), <span class="st">"right"</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.array_equal(next_state, [<span class="dv">1</span>, <span class="dv">0</span>]) <span class="kw">and</span> reward <span class="op">==</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> path, rewards</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </section>
-<section id="build-the-maze-object" class="level2">
-<h2 class="anchored" data-anchor-id="build-the-maze-object">10. Build the maze object</h2>
-<p>The <code>MazeMDP</code> class has two main methods:</p>
+<section id="exercise-2-cake-eating-10-min" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2-cake-eating-10-min">4. Exercise 2: Cake eating · 10 min</h2>
+<p>Use whole units of cake: state <span class="math inline">\(k\in\{0,1,2,3,4\}\)</span>, consumption <span class="math inline">\(c\in\{0,\ldots,k\}\)</span>.</p>
 <ul>
-<li><code>step(state, action)</code> applies the movement rule and returns the next state and reward.</li>
-<li><code>simulate(policy, initial_state, periods)</code> repeatedly asks the policy for an action, then applies <code>step</code>.</li>
+<li>Next state: <span class="math inline">\(k'=k-c\)</span>.</li>
+<li>Reward: <span class="math inline">\(\sqrt{c}\)</span>, written <code>np.sqrt(action)</code>.</li>
+<li>At zero cake, consume zero and stay at zero.</li>
 </ul>
-<p>New syntax used below:</p>
-<ul>
-<li><code>{...}</code> constructs a dictionary. <code>np.array_equal(a, b)</code> tests whether two arrays have equal entries.</li>
-<li><code>and</code> requires both conditions to hold; <code>not</code> reverses a Boolean.</li>
-<li><code>a, b = ...</code> <strong>unpacks</strong> two returned values into two names.</li>
-<li><code>.copy()</code> keeps a separate copy of an array.</li>
-</ul>
-<p>Read the movement rule first, then the simulation loop. The transition here is deterministic: each state/action pair selects exactly one next cell. An MDP can also have random transitions.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MazeMDP:</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.goal <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">2</span>])</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.wall <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">1</span>])</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.beta <span class="op">=</span> <span class="fl">0.95</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.moves <span class="op">=</span> {</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">"up"</span>: np.array([<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>]),</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">"down"</span>: np.array([<span class="dv">1</span>, <span class="dv">0</span>]),</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">"left"</span>: np.array([<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>]),</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">"right"</span>: np.array([<span class="dv">0</span>, <span class="dv">1</span>])</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, state, action):</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> np.array_equal(state, <span class="va">self</span>.goal):</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> state.copy(), <span class="dv">0</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        next_state <span class="op">=</span> state <span class="op">+</span> <span class="va">self</span>.moves[action]</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        inside <span class="op">=</span> np.<span class="bu">all</span>(next_state <span class="op">&gt;=</span> <span class="dv">0</span>) <span class="kw">and</span> np.<span class="bu">all</span>(next_state <span class="op">&lt;</span> <span class="dv">3</span>)</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> inside <span class="kw">or</span> np.array_equal(next_state, <span class="va">self</span>.wall):</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>            next_state <span class="op">=</span> state.copy()</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> next_state, <span class="op">-</span><span class="dv">1</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> simulate(<span class="va">self</span>, policy, initial_state, periods):</span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>        state <span class="op">=</span> np.array(initial_state)</span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        path <span class="op">=</span> [state.copy()]</span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>        rewards <span class="op">=</span> []</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> period <span class="kw">in</span> <span class="bu">range</span>(periods):</span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>            action <span class="op">=</span> policy(state)</span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>            state, reward <span class="op">=</span> <span class="va">self</span>.step(state, action)</span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>            path.append(state.copy())</span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>            rewards.append(reward)</span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.array(path), np.array(rewards)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>self.beta</code> stores the lecture’s discount factor, with <span class="math inline">\(0&lt;\beta&lt;1\)</span>. We do not calculate discounted values or optimize policies in this notebook.</p>
-<p>Notice that the simulation receives <code>up_then_right</code> <strong>without parentheses</strong>: we pass the function itself so that the method can call it on every new state.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>maze <span class="op">=</span> MazeMDP()</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>maze_path, rewards <span class="op">=</span> maze.simulate(up_then_right, initial_state<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">0</span>], periods<span class="op">=</span><span class="dv">6</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Locations, including the start:"</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(maze_path)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Rewards for the six moves:"</span>, rewards)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The first four moves reach the goal. The remaining two moves stay there and receive zero reward. The array of locations has seven rows: one initial state plus six transitions.</p>
+<p><strong>Your code:</strong> complete <code>step</code> and <code>consume_one</code>; the simulation loop is supplied. In <code>step</code>, check <code>0 &lt;= action &lt;= state</code> and return the next stock and reward. The policy consumes one unit when cake remains and zero otherwise. Use whole-number actions throughout.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CakeMDP:</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.beta <span class="op">=</span> <span class="fl">0.95</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, state, action):</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Check feasibility, then return next stock and reward.</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> simulate(<span class="va">self</span>, policy, initial_state, periods):</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        state <span class="op">=</span> initial_state</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        path, rewards <span class="op">=</span> [state], []</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> period <span class="kw">in</span> <span class="bu">range</span>(periods):</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>            action <span class="op">=</span> policy(state)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>            state, reward <span class="op">=</span> <span class="va">self</span>.step(state, action)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>            path.append(state)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>            rewards.append(reward)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.array(path), np.array(rewards)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> consume_one(state):</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Consume one unit if state &gt; 0; otherwise consume zero.</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Uncomment and run these checks after completing your code. Five periods give six states, including the initial stock.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cake = CakeMDP()</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># cake_path, cake_rewards = cake.simulate(consume_one, 4, periods=5)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Cake remaining:", cake_path)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Rewards:", cake_rewards)</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># assert np.array_equal(cake_path, [4, 3, 2, 1, 0, 0])</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># assert np.allclose(cake_rewards, [1, 1, 1, 1, 0])</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># stock, reward = cake.step(4, 2)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># assert stock == 2 and np.isclose(reward, np.sqrt(2))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details>
+<summary>
+Solution 2: Cake eating
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Solution 2: Cake eating (double-click to show code)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#@markdown The code is hidden. Double-click to reveal it; run the cell to define `cake_solution()`, then call that function in a new cell to check the solution.</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cake_solution():</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># These local definitions leave your CakeMDP and policies unchanged.</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> CakeMDP:</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.beta <span class="op">=</span> <span class="fl">0.95</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> step(<span class="va">self</span>, state, action):</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">assert</span> <span class="bu">isinstance</span>(state, (<span class="bu">int</span>, np.integer)) <span class="kw">and</span> <span class="dv">0</span> <span class="op">&lt;=</span> state <span class="op">&lt;=</span> <span class="dv">4</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">assert</span> <span class="bu">isinstance</span>(action, (<span class="bu">int</span>, np.integer)) <span class="kw">and</span> <span class="dv">0</span> <span class="op">&lt;=</span> action <span class="op">&lt;=</span> state</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> state <span class="op">-</span> action, np.sqrt(action)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> simulate(<span class="va">self</span>, policy, initial_state, periods):</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>            state <span class="op">=</span> initial_state</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>            path <span class="op">=</span> [state]</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>            rewards <span class="op">=</span> []</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> period <span class="kw">in</span> <span class="bu">range</span>(periods):</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>                action <span class="op">=</span> policy(state)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>                state, reward <span class="op">=</span> <span class="va">self</span>.step(state, action)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>                path.append(state)</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>                rewards.append(reward)</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> np.array(path), np.array(rewards)</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> consume_one(state):</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">min</span>(<span class="dv">1</span>, state)</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    cake <span class="op">=</span> CakeMDP()</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    path_one, rewards_one <span class="op">=</span> cake.simulate(consume_one, <span class="dv">4</span>, periods<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Consume one: stocks"</span>, path_one, <span class="st">"rewards"</span>, rewards_one)</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.array_equal(path_one, [<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.allclose(rewards_one, [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    next_stock, reward <span class="op">=</span> cake.step(<span class="dv">4</span>, <span class="dv">2</span>)</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> next_stock <span class="op">==</span> <span class="dv">2</span> <span class="kw">and</span> np.isclose(reward, np.sqrt(<span class="dv">2</span>))</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    next_stock, reward <span class="op">=</span> cake.step(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> next_stock <span class="op">==</span> <span class="dv">0</span> <span class="kw">and</span> reward <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cake, path_one, rewards_one</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </section>
-<section id="visualize-the-path-then-change-the-policy" class="level2">
-<h2 class="anchored" data-anchor-id="visualize-the-path-then-change-the-policy">11. Visualize the path, then change the policy</h2>
-<p><code>maze_path[:, 1]</code> selects every row (<code>:</code>) and column 1, the horizontal coordinate. Column 0 is the vertical coordinate. The plot reverses the vertical axis so row 0 appears at the top, as in the grid.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(maze.wall[<span class="dv">1</span>], maze.wall[<span class="dv">0</span>], marker<span class="op">=</span><span class="st">"s"</span>, s<span class="op">=</span><span class="dv">1800</span>, color<span class="op">=</span><span class="st">"gray"</span>, label<span class="op">=</span><span class="st">"Wall"</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>plt.plot(maze_path[:, <span class="dv">1</span>], maze_path[:, <span class="dv">0</span>], <span class="st">"o-"</span>, label<span class="op">=</span><span class="st">"Policy path"</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">0</span>, <span class="dv">2</span>, <span class="st">" S"</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="dv">2</span>, <span class="dv">0</span>, <span class="st">" G"</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>plt.xticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>])</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>plt.yticks([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>])</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="op">-</span><span class="fl">0.5</span>, <span class="fl">2.5</span>)</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="fl">2.5</span>, <span class="op">-</span><span class="fl">0.5</span>)</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Column"</span>)</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Row"</span>)</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Maze path: up first, then right"</span>)</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now keep the MDP fixed and change only its policy. Predict the path before running. Why does this policy stop making progress?</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> always_right(state):</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"right"</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>stuck_path, stuck_rewards <span class="op">=</span> maze.simulate(always_right, [<span class="dv">2</span>, <span class="dv">0</span>], periods<span class="op">=</span><span class="dv">6</span>)</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Always-right locations:"</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(stuck_path)</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Rewards:"</span>, stuck_rewards)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="your-exercise" class="level3">
-<h3 class="anchored" data-anchor-id="your-exercise">Your exercise</h3>
-<ol type="1">
-<li>Write a new policy in the cell below that goes <strong>right first, then up</strong>. Follow the same <code>if</code> / <code>else</code> structure as <code>up_then_right</code>.</li>
-<li>Simulate it from <code>[2, 0]</code> and check the first four moves on paper.</li>
-<li>Try <code>maze.step(np.array([1, 0]), "right")</code>. Explain why the next state is unchanged.</li>
-<li>Compare the two models: what selects the next employment state, and what selects an action in the maze?</li>
-</ol>
-<p>This cell contains comments so the supplied notebook runs from top to bottom. Replace the comments with your policy and simulation call.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define your right_then_up(state) policy here.</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Then call maze.simulate(right_then_up, [2, 0], periods=6).</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the returned path and rewards.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="my-observations" class="level3">
-<h3 class="anchored" data-anchor-id="my-observations">My observations</h3>
-<p>Edit this text cell:</p>
-<ul>
-<li>A Python list and a NumPy array both store values; the array helped me to…</li>
-<li><code>P[0, 1]</code> means…</li>
-<li>The vector <code>mu0</code> and the vector <code>[row, column]</code> describe different things because…</li>
-<li>A class stores…; a method does…</li>
-<li><code>employment.simulate(...)</code> draws…; <code>maze.simulate(...)</code> calls the policy to…</li>
-<li>My new policy and the path it produced:</li>
-</ul>
-</section>
-</section>
-<section id="independent-mdp-exercise-cake-eating" class="level2">
-<h2 class="anchored" data-anchor-id="independent-mdp-exercise-cake-eating">12. Independent MDP exercise: cake eating</h2>
-<p>Now build a different MDP yourself using the lecture’s <strong>cake-eating</strong> problem. Use the maze class as a guide, but write the new transition and policy. Allow about 20 minutes, or finish after class.</p>
-<p>For this exercise, restrict the lecture’s continuous stock and consumption to <strong>whole units</strong>:</p>
-<ul>
-<li><strong>State</strong> <span class="math inline">\(k_t\)</span>: remaining cake, initially 4 units; <span class="math inline">\(\mathcal S=\{0,1,2,3,4\}\)</span>.</li>
-<li><strong>Action</strong> <span class="math inline">\(c_t\)</span>: whole units consumed, with <span class="math inline">\(0\leq c_t\leq k_t\)</span>.</li>
-<li><strong>Transition</strong> <span class="math inline">\(k_{t+1}=k_t-c_t\)</span>.</li>
-<li><strong>Reward</strong> <span class="math inline">\(r(k_t,c_t)=\sqrt{c_t}\)</span>, computed with <code>np.sqrt(action)</code>.</li>
-<li><strong>Discount factor</strong> <span class="math inline">\(\beta=0.95\)</span>. Store it in the model; we will study discounted values and optimal policies in later lectures.</li>
-<li>At zero cake, only action 0 is feasible; the stock stays zero and reward is zero.</li>
-</ul>
-<p><strong>Task A — complete the model.</strong> Implement <code>step</code> and <code>simulate</code> in the scaffold below. <code>step</code> should check that the action is feasible (use <code>assert</code>), then return the next state and reward. <code>simulate</code> should call the policy at every step and return the state path and rewards, as the maze method does.</p>
-<p><code>pass</code> is Python’s “do nothing” placeholder. It lets an unfinished definition run, but it does not implement the method. Replace every <code>pass</code> below with your code.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CakeMDP:</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.beta <span class="op">=</span> <span class="fl">0.95</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, state, action):</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Check: action is a whole number between 0 and state.</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Return: next state, reward.</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> simulate(<span class="va">self</span>, policy, initial_state, periods):</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Start a path and reward list.</span></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Each period: choose an action, step, and record the results.</span></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Return two NumPy arrays, as in MazeMDP.simulate.</span></span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span></span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> consume_one(state):</span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Consume one unit if cake remains; otherwise consume zero.</span></span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Task B — apply a policy and verify the path.</strong> Complete <code>consume_one</code>, create your model, and simulate five periods from 4 units.</p>
-<p>Before running, write the expected path on paper. There are <strong>six states</strong> (including the initial stock) and <strong>five rewards</strong>. The checks below should pass once your implementation is complete. Uncomment them together by removing the leading <code>#</code> on each line.</p>
-<p>A call such as <code>cake.step(4, 2)</code> should give next state 2 and reward <span class="math inline">\(\sqrt{2}\)</span>. An action larger than the available cake must be rejected.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run these checks after completing Task A and the policy.</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># cake = CakeMDP()</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># cake_path, cake_rewards = cake.simulate(consume_one, initial_state=4, periods=5)</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Cake remaining:", cake_path)</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Rewards:", cake_rewards)</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># assert np.array_equal(cake_path, [4, 3, 2, 1, 0, 0])</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># assert np.allclose(cake_rewards, [1, 1, 1, 1, 0])</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># next_stock, reward = cake.step(4, 2)</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># assert next_stock == 2 and np.isclose(reward, np.sqrt(2))</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co"># next_stock, reward = cake.step(0, 0)</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co"># assert next_stock == 0 and reward == 0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Task C — change only the policy.</strong> Write <code>consume_two(state)</code>: consume two units if at least two remain, one if only one remains, and zero otherwise. Simulate it from 4 units and compare the stock and reward paths with <code>consume_one</code>.</p>
-<section id="my-mdp-exercise-answers" class="level3">
-<h3 class="anchored" data-anchor-id="my-mdp-exercise-answers">My MDP exercise answers</h3>
-<ul>
-<li>My two policies and their stock paths:</li>
-<li>How feasible consumption depends on the state:</li>
-<li>What happens after the cake is exhausted:</li>
-<li>Which code represents the environment, and which code represents the policy:</li>
-<li>Why different reward paths alone do not establish which policy is optimal:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define consume_two(state), then simulate it with the same CakeMDP object.</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Print and compare the stock and reward paths.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-<section id="save-and-reproduce-your-work" class="level2">
-<h2 class="anchored" data-anchor-id="save-and-reproduce-your-work">13. Save and reproduce your work</h2>
-<p>Restart the runtime/kernel and run all cells from the top. This checks that your work does not depend on values left from earlier runs. Save your answers and download the <code>.ipynb</code> file.</p>
-<p>For the local setup homework, install <code>numpy</code>, <code>matplotlib</code>, and <code>ipykernel</code> in your project environment and select it in VS Code. The companion <code>markov_processes.py</code> contains the notebook’s supplied code cells in the same order. Run it and check that its baseline probability vector and maze path match the notebook. Keep the files and a short README in your Git repository, then commit and push.</p>
-<section id="reading" class="level3">
-<h3 class="anchored" data-anchor-id="reading">Reading</h3>
-<ul>
-<li>Course lecture: <em>Introduction to Markov Decision Processes</em>, employment/unemployment, transition properties, and maze escape. The employment probabilities and smaller maze used here are teaching choices.</li>
-<li><a href="https://docs.python.org/3/tutorial/">Python tutorial</a>: revisit Python terminology as needed.</li>
-<li><a href="https://numpy.org/doc/stable/user/absolute_beginners.html">NumPy: the absolute basics for beginners</a>.</li>
-</ul>
+<section id="save-your-work" class="level2">
+<h2 class="anchored" data-anchor-id="save-your-work">Save your work</h2>
+<p>After completing both exercises, restart the runtime and run all cells. Save and download your <code>.ipynb</code> file. The companion <code>markov_processes.py</code> contains the same code; solution functions run only when called.</p>
+<p><strong>Further reading:</strong> <a href="https://docs.python.org/3/tutorial/">Python tutorial</a> · <a href="https://numpy.org/doc/stable/user/absolute_beginners.html">NumPy basics</a>.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
