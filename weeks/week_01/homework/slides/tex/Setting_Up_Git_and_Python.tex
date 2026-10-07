@@ -1,62 +1,16 @@
 \newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
 \input{\CourseTemplatePath course_preamble.tex}
-\title[Setup homework]{Homework: Setting Up Git and Python}
-\subtitle{Create a repository, run a script and notebook, and verify the results}
+\title[Week 1 homework]{Week 1 Homework}
 \begin{document}
-\makecoursetitle
-
-\begin{frame}{Prepare Your Project}
-\begin{itemize}
-\item Use the lab slides on \href{https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_01/lab/Introduction_to_Git.pdf}{Introduction to Git} and \href{https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_01/lab/Introduction_to_Python.pdf}{Introduction to Python}.
-\item Download the \href{https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/tree/main/weeks/week_01/lab/starter}{starter files}: \texttt{markov\_processes.py}, \texttt{markov\_processes.ipynb}, \texttt{requirements.txt}, and \texttt{.gitignore}.
-\item Create a project folder named \texttt{computational-economics} and open it in VS Code.
-\item You may use graphical interfaces. Be able to explain what you changed and how you checked the result.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Git: Create and Connect Your Repository}
-\small
+\begin{frame}{Week 1 Homework}
 \begin{enumerate}
-\item Install Git. Confirm that VS Code detects it, or check with \texttt{git --version}.
-\item Register for GitHub and complete account verification.
-\item Initialize Git in your project folder. Add a README and the supplied \texttt{.gitignore}.
-\item Inspect and stage the intended files, then make your first commit.
-\item Use \textbf{Publish to GitHub} in VS Code to create and connect a remote repository. Choose its visibility and review the files before publishing.
-\item Make a second meaningful change, commit, and push. Open the GitHub URL and confirm that both commits appear.
+\item \href{https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_01/lab/Introduction_to_Git.pdf\#page=8}{\textbf{Git: Your First Git Repository}}
+\par\smallskip
+Complete the homework at the end of the Git slides (page 8).
+\vspace{6mm}
+\item \href{https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/markov_processes.ipynb}{\textbf{Python: Colab Notebook}}
+\par\smallskip
+Complete the two coding exercises: maze policy and cake eating.
 \end{enumerate}
-\end{frame}
-
-\begin{frame}{Python: Run a Script and Notebook}
-\small
-\begin{enumerate}
-\item Install Python 3 and VS Code with Microsoft's Python and Jupyter extensions.
-\item Copy the starter script and notebook into your project folder.
-\item Use \textbf{Python: Create Environment}, select its interpreter, install the packages in \texttt{requirements.txt}, and run \texttt{markov\_processes.py}.
-\item Open \texttt{markov\_processes.ipynb} and select the same environment as its kernel. Install \texttt{ipykernel} there if prompted.
-\item Restart the kernel and run all cells. Check that both files give the next-month probabilities \textbf{[0.50, 0.50]}.
-\end{enumerate}
-\medskip
-You can also practice with the \href{https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/markov_processes.ipynb}{notebook in Colab}. Complete the local setup and compare the results.
-\end{frame}
-
-\begin{frame}{Change an Input and Check the Result}
-\begin{enumerate}
-\item Change the job-finding probability from 0.20 to 0.40, keeping the other inputs fixed.
-\item Rebuild the transition matrix and verify next-month probabilities \textbf{[0.38, 0.62]}.
-\item Restart the notebook kernel and run all cells to check reproducibility.
-\item Update your README with the Python version, run instructions, both results, and an explanation of the change.
-\item Commit and push your work. Check the latest version on GitHub.
-\end{enumerate}
-\end{frame}
-
-\begin{frame}{Completion Checklist}
-\begin{itemize}
-\item Your GitHub repository URL and two visible commit identifiers or messages.
-\item A working \texttt{.py} script and \texttt{.ipynb} notebook with matching results.
-\item A README explaining setup, execution, results, and one check you performed yourself.
-\item Local environments, caches, credentials, and private data excluded from the repository.
-\end{itemize}
-\medskip
-Keep the repository link and completion evidence ready for the announced submission channel and deadline.
 \end{frame}
 \end{document}
