@@ -14,7 +14,7 @@
 
 5. [**Feng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. \[Online course\]**](https://vonzhg.github.io/AI-ECON-2026/index.html)
 
-6. [**QuantEcon, Python Programming for Economics and Finance. \[Online course\]**](https://python-programming.quantecon.org/intro.html)
+6. [**QuantEcon, Economics and Computational Tools. \[Online courses and tools\]**](https://quantecon.org/) Includes [Python Programming for Economics and Finance](https://python-programming.quantecon.org/intro.html).
 
 ## Lecture notes and teaching resources
 
@@ -23,12 +23,6 @@
 8. [**Jesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. \[Web resource\]**](https://www.sas.upenn.edu/~jesusfv/teaching.html)
 
 9. [**Feng, Workshop Notes on AI and Machine Learning for Economists. \[Web resource\]**](https://sites.google.com/site/zfeng202/notes)
-
-## Websites and tools
-
-10. [**Feng, Personal Website. \[Web resource\]**](https://sites.google.com/site/zfeng202/)
-
-11. [**QuantEcon, QuantEcon: Economics and Computational Tools. \[Web resource\]**](https://quantecon.org/)
 
 ## Papers
 
