@@ -298,7 +298,7 @@
     "href": "references.html",
     "title": "Readings and references",
     "section": "",
-    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\n\n\n\n\n\nFeng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, Python Programming for Economics and Finance. [Online course]\n\n\n\n\n\nDimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. [Web resource]\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\nFeng, Workshop Notes on AI and Machine Learning for Economists. [Web resource]\n\n\n\n\n\nFeng, Personal Website. [Web resource]\nQuantEcon, QuantEcon: Economics and Computational Tools. [Web resource]\n\n\n\n\nResearch-paper readings will be announced here."
+    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\n\n\n\n\n\nFeng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, Economics and Computational Tools. [Online courses and tools] Includes Python Programming for Economics and Finance.\n\n\n\n\n\nDimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. [Web resource]\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\nFeng, Workshop Notes on AI and Machine Learning for Economists. [Web resource]\n\n\n\n\nResearch-paper readings will be announced here."
   },
   {
     "objectID": "references.html#books-and-online-books",
@@ -312,7 +312,7 @@
     "href": "references.html#online-courses",
     "title": "Readings and references",
     "section": "",
-    "text": "Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, Python Programming for Economics and Finance. [Online course]"
+    "text": "Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, Economics and Computational Tools. [Online courses and tools] Includes Python Programming for Economics and Finance."
   },
   {
     "objectID": "references.html#lecture-notes-and-teaching-resources",
@@ -320,13 +320,6 @@
     "title": "Readings and references",
     "section": "",
     "text": "Dimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. [Web resource]\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\nFeng, Workshop Notes on AI and Machine Learning for Economists. [Web resource]"
-  },
-  {
-    "objectID": "references.html#websites-and-tools",
-    "href": "references.html#websites-and-tools",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Feng, Personal Website. [Web resource]\nQuantEcon, QuantEcon: Economics and Computational Tools. [Web resource]"
   },
   {
     "objectID": "references.html#papers",
