@@ -2,9 +2,9 @@
 
 [Open in Colab](https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_01/lab/starter/markov_processes.ipynb) · [Read online](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_01/lab/starter/markov_processes.html)
 
-A 30-minute introduction: states and probabilities (5 minutes), Markov-process simulation (5 minutes), a maze-policy exercise (10 minutes), and a cake-eating exercise (10 minutes). All exercises are coding tasks.
+Follow the employment Markov chain from lists and probability vectors to matrices, simulation, a model class, and plotting. Then build and visualize a maze MDP and compare policies. Finish with two coding exercises: a maze policy and cake eating. The class walkthrough introduces the exercises for completion afterwards.
 
-Save a copy in Drive and run cells in order. Complete the two scaffolds and uncomment their checks. Solution code is hidden by default in Colab; double-click each solution block to reveal it. The solution functions leave your definitions unchanged.
+Save a copy in Drive and run cells in order. Complete the two scaffolds and uncomment their checks. Solution code is hidden by default in Colab; select **Show code** in each solution block to reveal it. The solution functions leave your definitions unchanged.
 
 ## Run locally
 
