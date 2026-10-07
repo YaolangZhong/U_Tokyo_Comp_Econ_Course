@@ -298,28 +298,35 @@
     "href": "references.html",
     "title": "Readings and references",
     "section": "",
-    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\n\n\n\n\n\nFeng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, Economics and Computational Tools. [Online courses and tools] Includes Python Programming for Economics and Finance.\n\n\n\n\n\nDimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. [Web resource]\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\n\n\n\n\nResearch-paper readings will be announced here."
+    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]\nDimitri P. Bertsekas (2019), Reinforcement Learning and Optimal Control. Athena Scientific. [Book]\nScott Chacon and Ben Straub, Pro Git. 2nd ed. [Book]\n\n\n\n\n\nFeng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nThomas J. Sargent and John Stachurski, QuantEcon. [Online lectures] Includes Python Programming for Economics and Finance.\nDimitri P. Bertsekas and Yuchao Li (2025), Topics in Reinforcement Learning. CSE 691, Arizona State University. [Online course]\n\n\n\n\n\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\n\n\n\n\n\nGit, Reference. [Official documentation]\nGitHub, GitHub Docs. [Webpage]\nMicrosoft, Visual Studio Code Documentation. [Webpages]\nPython Software Foundation, Python.org and Python Documentation. [Webpages]\nGoogle, Colaboratory. [Online notebook service]\nNumPy Developers, NumPy User Guide. [Documentation]\n\n\n\n\nResearch-paper readings will be announced here."
   },
   {
     "objectID": "references.html#books-and-online-books",
     "href": "references.html#books-and-online-books",
     "title": "Readings and references",
     "section": "",
-    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]"
+    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]\nDimitri P. Bertsekas (2019), Reinforcement Learning and Optimal Control. Athena Scientific. [Book]\nScott Chacon and Ben Straub, Pro Git. 2nd ed. [Book]"
   },
   {
     "objectID": "references.html#online-courses",
     "href": "references.html#online-courses",
     "title": "Readings and references",
     "section": "",
-    "text": "Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nQuantEcon, Economics and Computational Tools. [Online courses and tools] Includes Python Programming for Economics and Finance."
+    "text": "Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nThomas J. Sargent and John Stachurski, QuantEcon. [Online lectures] Includes Python Programming for Economics and Finance.\nDimitri P. Bertsekas and Yuchao Li (2025), Topics in Reinforcement Learning. CSE 691, Arizona State University. [Online course]"
   },
   {
     "objectID": "references.html#lecture-notes-and-teaching-resources",
     "href": "references.html#lecture-notes-and-teaching-resources",
     "title": "Readings and references",
     "section": "",
-    "text": "Dimitri P. Bertsekas, Reinforcement Learning: Books and Course Materials. [Web resource]\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]"
+    "text": "Jesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]"
+  },
+  {
+    "objectID": "references.html#documentation-and-tools",
+    "href": "references.html#documentation-and-tools",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Git, Reference. [Official documentation]\nGitHub, GitHub Docs. [Webpage]\nMicrosoft, Visual Studio Code Documentation. [Webpages]\nPython Software Foundation, Python.org and Python Documentation. [Webpages]\nGoogle, Colaboratory. [Online notebook service]\nNumPy Developers, NumPy User Guide. [Documentation]"
   },
   {
     "objectID": "references.html#papers",
@@ -361,7 +368,7 @@
     "href": "getting-started.html#optional-background",
     "title": "Research tools lab",
     "section": "Optional background",
-    "text": "Optional background\nStudents who need Python background can consult QuantEcon (n.d.) and Turrell (n.d.). Any optional programming exercises will be linked from the relevant weekly page when available."
+    "text": "Optional background\nStudents who need Python background can consult Sargent and Stachurski (n.d.) and Turrell (n.d.). Any optional programming exercises will be linked from the relevant weekly page when available."
   },
   {
     "objectID": "index.html",
