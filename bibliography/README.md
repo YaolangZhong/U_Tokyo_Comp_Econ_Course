@@ -22,8 +22,6 @@
 
 8. [**Jesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. \[Web resource\]**](https://www.sas.upenn.edu/~jesusfv/teaching.html)
 
-9. [**Feng, Workshop Notes on AI and Machine Learning for Economists. \[Web resource\]**](https://sites.google.com/site/zfeng202/notes)
-
 ## Papers
 
 Research-paper readings will be announced here.
