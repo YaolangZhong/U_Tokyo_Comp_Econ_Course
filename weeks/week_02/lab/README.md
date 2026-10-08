@@ -1,5 +1,5 @@
-# Research tools lab
+# Value Functions and Dynamic Programming
 
-This lab will explore LLM-agent tools for research alongside Git and other research tools. The activity, setup instructions, and deliverable will be announced on the weekly course page.
+[Open the notebook in Colab](https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_02/lab/starter/value_functions.ipynb)
 
-Tool requirements and activities will be announced on the weekly page.
+Use Lab 1's models to implement the Week 2 lecture: discounted returns, policy evaluation, the Bellman equation, value iteration, and backward induction. The [starter folder](starter/) contains the notebook, companion script, and local setup instructions.
