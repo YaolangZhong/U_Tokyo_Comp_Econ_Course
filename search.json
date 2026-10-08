@@ -424,7 +424,7 @@
     "href": "syllabus.html#schedule-20262027",
     "title": "Course syllabus",
     "section": "Schedule · 2026–2027",
-    "text": "Schedule · 2026–2027\n\n\nWeek 1 (Oct 7)\n\nLecture\n\nIntroduction to Markov Decision Processes (MDP)\n\nLab\n\nIntroduction to Git\nIntroduction to Python\nFirst Steps in Python: Markov Processes and Decisions (Colab)\n\nHomework\n\nSetting Up Git and Python\n\n\n\n\nWeek 2 (Oct 14)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 3 (Oct 21)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 4 (Oct 28)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 5 (Nov 4)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 6 (Nov 11)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 7 (Nov 18)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 8 (Dec 9)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 9 (Dec 16)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 10 (Dec 23)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 11 (Jan 6)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 12 (Jan 13)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 13 (Jan 20)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 14 (Jan 27)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD"
+    "text": "Schedule · 2026–2027\n\n\nWeek 1 (Oct 7)\n\nLecture\n\nIntroduction to Markov Decision Processes (MDP)\n\nLab\n\nIntroduction to Git\nIntroduction to Python\nFirst Steps in Python: Markov Processes and Decisions (Colab)\n\nHomework\n\nSetting Up Git and Python\n\n\n\n\nWeek 2 (Oct 14)\n\nLecture\n\nValue Functions and the Bellman Equation\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 3 (Oct 21)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 4 (Oct 28)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 5 (Nov 4)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 6 (Nov 11)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 7 (Nov 18)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 8 (Dec 9)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 9 (Dec 16)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 10 (Dec 23)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 11 (Jan 6)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 12 (Jan 13)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 13 (Jan 20)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 14 (Jan 27)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD"
   },
   {
     "objectID": "project.html",
@@ -508,14 +508,14 @@
     "href": "weeks/week_02/index.html",
     "title": "Dynamic programming methods",
     "section": "",
-    "text": "Bellman Equation and Value Function Iteration\nPolicy Function Iteration"
+    "text": "Value Functions and the Bellman Equation"
   },
   {
     "objectID": "weeks/week_02/index.html#lecture",
     "href": "weeks/week_02/index.html#lecture",
     "title": "Dynamic programming methods",
     "section": "",
-    "text": "Bellman Equation and Value Function Iteration\nPolicy Function Iteration"
+    "text": "Value Functions and the Bellman Equation"
   },
   {
     "objectID": "weeks/week_02/index.html#lab",
