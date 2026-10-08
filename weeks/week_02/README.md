@@ -1,11 +1,10 @@
-# Week 2 (Oct 14): Dynamic programming methods
+# Week 2 (Oct 14): Value functions and the Bellman equation
 
 [Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_02/)
 
 - **Lecture**
 
-    - [Bellman Equation and Value Function Iteration](lecture/slides/pdf/Bellman_Equation_and_Value_Function_Iteration.pdf)
-    - [Policy Function Iteration](lecture/slides/pdf/Policy_Function_Iteration.pdf)
+    - [Value Functions and the Bellman Equation](lecture/slides/pdf/Bellman_Equation_and_Value_Function_Iteration.pdf)
 
 - **Lab**
 

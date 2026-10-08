@@ -1,0 +1,347 @@
+% Topic content; common typography and layout live in the shared preamble.
+\newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
+\input{\CourseTemplatePath course_preamble.tex}
+\title[Value Functions and the Bellman Equation]{Lecture: Value Functions and the Bellman Equation}
+\subtitle{Discounted rewards, policy evaluation, and value iteration}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Sset}{\mathcal S}
+\newcommand{\Aset}{\mathcal A}
+\tikzset{valueState/.style={draw=SessionTeal,fill=SessionTealLight,rounded corners=1mm,minimum width=17mm,minimum height=10mm,align=center},valueFlow/.style={-{Stealth[length=2mm]},draw=SessionCharcoal,line width=.8pt}}
+\begin{document}
+\makecoursetitle
+
+\begin{frame}{From a State and a Policy to a Reward Stream}
+Start at \(s_0=s\) and follow a stationary deterministic policy \(a_t=\sigma(s_t)\).
+\par\medskip
+\begin{center}
+\begin{tikzpicture}[font=\sffamily\small]
+\node[valueState] (s0) at (0,0) {$s_0=s$};
+\node[valueState] (s1) at (3.6,0) {$s_1$};
+\node[valueState] (s2) at (7.2,0) {$s_2$};
+\node (rest) at (10,0) {$\cdots$};
+\draw[valueFlow] (s0)--node[above]{$a_0=\sigma(s_0)$}node[below]{$R_1$}(s1);
+\draw[valueFlow] (s1)--node[above]{$a_1=\sigma(s_1)$}node[below]{$R_2$}(s2);
+\draw[valueFlow] (s2)--node[above]{$a_2=\sigma(s_2)$}node[below]{$R_3$}(rest);
+\end{tikzpicture}
+\end{center}
+\medskip
+The \term{discounted accumulated reward}, or \term{return}, along this path is
+\[G_0=R_1+\beta R_2+\beta^2R_3+\cdots
+       =\sum_{t=0}^{\infty}\beta^tR_{t+1},\qquad 0<\beta<1.\]
+\begin{itemize}
+\item \(R_{t+1}\) is the reward from the action taken at \(t\), as in the MDP timing.
+\item Fixing \(s\) and \(\sigma\) determines a probability law over paths. The return can still be random.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Discounting and a Finite Return}
+\begin{itemize}
+\item One unit received now has weight 1; one period later it has weight \(\beta\). A larger \(\beta\) places more weight on the future.
+\item Assume rewards are uniformly bounded: \(|R_{t+1}|\leq\bar R<\infty\) almost surely, under every feasible policy. Then
+\[|G_0|\leq\sum_{t=0}^{\infty}\beta^t\bar R
+       =\frac{\bar R}{1-\beta}.\]
+\item Keeping only the first \(H\) rewards leaves a bounded tail:
+\[\left|G_0-\sum_{t=0}^{H-1}\beta^tR_{t+1}\right|
+       \leq\frac{\beta^H\bar R}{1-\beta}.\]
+\end{itemize}
+For example, a reward of 1 every period has return \(1/(1-\beta)=10\) when \(\beta=0.9\).
+\end{frame}
+
+\begin{frame}{Example: Two Cake-Eating Policies}
+\courseexample{Example: Cake Eating}
+\par Start with two units of cake. For this example, restrict stock and consumption to whole units:
+\[k\in\{0,1,2\},\quad c\in\{0,\ldots,k\},\quad k'=k-c,
+\quad r(k,c)=\sqrt c,\quad\beta=0.9.\]
+\begin{columns}[T]
+\begin{column}{.48\textwidth}
+\textbf{Consume everything: \(\sigma_A(k)=k\)}
+\[k_t:\quad 2\longrightarrow0\longrightarrow0\]
+\[R_{t+1}:\quad \sqrt2,\;0,\;0,\ldots\]
+\[G_0=\sqrt2\approx1.414.\]
+\end{column}
+\begin{column}{.48\textwidth}
+\textbf{One unit at a time: \(\sigma_B(k)=\min\{1,k\}\)}
+\[k_t:\quad 2\longrightarrow1\longrightarrow0\]
+\[R_{t+1}:\quad 1,\;1,\;0,\ldots\]
+\[G_0=1+0.9=1.9.\]
+\end{column}
+\end{columns}
+\medskip
+A smaller reward today can produce a larger accumulated reward. These paths are deterministic, so their returns can be calculated directly.
+\end{frame}
+
+\begin{frame}{The Value Function of a Policy}
+The \term{value function under policy \(\sigma\)} assigns each starting state its expected return:
+\begin{conceptbox}
+\[V^\sigma(s)=\E_\sigma[G_0\mid s_0=s]
+ =\E_\sigma\!\left[\sum_{t=0}^{\infty}\beta^tR_{t+1}\,\middle|\,s_0=s\right].\]
+\end{conceptbox}
+\begin{itemize}
+\item \(s\) fixes the initial state; \(\sigma\) specifies actions at every future state. The expectation averages over the resulting paths and rewards.
+\item Since \(r(s,a)\) is the conditional mean reward, boundedness also gives
+\[V^\sigma(s)=\E_\sigma\!\left[\sum_{t=0}^{\infty}\beta^t
+  r(s_t,\sigma(s_t))\,\middle|\,s_0=s\right].\]
+\item For the cake example, \(V^{\sigma_A}(2)=\sqrt2\) and \(V^{\sigma_B}(2)=1.9\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Return Has a Recursive Form}
+From any date \(t\), define the return using that date as the discounting origin:
+\[G_t=R_{t+1}+\beta R_{t+2}+\beta^2R_{t+3}+\cdots.\]
+Separate the first reward from all later rewards:
+\begin{align*}
+G_t&=R_{t+1}+\beta\big(R_{t+2}+\beta R_{t+3}+\cdots\big)\\
+   &=R_{t+1}+\beta G_{t+1}.
+\end{align*}
+\begin{itemize}
+\item The future return is the same object, starting one period later.
+\item With time-homogeneous dynamics and a stationary policy,
+\[\E_\sigma[G_{t+1}\mid s_{t+1}=s']=V^\sigma(s').\]
+\end{itemize}
+This lets us replace an infinite reward sequence with a one-step equation.
+\end{frame}
+
+\begin{frame}{The Bellman Equation for a Fixed Policy}
+Take conditional expectations of \(G_0=R_1+\beta G_1\):
+\begin{align*}
+V^\sigma(s)
+ &=\E_\sigma[R_1+\beta G_1\mid s_0=s]\\
+ &=r(s,\sigma(s))+\beta\E[V^\sigma(s_1)\mid s_0=s,\;a_0=\sigma(s)].
+\end{align*}
+The second equality uses the law of iterated expectations and the Markov structure.
+\par\medskip
+For a finite state space, the \term{policy Bellman equation} is
+\begin{conceptbox}
+\[V^\sigma(s)=r(s,\sigma(s))
+ +\beta\sum_{s'\in\Sset}P(s'\mid s,\sigma(s))V^\sigma(s').\]
+\end{conceptbox}
+\small Current expected reward plus discounted expected continuation value. For a continuous state space, replace the sum by an integral with respect to \(P(ds'\mid s,\sigma(s))\).
+\end{frame}
+
+\begin{frame}{Policy Evaluation as a Linear System}
+From here, assume \(\Sset\) and each nonempty \(\Aset(s)\) are finite.
+\par\medskip
+Fix \(\sigma\). Recall its induced transition matrix and reward vector:
+\[P^\sigma_{ij}=P(j\mid i,\sigma(i)),\qquad r^\sigma_i=r(i,\sigma(i)).\]
+Treat \(V^\sigma\) and \(r^\sigma\) as \textbf{column vectors}. Then
+\[V^\sigma=r^\sigma+\beta P^\sigma V^\sigma
+ \quad\Longleftrightarrow\quad (I-\beta P^\sigma)V^\sigma=r^\sigma.\]
+\begin{itemize}
+\item \(P^\sigma\) is row-stochastic, so \(\beta<1\) makes \(I-\beta P^\sigma\) invertible:
+\[V^\sigma=\sum_{t=0}^{\infty}\beta^t(P^\sigma)^t r^\sigma
+          =(I-\beta P^\sigma)^{-1}r^\sigma.\]
+\item In code, solve the linear system rather than forming the inverse.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Income Along an Employment Chain}
+\small
+\courseexample{Example: Employment and Unemployment}
+\par Take the earlier employment dynamics as given, and attach income 0 in U and 1 in E. There is no action choice in this calculation.
+\[P=\begin{pmatrix}0.8&0.2\\0.05&0.95\end{pmatrix},\qquad
+r=\begin{pmatrix}0\\1\end{pmatrix},\qquad\beta=0.9.\]
+The value of the income stream solves
+\begin{align*}
+V(\mathrm U)&=0+0.9\big[0.8V(\mathrm U)+0.2V(\mathrm E)\big],\\
+V(\mathrm E)&=1+0.9\big[0.05V(\mathrm U)+0.95V(\mathrm E)\big].
+\end{align*}
+\[V(\mathrm U)=\frac{72}{13}\approx5.538,\qquad
+  V(\mathrm E)=\frac{112}{13}\approx8.615.\]
+\begin{itemize}
+\item Unemployment has positive value because future employment is possible.
+\item Employment is worth less than \(1/(1-0.9)=10\), because job loss is possible.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Iterative Policy Evaluation}
+We can also compute \(V^\sigma\) by repeated substitution, keeping \(\sigma\) fixed:
+\[v^{(n+1)}=r^\sigma+\beta P^\sigma v^{(n)},\qquad v^{(0)}=0.\]
+\begin{itemize}
+\item Use the old vector \(v^{(n)}\) for every state in a sweep.
+\item After \(n\) sweeps, \(v^{(n)}\) is the expected return from the first \(n\) rewards under \(\sigma\), with zero value beyond them.
+\end{itemize}
+For the employment example:
+\[v^{(0)}=\begin{pmatrix}0\\0\end{pmatrix},\quad
+v^{(1)}=\begin{pmatrix}0\\1\end{pmatrix},\quad
+v^{(2)}=\begin{pmatrix}0.180\\1.855\end{pmatrix},\quad
+v^{(n)}\longrightarrow\begin{pmatrix}5.538\ldots\\8.615\ldots\end{pmatrix}.\]
+\medskip
+\(n\) counts computational iterations. The policy being evaluated does not change.
+\end{frame}
+
+\begin{frame}{From Policy Values to the Optimal Value}
+Let \(\Sigma\) be the set of feasible stationary deterministic policies. Define the \term{optimal value function} by
+\[V^*(s)=\max_{\sigma\in\Sigma}V^\sigma(s).\]
+\begin{itemize}
+\item A policy \(\sigma^*\) is \term{optimal} if it achieves this value at every state:
+\[V^{\sigma^*}(s)=V^*(s)\qquad\text{for every }s\in\Sset.\]
+\item In a finite, time-homogeneous discounted MDP, such a stationary deterministic policy exists. Allowing randomized or history-dependent policies cannot improve the value.
+\item The policy may be nonunique when several actions are equally good.
+\end{itemize}
+\medskip
+The task now is to choose a policy, as well as evaluate the rewards it generates.
+\end{frame}
+
+\begin{frame}{The Bellman Optimality Equation}
+\small
+The \term{principle of optimality}: after the next state is observed, an optimal policy uses an optimal continuation from that state.
+\par\medskip
+Choose the current action \(a\), then continue optimally. Its expected return is
+\[r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V^*(s').\]
+Maximizing over the feasible current actions gives the \term{Bellman optimality equation}:
+\begin{conceptbox}
+\[V^*(s)=\max_{a\in\Aset(s)}
+ \left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V^*(s')\right\}.\]
+\end{conceptbox}
+\begin{itemize}
+\item The current action is chosen before the random next state is observed.
+\item Future actions can respond to that realized state. \(V^*(s')\) includes all those later choices.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example: The Cake-Eating Bellman Equation}
+\small
+\courseexample{Example: Cake Eating}
+\par Use the same whole-unit model, \(k\in\{0,1,2\}\) and \(\beta=0.9\):
+\[V^*(k)=\max_{c\in\{0,\ldots,k\}}\{\sqrt c+0.9V^*(k-c)\}.\]
+At zero stock, \(V^*(0)=0.9V^*(0)\), so \(V^*(0)=0\). At one unit,
+\[V^*(1)=\max\{0.9V^*(1),\;1\}=1.\]
+At two units, check all three feasible actions:
+\[V^*(2)=\max\{\underbrace{0.9V^*(2)}_{c=0},\;
+\underbrace{1+0.9V^*(1)}_{c=1},\;
+\underbrace{\sqrt2}_{c=2}\}=1.9.\]
+\begin{itemize}
+\item At this solution, the three candidate values are \(1.71,1.9,1.414\ldots\).
+\item Thus \(\sigma^*(2)=1\), \(\sigma^*(1)=1\), and \(\sigma^*(0)=0\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Bellman Operator}
+An \term{operator} maps a candidate value function \(v\) to a new function.
+\[ (Tv)(s)=\max_{a\in\Aset(s)}
+ \left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)v(s')\right\}.\]
+\begin{itemize}
+\item \(v(s')\) is our current assessment of future states. \(Tv\) updates that assessment using the best current action.
+\item Holding a policy fixed instead gives
+\[(T^\sigma v)(s)=r(s,\sigma(s))+
+ \beta\sum_{s'}P(s'\mid s,\sigma(s))v(s').\]
+\item A \term{fixed point} is unchanged by its operator:
+\[V^*=TV^*,\qquad V^\sigma=T^\sigma V^\sigma.\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Why the Iteration Converges}
+\small
+Use the \term{maximum norm} \(\|v-w\|_\infty=\max_s|v(s)-w(s)|\). For any state and action,
+\[\left|\beta\sum_{s'}P(s'\mid s,a)\big[v(s')-w(s')\big]\right|
+ \leq\beta\|v-w\|_\infty.\]
+Taking the maximum over actions preserves this bound, since
+\( |\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a| \). Hence
+\begin{conceptbox}
+\[\|Tv-Tw\|_\infty\leq\beta\|v-w\|_\infty.\]
+\end{conceptbox}
+\begin{itemize}
+\item \(T\) is a \term{contraction}: the new distance is at most \(\beta<1\) times the old distance.
+\item On the finite-dimensional value space, it has a unique fixed point \(V^*\), and
+\[\|T^n v^{(0)}-V^*\|_\infty\leq\beta^n\|v^{(0)}-V^*\|_\infty.\]
+\item The same argument applies to \(T^\sigma\) and its fixed point \(V^\sigma\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Value Function Iteration}
+\small
+Given the finite MDP and a desired value-error tolerance \(\varepsilon>0\):
+\begin{enumerate}
+\item Choose \(v^{(0)}\), for example zero, and set \(n=0\).
+\item Update every state using the previous vector:
+\[v^{(n+1)}(s)=(Tv^{(n)})(s)
+ =\max_{a\in\Aset(s)}\left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)v^{(n)}(s')\right\}.\]
+\item Calculate the \term{Bellman residual} of \(v^{(n)}\):
+\[d_n=\|Tv^{(n)}-v^{(n)}\|_\infty
+     =\|v^{(n+1)}-v^{(n)}\|_\infty.\]
+\item If \(d_n\leq(1-\beta)\varepsilon\), return \(v^{(n)}\). Otherwise increase \(n\) and repeat.
+\end{enumerate}
+The contraction inequality implies
+\[\|v^{(n)}-V^*\|_\infty\leq\frac{d_n}{1-\beta}\leq\varepsilon.\]
+This bound assumes exact expectations and maximization in the specified finite model.
+\end{frame}
+
+\begin{frame}{Example: Value Iteration for Cake Eating}
+\small
+\courseexample{Example: Cake Eating}
+\par Start from \(v^{(0)}(k)=0\), using \(\beta=0.9\).
+\begin{center}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{lccc}
+\toprule
+& Stock 0 & Stock 1 & Stock 2\\
+\midrule
+\(v^{(0)}\) & 0 & 0 & 0\\
+\(v^{(1)}=Tv^{(0)}\) & 0 & 1 & \(\sqrt2\approx1.414\)\\
+\(v^{(2)}=Tv^{(1)}\) & 0 & 1 & 1.9\\
+\(v^{(3)}=Tv^{(2)}\) & 0 & 1 & 1.9\\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item The first update assigns zero continuation value, so consuming everything looks best.
+\item In the second update, saving one unit has value:
+\[1+0.9v^{(1)}(1)=1.9>\sqrt2.\]
+\item A further update leaves the vector unchanged: the Bellman residual is zero.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Finite Horizon: Backward Induction}
+\small
+If decisions end at date \(H-1\), let \(h(s_H)\) be a terminal payoff at date \(H\).
+The objective from \(s_t=s\) is
+\[\max_{\sigma_t,\ldots,\sigma_{H-1}}
+\E\!\left[\sum_{j=t}^{H-1}\beta^{j-t}R_{j+1}
+            +\beta^{H-t}h(s_H)\,\middle|\,s_t=s\right].\]
+\term{Backward induction} starts at the terminal date and works toward the present:
+\[V_H(s)=h(s),\]
+\[V_t(s)=\max_{a\in\Aset(s)}
+ \left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V_{t+1}(s')\right\},
+\quad t=H-1,\ldots,0.\]
+\begin{itemize}
+\item The remaining horizon changes with \(t\); optimal decision rules can depend on time.
+\item With \(h=0\), \(T^H0\) is the value with \(H\) decisions remaining. This also explains the earlier cake iterations.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Recovering a Policy from Values}
+Once we have \(V^*\), choose an action that attains its Bellman maximum:
+\[\sigma^*(s)\in\argmax_{a\in\Aset(s)}
+\left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V^*(s')\right\}.\]
+\begin{itemize}
+\item A \term{greedy policy with respect to \(v\)} uses the same expression with a candidate value \(v\) in place of \(V^*\).
+\item With an approximate value, the resulting policy is a candidate. Evaluate it by solving
+\[(I-\beta P^\sigma)V^\sigma=r^\sigma.\]
+\item The value function summarizes future rewards; the policy specifies the action to take. Computing both makes the solution usable.
+\end{itemize}
+\end{frame}
+
+% BEGIN MANAGED READINGS: week2_value
+\begin{frame}{References and Further Reading}
+\coursereading{1}
+  {Richard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]}
+  {https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf}
+  {\begin{itemize}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=69}{Chapter 3: Finite Markov Decision Processes (Sections 3.3, 3.5 and 3.6)}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=95}{Chapter 4: Dynamic Programming (Sections 4.1 and 4.4)}
+\end{itemize}}
+\coursereading{2}
+  {Thomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]}
+  {https://quantecon.org/lectures/}
+  {\begin{itemize}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html}{Discrete State Dynamic Programming}
+\end{itemize}}
+\coursereading{3}
+  {Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]}
+  {https://vonzhg.github.io/Macro-2026Fall/index.html}
+  {\begin{itemize}
+\item \href{https://vonzhg.github.io/Macro-2026Fall/slides/pdf/S01_B2_Dynamic_Programming.pdf}{Session 1, Deck 1.B2: Dynamic Programming: Why It Works and How It Computes}
+\end{itemize}}
+\end{frame}
+% END MANAGED READINGS: week2_value
+\end{document}

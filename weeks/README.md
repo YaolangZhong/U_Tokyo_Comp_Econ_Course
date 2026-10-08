@@ -25,8 +25,7 @@
 
 - **Lecture**
 
-    - [Bellman Equation and Value Function Iteration](week_02/lecture/slides/pdf/Bellman_Equation_and_Value_Function_Iteration.pdf)
-    - [Policy Function Iteration](week_02/lecture/slides/pdf/Policy_Function_Iteration.pdf)
+    - [Value Functions and the Bellman Equation](week_02/lecture/slides/pdf/Bellman_Equation_and_Value_Function_Iteration.pdf)
 
 - **Lab**
 
