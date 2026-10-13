@@ -191,16 +191,19 @@ For the two maze routes, take \(\beta=0.9\):
 \end{frame}
 
 \begin{frame}{Discounting and a Finite Return}
-\begin{itemize}
-\item One unit received now has weight 1; one period later it has weight \(\beta\). A larger \(\beta\) places more weight on the future.
-\item Assume rewards are uniformly bounded: \(|R_{t+\tau}|\leq\bar R<\infty\) for every \(\tau\geq1\) almost surely, under every feasible policy. Then
-\[|G_t|\leq\sum_{\tau=1}^{\infty}\beta^{\tau-1}\bar R
-       =\frac{\bar R}{1-\beta}.\]
-\item Keeping only the first \(H\) rewards leaves a bounded tail:
-\[\left|G_t-\sum_{\tau=1}^{H}\beta^{\tau-1}R_{t+\tau}\right|
-       \leq\frac{\beta^H\bar R}{1-\beta}.\]
-\end{itemize}
-For example, a reward of 1 every period has return \(1/(1-\beta)=10\) when \(\beta=0.9\).
+Assume \(|R_{t+j}|\leq\bar r<\infty\) for every \(j\geq1\), with \(0<\beta<1\).
+\par\medskip
+Over the next \(\tau\) periods,
+\begin{align*}
+\left|G_t^{(\tau)}\right|
+ &=\left|\sum_{j=1}^{\tau}\beta^{j-1}R_{t+j}\right|
+ \leq\sum_{j=1}^{\tau}\beta^{j-1}|R_{t+j}|\\
+ &\leq\bar r\sum_{j=1}^{\tau}\beta^{j-1}
+ =\frac{1-\beta^\tau}{1-\beta}\,\bar r.
+\end{align*}
+As \(\tau\to\infty\), \(\beta^\tau\to0\), so the infinite-horizon return satisfies
+\[|G_t|\leq\lim_{\tau\to\infty}\frac{1-\beta^\tau}{1-\beta}\,\bar r
+ =\frac{\bar r}{1-\beta}.\]
 \end{frame}
 
 \begin{frame}{Example: Two Cake-Eating Policies}
