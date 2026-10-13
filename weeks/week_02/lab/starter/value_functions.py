@@ -105,26 +105,26 @@ print("12-step return:", discounted_return(search_rewards, mccall.beta))
 def policy_arrays(model, policy):
     n = len(model.states)
     P = np.zeros((n, n))
-    r = np.zeros(n)
+    mu = np.zeros(n)
     for state in range(n):
         action = policy(state)
         P[state] = model.transition_probabilities(state, action)
-        r[state] = model.reward(state, action)
+        mu[state] = model.reward(state, action)
     if np.any(P < 0) or not np.allclose(P.sum(axis=1), 1):
         raise ValueError("Every transition row must be a probability vector.")
-    return P, r
+    return P, mu
 
 
 def evaluate_policy(model, policy):
-    P, r = policy_arrays(model, policy)
-    V = np.linalg.solve(np.eye(len(r)) - model.beta * P, r)
-    return V, P, r
+    P, mu = policy_arrays(model, policy)
+    V = np.linalg.solve(np.eye(len(mu)) - model.beta * P, mu)
+    return V, P, mu
 
 
-V_search, P_search, r_search = evaluate_policy(mccall, search_policy)
-print("Offer | action | value while unemployed")
+V_search, P_search, mu_search = evaluate_policy(mccall, search_policy)
+print("State | action | value")
 for i, wage in enumerate(mccall.wages):
-    print(f"{wage:5.1f} | {search_policy(i):6s} | {V_search[i]:.4f}")
+    print(f"{mccall.states[i]} | {search_policy(i):6s} | {V_search[i]:.4f}")
 print("Value from (U, wage 2):", V_search[search_start])
 print("Employed-state values:", V_search[mccall.n:])
 assert np.allclose(V_search[mccall.n:], mccall.wages / (1 - mccall.beta))
@@ -145,10 +145,10 @@ def estimate_value(model, policy, initial_state, repetitions=600, periods=100, s
         rollout_seed = int(rng.integers(0, 2**32))
         _, rewards = model.simulate(policy, initial_state, periods, seed=rollout_seed)
         returns[i] = discounted_return(rewards, model.beta)
-    _, r = policy_arrays(model, policy)
+    _, mu = policy_arrays(model, policy)
     return {"mean": returns.mean(),
             "standard_error": returns.std(ddof=1) / np.sqrt(repetitions),
-            "tail_bound": model.beta**periods * np.max(np.abs(r)) / (1 - model.beta)}
+            "tail_bound": model.beta**periods * np.max(np.abs(mu)) / (1 - model.beta)}
 
 
 search_estimate = estimate_value(mccall, search_policy, search_start)
@@ -229,7 +229,7 @@ for ax in axes:
 plt.tight_layout()
 plt.show()
 
-V_saving, P_saving, r_saving = evaluate_policy(savings, save_half)
+V_saving, P_saving, mu_saving = evaluate_policy(savings, save_half)
 V_consume, _, _ = evaluate_policy(savings, lambda state: 0)
 print("Value from stock 5 under save-half:", V_saving[saving_start])
 print("Stock | saving | consumption | value")
@@ -252,11 +252,11 @@ print("Simulated mean:", saving_estimate["mean"])
 print("Monte Carlo standard error:", saving_estimate["standard_error"])
 print("Maximum omitted tail:", saving_estimate["tail_bound"])
 
-for label, model, V, P, r in [
-    ("McCall", mccall, V_search, P_search, r_search),
-    ("Consumption-saving", savings, V_saving, P_saving, r_saving),
+for label, model, V, P, mu in [
+    ("McCall", mccall, V_search, P_search, mu_search),
+    ("Consumption-saving", savings, V_saving, P_saving, mu_saving),
 ]:
-    residual = np.max(np.abs(V - r - model.beta * (P @ V)))
+    residual = np.max(np.abs(V - mu - model.beta * (P @ V)))
     print(label, "maximum policy Bellman residual:", residual)
     assert residual < 1e-10
 

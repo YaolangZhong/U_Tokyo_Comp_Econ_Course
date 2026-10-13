@@ -413,18 +413,18 @@ A policy \(\sigma\) specifies whether to accept each offer while unemployed.
 
 \begin{frame}{The McCall Search Model: Recursive Values}
 \small
-Write \(V^\sigma_{\mathrm U}(w)=V^\sigma((\mathrm U,w))\). Once employed, there is no further choice:
-\[V_{\mathrm E}(w)=w+\beta V_{\mathrm E}(w)=\frac{w}{1-\beta}.\]
+Once employed, the state is \((\mathrm E,w)\) and there is no further choice:
+\[V^\sigma((\mathrm E,w))=w+\beta V^\sigma((\mathrm E,w))=\frac{w}{1-\beta}.\]
 For a specified acceptance policy, the \term{policy Bellman equation} is
-\[V^\sigma_{\mathrm U}(w)=
+\[V^\sigma((\mathrm U,w))=
 \begin{cases}
-w+\beta V_{\mathrm E}(w),&\sigma(\mathrm U,w)=\text{accept},\\
-b+\beta\sum_{w'\in\mathcal W}q(w')V^\sigma_{\mathrm U}(w'),&\sigma(\mathrm U,w)=\text{reject}.
+w+\beta V^\sigma((\mathrm E,w)),&\sigma((\mathrm U,w))=\text{accept},\\
+b+\beta\sum_{w'\in\mathcal W}q(w')V^\sigma((\mathrm U,w')),&\sigma((\mathrm U,w))=\text{reject}.
 \end{cases}\]
 Allowing the worker to choose gives
-\[V^*_{\mathrm U}(w)=\max\left\{
+\[V^*((\mathrm U,w))=\max\left\{
 \underbrace{\frac{w}{1-\beta}}_{\text{accept}},\quad
-\underbrace{b+\beta\sum_{w'\in\mathcal W}q(w')V^*_{\mathrm U}(w')}_{\text{reject and continue}}\right\}.\]
+\underbrace{b+\beta\sum_{w'\in\mathcal W}q(w')V^*((\mathrm U,w'))}_{\text{reject and continue}}\right\}.\]
 The notebook evaluates specified wage-threshold policies and their rollouts.
 \end{frame}
 
