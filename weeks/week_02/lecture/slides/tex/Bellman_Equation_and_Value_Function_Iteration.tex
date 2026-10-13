@@ -11,14 +11,12 @@
 % The maze geometry and reward convention match the Week 1 example.
 \definecolor{ValueMazeWall}{HTML}{928580}
 \newcommand{\ValueMazeBase}{%
-  \fill[SessionPaper] (0,0) rectangle (9,6);
-  \fill[SessionTealLight] (0,3) rectangle +(1,1);
-  \fill[SessionGold!15] (8,5) rectangle +(1,1);
+  \fill[white] (0,0) rectangle (9,6);
   \foreach \x/\y in {2/2,2/3,2/4,7/3,7/4,7/5,5/1}
     \fill[ValueMazeWall] (\x,\y) rectangle +(1,1);
   \draw[SessionLine,line width=.3pt,step=1] (0,0) grid (9,6);
   \draw[SessionCharcoal,line width=.7pt] (0,0) rectangle (9,6);
-  % Free cells numbered left-to-right, top-to-bottom; walls are not states.
+  % S and G label the endpoint states; other free cells are numbered.
   \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,5.92) {1};
   \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,5.92) {2};
   \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,5.92) {3};
@@ -26,50 +24,48 @@
   \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,5.92) {5};
   \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,5.92) {6};
   \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,5.92) {7};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,5.92) {8};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,4.92) {9};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,4.92) {10};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,4.92) {11};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,4.92) {12};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,4.92) {13};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,4.92) {14};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,4.92) {15};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,3.92) {16};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,3.92) {17};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,3.92) {18};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,3.92) {19};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,3.92) {20};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,3.92) {21};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,3.92) {22};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,2.92) {23};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,2.92) {24};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,2.92) {25};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,2.92) {26};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,2.92) {27};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,2.92) {28};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,2.92) {29};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,2.92) {30};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,1.92) {31};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,1.92) {32};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,1.92) {33};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,1.92) {34};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,1.92) {35};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,1.92) {36};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,1.92) {37};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,1.92) {38};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,0.92) {39};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,0.92) {40};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,0.92) {41};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,0.92) {42};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,0.92) {43};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,0.92) {44};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,0.92) {45};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,0.92) {46};
-  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,0.92) {47};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,4.92) {8};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,4.92) {9};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,4.92) {10};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,4.92) {11};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,4.92) {12};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,4.92) {13};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,4.92) {14};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,3.92) {15};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,3.92) {16};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,3.92) {17};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,3.92) {18};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,3.92) {19};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,3.92) {20};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,2.92) {21};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,2.92) {22};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,2.92) {23};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,2.92) {24};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,2.92) {25};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,2.92) {26};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,2.92) {27};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,2.92) {28};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,1.92) {29};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,1.92) {30};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,1.92) {31};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,1.92) {32};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,1.92) {33};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,1.92) {34};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,1.92) {35};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,1.92) {36};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,0.92) {37};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,0.92) {38};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,0.92) {39};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,0.92) {40};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,0.92) {41};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,0.92) {42};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,0.92) {43};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,0.92) {44};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,0.92) {45};
 }
 \newcommand{\ValueMazeLabels}{%
-  \node[font=\sffamily\bfseries\fontsize{8}{8}\selectfont,fill=SessionTealLight,inner sep=.5pt] at (.62,3.38) {S};
-  \node[font=\sffamily\bfseries\fontsize{8}{8}\selectfont,fill=SessionGold!15,inner sep=.5pt] at (8.62,5.38) {G};
+  \node[font=\sffamily\large,text=SessionCharcoal,fill=white,inner sep=0pt] at (.5,3.5) {S};
+  \node[font=\sffamily\large,text=SessionCharcoal,fill=white,inner sep=0pt] at (8.5,5.5) {G};
 }
 \newcommand{\ValueMazeRouteA}{%
   \draw[valueFlow,shorten <=2pt,shorten >=2pt] (0.5,3.5) -- (0.5,2.5);
@@ -115,7 +111,7 @@ A time-homogeneous discounted \term{MDP} is specified by
 \begin{columns}[c]
 \begin{column}{.55\textwidth}
 \begin{itemize}
-\item \term{State space \(\Sset\):} free cells \(\Sset=\{1,\ldots,47\}\), including G. Walls are excluded.
+\item \term{State space \(\Sset\):} free cells \(\Sset=\{\mathrm S,\mathrm G,1,\ldots,45\}\), including G. Walls are excluded.
 \item \term{Actions \(\Aset(s)\):} up, down, left, right.
 \item \term{Transition law \(P(s'\mid s,a)\):} move one cell; a wall or boundary leaves the state unchanged. G is absorbing.
 \item \term{Mean reward \(r(s,a)\):} \(-1\) per move from outside G (including entry into G); zero at G.
@@ -123,13 +119,13 @@ A time-homogeneous discounted \term{MDP} is specified by
 \end{itemize}
 \end{column}
 \begin{column}{.42\textwidth}
+\begin{figure}
 \centering
-\courseexample{Example: Maze Escape}\par\medskip
 \begin{tikzpicture}[x=.53cm,y=.53cm]
 \ValueMazeBase\ValueMazeLabels
 \end{tikzpicture}
-\par\smallskip
-\footnotesize Start S: cell 16. Goal G: cell 8.\par Cell numbers identify the states; the next cell and reward follow from the action.
+\caption{Maze navigation.}
+\end{figure}
 \end{column}
 \end{columns}
 \end{frame}
@@ -142,32 +138,39 @@ A \term{stationary deterministic policy} is a rule \(\sigma\) with
 \begin{columns}[T]
 \begin{column}{.49\textwidth}
 \centering
-\courseexample{Policy \(\sigma_A\): lower route}\par
-\footnotesize\(\sigma_A=(\text{cell 16}\to\text{down},\;\text{cell 23}\to\text{down},\)\par\(\text{cell 31}\to\text{right},\ldots)\)\small\par\smallskip
-\begin{tikzpicture}[x=.51cm,y=.51cm]
+\footnotesize
+\(\sigma_A=(\mathrm S\to\text{down},\;\text{cell 21}\to\text{down},\)\par
+\(\text{cell 29}\to\text{right},\ldots)\)
+\begin{figure}
+\centering
+\begin{tikzpicture}[x=.55cm,y=.55cm]
 \ValueMazeBase\ValueMazeRouteA\ValueMazeLabels
-\end{tikzpicture}\par
-14 moves to G; 14 rewards of \(-1\).
+\end{tikzpicture}
+\caption{Policy \(\sigma_A\).}
+\end{figure}
 \end{column}
 \begin{column}{.49\textwidth}
 \centering
-\courseexample{Policy \(\sigma_B\): upper route}\par
-\footnotesize\(\sigma_B=(\text{cell 16}\to\text{up},\;\text{cell 9}\to\text{up},\)\par\(\text{cell 1}\to\text{right},\ldots)\)\small\par\smallskip
-\begin{tikzpicture}[x=.51cm,y=.51cm]
+\footnotesize
+\(\sigma_B=(\mathrm S\to\text{up},\;\text{cell 8}\to\text{up},\)\par
+\(\text{cell 1}\to\text{right},\ldots)\)
+\begin{figure}
+\centering
+\begin{tikzpicture}[x=.55cm,y=.55cm]
 \ValueMazeBase\ValueMazeRouteB\ValueMazeLabels
-\end{tikzpicture}\par
-16 moves to G; 16 rewards of \(-1\).
+\end{tikzpicture}
+\caption{Policy \(\sigma_B\).}
+\end{figure}
 \end{column}
 \end{columns}
-\smallskip
-The arrows show the route from cell 16 (S) to cell 8 (G). At cells without an outgoing arrow, both policies choose right; G is absorbing with zero reward.
 \end{frame}
 
 \begin{frame}{From a State and a Policy to a Reward Stream}
 \small
 Start at \(s_t=s\). At future date \(t+\tau-1\), choose
 \(a_{t+\tau-1}=\sigma(s_{t+\tau-1})\), for \(\tau=1,2,\ldots\).
-\begin{center}
+\begin{figure}
+\centering
 \begin{tikzpicture}[font=\sffamily\small]
 \node[valueState] (s0) at (0,0) {$s_t=s$};
 \node[valueState] (s1) at (3.5,0) {$s_{t+1}$};
@@ -177,16 +180,14 @@ Start at \(s_t=s\). At future date \(t+\tau-1\), choose
 \draw[valueFlow] (s1)--node[above]{$\sigma(s_{t+1})$}node[below]{$R_{t+2}$}(s2);
 \draw[valueFlow] (s2)--node[above]{$\sigma(s_{t+2})$}node[below]{$R_{t+3}$}(rest);
 \end{tikzpicture}
-\end{center}
+\caption{States, actions, and rewards.}
+\end{figure}
 The \term{discounted accumulated reward}, or \term{return}, from date \(t\) is
 \[G_t=R_{t+1}+\beta R_{t+2}+\cdots+\beta^{\tau-1}R_{t+\tau}+\cdots
  =\sum_{\tau=1}^{\infty}\beta^{\tau-1}R_{t+\tau}.\]
-\(R_{t+\tau}\) is received after the \(\tau\)-th action from the starting date.
-\par\smallskip
 For the two maze routes, take \(\beta=0.9\):
 \[G_t^{\sigma_A}=-\sum_{\tau=1}^{14}0.9^{\tau-1}\approx-7.71,
 \qquad G_t^{\sigma_B}=-\sum_{\tau=1}^{16}0.9^{\tau-1}\approx-8.15.\]
-The shorter route has a higher return.
 \end{frame}
 
 \begin{frame}{Discounting and a Finite Return}
