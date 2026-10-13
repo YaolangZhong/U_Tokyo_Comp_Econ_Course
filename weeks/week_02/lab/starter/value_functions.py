@@ -3,132 +3,133 @@ Evaluate specified policies in McCall job search and consumption-saving models.
 Call mccall_solution() or savings_solution() separately to run exercise solutions.
 """
 
-import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-print("Python:", sys.version.split()[0])
-np.set_printoptions(precision=4, suppress=True)
-plt.rcParams.update({"figure.figsize": (8, 3.5), "axes.spines.top": False,
-                     "axes.spines.right": False})
+np.set_printoptions(precision=4, suppress=True)  # Shorter printed numbers.
+plt.rcParams["figure.figsize"] = (8, 3.5)
 
 def simulate_policy(model, policy, initial_state, periods, seed=7):
-    rng = np.random.default_rng(seed)
-    state = int(initial_state)
-    if state not in range(len(model.states)) or periods < 0:
-        raise ValueError("Use a valid initial state and a nonnegative horizon.")
-    path, rewards = [state], []
-    for _ in range(periods):
+    rng = np.random.default_rng(seed)  # Same seed gives the same random draws.
+    state = initial_state
+    path = [state]
+    rewards = []
+
+    for t in range(periods):
         action = policy(state)
         state, reward = model.step(state, action, rng)
-        path.append(state)
+        path.append(state)       # append adds one item to a list.
         rewards.append(reward)
-    return np.array(path), np.array(rewards, dtype=float)
+
+    return np.array(path), np.array(rewards)
 
 
 def discounted_return(rewards, beta):
+    # For H rewards: weights = [1, beta, beta**2, ..., beta**(H-1)].
     weights = beta ** np.arange(len(rewards))
-    return float(weights @ rewards)
+    return np.sum(weights * rewards)
 
 class McCallModel:
     def __init__(self, wages=(1, 2, 3, 4, 5),
                  probabilities=(0.1, 0.2, 0.4, 0.2, 0.1), benefit=1.0, beta=0.9):
-        self.wages = np.asarray(wages, dtype=float)
-        self.q = np.asarray(probabilities, dtype=float)
-        self.benefit, self.beta = float(benefit), float(beta)
-        if (self.wages.ndim != 1 or len(self.wages) == 0
-                or self.q.shape != self.wages.shape
-                or not np.all(np.isfinite(self.wages)) or np.any(self.wages <= 0)
-                or not np.all(np.diff(self.wages) > 0)
-                or not np.all(np.isfinite(self.q)) or np.any(self.q < 0)
-                or not np.isclose(self.q.sum(), 1)
-                or not np.isfinite(self.benefit) or self.benefit < 0
-                or not 0 < self.beta < 1):
-            raise ValueError("Check wages, offer probabilities, benefit, and beta.")
-        self.n = len(self.wages)
-        self.states = [(status, float(wage)) for status in ("U", "E") for wage in self.wages]
+        self.wages = np.array(wages)
+        self.q = np.array(probabilities)
+        self.benefit = benefit
+        self.beta = beta
+        self.n = len(wages)  # Number of possible wage offers.
+
+        # assert stops the cell if a check fails.
+        # Each wage needs one probability; probabilities must sum to one.
+        assert len(self.q) == self.n, "One probability per wage."
+        assert np.all(self.q >= 0) and np.isclose(self.q.sum(), 1), "Check probabilities."
+        assert 0 < beta < 1, "Use a discount factor between 0 and 1."
+
+        # Join two lists: unemployed states first, then employed states.
+        self.states = [("U", w) for w in wages] + [("E", w) for w in wages]
 
     def actions(self, state):
-        if not isinstance(state, (int, np.integer)) or not 0 <= state < 2 * self.n:
-            raise ValueError("Invalid state index.")
-        return ("accept", "reject") if state < self.n else ("work",)
+        if state < self.n:
+            return ["accept", "reject"]
+        return ["work"]
 
     def reward(self, state, action):
-        if action not in self.actions(state):
-            raise ValueError("This action is unavailable at the current state.")
-        return self.benefit if action == "reject" else self.wages[state % self.n]
+        assert action in self.actions(state), "Choose an available action."
+        status, wage = self.states[state]  # Unpack the full state.
+        if action == "reject":
+            return self.benefit
+        return wage
 
     def transition_probabilities(self, state, action):
-        self.reward(state, action)  # Also check feasibility.
         p = np.zeros(len(self.states))
         if action == "reject":
-            p[:self.n] = self.q
+            p[:self.n] = self.q       # A new offer: first n states only.
         elif action == "accept":
-            p[self.n + state] = 1.0
+            p[state + self.n] = 1    # Move to employment at the same wage.
         else:
-            p[state] = 1.0
+            p[state] = 1             # Already employed: stay here.
         return p
 
     def step(self, state, action, rng):
         reward = self.reward(state, action)
         p = self.transition_probabilities(state, action)
-        next_state = int(rng.choice(len(self.states), p=p))
+        next_state = rng.choice(len(self.states), p=p)  # Sample using probabilities p.
         return next_state, reward
 
     def simulate(self, policy, initial_state, periods, seed=7):
         return simulate_policy(self, policy, initial_state, periods, seed)
 
 mccall = McCallModel()
-print("State indices and labels:")
-for index, label in enumerate(mccall.states):
-    print(index, label)
-print("Reject an offer: probabilities over all states")
-print(mccall.transition_probabilities(1, "reject"))
-print("Accept wage 2: probabilities over all states")
-print(mccall.transition_probabilities(1, "accept"))
+for i, state in enumerate(mccall.states):  # enumerate gives the index and its item.
+    print(i, state)
+
+# Index 1 means (U, 2).
+print("Reject:", mccall.transition_probabilities(1, "reject"))
+print("Accept:", mccall.transition_probabilities(1, "accept"))
 
 def make_threshold_policy(model, threshold):
     def policy(state):
-        if state >= model.n:
+        status, wage = model.states[state]
+        if status == "E":
             return "work"
-        return "accept" if model.wages[state] >= threshold else "reject"
-    return policy
+        if wage >= threshold:
+            return "accept"
+        return "reject"
+    return policy  # Return the function itself; call it later with a state.
 
 
 search_policy = make_threshold_policy(mccall, threshold=3)
-search_start = 1  # (U, wage 2)
+search_start = 1  # (U, 2)
 search_path, search_rewards = mccall.simulate(search_policy, search_start, periods=12)
-print("Rollout:", [mccall.states[s] for s in search_path])
-print("Reward stream:", search_rewards)
-print("12-step return:", discounted_return(search_rewards, mccall.beta))
+print("States:", [mccall.states[i] for i in search_path])
+print("Rewards:", search_rewards)
+print("Return:", discounted_return(search_rewards, mccall.beta))
 
 def policy_arrays(model, policy):
     n = len(model.states)
-    P = np.zeros((n, n))
+    P = np.zeros((n, n))  # One row for each current state.
     mu = np.zeros(n)
     for state in range(n):
         action = policy(state)
-        P[state] = model.transition_probabilities(state, action)
         mu[state] = model.reward(state, action)
-    if np.any(P < 0) or not np.allclose(P.sum(axis=1), 1):
-        raise ValueError("Every transition row must be a probability vector.")
+        P[state] = model.transition_probabilities(state, action)
     return P, mu
 
 
 def evaluate_policy(model, policy):
     P, mu = policy_arrays(model, policy)
-    V = np.linalg.solve(np.eye(len(mu)) - model.beta * P, mu)
-    return V, P, mu
+    I = np.eye(len(mu))   # Identity matrix: ones on the diagonal.
+    V = np.linalg.solve(I - model.beta * P, mu)
+    return V, P, mu       # solve(A, b) finds the vector x satisfying A @ x = b.
 
 
 V_search, P_search, mu_search = evaluate_policy(mccall, search_policy)
-print("State | action | value")
-for i, wage in enumerate(mccall.wages):
-    print(f"{mccall.states[i]} | {search_policy(i):6s} | {V_search[i]:.4f}")
-print("Value from (U, wage 2):", V_search[search_start])
-print("Employed-state values:", V_search[mccall.n:])
+for i in range(mccall.n):
+    print(mccall.states[i], "value:", round(V_search[i], 4))
+
+# A known value: permanent employment pays w every period.
 assert np.allclose(V_search[mccall.n:], mccall.wages / (1 - mccall.beta))
 
+# [:mccall.n] selects the unemployed-state values.
 fig, ax = plt.subplots()
 ax.plot(mccall.wages, V_search[:mccall.n], "o-", label="Supplied threshold = 3")
 ax.plot(mccall.wages, mccall.wages / (1 - mccall.beta), "s--", label="Accept every offer")
@@ -138,84 +139,72 @@ ax.grid(alpha=0.2)
 plt.tight_layout()
 plt.show()
 
-def estimate_value(model, policy, initial_state, repetitions=600, periods=100, seed=21):
-    rng = np.random.default_rng(seed)
-    returns = np.empty(repetitions)
-    for i in range(repetitions):
-        rollout_seed = int(rng.integers(0, 2**32))
-        _, rewards = model.simulate(policy, initial_state, periods, seed=rollout_seed)
-        returns[i] = discounted_return(rewards, model.beta)
-    _, mu = policy_arrays(model, policy)
-    return {"mean": returns.mean(),
-            "standard_error": returns.std(ddof=1) / np.sqrt(repetitions),
-            "tail_bound": model.beta**periods * np.max(np.abs(mu)) / (1 - model.beta)}
+def simulate_returns(model, policy, initial_state, repetitions=600, periods=100):
+    returns = []
+    for seed in range(repetitions):  # Use a different seed for each rollout.
+        path, rewards = model.simulate(policy, initial_state, periods, seed=seed)
+        returns.append(discounted_return(rewards, model.beta))
+    return np.array(returns)
 
 
-search_estimate = estimate_value(mccall, search_policy, search_start)
-print("Exact infinite-horizon value:", V_search[search_start])
-print("Simulated mean:", search_estimate["mean"])
-print("Monte Carlo standard error:", search_estimate["standard_error"])
-print("Maximum omitted tail:", search_estimate["tail_bound"])
+search_returns = simulate_returns(mccall, search_policy, search_start)
+print("Exact value:", V_search[search_start])
+print("Average simulated return:", search_returns.mean())
 
 class ConsumptionSavingModel:
     def __init__(self, M=5, B=3, alpha=0.5, beta=0.9):
-        if (not isinstance(M, (int, np.integer)) or M < 0
-                or not isinstance(B, (int, np.integer)) or B < 0
-                or not 0 < alpha < 1 or not 0 < beta < 1):
-            raise ValueError("Use nonnegative integer M and B, and alpha/beta in (0, 1).")
-        self.M, self.B = int(M), int(B)
-        self.alpha, self.beta = float(alpha), float(beta)
-        self.states = np.arange(self.M + self.B + 1)
-        self.incomes = np.arange(self.B + 1)
-        self.q = np.full(self.B + 1, 1 / (self.B + 1))
+        # M and B count whole units of goods.
+        assert M >= 0 and B >= 0, "Use nonnegative M and B."
+        assert 0 < alpha < 1 and 0 < beta < 1, "Keep alpha and beta between 0 and 1."
+        self.M = M
+        self.B = B
+        self.alpha = alpha
+        self.beta = beta
+        self.states = np.arange(M + B + 1)
+        self.incomes = np.arange(B + 1)
+        self.q = np.ones(B + 1) / (B + 1)  # Equal income probabilities.
 
     def actions(self, state):
-        if not isinstance(state, (int, np.integer)) or state not in range(len(self.states)):
-            raise ValueError("Invalid stock.")
         return np.arange(min(state, self.M) + 1)
 
     def reward(self, state, action):
-        if not isinstance(action, (int, np.integer)) or action not in self.actions(state):
-            raise ValueError("Saving must be a feasible whole number of units.")
-        return float((state - action)**self.alpha)
+        assert action in self.actions(state), "Saving must be feasible."
+        consumption = state - action
+        return consumption ** self.alpha
 
     def transition_probabilities(self, state, action):
-        self.reward(state, action)  # Also check the saving constraint.
         p = np.zeros(len(self.states))
+        # Saving a gives next stocks a, a+1, ..., a+B.
+        # A slice includes its start but excludes its stop, hence the +1.
         p[action:action + self.B + 1] = self.q
         return p
 
     def step(self, state, action, rng):
         reward = self.reward(state, action)
         p = self.transition_probabilities(state, action)
-        next_state = int(rng.choice(len(self.states), p=p))
+        next_state = rng.choice(len(self.states), p=p)
         return next_state, reward
 
     def simulate(self, policy, initial_state, periods, seed=7):
         return simulate_policy(self, policy, initial_state, periods, seed)
 
 savings = ConsumptionSavingModel()
-print("Stocks:", savings.states)
-print("Possible income:", savings.incomes)
-print("Saving choices at stock 2:", savings.actions(2))
-print("Next-state probabilities after saving 1:", savings.transition_probabilities(2, 1))
 
 
 def save_half(state):
-    return min(state // 2, savings.M)  # // rounds down to whole units.
+    return min(state // 2, savings.M)  # // rounds down; min applies the storage cap.
 
 
 saving_start = 5
-saving_path, saving_rewards = savings.simulate(save_half, saving_start, periods=24, seed=7)
+saving_path, saving_rewards = savings.simulate(save_half, saving_start, periods=24)
+
+# Drop the last state: a path has one more state than rewards.
 saving_actions = np.array([save_half(s) for s in saving_path[:-1]])
 consumption = saving_path[:-1] - saving_actions
-income = saving_path[1:] - saving_actions
+income = saving_path[1:] - saving_actions  # Next stock minus saving is new income.
 print("First five stocks:", saving_path[:5])
 print("First five consumption choices:", consumption[:5])
-print("First five incomes:", income[:5])
-print("24-step return:", discounted_return(saving_rewards, savings.beta))
-assert np.allclose(saving_rewards, consumption**savings.alpha)
-assert np.all((0 <= income) & (income <= savings.B))
+print("Return:", discounted_return(saving_rewards, savings.beta))
 
 fig, axes = plt.subplots(1, 2, figsize=(10, 3.4))
 axes[0].step(range(len(saving_path)), saving_path, where="post", label="Stock")
@@ -230,9 +219,14 @@ plt.tight_layout()
 plt.show()
 
 V_saving, P_saving, mu_saving = evaluate_policy(savings, save_half)
-V_consume, _, _ = evaluate_policy(savings, lambda state: 0)
+def consume_all(state):
+    return 0  # Save nothing.
+
+
+V_consume, _, _ = evaluate_policy(savings, consume_all)
 print("Value from stock 5 under save-half:", V_saving[saving_start])
 print("Stock | saving | consumption | value")
+# Each entry V_saving[state] is the value from that initial stock.
 for state in savings.states:
     action = save_half(state)
     print(f"{state:5d} | {action:6d} | {state - action:11d} | {V_saving[state]:.4f}")
@@ -246,29 +240,14 @@ ax.grid(alpha=0.2)
 plt.tight_layout()
 plt.show()
 
-saving_estimate = estimate_value(savings, save_half, saving_start, seed=22)
-print("Exact infinite-horizon value:", V_saving[saving_start])
-print("Simulated mean:", saving_estimate["mean"])
-print("Monte Carlo standard error:", saving_estimate["standard_error"])
-print("Maximum omitted tail:", saving_estimate["tail_bound"])
-
-for label, model, V, P, mu in [
-    ("McCall", mccall, V_search, P_search, mu_search),
-    ("Consumption-saving", savings, V_saving, P_saving, mu_saving),
-]:
-    residual = np.max(np.abs(V - mu - model.beta * (P @ V)))
-    print(label, "maximum policy Bellman residual:", residual)
-    assert residual < 1e-10
-
-# Independent check: consume everything, so next stock equals the new income.
-mean_future_utility = savings.q @ (savings.incomes**savings.alpha)
-consume_benchmark = (savings.states**savings.alpha
-                     + savings.beta * mean_future_utility / (1 - savings.beta))
-assert np.allclose(V_consume, consume_benchmark)
-print("Analytical benchmarks passed.")
+saving_returns = simulate_returns(savings, save_half, saving_start)
+print("Exact value:", V_saving[saving_start])
+print("Average simulated return:", saving_returns.mean())
 
 def compare_thresholds(model, thresholds):
-    # For each threshold: construct a policy, evaluate it, and keep the U-state values.
+    results = {}  # A dictionary stores pairs: threshold -> value array.
+    # Loop over thresholds; use make_threshold_policy and evaluate_policy.
+    # Store V[:model.n] in results[threshold], then return results.
     pass
 
 # Run after completing the function:
