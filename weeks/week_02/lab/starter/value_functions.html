@@ -225,7 +225,8 @@ window.Quarto = {
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"axes.spines.right"</span>: <span class="va">False</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="from-lab-1-to-economic-models" class="level2">
 <h2 class="anchored" data-anchor-id="from-lab-1-to-economic-models">1. From Lab 1 to economic models</h2>
-<p>Both models will provide <code>states</code>, <code>beta</code>, <code>actions</code>, <code>reward</code>, <code>transition_probabilities</code>, <code>step</code>, and <code>simulate</code>. The same rollout loop works for both. The element <code>rewards[j]</code> is <span class="math inline">\(R_{t+j+1}\)</span>; a path with <span class="math inline">\(H\)</span> transitions has <span class="math inline">\(H+1\)</span> states.</p>
+<p>Both models will provide <code>states</code>, <code>beta</code>, <code>actions</code>, <code>reward</code>, <code>transition_probabilities</code>, <code>step</code>, and <code>simulate</code>. The same rollout loop works for both. The element <code>rewards[j]</code> is <span class="math inline">\(r_{t+j+1}\)</span>; a path with <span class="math inline">\(H\)</span> transitions has <span class="math inline">\(H+1\)</span> states.</p>
+<p>Notation follows the slides: <span class="math inline">\(R(s,a)\)</span> is the reward function, <span class="math inline">\(r_{t+1}\)</span> is a realized reward, and <span class="math inline">\(\mu^\sigma\)</span> is the expected-reward vector. Both models here have deterministic rewards given state and action. In code, <code>reward(state, action)</code> implements <span class="math inline">\(R\)</span>, and <code>mu</code> stores the expected-reward vector.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate_policy(model, policy, initial_state, periods, seed<span class="op">=</span><span class="dv">7</span>):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(seed)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    state <span class="op">=</span> <span class="bu">int</span>(initial_state)</span>
@@ -248,12 +249,13 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="the-mccall-search-model">2. The McCall search model</h2>
 <p>An unemployed worker sees a wage offer <span class="math inline">\(w\)</span>. Accepting pays <span class="math inline">\(w\)</span> immediately and forever; rejecting pays benefit <span class="math inline">\(b\)</span> now and leads to a fresh IID offer with probabilities <span class="math inline">\(q\)</span> next period. Employment is permanent.</p>
 <p>The state is <span class="math inline">\((\mathrm U,w)\)</span> or <span class="math inline">\((\mathrm E,w)\)</span>. Its action is <code>accept</code>/<code>reject</code> when unemployed and <code>work</code> when employed. Rewards are income from the current action.</p>
-<p>Following <a href="https://python.quantecon.org/mccall_model.html#the-mccall-model">QuantEcon: The McCall Model</a>, <span class="math display">\[V_{\mathrm E}(w)=\frac{w}{1-\beta},\qquad
-V^\sigma_{\mathrm U}(w)=
+<p>Following <a href="https://python.quantecon.org/mccall_model.html#the-mccall-model">QuantEcon: The McCall Model</a>, <span class="math display">\[V^\sigma((\mathrm E,w))=\frac{w}{1-\beta},\qquad
+V^\sigma((\mathrm U,w))=
 \begin{cases}
-w+\beta V_{\mathrm E}(w),&amp;\sigma(\mathrm U,w)=\text{accept},\\
-b+\beta\sum_{w'}q(w')V^\sigma_{\mathrm U}(w'),&amp;\sigma(\mathrm U,w)=\text{reject}.
+w+\beta V^\sigma((\mathrm E,w)),&amp;\sigma((\mathrm U,w))=\text{accept},\\
+b+\beta\sum_{w'}q(w')V^\sigma((\mathrm U,w')),&amp;\sigma((\mathrm U,w))=\text{reject}.
 \end{cases}\]</span></p>
+<p>Write the full state inside the value function: <span class="math inline">\(V^\sigma((\mathrm U,w))\)</span> or <span class="math inline">\(V^\sigma((\mathrm E,w))\)</span>.</p>
 <p>The class uses integer <strong>state indices</strong>. Indices <code>0, ..., n-1</code> represent unemployed workers; <code>n, ..., 2*n-1</code> represent employed workers. <code>states[index]</code> gives the economic label.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> McCallModel:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, wages<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>),</span>
@@ -331,31 +333,31 @@ b+\beta\sum_{w'}q(w')V^\sigma_{\mathrm U}(w'),&amp;\sigma(\mathrm U,w)=\text{rej
 </section>
 <section id="evaluate-a-given-policy" class="level2">
 <h2 class="anchored" data-anchor-id="evaluate-a-given-policy">3. Evaluate a given policy</h2>
-<p>For each state, use its chosen action to construct one row of <span class="math inline">\(P^\sigma\)</span> and one entry of <span class="math inline">\(r^\sigma\)</span>. Then solve <span class="math display">\[(I-\beta P^\sigma)V^\sigma=r^\sigma.\]</span></p>
+<p>For each state, use its chosen action to construct one row of <span class="math inline">\(P^\sigma\)</span> and one entry of <span class="math inline">\(\mu^\sigma\)</span>. The entries are <span class="math inline">\(\mu_i^\sigma=\mathbb E[R(i,\sigma(i))]\)</span>. Then solve <span class="math display">\[(I-\beta P^\sigma)V^\sigma=\mu^\sigma.\]</span></p>
 <p><code>np.linalg.solve</code> computes all state values together. The superscript <span class="math inline">\(\sigma\)</span> identifies the supplied policy used at every future state.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> policy_arrays(model, policy):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">len</span>(model.states)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    P <span class="op">=</span> np.zeros((n, n))</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> np.zeros(n)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> np.zeros(n)</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> state <span class="kw">in</span> <span class="bu">range</span>(n):</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        action <span class="op">=</span> policy(state)</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        P[state] <span class="op">=</span> model.transition_probabilities(state, action)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        r[state] <span class="op">=</span> model.reward(state, action)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        mu[state] <span class="op">=</span> model.reward(state, action)</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> np.<span class="bu">any</span>(P <span class="op">&lt;</span> <span class="dv">0</span>) <span class="kw">or</span> <span class="kw">not</span> np.allclose(P.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>), <span class="dv">1</span>):</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Every transition row must be a probability vector."</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> P, r</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> P, mu</span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_policy(model, policy):</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    P, r <span class="op">=</span> policy_arrays(model, policy)</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    V <span class="op">=</span> np.linalg.solve(np.eye(<span class="bu">len</span>(r)) <span class="op">-</span> model.beta <span class="op">*</span> P, r)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> V, P, r</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    P, mu <span class="op">=</span> policy_arrays(model, policy)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    V <span class="op">=</span> np.linalg.solve(np.eye(<span class="bu">len</span>(mu)) <span class="op">-</span> model.beta <span class="op">*</span> P, mu)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> V, P, mu</span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>V_search, P_search, r_search <span class="op">=</span> evaluate_policy(mccall, search_policy)</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Offer | action | value while unemployed"</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>V_search, P_search, mu_search <span class="op">=</span> evaluate_policy(mccall, search_policy)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"State | action | value"</span>)</span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, wage <span class="kw">in</span> <span class="bu">enumerate</span>(mccall.wages):</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>wage<span class="sc">:5.1f}</span><span class="ss"> | </span><span class="sc">{</span>search_policy(i)<span class="sc">:6s}</span><span class="ss"> | </span><span class="sc">{</span>V_search[i]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>mccall<span class="sc">.</span>states[i]<span class="sc">}</span><span class="ss"> | </span><span class="sc">{</span>search_policy(i)<span class="sc">:6s}</span><span class="ss"> | </span><span class="sc">{</span>V_search[i]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Value from (U, wage 2):"</span>, V_search[search_start])</span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Employed-state values:"</span>, V_search[mccall.n:])</span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(V_search[mccall.n:], mccall.wages <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> mccall.beta))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -378,10 +380,10 @@ b+\beta\sum_{w'}q(w')V^\sigma_{\mathrm U}(w'),&amp;\sigma(\mathrm U,w)=\text{rej
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        rollout_seed <span class="op">=</span> <span class="bu">int</span>(rng.integers(<span class="dv">0</span>, <span class="dv">2</span><span class="op">**</span><span class="dv">32</span>))</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        _, rewards <span class="op">=</span> model.simulate(policy, initial_state, periods, seed<span class="op">=</span>rollout_seed)</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        returns[i] <span class="op">=</span> discounted_return(rewards, model.beta)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    _, r <span class="op">=</span> policy_arrays(model, policy)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    _, mu <span class="op">=</span> policy_arrays(model, policy)</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"mean"</span>: returns.mean(),</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">"standard_error"</span>: returns.std(ddof<span class="op">=</span><span class="dv">1</span>) <span class="op">/</span> np.sqrt(repetitions),</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"tail_bound"</span>: model.beta<span class="op">**</span>periods <span class="op">*</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(r)) <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> model.beta)}</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"tail_bound"</span>: model.beta<span class="op">**</span>periods <span class="op">*</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(mu)) <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> model.beta)}</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>search_estimate <span class="op">=</span> estimate_value(mccall, search_policy, search_start)</span>
@@ -396,7 +398,7 @@ b+\beta\sum_{w'}q(w')V^\sigma_{\mathrm U}(w'),&amp;\sigma(\mathrm U,w)=\text{rej
 <p>A household starts with stock <span class="math inline">\(s\)</span>, saves <span class="math inline">\(a\)</span>, and consumes <span class="math inline">\(c=s-a\)</span>. Savings carry over one for one. New income <span class="math inline">\(Y'\)</span> arrives next period, independently and uniformly on <span class="math inline">\(\{0,\ldots,B\}\)</span>.</p>
 <p>Following <a href="https://tools-techniques.quantecon.org/discrete_dp.html#example-a-growth-model">QuantEcon: Example: A Growth Model</a>, use whole units, storage capacity <span class="math inline">\(M\)</span>, and utility <span class="math inline">\(c^\alpha\)</span>: <span class="math display">\[\mathcal S=\{0,\ldots,M+B\},\quad
 \mathcal A(s)=\{0,\ldots,\min(s,M)\},\quad
-s'=a+Y',\quad r(s,a)=(s-a)^\alpha.\]</span></p>
+s'=a+Y',\quad R(s,a)=(s-a)^\alpha.\]</span></p>
 <p>This extends Lab 1’s cake problem with new income. The policy <span class="math inline">\(\sigma(s)\)</span> now returns <strong>saving</strong>, so consumption is <span class="math inline">\(s-\sigma(s)\)</span>.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ConsumptionSavingModel:</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, M<span class="op">=</span><span class="dv">5</span>, B<span class="op">=</span><span class="dv">3</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, beta<span class="op">=</span><span class="fl">0.9</span>):</span>
@@ -472,7 +474,7 @@ s'=a+Y',\quad r(s,a)=(s-a)^\alpha.\]</span></p>
 <p>The policy Bellman equation is <span class="math display">\[V^\sigma(s)=(s-\sigma(s))^\alpha+
 \frac{\beta}{B+1}\sum_{y=0}^B V^\sigma(\sigma(s)+y).\]</span></p>
 <p>Reuse <code>evaluate_policy</code> to compute values at all stocks. We compare two supplied rules: saving half the stock (rounded down and capped at <span class="math inline">\(M\)</span>), and consuming everything each period.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>V_saving, P_saving, r_saving <span class="op">=</span> evaluate_policy(savings, save_half)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>V_saving, P_saving, mu_saving <span class="op">=</span> evaluate_policy(savings, save_half)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>V_consume, _, _ <span class="op">=</span> evaluate_policy(savings, <span class="kw">lambda</span> state: <span class="dv">0</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Value from stock 5 under save-half:"</span>, V_saving[saving_start])</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Stock | saving | consumption | value"</span>)</span>
@@ -497,12 +499,12 @@ s'=a+Y',\quad r(s,a)=(s-a)^\alpha.\]</span></p>
 </section>
 <section id="check-the-computed-values" class="level2">
 <h2 class="anchored" data-anchor-id="check-the-computed-values">5. Check the computed values</h2>
-<p>A correctly evaluated policy satisfies <span class="math inline">\(V^\sigma-r^\sigma-\beta P^\sigma V^\sigma=0\)</span>. We also have two independent benchmarks: permanent employment pays <span class="math inline">\(w/(1-\beta)\)</span>, and consuming everything pays current utility plus discounted expected utility of future income.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label, model, V, P, r <span class="kw">in</span> [</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"McCall"</span>, mccall, V_search, P_search, r_search),</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"Consumption-saving"</span>, savings, V_saving, P_saving, r_saving),</span>
+<p>A correctly evaluated policy satisfies <span class="math inline">\(V^\sigma-\mu^\sigma-\beta P^\sigma V^\sigma=0\)</span>. We also have two independent benchmarks: permanent employment pays <span class="math inline">\(w/(1-\beta)\)</span>, and consuming everything pays current utility plus discounted expected utility of future income.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label, model, V, P, mu <span class="kw">in</span> [</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"McCall"</span>, mccall, V_search, P_search, mu_search),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"Consumption-saving"</span>, savings, V_saving, P_saving, mu_saving),</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>]:</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    residual <span class="op">=</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(V <span class="op">-</span> r <span class="op">-</span> model.beta <span class="op">*</span> (P <span class="op">@</span> V)))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    residual <span class="op">=</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(V <span class="op">-</span> mu <span class="op">-</span> model.beta <span class="op">*</span> (P <span class="op">@</span> V)))</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(label, <span class="st">"maximum policy Bellman residual:"</span>, residual)</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> residual <span class="op">&lt;</span> <span class="fl">1e-10</span></span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
@@ -603,7 +605,7 @@ Solution 2: Compare saving targets (Show code)
 </ul></li>
 <li>Richard S. Sutton and Andrew G. Barto (2018), <em>Reinforcement Learning: An Introduction</em>, 2nd ed., MIT Press. [Book]
 <ul>
-<li><a href="https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf#page=69">Chapter 3: Finite Markov Decision Processes</a>: Sections 3.3, 3.5 and 3.6.</li>
+<li><a href="https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf#page=69">Chapter 3: Finite Markov Decision Processes</a>: Sections 3.1, 3.3, 3.5 and 3.6.</li>
 <li><a href="https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf#page=96">Section 4.1: Policy Evaluation (Prediction)</a>.</li>
 </ul></li>
 </ol>
