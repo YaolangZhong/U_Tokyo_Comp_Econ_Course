@@ -242,41 +242,28 @@ As \(\tau\to\infty\), \(\beta^\tau\to0\), so the infinite-horizon return satisfi
  =\frac{\bar r}{1-\beta}.\]
 \end{frame}
 
-\begin{frame}{Example: Two Cake-Eating Rollouts}
-\courseexample{Example: Cake Eating}
-\par Start with two units of cake. For this example, restrict stock and consumption to whole units:
-\[k\in\{0,1,2\},\quad c\in\{0,\ldots,k\},\quad k'=k-c,
-\quad r(k,c)=\sqrt c,\quad\beta=0.9.\]
-\begin{columns}[T]
-\begin{column}{.48\textwidth}
-\textbf{Consume everything: \(\sigma_A(k)=k\)}
-\[k_t,k_{t+1},k_{t+2}:\quad 2\longrightarrow0\longrightarrow0\]
-\[R_{t+1},R_{t+2},\ldots:\quad \sqrt2,\;0,\;0,\ldots\]
-\[G_t=\sqrt2\approx1.414.\]
-\end{column}
-\begin{column}{.48\textwidth}
-\textbf{One unit at a time: \(\sigma_B(k)=\min\{1,k\}\)}
-\[k_t,k_{t+1},k_{t+2}:\quad 2\longrightarrow1\longrightarrow0\]
-\[R_{t+1},R_{t+2},\ldots:\quad 1,\;1,\;0,\ldots\]
-\[G_t=1+0.9=1.9.\]
-\end{column}
-\end{columns}
-\medskip
-Each policy produces a deterministic rollout. A smaller reward at the first step can lead to a larger return.
+\begin{frame}{Standing Assumptions}
+Unless explicitly stated otherwise, we assume:
+\begin{itemize}
+\item \term{Time-homogeneous dynamics.} For a given state and action, the next-state probabilities and mean reward are the same at every date:
+\[P_t(s'\mid s,a)=P(s'\mid s,a),\qquad r_t(s,a)=r(s,a).\]
+\item \term{A stationary policy.} The action rule depends on the current state, not the date:
+\[\sigma_t(s)=\sigma(s).\]
+Actions can still change when the state changes.
+\item We therefore omit date subscripts on \(P\), \(r\), and \(\sigma\). Over an infinite horizon, the expected return from a state also does not depend on the starting date; we write \(V^\sigma(s)\).
+\end{itemize}
 \end{frame}
 
 \begin{frame}{The Value Function of a Policy}
-The \term{state-value function under policy \(\sigma\)} is the expected return over rollouts starting at \(s\). With time-homogeneous dynamics and a stationary policy, it does not depend on the starting date \(t\):
-\begin{conceptbox}
+The \term{state-value function under policy \(\sigma\)} is the expected return over rollouts starting at \(s\):
 \[V^\sigma(s)=\E_\sigma[G_t\mid s_t=s]
  =\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}R_{t+\tau}\,\middle|\,s_t=s\right].\]
-\end{conceptbox}
 \begin{itemize}
+\item The subscript \(\sigma\) in \(\E_\sigma\) means that the expectation is over rollouts following this particular policy \(\sigma\).
 \item \(G_t\) is the return of one rollout. \(V^\sigma(s)\) averages over all possible rollouts from \(s\) under \(\sigma\).
 \item Since \(r(s,a)\) is the conditional mean reward, boundedness also gives
 \[V^\sigma(s)=\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}
   r(s_{t+\tau-1},\sigma(s_{t+\tau-1}))\,\middle|\,s_t=s\right].\]
-\item For the cake example, \(V^{\sigma_A}(2)=\sqrt2\) and \(V^{\sigma_B}(2)=1.9\).
 \end{itemize}
 \end{frame}
 
@@ -290,7 +277,7 @@ G_t&=R_{t+1}+\beta\big(R_{t+2}+\beta R_{t+3}+\cdots\big)\\
 \end{align*}
 \begin{itemize}
 \item \(G_{t+1}\) is the return from the remainder of the same rollout.
-\item With time-homogeneous dynamics and a stationary policy,
+\item From the next state \(s'\), the expected remaining return is
 \[\E_\sigma[G_{t+1}\mid s_{t+1}=s']=V^\sigma(s').\]
 \end{itemize}
 This lets us replace an infinite reward sequence with a one-step equation.
@@ -306,10 +293,8 @@ V^\sigma(s)
 The second equality uses the law of iterated expectations and the Markov structure.
 \par\medskip
 For a finite state space, the \term{policy Bellman equation} is
-\begin{conceptbox}
 \[V^\sigma(s)=r(s,\sigma(s))
  +\beta\sum_{s'\in\Sset}P(s'\mid s,\sigma(s))V^\sigma(s').\]
-\end{conceptbox}
 \small Current expected reward plus discounted expected continuation value. For a continuous state space, replace the sum by an integral with respect to \(P(ds'\mid s,\sigma(s))\).
 \end{frame}
 
@@ -384,10 +369,8 @@ The \term{principle of optimality}: after the next state is observed, an optimal
 Choose the current action \(a\), then continue optimally. Its expected return is
 \[r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V^*(s').\]
 Maximizing over the feasible current actions gives the \term{Bellman optimality equation}:
-\begin{conceptbox}
 \[V^*(s)=\max_{a\in\Aset(s)}
  \left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V^*(s')\right\}.\]
-\end{conceptbox}
 \begin{itemize}
 \item The current action is chosen before the random next state is observed.
 \item Future actions can respond to that realized state. \(V^*(s')\) includes all those later choices.
@@ -397,7 +380,7 @@ Maximizing over the feasible current actions gives the \term{Bellman optimality 
 \begin{frame}{Example: The Cake-Eating Bellman Equation}
 \small
 \courseexample{Example: Cake Eating}
-\par Use the same whole-unit model, \(k\in\{0,1,2\}\) and \(\beta=0.9\):
+\par Stock \(k\in\{0,1,2\}\), consumption \(c\in\{0,\ldots,k\}\), next stock \(k'=k-c\), reward \(\sqrt c\), and \(\beta=0.9\):
 \[V^*(k)=\max_{c\in\{0,\ldots,k\}}\{\sqrt c+0.9V^*(k-c)\}.\]
 At zero stock, \(V^*(0)=0.9V^*(0)\), so \(V^*(0)=0\). At one unit,
 \[V^*(1)=\max\{0.9V^*(1),\;1\}=1.\]
@@ -432,9 +415,7 @@ Use the \term{maximum norm} \(\|v-w\|_\infty=\max_s|v(s)-w(s)|\). For any state 
  \leq\beta\|v-w\|_\infty.\]
 Taking the maximum over actions preserves this bound, since
 \( |\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a| \). Hence
-\begin{conceptbox}
 \[\|Tv-Tw\|_\infty\leq\beta\|v-w\|_\infty.\]
-\end{conceptbox}
 \begin{itemize}
 \item \(T\) is a \term{contraction}: the new distance is at most \(\beta<1\) times the old distance.
 \item On the finite-dimensional value space, it has a unique fixed point \(V^*\), and
