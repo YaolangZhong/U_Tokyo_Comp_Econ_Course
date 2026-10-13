@@ -365,7 +365,7 @@ For a finite state space, fix a deterministic policy \(\sigma\) and define
 Treat \(V^\sigma\) and \(\mu^\sigma\) as column vectors. The policy Bellman equations become
 \[V^\sigma=\mu^\sigma+\beta P^\sigma V^\sigma,
 \qquad (I-\beta P^\sigma)V^\sigma=\mu^\sigma.\]
-\term{Policy evaluation} computes the value of the specified policy by solving this linear system. We will do this for both economic models in the notebook.
+\term{Policy evaluation} computes the value of the specified policy by solving this linear system.
 \end{frame}
 
 \begin{frame}{From a Given Policy to the Optimal Value}
@@ -425,7 +425,6 @@ Allowing the worker to choose gives
 \[V^*((\mathrm U,w))=\max\left\{
 \underbrace{\frac{w}{1-\beta}}_{\text{accept}},\quad
 \underbrace{b+\beta\sum_{w'\in\mathcal W}q(w')V^*((\mathrm U,w'))}_{\text{reject and continue}}\right\}.\]
-The notebook evaluates specified wage-threshold policies and their rollouts.
 \end{frame}
 
 \begin{frame}{Consumption and Saving: Setup}
@@ -467,7 +466,7 @@ Choosing saving optimally instead gives
 \left\{(s-a)^\alpha+\frac{\beta}{B+1}\sum_{y=0}^{B}V^*(a+y)\right\}.\]
 \begin{itemize}
 \item Saving more lowers current utility and changes the distribution of next-period resources.
-\item In the notebook, a chosen rule \(\sigma\) determines \(P^\sigma\) and \(\mu^\sigma\). Solving \((I-\beta P^\sigma)V^\sigma=\mu^\sigma\) gives its value at every stock.
+\item A given saving rule \(\sigma\) determines \(P^\sigma\) and \(\mu^\sigma\). Solving \((I-\beta P^\sigma)V^\sigma=\mu^\sigma\) gives its value at every stock.
 \end{itemize}
 \end{frame}
 
