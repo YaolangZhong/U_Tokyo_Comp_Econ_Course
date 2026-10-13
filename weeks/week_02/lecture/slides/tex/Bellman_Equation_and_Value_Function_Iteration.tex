@@ -135,7 +135,7 @@ A time-homogeneous discounted \term{MDP} is specified by
 \item \term{State space \(\Sset\):} free cells \(\Sset=\{\mathrm S,\mathrm G,1,\ldots,45\}\), including G. Walls are excluded.
 \item \term{Actions \(\Aset(s)\):} up, down, left, right.
 \item \term{Transition kernel \(P(s'\mid s,a)\):} probability 1 for the cell reached by action \(a\), and 0 for all other cells. For example, \(P(21\mid\mathrm S,\text{down})=1\). A wall or boundary keeps the current cell; G is absorbing.
-\item \term{Mean reward \(r(s,a)\):} \(-1\) per move from outside G (including entry into G); zero at G.
+\item \term{Reward \(r(s,a)\):} \(-1\) per move from outside G (including entry into G); zero at G.
 \item \term{Discount factor \(\beta\in(0,1)\):} weights future rewards.
 \end{itemize}
 \end{column}
@@ -193,8 +193,8 @@ In reinforcement learning, a \term{rollout} follows a policy from a starting sta
 To simulate a rollout from \(s_t=s\), repeat for \(\tau=1,2,\ldots\):
 \[a_{t+\tau-1}=\sigma(s_{t+\tau-1}),\qquad
 s_{t+\tau}\sim P(\,\cdot\mid s_{t+\tau-1},a_{t+\tau-1}).\]
-The environment also generates reward \(R_{t+\tau}\), whose conditional mean is
-\(r(s_{t+\tau-1},a_{t+\tau-1})\).
+Each call to \(\sigma(s)\) draws an action; each call to \(r(s,a)\) draws a reward. Deterministic rules always return the same outcome. Here
+\[R_{t+\tau}=r(s_{t+\tau-1},a_{t+\tau-1}).\]
 \begin{figure}
 \centering
 \begin{tikzpicture}[font=\sffamily\small]
@@ -209,7 +209,7 @@ The environment also generates reward \(R_{t+\tau}\), whose conditional mean is
 \caption{A rollout under policy \(\sigma\).}
 \end{figure}
 The associated \term{reward stream} is \(R_{t+1},R_{t+2},\ldots\).
-Rollouts can differ when transitions or rewards are random.
+Rollouts can differ through actions, rewards, or state transitions.
 \end{frame}
 
 \begin{frame}{The Return of a Rollout}
@@ -218,7 +218,7 @@ The \term{discounted accumulated reward}, or \term{return}, assigns a number to 
  =\sum_{\tau=1}^{\infty}\beta^{\tau-1}R_{t+\tau}.\]
 \begin{itemize}
 \item The first reward has weight 1; the reward \(\tau\) steps ahead has weight \(\beta^{\tau-1}\).
-\item One rollout gives one realized return. Random transitions or rewards can produce different returns under the same policy.
+\item One rollout gives one realized return. Random actions, rewards, or transitions can produce different returns under the same policy.
 \item To evaluate a policy from a given state, we consider the expected return over its possible rollouts.
 \end{itemize}
 \end{frame}
@@ -242,12 +242,12 @@ As \(\tau\to\infty\), \(\beta^\tau\to0\), so the infinite-horizon return satisfi
 \begin{frame}{Standing Assumptions}
 Unless explicitly stated otherwise, we assume:
 \begin{itemize}
-\item \term{Time-homogeneous dynamics.} For a given state and action, the next-state probabilities and mean reward are the same at every date:
-\[P_t(s'\mid s,a)=P(s'\mid s,a),\qquad r_t(s,a)=r(s,a).\]
-\item \term{A stationary policy.} The action rule depends on the current state, not the date:
-\[\sigma_t(s)=\sigma(s).\]
-Actions can still change when the state changes.
-\item We therefore omit date subscripts on \(P\), \(r\), and \(\sigma\). Over an infinite horizon, the expected return from a state also does not depend on the starting date; we write \(V^\sigma(s)\).
+\item \term{Time-homogeneous dynamics.} For a given state and action, transition probabilities and the reward distribution are the same at every date:
+\[P_t(s'\mid s,a)=P(s'\mid s,a),\qquad r_t(s,a)\overset{d}{=}r(s,a).\]
+\item \term{A stationary policy.} At a given state, the action distribution does not change with the date:
+\[\sigma_t(s)\overset{d}{=}\sigma(s).\]
+Here \(\overset{d}{=}\) means equal in distribution. A deterministic policy assigns probability one to its chosen action.
+\item We omit date subscripts on \(P\), \(r\), and \(\sigma\). Over an infinite horizon, the expected return also does not depend on the starting date; we write \(V^\sigma(s)\).
 \end{itemize}
 \end{frame}
 
@@ -258,9 +258,7 @@ The \term{state-value function under policy \(\sigma\)} is the expected return o
 \begin{itemize}
 \item The subscript \(\sigma\) in \(\E_\sigma\) means that the expectation is over rollouts following this particular policy \(\sigma\).
 \item \(G_t\) is the return of one rollout. \(V^\sigma(s)\) averages over all possible rollouts from \(s\) under \(\sigma\).
-\item Since \(r(s,a)\) is the conditional mean reward, boundedness also gives
-\[V^\sigma(s)=\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}
-  r(s_{t+\tau-1},\sigma(s_{t+\tau-1}))\,\middle|\,s_t=s\right].\]
+\item The expectation averages over random actions \(\sigma(s)\), rewards \(r(s,a)\), and next states drawn from \(P\), throughout the rollout. The starting state is held fixed.
 \end{itemize}
 \end{frame}
 
@@ -280,24 +278,86 @@ G_t&=R_{t+1}+\beta\big(R_{t+2}+\beta R_{t+3}+\cdots\big)\\
 This lets us replace an infinite reward sequence with a one-step equation.
 \end{frame}
 
+
+\begin{frame}{What Does the Expectation Average Over?}
+\small
+Fix the starting state \(s_t=s\). There are three possible sources of randomness:
+\begin{itemize}
+\item \textbf{Action:} \(\sigma(s)\) is a random action; \(a\) is one realization.
+\item \textbf{Reward:} \(r(s,a)\) is a random reward; \(z\) is one realization.
+\item \textbf{Next state:} \(s'\) is drawn from the transition kernel. Conditional on reward \(z\), use \(P(s'\mid s,a,z)\).
+\end{itemize}
+For discrete outcomes, expand \(V^\sigma(s)=\E_\sigma[G_t\mid s_t=s]\):
+\[V^\sigma(s)=
+\sum_a\underbrace{\Pr\{\sigma(s)=a\}}_{\text{action}}
+\sum_z\underbrace{\Pr\{r(s,a)=z\}}_{\text{reward}}
+\sum_{s'}\underbrace{P(s'\mid s,a,z)}_{\text{next state}}
+\bigl[z+\beta V^\sigma(s')\bigr].\]
+The mean reward and the original transition kernel are
+\[\E[r(s,a)]=\sum_z z\Pr\{r(s,a)=z\},\qquad
+P(s'\mid s,a)=\sum_z\Pr\{r(s,a)=z\}P(s'\mid s,a,z).\]
+\footnotesize Rewards and next states may be dependent. For continuous outcomes, replace the corresponding sums by integrals.
+\end{frame}
+
+\begin{frame}{One Starting State, Many Possible Rollouts}
+\small
+Restarting from the same \(s_0\) can generate different paths. Draw again at each new state.
+\begin{figure}
+\centering
+\begin{tikzpicture}[x=1cm,y=.87cm,font=\sffamily\footnotesize,
+  branchNode/.style={valueState,minimum width=9mm,minimum height=3.1mm,inner sep=1pt},
+  actionDraw/.style={valueFlow,draw=SessionTeal},
+  rewardDraw/.style={valueFlow,draw=SessionRed},
+  stateDraw/.style={valueFlow,draw=CourseVariableColor}]
+\node[font=\sffamily\footnotesize,text=SessionTeal] at (1.4,1.78) {\(\sigma(s_0)\)};
+\node[font=\sffamily\footnotesize,text=SessionRed] at (4.1,1.78) {\(r(s_0,a)\)};
+\node[font=\sffamily\footnotesize,text=CourseVariableColor] at (7.5,1.78) {\(P(s_1\mid s_0,a,z)\)};
+\node[branchNode] (s0) at (0,0) {\(s_0\)};
+\node[branchNode] (a1) at (2.8,.7) {\(a^{(1)}\)};
+\node[branchNode] (a2) at (2.8,-1.3) {\(a^{(2)}\)};
+\draw[actionDraw] (s0)--(a1);\draw[actionDraw] (s0)--(a2);
+\foreach \i/\y/\parent in {1/1.1/a1,2/-.3/a1}{
+  \node[branchNode,draw=SessionRed,fill=SessionRedLight] (r\i) at (5.6,\y) {\(z^{(\i)}\)};
+  \draw[rewardDraw] (\parent)--(r\i);
+}
+\foreach \i/\y/\parent in {1/1.45/r1,2/.75/r1,3/.05/r2,4/-.65/r2}{
+  \node[branchNode,draw=CourseVariableColor,fill=CourseVariableColor!6] (s\i) at (9.2,\y) {\(s_1^{(\i)}\)};
+  \draw[stateDraw] (\parent)--(s\i);
+  \draw[valueFlow] (s\i.east)--(10.35,\y) node[right] {\(\cdots\)};
+}
+\draw[rewardDraw] (a2)--(5.1,-1.3) node[right,text=SessionMuted] {\(\cdots\)};
+\node[text=SessionMuted] at (0,-1.78) {Starting state};
+\node[text=SessionTeal] at (2.8,-1.78) {Action};
+\node[text=SessionRed] at (5.6,-1.78) {Reward};
+\node[text=CourseVariableColor] at (9.2,-1.78) {Next state};
+\end{tikzpicture}
+\caption{Branches of a rollout.}
+\end{figure}
+\footnotesize
+\begin{itemize}
+\item Arrows show conditional draws; a rollout follows one branch at each step. Dots indicate further branches.
+\item Deterministic \(\sigma(s)\) or \(r(s,a)\) leaves one branch at that step.
+\end{itemize}
+\end{frame}
+
 \begin{frame}{The Bellman Equation for a Fixed Policy}
-Average the rollout identity \(G_t=R_{t+1}+\beta G_{t+1}\) conditional on \(s_t=s\):
+For a deterministic policy \(a=\sigma(s)\), average \(G_t=R_{t+1}+\beta G_{t+1}\) conditional on \(s_t=s\):
 \begin{align*}
 V^\sigma(s)
  &=\E_\sigma[R_{t+1}+\beta G_{t+1}\mid s_t=s]\\
- &=r(s,\sigma(s))+\beta\E[V^\sigma(s_{t+1})\mid s_t=s,\;a_t=\sigma(s)].
+ &=\E[r(s,\sigma(s))]+\beta\E[V^\sigma(s_{t+1})\mid s_t=s,\;a_t=\sigma(s)].
 \end{align*}
 The second equality uses the law of iterated expectations and the Markov structure.
 \par\medskip
 For a finite state space, the \term{policy Bellman equation} is
-\[V^\sigma(s)=r(s,\sigma(s))
+\[V^\sigma(s)=\E[r(s,\sigma(s))]
  +\beta\sum_{s'\in\Sset}P(s'\mid s,\sigma(s))V^\sigma(s').\]
 \small Current expected reward plus discounted expected continuation value. For a continuous state space, replace the sum by an integral with respect to \(P(ds'\mid s,\sigma(s))\).
 \end{frame}
 
 \begin{frame}{Policy Evaluation as a Linear System}
-For a finite state space, fix a policy \(\sigma\) and define
-\[P^\sigma_{ij}=P(j\mid i,\sigma(i)),\qquad r^\sigma_i=r(i,\sigma(i)).\]
+For a finite state space, fix a deterministic policy \(\sigma\) and define
+\[P^\sigma_{ij}=P(j\mid i,\sigma(i)),\qquad r^\sigma_i=\E[r(i,\sigma(i))].\]
 \begin{itemize}
 \item Row \(i\) of \(P^\sigma\) gives next-state probabilities when we follow \(\sigma\) from state \(i\).
 \item Entry \(i\) of \(r^\sigma\) is the current expected reward at that state.
@@ -313,22 +373,24 @@ For the finite-state, finite-action models below, let \(\Sigma\) denote the feas
 \[V^*(s)=\max_{\sigma\in\Sigma}V^\sigma(s).\]
 Choose the current action, then follow an optimal policy from the next state. This gives the \term{Bellman optimality equation}:
 \[V^*(s)=\max_{a\in\Aset(s)}
- \left\{r(s,a)+\beta\sum_{s'\in\Sset}P(s'\mid s,a)V^*(s')\right\}.\]
+ \left\{\E[r(s,a)]+\beta\sum_{s'\in\Sset}P(s'\mid s,a)V^*(s')\right\}.\]
 \begin{itemize}
-\item The first term is the current reward; the second is expected continuation value.
+\item The first term is expected current reward; the second is expected continuation value.
 \item The action is chosen before the next state is observed. Later actions can respond to the state that is realized.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{The McCall Search Model: Setup}
-An unemployed worker receives a wage offer at the beginning of each period and decides whether to accept it.
+An unemployed worker observes a wage offer and chooses whether to accept it.
 \begin{itemize}
-\item Offers are independent across periods: \(w\in\mathcal W\), a finite wage set, with probability \(q(w)\).
-\item \textbf{Accept:} earn \(w\) immediately and keep the job at that wage forever. There is no job separation.
-\item \textbf{Reject:} receive unemployment benefit \(b\) now and draw a new offer next period.
-\item The worker maximizes expected discounted income. In our timing, \(R_{t+1}\) is the income generated by the decision at date \(t\).
+\item \textbf{Offers:} wage \(\modelvar{w\in\mathcal W}\), drawn independently each period with probability \(\modelvar{q(w)}\).
+\item \textbf{Accept:} earn \(\modelvar{w}\) now and every period thereafter. Employment is permanent.
+\item \textbf{Reject:} receive benefit \(\modelvar{b}\) now; draw a new offer next period.
+\item \textbf{Objective:} maximize expected discounted income, with discount factor \(\modelvar{\beta}\).
 \end{itemize}
-Accepting gives income today; waiting preserves the opportunity to receive a better offer.
+Accept today or wait for a better offer.
+\par\medskip
+\small The decision at date \(t\) generates income \(R_{t+1}\).
 \end{frame}
 
 \begin{frame}{The McCall Search Model as an MDP}
@@ -367,14 +429,14 @@ The notebook evaluates specified wage-threshold policies and their rollouts.
 \end{frame}
 
 \begin{frame}{Consumption and Saving: Setup}
-A household starts each period with a stock of a consumption good. It chooses how much to consume now and how much to save.
+A household divides its current stock between consumption and saving.
 \begin{itemize}
-\item Saving carries goods into the next period one for one. There is no borrowing, and storage capacity is \(M\).
-\item After the saving decision, the household receives new income \(Y_{t+1}\), independent across periods and uniform on \(\{0,\ldots,B\}\).
-\item Consumption gives utility \(u(c)=c^\alpha\), where \(0<\alpha<1\). The household maximizes expected discounted utility.
-\item This extends the cake-eating problem: saved goods are replenished by new income, so consumption can continue over time.
+\item \textbf{Choice:} from stock \(\modelvar{s}\), save \(\modelvar{a}\) and consume \(\modelvar{c=s-a}\). No borrowing; storage capacity \(\modelvar{M}\).
+\item \textbf{Next period:} savings carry over one for one, plus new income \(\modelvar{Y_{t+1}}\), drawn independently and uniformly from \(\modelvar{\{0,\ldots,B\}}\).
+\item \textbf{Preferences:} utility \(\modelvar{u(c)=c^\alpha}\), with \(\modelvar{0<\alpha<1}\), and discount factor \(\modelvar{\beta}\).
+\item \textbf{Objective:} maximize expected discounted utility.
 \end{itemize}
-Saving reduces current consumption but provides resources for future consumption when income is low.
+This extends cake eating with new income: consume now or save for periods when income is low.
 \end{frame}
 
 \begin{frame}{Consumption and Saving as an MDP}
@@ -415,7 +477,7 @@ Choosing saving optimally instead gives
   {Richard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]}
   {https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf}
   {\begin{itemize}
-\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=69}{Chapter 3: Finite Markov Decision Processes (Sections 3.3, 3.5 and 3.6)}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=69}{Chapter 3: Finite Markov Decision Processes (Sections 3.1, 3.3, 3.5 and 3.6)}
 \item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=96}{Section 4.1: Policy Evaluation (Prediction)}
 \item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=205}{Section 8.10: Rollout Algorithms}
 \end{itemize}}
