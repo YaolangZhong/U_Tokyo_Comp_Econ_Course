@@ -212,252 +212,233 @@ window.Quarto = {
 
 
 <!-- Generated from the adjacent notebook; edit the notebook. -->
-<p>Build two economic MDPs, simulate policy rollouts, and compute the value of a <strong>specified policy</strong>.</p>
-<p>We keep Lab 1’s interface: <code>step(state, action, rng)</code> returns a next state and reward; <code>simulate(policy, initial_state, periods)</code> returns a state path and reward stream. A policy is a Python function mapping a state to an action.</p>
-<p>Run the cells in order, then complete the two coding exercises. The model classes and helper functions are included here.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Python:"</span>, sys.version.split()[<span class="dv">0</span>])</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>np.set_printoptions(precision<span class="op">=</span><span class="dv">4</span>, suppress<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>plt.rcParams.update({<span class="st">"figure.figsize"</span>: (<span class="dv">8</span>, <span class="fl">3.5</span>), <span class="st">"axes.spines.top"</span>: <span class="va">False</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"axes.spines.right"</span>: <span class="va">False</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="from-lab-1-to-economic-models" class="level2">
-<h2 class="anchored" data-anchor-id="from-lab-1-to-economic-models">1. From Lab 1 to economic models</h2>
-<p>Both models will provide <code>states</code>, <code>beta</code>, <code>actions</code>, <code>reward</code>, <code>transition_probabilities</code>, <code>step</code>, and <code>simulate</code>. The same rollout loop works for both. The element <code>rewards[j]</code> is <span class="math inline">\(r_{t+j+1}\)</span>; a path with <span class="math inline">\(H\)</span> transitions has <span class="math inline">\(H+1\)</span> states.</p>
-<p>Notation follows the slides: <span class="math inline">\(R(s,a)\)</span> is the reward function, <span class="math inline">\(r_{t+1}\)</span> is a realized reward, and <span class="math inline">\(\mu^\sigma\)</span> is the expected-reward vector. Both models here have deterministic rewards given state and action. In code, <code>reward(state, action)</code> implements <span class="math inline">\(R\)</span>, and <code>mu</code> stores the expected-reward vector.</p>
+<p>Build two models, simulate a policy, and compute its value. Run the cells in order, then complete the two coding exercises.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>np.set_printoptions(precision<span class="op">=</span><span class="dv">4</span>, suppress<span class="op">=</span><span class="va">True</span>)  <span class="co"># Shorter printed numbers.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">"figure.figsize"</span>] <span class="op">=</span> (<span class="dv">8</span>, <span class="fl">3.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="simulate-a-policy" class="level2">
+<h2 class="anchored" data-anchor-id="simulate-a-policy">1. Simulate a policy</h2>
+<p>As in Lab 1, a policy takes a state and returns an action. <code>step</code> returns the next state and one reward; <code>simulate</code> repeats this step.</p>
+<p><span class="math inline">\(R(s,a)\)</span> is the reward function; <code>rewards[j]</code> is the realized reward <span class="math inline">\(r_{t+j+1}\)</span>. Both models below have deterministic rewards given state and action.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate_policy(model, policy, initial_state, periods, seed<span class="op">=</span><span class="dv">7</span>):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(seed)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    state <span class="op">=</span> <span class="bu">int</span>(initial_state)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> state <span class="kw">not</span> <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(model.states)) <span class="kw">or</span> periods <span class="op">&lt;</span> <span class="dv">0</span>:</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Use a valid initial state and a nonnegative horizon."</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    path, rewards <span class="op">=</span> [state], []</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(periods):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(seed)  <span class="co"># Same seed gives the same random draws.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    state <span class="op">=</span> initial_state</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    path <span class="op">=</span> [state]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    rewards <span class="op">=</span> []</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(periods):</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        action <span class="op">=</span> policy(state)</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        state, reward <span class="op">=</span> model.step(state, action, rng)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        path.append(state)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        path.append(state)       <span class="co"># append adds one item to a list.</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        rewards.append(reward)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(path), np.array(rewards, dtype<span class="op">=</span><span class="bu">float</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(path), np.array(rewards)</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> discounted_return(rewards, beta):</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    weights <span class="op">=</span> beta <span class="op">**</span> np.arange(<span class="bu">len</span>(rewards))</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(weights <span class="op">@</span> rewards)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> discounted_return(rewards, beta):</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For H rewards: weights = [1, beta, beta**2, ..., beta**(H-1)].</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    weights <span class="op">=</span> beta <span class="op">**</span> np.arange(<span class="bu">len</span>(rewards))</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">sum</span>(weights <span class="op">*</span> rewards)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="the-mccall-search-model" class="level2">
-<h2 class="anchored" data-anchor-id="the-mccall-search-model">2. The McCall search model</h2>
-<p>An unemployed worker sees a wage offer <span class="math inline">\(w\)</span>. Accepting pays <span class="math inline">\(w\)</span> immediately and forever; rejecting pays benefit <span class="math inline">\(b\)</span> now and leads to a fresh IID offer with probabilities <span class="math inline">\(q\)</span> next period. Employment is permanent.</p>
-<p>The state is <span class="math inline">\((\mathrm U,w)\)</span> or <span class="math inline">\((\mathrm E,w)\)</span>. Its action is <code>accept</code>/<code>reject</code> when unemployed and <code>work</code> when employed. Rewards are income from the current action.</p>
-<p>Following <a href="https://python.quantecon.org/mccall_model.html#the-mccall-model">QuantEcon: The McCall Model</a>, <span class="math display">\[V^\sigma((\mathrm E,w))=\frac{w}{1-\beta},\qquad
-V^\sigma((\mathrm U,w))=
+<section id="mccall-job-search" class="level2">
+<h2 class="anchored" data-anchor-id="mccall-job-search">2. McCall job search</h2>
+<p>State <span class="math inline">\((\mathrm U,w)\)</span>: accept wage <span class="math inline">\(w\)</span> forever, or reject for benefit <span class="math inline">\(b\)</span> and draw a new offer from <span class="math inline">\(q\)</span>. State <span class="math inline">\((\mathrm E,w)\)</span>: remain employed.</p>
+<p><span class="math display">\[V^\sigma((\mathrm E,w))=\frac{w}{1-\beta},\]</span> <span class="math display">\[V^\sigma((\mathrm U,w))=
 \begin{cases}
 w+\beta V^\sigma((\mathrm E,w)),&amp;\sigma((\mathrm U,w))=\text{accept},\\
 b+\beta\sum_{w'}q(w')V^\sigma((\mathrm U,w')),&amp;\sigma((\mathrm U,w))=\text{reject}.
 \end{cases}\]</span></p>
-<p>Write the full state inside the value function: <span class="math inline">\(V^\sigma((\mathrm U,w))\)</span> or <span class="math inline">\(V^\sigma((\mathrm E,w))\)</span>.</p>
-<p>The class uses integer <strong>state indices</strong>. Indices <code>0, ..., n-1</code> represent unemployed workers; <code>n, ..., 2*n-1</code> represent employed workers. <code>states[index]</code> gives the economic label.</p>
+<p>The code uses integer indices: the first <code>n</code> states are unemployed, the next <code>n</code> employed. <code>states[i]</code> gives the full state. In a class, <code>self</code> refers to the current model; <code>__init__</code> stores its parameters.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> McCallModel:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, wages<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>),</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                 probabilities<span class="op">=</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>), benefit<span class="op">=</span><span class="fl">1.0</span>, beta<span class="op">=</span><span class="fl">0.9</span>):</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.wages <span class="op">=</span> np.asarray(wages, dtype<span class="op">=</span><span class="bu">float</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q <span class="op">=</span> np.asarray(probabilities, dtype<span class="op">=</span><span class="bu">float</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.benefit, <span class="va">self</span>.beta <span class="op">=</span> <span class="bu">float</span>(benefit), <span class="bu">float</span>(beta)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="va">self</span>.wages.ndim <span class="op">!=</span> <span class="dv">1</span> <span class="kw">or</span> <span class="bu">len</span>(<span class="va">self</span>.wages) <span class="op">==</span> <span class="dv">0</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                <span class="kw">or</span> <span class="va">self</span>.q.shape <span class="op">!=</span> <span class="va">self</span>.wages.shape</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                <span class="kw">or</span> <span class="kw">not</span> np.<span class="bu">all</span>(np.isfinite(<span class="va">self</span>.wages)) <span class="kw">or</span> np.<span class="bu">any</span>(<span class="va">self</span>.wages <span class="op">&lt;=</span> <span class="dv">0</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                <span class="kw">or</span> <span class="kw">not</span> np.<span class="bu">all</span>(np.diff(<span class="va">self</span>.wages) <span class="op">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                <span class="kw">or</span> <span class="kw">not</span> np.<span class="bu">all</span>(np.isfinite(<span class="va">self</span>.q)) <span class="kw">or</span> np.<span class="bu">any</span>(<span class="va">self</span>.q <span class="op">&lt;</span> <span class="dv">0</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                <span class="kw">or</span> <span class="kw">not</span> np.isclose(<span class="va">self</span>.q.<span class="bu">sum</span>(), <span class="dv">1</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                <span class="kw">or</span> <span class="kw">not</span> np.isfinite(<span class="va">self</span>.benefit) <span class="kw">or</span> <span class="va">self</span>.benefit <span class="op">&lt;</span> <span class="dv">0</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                <span class="kw">or</span> <span class="kw">not</span> <span class="dv">0</span> <span class="op">&lt;</span> <span class="va">self</span>.beta <span class="op">&lt;</span> <span class="dv">1</span>):</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Check wages, offer probabilities, benefit, and beta."</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.n <span class="op">=</span> <span class="bu">len</span>(<span class="va">self</span>.wages)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.states <span class="op">=</span> [(status, <span class="bu">float</span>(wage)) <span class="cf">for</span> status <span class="kw">in</span> (<span class="st">"U"</span>, <span class="st">"E"</span>) <span class="cf">for</span> wage <span class="kw">in</span> <span class="va">self</span>.wages]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.wages <span class="op">=</span> np.array(wages)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q <span class="op">=</span> np.array(probabilities)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.benefit <span class="op">=</span> benefit</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.beta <span class="op">=</span> beta</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.n <span class="op">=</span> <span class="bu">len</span>(wages)  <span class="co"># Number of possible wage offers.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># assert stops the cell if a check fails.</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Each wage needs one probability; probabilities must sum to one.</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="bu">len</span>(<span class="va">self</span>.q) <span class="op">==</span> <span class="va">self</span>.n, <span class="st">"One probability per wage."</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> np.<span class="bu">all</span>(<span class="va">self</span>.q <span class="op">&gt;=</span> <span class="dv">0</span>) <span class="kw">and</span> np.isclose(<span class="va">self</span>.q.<span class="bu">sum</span>(), <span class="dv">1</span>), <span class="st">"Check probabilities."</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="dv">0</span> <span class="op">&lt;</span> beta <span class="op">&lt;</span> <span class="dv">1</span>, <span class="st">"Use a discount factor between 0 and 1."</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Join two lists: unemployed states first, then employed states.</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.states <span class="op">=</span> [(<span class="st">"U"</span>, w) <span class="cf">for</span> w <span class="kw">in</span> wages] <span class="op">+</span> [(<span class="st">"E"</span>, w) <span class="cf">for</span> w <span class="kw">in</span> wages]</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> actions(<span class="va">self</span>, state):</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(state, (<span class="bu">int</span>, np.integer)) <span class="kw">or</span> <span class="kw">not</span> <span class="dv">0</span> <span class="op">&lt;=</span> state <span class="op">&lt;</span> <span class="dv">2</span> <span class="op">*</span> <span class="va">self</span>.n:</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Invalid state index."</span>)</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (<span class="st">"accept"</span>, <span class="st">"reject"</span>) <span class="cf">if</span> state <span class="op">&lt;</span> <span class="va">self</span>.n <span class="cf">else</span> (<span class="st">"work"</span>,)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> state <span class="op">&lt;</span> <span class="va">self</span>.n:</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> [<span class="st">"accept"</span>, <span class="st">"reject"</span>]</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [<span class="st">"work"</span>]</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> reward(<span class="va">self</span>, state, action):</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> action <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>.actions(state):</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"This action is unavailable at the current state."</span>)</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.benefit <span class="cf">if</span> action <span class="op">==</span> <span class="st">"reject"</span> <span class="cf">else</span> <span class="va">self</span>.wages[state <span class="op">%</span> <span class="va">self</span>.n]</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> transition_probabilities(<span class="va">self</span>, state, action):</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.reward(state, action)  <span class="co"># Also check feasibility.</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> np.zeros(<span class="bu">len</span>(<span class="va">self</span>.states))</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> action <span class="op">==</span> <span class="st">"reject"</span>:</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>            p[:<span class="va">self</span>.n] <span class="op">=</span> <span class="va">self</span>.q</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> action <span class="op">==</span> <span class="st">"accept"</span>:</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>            p[<span class="va">self</span>.n <span class="op">+</span> state] <span class="op">=</span> <span class="fl">1.0</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>            p[state] <span class="op">=</span> <span class="fl">1.0</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> p</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, state, action, rng):</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>        reward <span class="op">=</span> <span class="va">self</span>.reward(state, action)</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> <span class="va">self</span>.transition_probabilities(state, action)</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        next_state <span class="op">=</span> <span class="bu">int</span>(rng.choice(<span class="bu">len</span>(<span class="va">self</span>.states), p<span class="op">=</span>p))</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> next_state, reward</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> simulate(<span class="va">self</span>, policy, initial_state, periods, seed<span class="op">=</span><span class="dv">7</span>):</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> simulate_policy(<span class="va">self</span>, policy, initial_state, periods, seed)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> action <span class="kw">in</span> <span class="va">self</span>.actions(state), <span class="st">"Choose an available action."</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        status, wage <span class="op">=</span> <span class="va">self</span>.states[state]  <span class="co"># Unpack the full state.</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> action <span class="op">==</span> <span class="st">"reject"</span>:</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">self</span>.benefit</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> wage</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> transition_probabilities(<span class="va">self</span>, state, action):</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> np.zeros(<span class="bu">len</span>(<span class="va">self</span>.states))</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> action <span class="op">==</span> <span class="st">"reject"</span>:</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>            p[:<span class="va">self</span>.n] <span class="op">=</span> <span class="va">self</span>.q       <span class="co"># A new offer: first n states only.</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> action <span class="op">==</span> <span class="st">"accept"</span>:</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>            p[state <span class="op">+</span> <span class="va">self</span>.n] <span class="op">=</span> <span class="dv">1</span>    <span class="co"># Move to employment at the same wage.</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            p[state] <span class="op">=</span> <span class="dv">1</span>             <span class="co"># Already employed: stay here.</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> p</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, state, action, rng):</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>        reward <span class="op">=</span> <span class="va">self</span>.reward(state, action)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> <span class="va">self</span>.transition_probabilities(state, action)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        next_state <span class="op">=</span> rng.choice(<span class="bu">len</span>(<span class="va">self</span>.states), p<span class="op">=</span>p)  <span class="co"># Sample using probabilities p.</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> next_state, reward</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> simulate(<span class="va">self</span>, policy, initial_state, periods, seed<span class="op">=</span><span class="dv">7</span>):</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> simulate_policy(<span class="va">self</span>, policy, initial_state, periods, seed)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mccall <span class="op">=</span> McCallModel()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"State indices and labels:"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, label <span class="kw">in</span> <span class="bu">enumerate</span>(mccall.states):</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(index, label)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Reject an offer: probabilities over all states"</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mccall.transition_probabilities(<span class="dv">1</span>, <span class="st">"reject"</span>))</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accept wage 2: probabilities over all states"</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mccall.transition_probabilities(<span class="dv">1</span>, <span class="st">"accept"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="choose-a-policy-and-simulate" class="level3">
-<h3 class="anchored" data-anchor-id="choose-a-policy-and-simulate">Choose a policy and simulate</h3>
-<p>A supplied threshold rule accepts offers at or above a chosen wage. <code>make_threshold_policy</code> returns a function that remembers the model and threshold. We begin with threshold 3.</p>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, state <span class="kw">in</span> <span class="bu">enumerate</span>(mccall.states):  <span class="co"># enumerate gives the index and its item.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(i, state)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Index 1 means (U, 2).</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Reject:"</span>, mccall.transition_probabilities(<span class="dv">1</span>, <span class="st">"reject"</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accept:"</span>, mccall.transition_probabilities(<span class="dv">1</span>, <span class="st">"accept"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="choose-a-policy" class="level3">
+<h3 class="anchored" data-anchor-id="choose-a-policy">Choose a policy</h3>
+<p>Accept offers of at least 3. <code>make_threshold_policy</code> returns a function, so we can change the threshold without rewriting the rule.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_threshold_policy(model, threshold):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> policy(state):</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> state <span class="op">&gt;=</span> model.n:</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"work"</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"accept"</span> <span class="cf">if</span> model.wages[state] <span class="op">&gt;=</span> threshold <span class="cf">else</span> <span class="st">"reject"</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> policy</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>search_policy <span class="op">=</span> make_threshold_policy(mccall, threshold<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>search_start <span class="op">=</span> <span class="dv">1</span>  <span class="co"># (U, wage 2)</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>search_path, search_rewards <span class="op">=</span> mccall.simulate(search_policy, search_start, periods<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Rollout:"</span>, [mccall.states[s] <span class="cf">for</span> s <span class="kw">in</span> search_path])</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Reward stream:"</span>, search_rewards)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"12-step return:"</span>, discounted_return(search_rewards, mccall.beta))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        status, wage <span class="op">=</span> model.states[state]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> status <span class="op">==</span> <span class="st">"E"</span>:</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"work"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> wage <span class="op">&gt;=</span> threshold:</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"accept"</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"reject"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> policy  <span class="co"># Return the function itself; call it later with a state.</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>search_policy <span class="op">=</span> make_threshold_policy(mccall, threshold<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>search_start <span class="op">=</span> <span class="dv">1</span>  <span class="co"># (U, 2)</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>search_path, search_rewards <span class="op">=</span> mccall.simulate(search_policy, search_start, periods<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"States:"</span>, [mccall.states[i] <span class="cf">for</span> i <span class="kw">in</span> search_path])</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Rewards:"</span>, search_rewards)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Return:"</span>, discounted_return(search_rewards, mccall.beta))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
-<section id="evaluate-a-given-policy" class="level2">
-<h2 class="anchored" data-anchor-id="evaluate-a-given-policy">3. Evaluate a given policy</h2>
-<p>For each state, use its chosen action to construct one row of <span class="math inline">\(P^\sigma\)</span> and one entry of <span class="math inline">\(\mu^\sigma\)</span>. The entries are <span class="math inline">\(\mu_i^\sigma=\mathbb E[R(i,\sigma(i))]\)</span>. Then solve <span class="math display">\[(I-\beta P^\sigma)V^\sigma=\mu^\sigma.\]</span></p>
-<p><code>np.linalg.solve</code> computes all state values together. The superscript <span class="math inline">\(\sigma\)</span> identifies the supplied policy used at every future state.</p>
+<section id="compute-policy-values" class="level2">
+<h2 class="anchored" data-anchor-id="compute-policy-values">3. Compute policy values</h2>
+<p>Build <span class="math inline">\(P^\sigma\)</span> and <span class="math inline">\(\mu_i^\sigma=\mathbb E[R(i,\sigma(i))]\)</span>, then solve <span class="math display">\[(I-\beta P^\sigma)V^\sigma=\mu^\sigma.\]</span></p>
+<p>Here, <code>reward</code> is deterministic, so it also gives the mean reward. These functions work for both models.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> policy_arrays(model, policy):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">len</span>(model.states)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    P <span class="op">=</span> np.zeros((n, n))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    P <span class="op">=</span> np.zeros((n, n))  <span class="co"># One row for each current state.</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> np.zeros(n)</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> state <span class="kw">in</span> <span class="bu">range</span>(n):</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        action <span class="op">=</span> policy(state)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        P[state] <span class="op">=</span> model.transition_probabilities(state, action)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        mu[state] <span class="op">=</span> model.reward(state, action)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> np.<span class="bu">any</span>(P <span class="op">&lt;</span> <span class="dv">0</span>) <span class="kw">or</span> <span class="kw">not</span> np.allclose(P.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>), <span class="dv">1</span>):</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Every transition row must be a probability vector."</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> P, mu</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_policy(model, policy):</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    P, mu <span class="op">=</span> policy_arrays(model, policy)</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    V <span class="op">=</span> np.linalg.solve(np.eye(<span class="bu">len</span>(mu)) <span class="op">-</span> model.beta <span class="op">*</span> P, mu)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> V, P, mu</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        mu[state] <span class="op">=</span> model.reward(state, action)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        P[state] <span class="op">=</span> model.transition_probabilities(state, action)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> P, mu</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_policy(model, policy):</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    P, mu <span class="op">=</span> policy_arrays(model, policy)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    I <span class="op">=</span> np.eye(<span class="bu">len</span>(mu))   <span class="co"># Identity matrix: ones on the diagonal.</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    V <span class="op">=</span> np.linalg.solve(I <span class="op">-</span> model.beta <span class="op">*</span> P, mu)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> V, P, mu       <span class="co"># solve(A, b) finds the vector x satisfying A @ x = b.</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>V_search, P_search, mu_search <span class="op">=</span> evaluate_policy(mccall, search_policy)</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"State | action | value"</span>)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, wage <span class="kw">in</span> <span class="bu">enumerate</span>(mccall.wages):</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>mccall<span class="sc">.</span>states[i]<span class="sc">}</span><span class="ss"> | </span><span class="sc">{</span>search_policy(i)<span class="sc">:6s}</span><span class="ss"> | </span><span class="sc">{</span>V_search[i]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Value from (U, wage 2):"</span>, V_search[search_start])</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Employed-state values:"</span>, V_search[mccall.n:])</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(V_search[mccall.n:], mccall.wages <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> mccall.beta))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ax.plot(mccall.wages, V_search[:mccall.n], <span class="st">"o-"</span>, label<span class="op">=</span><span class="st">"Supplied threshold = 3"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ax.plot(mccall.wages, mccall.wages <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> mccall.beta), <span class="st">"s--"</span>, label<span class="op">=</span><span class="st">"Accept every offer"</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Current wage offer"</span>, ylabel<span class="op">=</span><span class="st">"Expected discounted income"</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>ax.grid(alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="compare-with-an-average-over-rollouts" class="level3">
-<h3 class="anchored" data-anchor-id="compare-with-an-average-over-rollouts">Compare with an average over rollouts</h3>
-<p>Starting from the same state, average many independently simulated returns. This is a <strong>Monte Carlo estimate</strong> of <span class="math inline">\(V^\sigma(s)\)</span>.</p>
-<p>Each rollout lasts <span class="math inline">\(H\)</span> steps. The omitted tail has absolute size at most <span class="math inline">\(\beta^H\bar r/(1-\beta)\)</span>; the standard error measures sampling uncertainty in the estimated finite-horizon mean. Both models here have deterministic rewards conditional on state and action.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_value(model, policy, initial_state, repetitions<span class="op">=</span><span class="dv">600</span>, periods<span class="op">=</span><span class="dv">100</span>, seed<span class="op">=</span><span class="dv">21</span>):</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(seed)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    returns <span class="op">=</span> np.empty(repetitions)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(repetitions):</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        rollout_seed <span class="op">=</span> <span class="bu">int</span>(rng.integers(<span class="dv">0</span>, <span class="dv">2</span><span class="op">**</span><span class="dv">32</span>))</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        _, rewards <span class="op">=</span> model.simulate(policy, initial_state, periods, seed<span class="op">=</span>rollout_seed)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        returns[i] <span class="op">=</span> discounted_return(rewards, model.beta)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    _, mu <span class="op">=</span> policy_arrays(model, policy)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"mean"</span>: returns.mean(),</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">"standard_error"</span>: returns.std(ddof<span class="op">=</span><span class="dv">1</span>) <span class="op">/</span> np.sqrt(repetitions),</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"tail_bound"</span>: model.beta<span class="op">**</span>periods <span class="op">*</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(mu)) <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> model.beta)}</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>search_estimate <span class="op">=</span> estimate_value(mccall, search_policy, search_start)</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Exact infinite-horizon value:"</span>, V_search[search_start])</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Simulated mean:"</span>, search_estimate[<span class="st">"mean"</span>])</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Monte Carlo standard error:"</span>, search_estimate[<span class="st">"standard_error"</span>])</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Maximum omitted tail:"</span>, search_estimate[<span class="st">"tail_bound"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>V_search, P_search, mu_search <span class="op">=</span> evaluate_policy(mccall, search_policy)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(mccall.n):</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(mccall.states[i], <span class="st">"value:"</span>, <span class="bu">round</span>(V_search[i], <span class="dv">4</span>))</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co"># A known value: permanent employment pays w every period.</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(V_search[mccall.n:], mccall.wages <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> mccall.beta))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [:mccall.n] selects the unemployed-state values.</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ax.plot(mccall.wages, V_search[:mccall.n], <span class="st">"o-"</span>, label<span class="op">=</span><span class="st">"Supplied threshold = 3"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>ax.plot(mccall.wages, mccall.wages <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> mccall.beta), <span class="st">"s--"</span>, label<span class="op">=</span><span class="st">"Accept every offer"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Current wage offer"</span>, ylabel<span class="op">=</span><span class="st">"Expected discounted income"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>ax.grid(alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="average-simulated-returns" class="level3">
+<h3 class="anchored" data-anchor-id="average-simulated-returns">Average simulated returns</h3>
+<p>Their mean approximates <span class="math inline">\(V^\sigma(s)\)</span>. More rollouts reduce sampling noise; more periods reduce the omitted tail.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate_returns(model, policy, initial_state, repetitions<span class="op">=</span><span class="dv">600</span>, periods<span class="op">=</span><span class="dv">100</span>):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    returns <span class="op">=</span> []</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> seed <span class="kw">in</span> <span class="bu">range</span>(repetitions):  <span class="co"># Use a different seed for each rollout.</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        path, rewards <span class="op">=</span> model.simulate(policy, initial_state, periods, seed<span class="op">=</span>seed)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        returns.append(discounted_return(rewards, model.beta))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(returns)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>search_returns <span class="op">=</span> simulate_returns(mccall, search_policy, search_start)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Exact value:"</span>, V_search[search_start])</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Average simulated return:"</span>, search_returns.mean())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="consumption-and-saving" class="level2">
 <h2 class="anchored" data-anchor-id="consumption-and-saving">4. Consumption and saving</h2>
-<p>A household starts with stock <span class="math inline">\(s\)</span>, saves <span class="math inline">\(a\)</span>, and consumes <span class="math inline">\(c=s-a\)</span>. Savings carry over one for one. New income <span class="math inline">\(Y'\)</span> arrives next period, independently and uniformly on <span class="math inline">\(\{0,\ldots,B\}\)</span>.</p>
-<p>Following <a href="https://tools-techniques.quantecon.org/discrete_dp.html#example-a-growth-model">QuantEcon: Example: A Growth Model</a>, use whole units, storage capacity <span class="math inline">\(M\)</span>, and utility <span class="math inline">\(c^\alpha\)</span>: <span class="math display">\[\mathcal S=\{0,\ldots,M+B\},\quad
-\mathcal A(s)=\{0,\ldots,\min(s,M)\},\quad
-s'=a+Y',\quad R(s,a)=(s-a)^\alpha.\]</span></p>
-<p>This extends Lab 1’s cake problem with new income. The policy <span class="math inline">\(\sigma(s)\)</span> now returns <strong>saving</strong>, so consumption is <span class="math inline">\(s-\sigma(s)\)</span>.</p>
+<p>From stock <span class="math inline">\(s\)</span>, save <span class="math inline">\(a\)</span> and consume <span class="math inline">\(s-a\)</span>. Next income <span class="math inline">\(Y'\)</span> is uniform on <span class="math inline">\(\{0,\ldots,B\}\)</span>; storage capacity is <span class="math inline">\(M\)</span>.</p>
+<p><span class="math display">\[a\in\{0,\ldots,\min(s,M)\},\quad s'=a+Y',\quad R(s,a)=(s-a)^\alpha.\]</span></p>
+<p>Stock values <code>0, ..., M+B</code> are also their state indices. The policy returns <strong>saving</strong>.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ConsumptionSavingModel:</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, M<span class="op">=</span><span class="dv">5</span>, B<span class="op">=</span><span class="dv">3</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, beta<span class="op">=</span><span class="fl">0.9</span>):</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="kw">not</span> <span class="bu">isinstance</span>(M, (<span class="bu">int</span>, np.integer)) <span class="kw">or</span> M <span class="op">&lt;</span> <span class="dv">0</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                <span class="kw">or</span> <span class="kw">not</span> <span class="bu">isinstance</span>(B, (<span class="bu">int</span>, np.integer)) <span class="kw">or</span> B <span class="op">&lt;</span> <span class="dv">0</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                <span class="kw">or</span> <span class="kw">not</span> <span class="dv">0</span> <span class="op">&lt;</span> alpha <span class="op">&lt;</span> <span class="dv">1</span> <span class="kw">or</span> <span class="kw">not</span> <span class="dv">0</span> <span class="op">&lt;</span> beta <span class="op">&lt;</span> <span class="dv">1</span>):</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Use nonnegative integer M and B, and alpha/beta in (0, 1)."</span>)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.M, <span class="va">self</span>.B <span class="op">=</span> <span class="bu">int</span>(M), <span class="bu">int</span>(B)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.alpha, <span class="va">self</span>.beta <span class="op">=</span> <span class="bu">float</span>(alpha), <span class="bu">float</span>(beta)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.states <span class="op">=</span> np.arange(<span class="va">self</span>.M <span class="op">+</span> <span class="va">self</span>.B <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.incomes <span class="op">=</span> np.arange(<span class="va">self</span>.B <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q <span class="op">=</span> np.full(<span class="va">self</span>.B <span class="op">+</span> <span class="dv">1</span>, <span class="dv">1</span> <span class="op">/</span> (<span class="va">self</span>.B <span class="op">+</span> <span class="dv">1</span>))</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> actions(<span class="va">self</span>, state):</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(state, (<span class="bu">int</span>, np.integer)) <span class="kw">or</span> state <span class="kw">not</span> <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(<span class="va">self</span>.states)):</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Invalid stock."</span>)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.arange(<span class="bu">min</span>(state, <span class="va">self</span>.M) <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> reward(<span class="va">self</span>, state, action):</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(action, (<span class="bu">int</span>, np.integer)) <span class="kw">or</span> action <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>.actions(state):</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Saving must be a feasible whole number of units."</span>)</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">float</span>((state <span class="op">-</span> action)<span class="op">**</span><span class="va">self</span>.alpha)</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> transition_probabilities(<span class="va">self</span>, state, action):</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.reward(state, action)  <span class="co"># Also check the saving constraint.</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> np.zeros(<span class="bu">len</span>(<span class="va">self</span>.states))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># M and B count whole units of goods.</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> M <span class="op">&gt;=</span> <span class="dv">0</span> <span class="kw">and</span> B <span class="op">&gt;=</span> <span class="dv">0</span>, <span class="st">"Use nonnegative M and B."</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="dv">0</span> <span class="op">&lt;</span> alpha <span class="op">&lt;</span> <span class="dv">1</span> <span class="kw">and</span> <span class="dv">0</span> <span class="op">&lt;</span> beta <span class="op">&lt;</span> <span class="dv">1</span>, <span class="st">"Keep alpha and beta between 0 and 1."</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.M <span class="op">=</span> M</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.B <span class="op">=</span> B</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.alpha <span class="op">=</span> alpha</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.beta <span class="op">=</span> beta</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.states <span class="op">=</span> np.arange(M <span class="op">+</span> B <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.incomes <span class="op">=</span> np.arange(B <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q <span class="op">=</span> np.ones(B <span class="op">+</span> <span class="dv">1</span>) <span class="op">/</span> (B <span class="op">+</span> <span class="dv">1</span>)  <span class="co"># Equal income probabilities.</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> actions(<span class="va">self</span>, state):</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.arange(<span class="bu">min</span>(state, <span class="va">self</span>.M) <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> reward(<span class="va">self</span>, state, action):</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> action <span class="kw">in</span> <span class="va">self</span>.actions(state), <span class="st">"Saving must be feasible."</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        consumption <span class="op">=</span> state <span class="op">-</span> action</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> consumption <span class="op">**</span> <span class="va">self</span>.alpha</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> transition_probabilities(<span class="va">self</span>, state, action):</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> np.zeros(<span class="bu">len</span>(<span class="va">self</span>.states))</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Saving a gives next stocks a, a+1, ..., a+B.</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># A slice includes its start but excludes its stop, hence the +1.</span></span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        p[action:action <span class="op">+</span> <span class="va">self</span>.B <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> <span class="va">self</span>.q</span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> p</span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, state, action, rng):</span>
 <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        reward <span class="op">=</span> <span class="va">self</span>.reward(state, action)</span>
 <span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> <span class="va">self</span>.transition_probabilities(state, action)</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        next_state <span class="op">=</span> <span class="bu">int</span>(rng.choice(<span class="bu">len</span>(<span class="va">self</span>.states), p<span class="op">=</span>p))</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        next_state <span class="op">=</span> rng.choice(<span class="bu">len</span>(<span class="va">self</span>.states), p<span class="op">=</span>p)</span>
 <span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> next_state, reward</span>
 <span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> simulate(<span class="va">self</span>, policy, initial_state, periods, seed<span class="op">=</span><span class="dv">7</span>):</span>
 <span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> simulate_policy(<span class="va">self</span>, policy, initial_state, periods, seed)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>savings <span class="op">=</span> ConsumptionSavingModel()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Stocks:"</span>, savings.states)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Possible income:"</span>, savings.incomes)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Saving choices at stock 2:"</span>, savings.actions(<span class="dv">2</span>))</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Next-state probabilities after saving 1:"</span>, savings.transition_probabilities(<span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> save_half(state):</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">min</span>(state <span class="op">//</span> <span class="dv">2</span>, savings.M)  <span class="co"># // rounds down; min applies the storage cap.</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> save_half(state):</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">min</span>(state <span class="op">//</span> <span class="dv">2</span>, savings.M)  <span class="co"># // rounds down to whole units.</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>saving_start <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>saving_path, saving_rewards <span class="op">=</span> savings.simulate(save_half, saving_start, periods<span class="op">=</span><span class="dv">24</span>)</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>saving_start <span class="op">=</span> <span class="dv">5</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>saving_path, saving_rewards <span class="op">=</span> savings.simulate(save_half, saving_start, periods<span class="op">=</span><span class="dv">24</span>, seed<span class="op">=</span><span class="dv">7</span>)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>saving_actions <span class="op">=</span> np.array([save_half(s) <span class="cf">for</span> s <span class="kw">in</span> saving_path[:<span class="op">-</span><span class="dv">1</span>]])</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>consumption <span class="op">=</span> saving_path[:<span class="op">-</span><span class="dv">1</span>] <span class="op">-</span> saving_actions</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>income <span class="op">=</span> saving_path[<span class="dv">1</span>:] <span class="op">-</span> saving_actions</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"First five stocks:"</span>, saving_path[:<span class="dv">5</span>])</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"First five consumption choices:"</span>, consumption[:<span class="dv">5</span>])</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"First five incomes:"</span>, income[:<span class="dv">5</span>])</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"24-step return:"</span>, discounted_return(saving_rewards, savings.beta))</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(saving_rewards, consumption<span class="op">**</span>savings.alpha)</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.<span class="bu">all</span>((<span class="dv">0</span> <span class="op">&lt;=</span> income) <span class="op">&amp;</span> (income <span class="op">&lt;=</span> savings.B))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop the last state: a path has one more state than rewards.</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>saving_actions <span class="op">=</span> np.array([save_half(s) <span class="cf">for</span> s <span class="kw">in</span> saving_path[:<span class="op">-</span><span class="dv">1</span>]])</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>consumption <span class="op">=</span> saving_path[:<span class="op">-</span><span class="dv">1</span>] <span class="op">-</span> saving_actions</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>income <span class="op">=</span> saving_path[<span class="dv">1</span>:] <span class="op">-</span> saving_actions  <span class="co"># Next stock minus saving is new income.</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"First five stocks:"</span>, saving_path[:<span class="dv">5</span>])</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"First five consumption choices:"</span>, consumption[:<span class="dv">5</span>])</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Return:"</span>, discounted_return(saving_rewards, savings.beta))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="fl">3.4</span>))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].step(<span class="bu">range</span>(<span class="bu">len</span>(saving_path)), saving_path, where<span class="op">=</span><span class="st">"post"</span>, label<span class="op">=</span><span class="st">"Stock"</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Step"</span>, ylabel<span class="op">=</span><span class="st">"Units of goods"</span>, title<span class="op">=</span><span class="st">"One rollout: save half"</span>)</span>
@@ -469,147 +450,131 @@ s'=a+Y',\quad R(s,a)=(s-a)^\alpha.\]</span></p>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    ax.grid(alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="compute-the-policy-value" class="level3">
-<h3 class="anchored" data-anchor-id="compute-the-policy-value">Compute the policy value</h3>
-<p>The policy Bellman equation is <span class="math display">\[V^\sigma(s)=(s-\sigma(s))^\alpha+
+<section id="evaluate-the-saving-rule" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate-the-saving-rule">Evaluate the saving rule</h3>
+<p><span class="math display">\[V^\sigma(s)=(s-\sigma(s))^\alpha+
 \frac{\beta}{B+1}\sum_{y=0}^B V^\sigma(\sigma(s)+y).\]</span></p>
-<p>Reuse <code>evaluate_policy</code> to compute values at all stocks. We compare two supplied rules: saving half the stock (rounded down and capped at <span class="math inline">\(M\)</span>), and consuming everything each period.</p>
+<p>Reuse <code>evaluate_policy</code>. Compare saving half with consuming everything.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>V_saving, P_saving, mu_saving <span class="op">=</span> evaluate_policy(savings, save_half)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>V_consume, _, _ <span class="op">=</span> evaluate_policy(savings, <span class="kw">lambda</span> state: <span class="dv">0</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Value from stock 5 under save-half:"</span>, V_saving[saving_start])</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Stock | saving | consumption | value"</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> state <span class="kw">in</span> savings.states:</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    action <span class="op">=</span> save_half(state)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>state<span class="sc">:5d}</span><span class="ss"> | </span><span class="sc">{</span>action<span class="sc">:6d}</span><span class="ss"> | </span><span class="sc">{</span>state <span class="op">-</span> action<span class="sc">:11d}</span><span class="ss"> | </span><span class="sc">{</span>V_saving[state]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>ax.plot(savings.states, V_saving, <span class="st">"o-"</span>, label<span class="op">=</span><span class="st">"Save half (rounded down)"</span>)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>ax.plot(savings.states, V_consume, <span class="st">"s--"</span>, label<span class="op">=</span><span class="st">"Consume everything"</span>)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Initial stock"</span>, ylabel<span class="op">=</span><span class="st">"Expected discounted utility"</span>)</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>ax.grid(alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>saving_estimate <span class="op">=</span> estimate_value(savings, save_half, saving_start, seed<span class="op">=</span><span class="dv">22</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Exact infinite-horizon value:"</span>, V_saving[saving_start])</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Simulated mean:"</span>, saving_estimate[<span class="st">"mean"</span>])</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Monte Carlo standard error:"</span>, saving_estimate[<span class="st">"standard_error"</span>])</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Maximum omitted tail:"</span>, saving_estimate[<span class="st">"tail_bound"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> consume_all(state):</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span>  <span class="co"># Save nothing.</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>V_consume, _, _ <span class="op">=</span> evaluate_policy(savings, consume_all)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Value from stock 5 under save-half:"</span>, V_saving[saving_start])</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Stock | saving | consumption | value"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Each entry V_saving[state] is the value from that initial stock.</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> state <span class="kw">in</span> savings.states:</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    action <span class="op">=</span> save_half(state)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>state<span class="sc">:5d}</span><span class="ss"> | </span><span class="sc">{</span>action<span class="sc">:6d}</span><span class="ss"> | </span><span class="sc">{</span>state <span class="op">-</span> action<span class="sc">:11d}</span><span class="ss"> | </span><span class="sc">{</span>V_saving[state]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>ax.plot(savings.states, V_saving, <span class="st">"o-"</span>, label<span class="op">=</span><span class="st">"Save half (rounded down)"</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>ax.plot(savings.states, V_consume, <span class="st">"s--"</span>, label<span class="op">=</span><span class="st">"Consume everything"</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Initial stock"</span>, ylabel<span class="op">=</span><span class="st">"Expected discounted utility"</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>ax.grid(alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>saving_returns <span class="op">=</span> simulate_returns(savings, save_half, saving_start)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Exact value:"</span>, V_saving[saving_start])</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Average simulated return:"</span>, saving_returns.mean())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
-<section id="check-the-computed-values" class="level2">
-<h2 class="anchored" data-anchor-id="check-the-computed-values">5. Check the computed values</h2>
-<p>A correctly evaluated policy satisfies <span class="math inline">\(V^\sigma-\mu^\sigma-\beta P^\sigma V^\sigma=0\)</span>. We also have two independent benchmarks: permanent employment pays <span class="math inline">\(w/(1-\beta)\)</span>, and consuming everything pays current utility plus discounted expected utility of future income.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label, model, V, P, mu <span class="kw">in</span> [</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"McCall"</span>, mccall, V_search, P_search, mu_search),</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"Consumption-saving"</span>, savings, V_saving, P_saving, mu_saving),</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>]:</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    residual <span class="op">=</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(V <span class="op">-</span> mu <span class="op">-</span> model.beta <span class="op">*</span> (P <span class="op">@</span> V)))</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(label, <span class="st">"maximum policy Bellman residual:"</span>, residual)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> residual <span class="op">&lt;</span> <span class="fl">1e-10</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Independent check: consume everything, so next stock equals the new income.</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>mean_future_utility <span class="op">=</span> savings.q <span class="op">@</span> (savings.incomes<span class="op">**</span>savings.alpha)</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>consume_benchmark <span class="op">=</span> (savings.states<span class="op">**</span>savings.alpha</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                     <span class="op">+</span> savings.beta <span class="op">*</span> mean_future_utility <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> savings.beta))</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(V_consume, consume_benchmark)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Analytical benchmarks passed."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="exercise-1-compare-two-mccall-policies" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-1-compare-two-mccall-policies">Exercise 1: Compare two McCall policies</h2>
-<p>Write <code>compare_thresholds(model, thresholds)</code> to evaluate each supplied threshold and return a dictionary <code>{threshold: unemployed_value_array}</code>. Use thresholds 2 and 4, print the value starting with offer 2, and plot both value arrays against wages.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compare_thresholds(model, thresholds):</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For each threshold: construct a policy, evaluate it, and keep the U-state values.</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run after completing the function:</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># results = compare_thresholds(mccall, [2, 4])</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># for threshold, values in results.items():</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     print(threshold, "value from offer 2:", values[1])</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     plt.plot(mccall.wages, values, "o-", label=f"Threshold {threshold}")</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.xlabel("Wage offer")</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.ylabel("Expected discounted income")</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.legend()</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.show()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="exercise-1-change-the-acceptance-threshold" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1-change-the-acceptance-threshold">Exercise 1: Change the acceptance threshold</h2>
+<p>Complete <code>compare_thresholds</code>. Return a dictionary mapping each threshold to its unemployed-state values. For thresholds 2 and 4, print the value at <span class="math inline">\((\mathrm U,2)\)</span> and plot both arrays.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compare_thresholds(model, thresholds):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> {}  <span class="co"># A dictionary stores pairs: threshold -&gt; value array.</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Loop over thresholds; use make_threshold_policy and evaluate_policy.</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store V[:model.n] in results[threshold], then return results.</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run after completing the function:</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># results = compare_thresholds(mccall, [2, 4])</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># for threshold, values in results.items():</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     print(threshold, "value from offer 2:", values[1])</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     plt.plot(mccall.wages, values, "o-", label=f"Threshold {threshold}")</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.xlabel("Wage offer")</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.ylabel("Expected discounted income")</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.legend()</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.show()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <details>
 <summary>
 Solution 1: Compare McCall policies (Show code)
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Solution 1: Compare McCall policies (Show code)</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#@markdown Select **Show code** to reveal the answer; call `mccall_solution()` to run it.</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mccall_solution():</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> McCallModel()</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> {}</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> threshold <span class="kw">in</span> [<span class="dv">2</span>, <span class="dv">4</span>]:</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        policy <span class="op">=</span> make_threshold_policy(model, threshold)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        V, _, _ <span class="op">=</span> evaluate_policy(model, policy)</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        results[threshold] <span class="op">=</span> V[:model.n]</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(threshold, <span class="st">"value from offer 2:"</span>, V[<span class="dv">1</span>])</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        plt.plot(model.wages, V[:model.n], <span class="st">"o-"</span>, label<span class="op">=</span><span class="ss">f"Threshold </span><span class="sc">{</span>threshold<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"Wage offer"</span>)</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Expected discounted income"</span>)</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Solution 1: Compare McCall policies (Show code)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#@markdown Select **Show code** to reveal the answer; call `mccall_solution()` to run it.</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mccall_solution():</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> McCallModel()</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> {}</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> threshold <span class="kw">in</span> [<span class="dv">2</span>, <span class="dv">4</span>]:</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        policy <span class="op">=</span> make_threshold_policy(model, threshold)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        V, _, _ <span class="op">=</span> evaluate_policy(model, policy)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        results[threshold] <span class="op">=</span> V[:model.n]</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(threshold, <span class="st">"value from offer 2:"</span>, V[<span class="dv">1</span>])</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        plt.plot(model.wages, V[:model.n], <span class="st">"o-"</span>, label<span class="op">=</span><span class="ss">f"Threshold </span><span class="sc">{</span>threshold<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"Wage offer"</span>)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Expected discounted income"</span>)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </section>
-<section id="exercise-2-compare-saving-targets" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-2-compare-saving-targets">Exercise 2: Compare saving targets</h2>
-<p>Write <code>evaluate_saving_target(model, target)</code> for the policy <code>saving = min(stock, target, M)</code>. Return its value vector. Evaluate targets 1 and 3, print both values at stock 5, and plot the value vectors.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_saving_target(model, target):</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define the saving policy, evaluate it, and return V.</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run after completing the function:</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># for target in [1, 3]:</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     values = evaluate_saving_target(savings, target)</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     print(target, "value from stock 5:", values[5])</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     plt.plot(savings.states, values, "o-", label=f"Saving target {target}")</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.xlabel("Initial stock")</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.ylabel("Expected discounted utility")</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.legend()</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.show()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="exercise-2-change-the-saving-target" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2-change-the-saving-target">Exercise 2: Change the saving target</h2>
+<p>Complete <code>evaluate_saving_target</code> using <code>min(state, target, model.M)</code>. For targets 1 and 3, print the value at stock 5 and plot both value vectors.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_saving_target(model, target):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define the saving policy, evaluate it, and return V.</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run after completing the function:</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># for target in [1, 3]:</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     values = evaluate_saving_target(savings, target)</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     print(target, "value from stock 5:", values[5])</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     plt.plot(savings.states, values, "o-", label=f"Saving target {target}")</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.xlabel("Initial stock")</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.ylabel("Expected discounted utility")</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.legend()</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.show()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <details>
 <summary>
 Solution 2: Compare saving targets (Show code)
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Solution 2: Compare saving targets (Show code)</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#@markdown Select **Show code** to reveal the answer; call `savings_solution()` to run it.</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> savings_solution():</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> ConsumptionSavingModel()</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> {}</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> target <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">3</span>]:</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> policy(state):</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">min</span>(state, target, model.M)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        V, _, _ <span class="op">=</span> evaluate_policy(model, policy)</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        results[target] <span class="op">=</span> V</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(target, <span class="st">"value from stock 5:"</span>, V[<span class="dv">5</span>])</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>        plt.plot(model.states, V, <span class="st">"o-"</span>, label<span class="op">=</span><span class="ss">f"Saving target </span><span class="sc">{</span>target<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"Initial stock"</span>)</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Expected discounted utility"</span>)</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Solution 2: Compare saving targets (Show code)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#@markdown Select **Show code** to reveal the answer; call `savings_solution()` to run it.</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> savings_solution():</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> ConsumptionSavingModel()</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> {}</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> target <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">3</span>]:</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> policy(state):</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">min</span>(state, target, model.M)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        V, _, _ <span class="op">=</span> evaluate_policy(model, policy)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        results[target] <span class="op">=</span> V</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(target, <span class="st">"value from stock 5:"</span>, V[<span class="dv">5</span>])</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        plt.plot(model.states, V, <span class="st">"o-"</span>, label<span class="op">=</span><span class="ss">f"Saving target </span><span class="sc">{</span>target<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"Initial stock"</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Expected discounted utility"</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </section>
-<section id="references-and-saving-your-work" class="level2">
-<h2 class="anchored" data-anchor-id="references-and-saving-your-work">References and saving your work</h2>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
 <ol type="1">
 <li>Thomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]
 <ul>
 <li><a href="https://python.quantecon.org/mccall_model.html#the-mccall-model">Job Search I: The McCall Search Model — The McCall Model</a>.</li>
-<li><a href="https://tools-techniques.quantecon.org/discrete_dp.html#discrete-dps">Discrete State Dynamic Programming — Discrete DPs</a>.</li>
-<li><a href="https://tools-techniques.quantecon.org/discrete_dp.html#example-a-growth-model">Discrete State Dynamic Programming — Example: A Growth Model</a>: the finite-state consumption–saving specification used here.</li>
+<li><a href="https://tools-techniques.quantecon.org/discrete_dp.html#example-a-growth-model">Discrete State Dynamic Programming — Example: A Growth Model</a>.</li>
 </ul></li>
 <li>Richard S. Sutton and Andrew G. Barto (2018), <em>Reinforcement Learning: An Introduction</em>, 2nd ed., MIT Press. [Book]
 <ul>
-<li><a href="https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf#page=69">Chapter 3: Finite Markov Decision Processes</a>: Sections 3.1, 3.3, 3.5 and 3.6.</li>
 <li><a href="https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf#page=96">Section 4.1: Policy Evaluation (Prediction)</a>.</li>
 </ul></li>
 </ol>
-<p>Restart and run all cells after completing the exercises. Save the notebook, then commit and push it to your Git repository.</p>
 
 
 </section>
