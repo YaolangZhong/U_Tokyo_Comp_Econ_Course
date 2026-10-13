@@ -7,41 +7,150 @@
 \newcommand{\Sset}{\mathcal S}
 \newcommand{\Aset}{\mathcal A}
 \tikzset{valueState/.style={draw=SessionTeal,fill=SessionTealLight,rounded corners=1mm,minimum width=17mm,minimum height=10mm,align=center},valueFlow/.style={-{Stealth[length=2mm]},draw=SessionCharcoal,line width=.8pt}}
+
+% The maze geometry and reward convention match the Week 1 example.
+\definecolor{ValueMazeWall}{HTML}{928580}
+\newcommand{\ValueMazeBase}{%
+  \fill[white] (0,0) rectangle (9,6);
+  \fill[SessionTealLight] (0,3) rectangle +(1,1);
+  \fill[SessionGold!25] (8,5) rectangle +(1,1);
+  \foreach \x/\y in {2/2,2/3,2/4,7/3,7/4,7/5,5/1}
+    \fill[ValueMazeWall] (\x,\y) rectangle +(1,1);
+  \draw[SessionLine,line width=.3pt,step=1] (0,0) grid (9,6);
+  \draw[SessionCharcoal,line width=.7pt] (0,0) rectangle (9,6);
+  \node[font=\sffamily\scriptsize,anchor=east] at (-.08,3.5) {$s_t$};
+  \node[font=\sffamily\scriptsize,anchor=west] at (9.08,5.5) {G};
+}
+\newcommand{\ValueMazeRouteA}{%
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (0.5,3.5) -- (0.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (0.5,2.5) -- (0.5,1.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (0.5,1.5) -- (1.5,1.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (1.5,1.5) -- (2.5,1.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (2.5,1.5) -- (3.5,1.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (3.5,1.5) -- (3.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (3.5,2.5) -- (4.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (4.5,2.5) -- (5.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (5.5,2.5) -- (6.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (6.5,2.5) -- (7.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (7.5,2.5) -- (8.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (8.5,2.5) -- (8.5,3.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (8.5,3.5) -- (8.5,4.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (8.5,4.5) -- (8.5,5.5);
+}
+\newcommand{\ValueMazeRouteB}{%
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (0.5,3.5) -- (0.5,4.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (0.5,4.5) -- (0.5,5.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (0.5,5.5) -- (1.5,5.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (1.5,5.5) -- (2.5,5.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (2.5,5.5) -- (3.5,5.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (3.5,5.5) -- (4.5,5.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (4.5,5.5) -- (5.5,5.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (5.5,5.5) -- (6.5,5.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (6.5,5.5) -- (6.5,4.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (6.5,4.5) -- (6.5,3.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (6.5,3.5) -- (6.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (6.5,2.5) -- (7.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (7.5,2.5) -- (8.5,2.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (8.5,2.5) -- (8.5,3.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (8.5,3.5) -- (8.5,4.5);
+  \draw[valueFlow,shorten <=2pt,shorten >=2pt] (8.5,4.5) -- (8.5,5.5);
+}
 \begin{document}
 \makecoursetitle
 
+\begin{frame}{Recap: A Markov Decision Process}
+\small
+A time-homogeneous discounted \term{MDP} is specified by
+\[\bigl(\Sset,\{\Aset(s)\}_{s\in\Sset},P,r,\beta\bigr).\]
+\begin{columns}[c]
+\begin{column}{.55\textwidth}
+\begin{itemize}
+\item \term{State space \(\Sset\):} all free cells, including the goal G. Walls are excluded.
+\item \term{Actions \(\Aset(s)\):} up, down, left, right.
+\item \term{Transition law \(P(s'\mid s,a)\):} move one cell; a wall or boundary leaves the state unchanged. G is absorbing.
+\item \term{Mean reward \(r(s,a)\):} \(-1\) per move from outside G (including entry into G); zero at G.
+\item \term{Discount factor \(\beta\in(0,1)\):} weights future rewards.
+\end{itemize}
+\end{column}
+\begin{column}{.42\textwidth}
+\centering
+\courseexample{Example: Maze Escape}\par\medskip
+\begin{tikzpicture}[x=.53cm,y=.53cm]
+\ValueMazeBase
+\node[font=\sffamily\small] at (.5,3.5) {$s$};
+\end{tikzpicture}
+\par\smallskip
+\footnotesize The current cell is the state. Here, the next cell and reward are deterministic given the state and action.
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Recap: A Policy Chooses an Action at Each State}
+\small
+A \term{stationary deterministic policy} is a rule \(\sigma\) with
+\(\sigma(s)\in\Aset(s)\): at cell \(s\), take action \(a=\sigma(s)\).
+\par\smallskip
+\begin{columns}[T]
+\begin{column}{.49\textwidth}
+\centering
+\courseexample{Policy \(\sigma_A\): lower route}\par
+\(\sigma_A(s_t)=\text{down}\)\par\smallskip
+\begin{tikzpicture}[x=.51cm,y=.51cm]
+\ValueMazeBase\ValueMazeRouteA
+\end{tikzpicture}\par
+14 moves to G; 14 rewards of \(-1\).
+\end{column}
+\begin{column}{.49\textwidth}
+\centering
+\courseexample{Policy \(\sigma_B\): upper route}\par
+\(\sigma_B(s_t)=\text{up}\)\par\smallskip
+\begin{tikzpicture}[x=.51cm,y=.51cm]
+\ValueMazeBase\ValueMazeRouteB
+\end{tikzpicture}\par
+16 moves to G; 16 rewards of \(-1\).
+\end{column}
+\end{columns}
+\medskip
+Each policy follows its arrows; at unmarked cells it chooses right.
+At G, every action leaves the state at G and yields zero reward.
+\par\smallskip
+\textbf{A policy specifies an action at every state.} The arrows show the route it generates from \(s_t\).
+\end{frame}
+
 \begin{frame}{From a State and a Policy to a Reward Stream}
-Start at \(s_0=s\) and follow a stationary deterministic policy \(a_t=\sigma(s_t)\).
-\par\medskip
+\small
+Start at \(s_t=s\). At future date \(t+\tau-1\), choose
+\(a_{t+\tau-1}=\sigma(s_{t+\tau-1})\), for \(\tau=1,2,\ldots\).
 \begin{center}
 \begin{tikzpicture}[font=\sffamily\small]
-\node[valueState] (s0) at (0,0) {$s_0=s$};
-\node[valueState] (s1) at (3.6,0) {$s_1$};
-\node[valueState] (s2) at (7.2,0) {$s_2$};
+\node[valueState] (s0) at (0,0) {$s_t=s$};
+\node[valueState] (s1) at (3.5,0) {$s_{t+1}$};
+\node[valueState] (s2) at (7,0) {$s_{t+2}$};
 \node (rest) at (10,0) {$\cdots$};
-\draw[valueFlow] (s0)--node[above]{$a_0=\sigma(s_0)$}node[below]{$R_1$}(s1);
-\draw[valueFlow] (s1)--node[above]{$a_1=\sigma(s_1)$}node[below]{$R_2$}(s2);
-\draw[valueFlow] (s2)--node[above]{$a_2=\sigma(s_2)$}node[below]{$R_3$}(rest);
+\draw[valueFlow] (s0)--node[above]{$\sigma(s_t)$}node[below]{$R_{t+1}$}(s1);
+\draw[valueFlow] (s1)--node[above]{$\sigma(s_{t+1})$}node[below]{$R_{t+2}$}(s2);
+\draw[valueFlow] (s2)--node[above]{$\sigma(s_{t+2})$}node[below]{$R_{t+3}$}(rest);
 \end{tikzpicture}
 \end{center}
-\medskip
-The \term{discounted accumulated reward}, or \term{return}, along this path is
-\[G_0=R_1+\beta R_2+\beta^2R_3+\cdots
-       =\sum_{t=0}^{\infty}\beta^tR_{t+1},\qquad 0<\beta<1.\]
-\begin{itemize}
-\item \(R_{t+1}\) is the reward from the action taken at \(t\), as in the MDP timing.
-\item Fixing \(s\) and \(\sigma\) determines a probability law over paths. The return can still be random.
-\end{itemize}
+The \term{discounted accumulated reward}, or \term{return}, from date \(t\) is
+\[G_t=R_{t+1}+\beta R_{t+2}+\cdots+\beta^{\tau-1}R_{t+\tau}+\cdots
+ =\sum_{\tau=1}^{\infty}\beta^{\tau-1}R_{t+\tau}.\]
+\(R_{t+\tau}\) is received after the \(\tau\)-th action from the starting date.
+\par\smallskip
+For the two maze routes, take \(\beta=0.9\):
+\[G_t^{\sigma_A}=-\sum_{\tau=1}^{14}0.9^{\tau-1}\approx-7.71,
+\qquad G_t^{\sigma_B}=-\sum_{\tau=1}^{16}0.9^{\tau-1}\approx-8.15.\]
+The shorter route has a higher return.
 \end{frame}
 
 \begin{frame}{Discounting and a Finite Return}
 \begin{itemize}
 \item One unit received now has weight 1; one period later it has weight \(\beta\). A larger \(\beta\) places more weight on the future.
-\item Assume rewards are uniformly bounded: \(|R_{t+1}|\leq\bar R<\infty\) almost surely, under every feasible policy. Then
-\[|G_0|\leq\sum_{t=0}^{\infty}\beta^t\bar R
+\item Assume rewards are uniformly bounded: \(|R_{t+\tau}|\leq\bar R<\infty\) for every \(\tau\geq1\) almost surely, under every feasible policy. Then
+\[|G_t|\leq\sum_{\tau=1}^{\infty}\beta^{\tau-1}\bar R
        =\frac{\bar R}{1-\beta}.\]
 \item Keeping only the first \(H\) rewards leaves a bounded tail:
-\[\left|G_0-\sum_{t=0}^{H-1}\beta^tR_{t+1}\right|
+\[\left|G_t-\sum_{\tau=1}^{H}\beta^{\tau-1}R_{t+\tau}\right|
        \leq\frac{\beta^H\bar R}{1-\beta}.\]
 \end{itemize}
 For example, a reward of 1 every period has return \(1/(1-\beta)=10\) when \(\beta=0.9\).
@@ -55,15 +164,15 @@ For example, a reward of 1 every period has return \(1/(1-\beta)=10\) when \(\be
 \begin{columns}[T]
 \begin{column}{.48\textwidth}
 \textbf{Consume everything: \(\sigma_A(k)=k\)}
-\[k_t:\quad 2\longrightarrow0\longrightarrow0\]
-\[R_{t+1}:\quad \sqrt2,\;0,\;0,\ldots\]
-\[G_0=\sqrt2\approx1.414.\]
+\[k_t,k_{t+1},k_{t+2}:\quad 2\longrightarrow0\longrightarrow0\]
+\[R_{t+1},R_{t+2},\ldots:\quad \sqrt2,\;0,\;0,\ldots\]
+\[G_t=\sqrt2\approx1.414.\]
 \end{column}
 \begin{column}{.48\textwidth}
 \textbf{One unit at a time: \(\sigma_B(k)=\min\{1,k\}\)}
-\[k_t:\quad 2\longrightarrow1\longrightarrow0\]
-\[R_{t+1}:\quad 1,\;1,\;0,\ldots\]
-\[G_0=1+0.9=1.9.\]
+\[k_t,k_{t+1},k_{t+2}:\quad 2\longrightarrow1\longrightarrow0\]
+\[R_{t+1},R_{t+2},\ldots:\quad 1,\;1,\;0,\ldots\]
+\[G_t=1+0.9=1.9.\]
 \end{column}
 \end{columns}
 \medskip
@@ -71,16 +180,16 @@ A smaller reward today can produce a larger accumulated reward. These paths are 
 \end{frame}
 
 \begin{frame}{The Value Function of a Policy}
-The \term{value function under policy \(\sigma\)} assigns each starting state its expected return:
+For time-homogeneous dynamics and a stationary policy, the \term{value function under policy \(\sigma\)} assigns each state its expected return, independently of the starting date \(t\):
 \begin{conceptbox}
-\[V^\sigma(s)=\E_\sigma[G_0\mid s_0=s]
- =\E_\sigma\!\left[\sum_{t=0}^{\infty}\beta^tR_{t+1}\,\middle|\,s_0=s\right].\]
+\[V^\sigma(s)=\E_\sigma[G_t\mid s_t=s]
+ =\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}R_{t+\tau}\,\middle|\,s_t=s\right].\]
 \end{conceptbox}
 \begin{itemize}
 \item \(s\) fixes the initial state; \(\sigma\) specifies actions at every future state. The expectation averages over the resulting paths and rewards.
 \item Since \(r(s,a)\) is the conditional mean reward, boundedness also gives
-\[V^\sigma(s)=\E_\sigma\!\left[\sum_{t=0}^{\infty}\beta^t
-  r(s_t,\sigma(s_t))\,\middle|\,s_0=s\right].\]
+\[V^\sigma(s)=\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}
+  r(s_{t+\tau-1},\sigma(s_{t+\tau-1}))\,\middle|\,s_t=s\right].\]
 \item For the cake example, \(V^{\sigma_A}(2)=\sqrt2\) and \(V^{\sigma_B}(2)=1.9\).
 \end{itemize}
 \end{frame}
@@ -102,11 +211,11 @@ This lets us replace an infinite reward sequence with a one-step equation.
 \end{frame}
 
 \begin{frame}{The Bellman Equation for a Fixed Policy}
-Take conditional expectations of \(G_0=R_1+\beta G_1\):
+Take conditional expectations of \(G_t=R_{t+1}+\beta G_{t+1}\):
 \begin{align*}
 V^\sigma(s)
- &=\E_\sigma[R_1+\beta G_1\mid s_0=s]\\
- &=r(s,\sigma(s))+\beta\E[V^\sigma(s_1)\mid s_0=s,\;a_0=\sigma(s)].
+ &=\E_\sigma[R_{t+1}+\beta G_{t+1}\mid s_t=s]\\
+ &=r(s,\sigma(s))+\beta\E[V^\sigma(s_{t+1})\mid s_t=s,\;a_t=\sigma(s)].
 \end{align*}
 The second equality uses the law of iterated expectations and the Markov structure.
 \par\medskip
@@ -128,7 +237,7 @@ Treat \(V^\sigma\) and \(r^\sigma\) as \textbf{column vectors}. Then
  \quad\Longleftrightarrow\quad (I-\beta P^\sigma)V^\sigma=r^\sigma.\]
 \begin{itemize}
 \item \(P^\sigma\) is row-stochastic, so \(\beta<1\) makes \(I-\beta P^\sigma\) invertible:
-\[V^\sigma=\sum_{t=0}^{\infty}\beta^t(P^\sigma)^t r^\sigma
+\[V^\sigma=\sum_{\tau=1}^{\infty}\beta^{\tau-1}(P^\sigma)^{\tau-1} r^\sigma
           =(I-\beta P^\sigma)^{-1}r^\sigma.\]
 \item In code, solve the linear system rather than forming the inverse.
 \end{itemize}
@@ -296,7 +405,7 @@ This bound assumes exact expectations and maximization in the specified finite m
 If decisions end at date \(H-1\), let \(h(s_H)\) be a terminal payoff at date \(H\).
 The objective from \(s_t=s\) is
 \[\max_{\sigma_t,\ldots,\sigma_{H-1}}
-\E\!\left[\sum_{j=t}^{H-1}\beta^{j-t}R_{j+1}
+\E\!\left[\sum_{\tau=1}^{H-t}\beta^{\tau-1}R_{t+\tau}
             +\beta^{H-t}h(s_H)\,\middle|\,s_t=s\right].\]
 \term{Backward induction} starts at the terminal date and works toward the present:
 \[V_H(s)=h(s),\]
