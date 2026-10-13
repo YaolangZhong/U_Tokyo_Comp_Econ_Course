@@ -107,7 +107,7 @@
 \begin{itemize}
 \item \textbf{The Value Function}
   \begin{itemize}
-  \item MDPs, policies, and discounted rewards
+  \item MDPs, policy rollouts, and discounted rewards
   \item Expected return from a starting state
   \end{itemize}
 \item \textbf{The Bellman Equation}
@@ -187,10 +187,15 @@ A \term{stationary deterministic policy} is a rule \(\sigma\) with
 \end{columns}
 \end{frame}
 
-\begin{frame}{From a State and a Policy to a Reward Stream}
+\begin{frame}{Rollouts: Simulating a Policy}
 \small
-Start at \(s_t=s\). At future date \(t+\tau-1\), choose
-\(a_{t+\tau-1}=\sigma(s_{t+\tau-1})\), for \(\tau=1,2,\ldots\).
+In reinforcement learning, a \term{rollout} follows a policy from a starting state, generating a \term{trajectory} of states, actions, and rewards.
+\par\smallskip
+To simulate a rollout from \(s_t=s\), repeat for \(\tau=1,2,\ldots\):
+\[a_{t+\tau-1}=\sigma(s_{t+\tau-1}),\qquad
+s_{t+\tau}\sim P(\,\cdot\mid s_{t+\tau-1},a_{t+\tau-1}).\]
+The environment also generates reward \(R_{t+\tau}\), whose conditional mean is
+\(r(s_{t+\tau-1},a_{t+\tau-1})\).
 \begin{figure}
 \centering
 \begin{tikzpicture}[font=\sffamily\small]
@@ -202,20 +207,29 @@ Start at \(s_t=s\). At future date \(t+\tau-1\), choose
 \draw[valueFlow] (s1)--node[above]{$\sigma(s_{t+1})$}node[below]{$R_{t+2}$}(s2);
 \draw[valueFlow] (s2)--node[above]{$\sigma(s_{t+2})$}node[below]{$R_{t+3}$}(rest);
 \end{tikzpicture}
-\caption{States, actions, and rewards.}
+\caption{A rollout under policy \(\sigma\).}
 \end{figure}
-The \term{discounted accumulated reward}, or \term{return}, from date \(t\) is
+The associated \term{reward stream} is \(R_{t+1},R_{t+2},\ldots\).
+Rollouts can differ when transitions or rewards are random.
+\end{frame}
+
+\begin{frame}{The Return of a Rollout}
+The \term{discounted accumulated reward}, or \term{return}, assigns a number to the reward stream of a rollout starting at date \(t\):
 \[G_t=R_{t+1}+\beta R_{t+2}+\cdots+\beta^{\tau-1}R_{t+\tau}+\cdots
  =\sum_{\tau=1}^{\infty}\beta^{\tau-1}R_{t+\tau}.\]
-For the two maze routes, take \(\beta=0.9\):
+\courseexample{Example: Maze Escape}
+\par The two policies generate deterministic rollouts reaching G after 14 and 16 moves. Each move earns \(-1\); rewards are zero after reaching G.
+\par\smallskip
+With \(\beta=0.9\),
 \[G_t^{\sigma_A}=-\sum_{\tau=1}^{14}0.9^{\tau-1}\approx-7.71,
 \qquad G_t^{\sigma_B}=-\sum_{\tau=1}^{16}0.9^{\tau-1}\approx-8.15.\]
+A return describes one rollout. To evaluate a policy, we will consider the expected return over its possible rollouts.
 \end{frame}
 
 \begin{frame}{Discounting and a Finite Return}
 Assume \(|R_{t+j}|\leq\bar r<\infty\) for every \(j\geq1\), with \(0<\beta<1\).
 \par\medskip
-Over the next \(\tau\) periods,
+For any rollout truncated after \(\tau\) periods,
 \begin{align*}
 \left|G_t^{(\tau)}\right|
  &=\left|\sum_{j=1}^{\tau}\beta^{j-1}R_{t+j}\right|
@@ -228,7 +242,7 @@ As \(\tau\to\infty\), \(\beta^\tau\to0\), so the infinite-horizon return satisfi
  =\frac{\bar r}{1-\beta}.\]
 \end{frame}
 
-\begin{frame}{Example: Two Cake-Eating Policies}
+\begin{frame}{Example: Two Cake-Eating Rollouts}
 \courseexample{Example: Cake Eating}
 \par Start with two units of cake. For this example, restrict stock and consumption to whole units:
 \[k\in\{0,1,2\},\quad c\in\{0,\ldots,k\},\quad k'=k-c,
@@ -248,17 +262,17 @@ As \(\tau\to\infty\), \(\beta^\tau\to0\), so the infinite-horizon return satisfi
 \end{column}
 \end{columns}
 \medskip
-A smaller reward today can produce a larger accumulated reward. These paths are deterministic, so their returns can be calculated directly.
+Each policy produces a deterministic rollout. A smaller reward at the first step can lead to a larger return.
 \end{frame}
 
 \begin{frame}{The Value Function of a Policy}
-For time-homogeneous dynamics and a stationary policy, the \term{value function under policy \(\sigma\)} assigns each state its expected return, independently of the starting date \(t\):
+The \term{state-value function under policy \(\sigma\)} is the expected return over rollouts starting at \(s\). With time-homogeneous dynamics and a stationary policy, it does not depend on the starting date \(t\):
 \begin{conceptbox}
 \[V^\sigma(s)=\E_\sigma[G_t\mid s_t=s]
  =\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}R_{t+\tau}\,\middle|\,s_t=s\right].\]
 \end{conceptbox}
 \begin{itemize}
-\item \(s\) fixes the initial state; \(\sigma\) specifies actions at every future state. The expectation averages over the resulting paths and rewards.
+\item \(G_t\) is the return of one rollout. \(V^\sigma(s)\) averages over all possible rollouts from \(s\) under \(\sigma\).
 \item Since \(r(s,a)\) is the conditional mean reward, boundedness also gives
 \[V^\sigma(s)=\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}
   r(s_{t+\tau-1},\sigma(s_{t+\tau-1}))\,\middle|\,s_t=s\right].\]
@@ -267,7 +281,7 @@ For time-homogeneous dynamics and a stationary policy, the \term{value function 
 \end{frame}
 
 \begin{frame}{The Return Has a Recursive Form}
-From any date \(t\), define the return using that date as the discounting origin:
+Along a rollout, the return from date \(t\) is:
 \[G_t=R_{t+1}+\beta R_{t+2}+\beta^2R_{t+3}+\cdots.\]
 Separate the first reward from all later rewards:
 \begin{align*}
@@ -275,7 +289,7 @@ G_t&=R_{t+1}+\beta\big(R_{t+2}+\beta R_{t+3}+\cdots\big)\\
    &=R_{t+1}+\beta G_{t+1}.
 \end{align*}
 \begin{itemize}
-\item The future return is the same object, starting one period later.
+\item \(G_{t+1}\) is the return from the remainder of the same rollout.
 \item With time-homogeneous dynamics and a stationary policy,
 \[\E_\sigma[G_{t+1}\mid s_{t+1}=s']=V^\sigma(s').\]
 \end{itemize}
@@ -283,7 +297,7 @@ This lets us replace an infinite reward sequence with a one-step equation.
 \end{frame}
 
 \begin{frame}{The Bellman Equation for a Fixed Policy}
-Take conditional expectations of \(G_t=R_{t+1}+\beta G_{t+1}\):
+Average the rollout identity \(G_t=R_{t+1}+\beta G_{t+1}\) conditional on \(s_t=s\):
 \begin{align*}
 V^\sigma(s)
  &=\E_\sigma[R_{t+1}+\beta G_{t+1}\mid s_t=s]\\
@@ -321,7 +335,7 @@ Treat \(V^\sigma\) and \(r^\sigma\) as \textbf{column vectors}. Then
 \par Take the earlier employment dynamics as given, and attach income 0 in U and 1 in E. There is no action choice in this calculation.
 \[P=\begin{pmatrix}0.8&0.2\\0.05&0.95\end{pmatrix},\qquad
 r=\begin{pmatrix}0\\1\end{pmatrix},\qquad\beta=0.9.\]
-The value of the income stream solves
+Rollouts generate random income streams. Their expected returns solve
 \begin{align*}
 V(\mathrm U)&=0+0.9\big[0.8V(\mathrm U)+0.2V(\mathrm E)\big],\\
 V(\mathrm E)&=1+0.9\big[0.05V(\mathrm U)+0.95V(\mathrm E)\big].
@@ -339,7 +353,7 @@ We can also compute \(V^\sigma\) by repeated substitution, keeping \(\sigma\) fi
 \[v^{(n+1)}=r^\sigma+\beta P^\sigma v^{(n)},\qquad v^{(0)}=0.\]
 \begin{itemize}
 \item Use the old vector \(v^{(n)}\) for every state in a sweep.
-\item After \(n\) sweeps, \(v^{(n)}\) is the expected return from the first \(n\) rewards under \(\sigma\), with zero value beyond them.
+\item After \(n\) sweeps, \(v^{(n)}\) is the expected return of an \(n\)-step rollout under \(\sigma\), with zero value beyond it.
 \end{itemize}
 For the employment example:
 \[v^{(0)}=\begin{pmatrix}0\\0\end{pmatrix},\quad
@@ -360,7 +374,7 @@ Let \(\Sigma\) be the set of feasible stationary deterministic policies. Define 
 \item The policy may be nonunique when several actions are equally good.
 \end{itemize}
 \medskip
-The task now is to choose a policy, as well as evaluate the rewards it generates.
+The task now is to choose the policy with the highest expected rollout return from each state.
 \end{frame}
 
 \begin{frame}{The Bellman Optimality Equation}
@@ -510,6 +524,7 @@ Once we have \(V^*\), choose an action that attains its Bellman maximum:
   {\begin{itemize}
 \item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=69}{Chapter 3: Finite Markov Decision Processes (Sections 3.3, 3.5 and 3.6)}
 \item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=95}{Chapter 4: Dynamic Programming (Sections 4.1 and 4.4)}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=205}{Section 8.10: Rollout Algorithms}
 \end{itemize}}
 \coursereading{2}
   {Thomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]}
