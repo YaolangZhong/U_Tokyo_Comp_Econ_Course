@@ -1,325 +1,333 @@
-"""Companion to value_functions.ipynb; supplied code cells in notebook order.
-Complete the two exercise scaffolds. To check reference solutions, call
-employment_solution() or larger_cake_solution() separately.
+"""Companion to value_functions.ipynb; code cells in notebook order.
+Evaluate specified policies in McCall job search and consumption-saving models.
+Call mccall_solution() or savings_solution() separately to run exercise solutions.
 """
 
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-np.set_printoptions(precision=6, suppress=True)
+print("Python:", sys.version.split()[0])
+np.set_printoptions(precision=4, suppress=True)
+plt.rcParams.update({"figure.figsize": (8, 3.5), "axes.spines.top": False,
+                     "axes.spines.right": False})
 
-class CakeMDP:
-    def __init__(self, max_stock=2, beta=0.9):
-        assert isinstance(max_stock, (int, np.integer)) and max_stock >= 0
-        assert 0 < beta < 1
-        self.states = np.arange(max_stock + 1)
-        self.beta = beta
+def simulate_policy(model, policy, initial_state, periods, seed=7):
+    rng = np.random.default_rng(seed)
+    state = int(initial_state)
+    if state not in range(len(model.states)) or periods < 0:
+        raise ValueError("Use a valid initial state and a nonnegative horizon.")
+    path, rewards = [state], []
+    for _ in range(periods):
+        action = policy(state)
+        state, reward = model.step(state, action, rng)
+        path.append(state)
+        rewards.append(reward)
+    return np.array(path), np.array(rewards, dtype=float)
 
-    def step(self, state, action):
-        assert isinstance(state, (int, np.integer)) and 0 <= state < len(self.states)
-        assert isinstance(action, (int, np.integer)) and 0 <= action <= state
-        return state - action, np.sqrt(action)
-
-    def simulate(self, policy, initial_state, periods):
-        state = initial_state
-        path, rewards = [state], []
-        for period in range(periods):
-            action = policy(state)
-            state, reward = self.step(state, action)
-            path.append(state)
-            rewards.append(reward)
-        return np.array(path), np.array(rewards)
-
-def eat_all(state):
-    return state
-
-
-def consume_one(state):
-    return min(1, state)
-
-
-cake = CakeMDP()
-path_all, rewards_all = cake.simulate(eat_all, initial_state=2, periods=3)
-path_one, rewards_one = cake.simulate(consume_one, initial_state=2, periods=3)
-print("Eat all:     stocks", path_all, "rewards", rewards_all)
-print("Consume one: stocks", path_one, "rewards", rewards_one)
 
 def discounted_return(rewards, beta):
-    rewards = np.asarray(rewards, dtype=float)
     weights = beta ** np.arange(len(rewards))
-    return np.sum(weights * rewards)
+    return float(weights @ rewards)
 
+class McCallModel:
+    def __init__(self, wages=(1, 2, 3, 4, 5),
+                 probabilities=(0.1, 0.2, 0.4, 0.2, 0.1), benefit=1.0, beta=0.9):
+        self.wages = np.asarray(wages, dtype=float)
+        self.q = np.asarray(probabilities, dtype=float)
+        self.benefit, self.beta = float(benefit), float(beta)
+        if (self.wages.ndim != 1 or len(self.wages) == 0
+                or self.q.shape != self.wages.shape
+                or not np.all(np.isfinite(self.wages)) or np.any(self.wages <= 0)
+                or not np.all(np.diff(self.wages) > 0)
+                or not np.all(np.isfinite(self.q)) or np.any(self.q < 0)
+                or not np.isclose(self.q.sum(), 1)
+                or not np.isfinite(self.benefit) or self.benefit < 0
+                or not 0 < self.beta < 1):
+            raise ValueError("Check wages, offer probabilities, benefit, and beta.")
+        self.n = len(self.wages)
+        self.states = [(status, float(wage)) for status in ("U", "E") for wage in self.wages]
 
-return_all = discounted_return(rewards_all, cake.beta)
-return_one = discounted_return(rewards_one, cake.beta)
-print("Eat all:", return_all)
-print("Consume one:", return_one)
-assert np.isclose(return_all, np.sqrt(2))
-assert np.isclose(return_one, 1.9)
-assert return_one > return_all
+    def actions(self, state):
+        if not isinstance(state, (int, np.integer)) or not 0 <= state < 2 * self.n:
+            raise ValueError("Invalid state index.")
+        return ("accept", "reject") if state < self.n else ("work",)
 
-class MarkovProcess:
-    def __init__(self, states, P):
-        self.states = states
-        self.P = np.array(P)
-        assert self.P.shape == (len(states), len(states))
-        assert np.all(self.P >= 0)
-        assert np.allclose(self.P.sum(axis=1), 1)
+    def reward(self, state, action):
+        if action not in self.actions(state):
+            raise ValueError("This action is unavailable at the current state.")
+        return self.benefit if action == "reject" else self.wages[state % self.n]
 
-    def simulate(self, initial_state, periods, seed=7):
-        rng = np.random.default_rng(seed)
-        state = initial_state
-        path = [state]
-        for period in range(periods):
-            state = rng.choice(len(self.states), p=self.P[state])
-            path.append(state)
-        return np.array(path)
+    def transition_probabilities(self, state, action):
+        self.reward(state, action)  # Also check feasibility.
+        p = np.zeros(len(self.states))
+        if action == "reject":
+            p[:self.n] = self.q
+        elif action == "accept":
+            p[self.n + state] = 1.0
+        else:
+            p[state] = 1.0
+        return p
 
-states = ["Unemployed", "Employed"]
-P = np.array([[0.80, 0.20],
-              [0.05, 0.95]])
-r = np.array([0.0, 1.0])
-beta = 0.9
-employment = MarkovProcess(states, P)
+    def step(self, state, action, rng):
+        reward = self.reward(state, action)
+        p = self.transition_probabilities(state, action)
+        next_state = int(rng.choice(len(self.states), p=p))
+        return next_state, reward
 
-path = employment.simulate(initial_state=0, periods=80, seed=7)
-# The reward from the action at t is based on state s_t, not s_(t+1).
-sample_rewards = r[path[:-1]]
-sample_return = discounted_return(sample_rewards, beta)
-print("One simulated return, starting unemployed:", sample_return)
-print("Maximum omitted tail:", beta ** 80 / (1 - beta))
+    def simulate(self, policy, initial_state, periods, seed=7):
+        return simulate_policy(self, policy, initial_state, periods, seed)
 
-def evaluate_policy(P_sigma, r_sigma, beta):
-    P_sigma = np.asarray(P_sigma, dtype=float)
-    r_sigma = np.asarray(r_sigma, dtype=float)
-    n = len(r_sigma)
-    assert 0 < beta < 1
-    assert P_sigma.shape == (n, n)
-    assert np.all(P_sigma >= 0) and np.allclose(P_sigma.sum(axis=1), 1)
-    return np.linalg.solve(np.eye(n) - beta * P_sigma, r_sigma)
+mccall = McCallModel()
+print("State indices and labels:")
+for index, label in enumerate(mccall.states):
+    print(index, label)
+print("Reject an offer: probabilities over all states")
+print(mccall.transition_probabilities(1, "reject"))
+print("Accept wage 2: probabilities over all states")
+print(mccall.transition_probabilities(1, "accept"))
 
-
-employment_value = evaluate_policy(P, r, beta)
-print("Values [U, E]:", employment_value)
-print("Bellman residual:", employment_value - (r + beta * P @ employment_value))
-assert np.allclose(employment_value, [72 / 13, 112 / 13])
-
-def iterate_values(update, initial_value, beta, tolerance=1e-8, max_iter=10000):
-    assert 0 < beta < 1 and tolerance > 0
-    value = np.asarray(initial_value, dtype=float).copy()
-    history = [value.copy()]
-    for iteration in range(max_iter):
-        next_value = update(value)
-        residual = np.max(np.abs(next_value - value))
-        # The residual belongs to value, so return value rather than next_value.
-        if residual <= (1 - beta) * tolerance:
-            return value, np.array(history), residual
-        value = next_value
-        history.append(value.copy())
-    raise RuntimeError("Iteration limit reached before the tolerance was met.")
-
-
-def employment_update(value):
-    return r + beta * P @ value
-
-
-employment_iterated, employment_history, residual = iterate_values(
-    employment_update, np.zeros(2), beta
-)
-print("First three iterates:", employment_history[:3], sep="\n")
-print("Converged values:", employment_iterated)
-print("Residual-based error bound:", residual / (1 - beta))
-assert np.allclose(employment_history[:3], [[0, 0], [0, 1], [0.18, 1.855]])
-assert np.max(np.abs(employment_iterated - employment_value)) <= 1e-8
-
-errors = np.max(np.abs(employment_history - employment_value), axis=1)
-iterations = np.arange(len(errors))
-bound = beta ** iterations * errors[0]
-
-plt.figure(figsize=(7, 3))
-plt.semilogy(iterations, errors, label="Actual value error")
-plt.semilogy(iterations, bound, "--", label="Contraction bound")
-plt.xlabel("Iteration")
-plt.ylabel("Maximum absolute error")
-plt.title("Employment: iterative policy evaluation")
-plt.legend()
-plt.grid(alpha=0.3)
-plt.tight_layout()
-plt.show()
-
-def cake_policy_arrays(model, policy):
-    n = len(model.states)
-    P_sigma = np.zeros((n, n))
-    r_sigma = np.zeros(n)
-    for state in model.states:
-        action = policy(state)
-        next_state, reward = model.step(state, action)
-        P_sigma[state, next_state] = 1
-        r_sigma[state] = reward
-    return P_sigma, r_sigma
-
-
-P_all, r_all = cake_policy_arrays(cake, eat_all)
-P_one, r_one = cake_policy_arrays(cake, consume_one)
-value_all = evaluate_policy(P_all, r_all, cake.beta)
-value_one = evaluate_policy(P_one, r_one, cake.beta)
-print("P under consume_one:", P_one, sep="\n")
-print("Values under eat_all:", value_all)
-print("Values under consume_one:", value_one)
-assert np.allclose(value_all, [0, 1, np.sqrt(2)])
-assert np.allclose(value_one, [0, 1, 1.9])
-assert np.isclose(value_all[2], return_all)
-assert np.isclose(value_one[2], return_one)
-
-def cake_action_values(model, value, state):
-    candidates = []
-    for action in range(state + 1):
-        next_state, reward = model.step(state, action)
-        candidates.append(reward + model.beta * value[next_state])
-    return np.array(candidates)
-
-
-def cake_bellman(model, value):
-    new_value = np.zeros(len(model.states))
-    for state in model.states:
-        new_value[state] = np.max(cake_action_values(model, value, state))
-    return new_value
-
-
-def cake_greedy_policy(model, value):
-    policy = np.zeros(len(model.states), dtype=int)
-    for state in model.states:
-        policy[state] = np.argmax(cake_action_values(model, value, state))
+def make_threshold_policy(model, threshold):
+    def policy(state):
+        if state >= model.n:
+            return "work"
+        return "accept" if model.wages[state] >= threshold else "reject"
     return policy
 
-def cake_update(value):
-    return cake_bellman(cake, value)
+
+search_policy = make_threshold_policy(mccall, threshold=3)
+search_start = 1  # (U, wage 2)
+search_path, search_rewards = mccall.simulate(search_policy, search_start, periods=12)
+print("Rollout:", [mccall.states[s] for s in search_path])
+print("Reward stream:", search_rewards)
+print("12-step return:", discounted_return(search_rewards, mccall.beta))
+
+def policy_arrays(model, policy):
+    n = len(model.states)
+    P = np.zeros((n, n))
+    r = np.zeros(n)
+    for state in range(n):
+        action = policy(state)
+        P[state] = model.transition_probabilities(state, action)
+        r[state] = model.reward(state, action)
+    if np.any(P < 0) or not np.allclose(P.sum(axis=1), 1):
+        raise ValueError("Every transition row must be a probability vector.")
+    return P, r
 
 
-cake_value, cake_history, cake_residual = iterate_values(
-    cake_update, np.zeros(len(cake.states)), cake.beta
-)
-cake_policy = cake_greedy_policy(cake, cake_value)
-print("Value iterates (columns are stocks 0, 1, 2):", cake_history, sep="\n")
-print("Optimal value:", cake_value)
-print("Consumption by stock:", cake_policy)
-print("Residual:", cake_residual)
-assert np.allclose(cake_history[1], [0, 1, np.sqrt(2)])
-assert np.allclose(cake_value, [0, 1, 1.9])
-assert np.array_equal(cake_policy, [0, 1, 1])
+def evaluate_policy(model, policy):
+    P, r = policy_arrays(model, policy)
+    V = np.linalg.solve(np.eye(len(r)) - model.beta * P, r)
+    return V, P, r
 
-plt.figure(figsize=(6, 3))
-for iteration, value in enumerate(cake_history):
-    plt.plot(cake.states, value, "o-", label=f"Iteration {iteration}")
-plt.xticks(cake.states)
-plt.xlabel("Cake stock")
-plt.ylabel("Value")
-plt.title("Cake eating: value iteration")
-plt.legend()
-plt.grid(alpha=0.3)
+
+V_search, P_search, r_search = evaluate_policy(mccall, search_policy)
+print("Offer | action | value while unemployed")
+for i, wage in enumerate(mccall.wages):
+    print(f"{wage:5.1f} | {search_policy(i):6s} | {V_search[i]:.4f}")
+print("Value from (U, wage 2):", V_search[search_start])
+print("Employed-state values:", V_search[mccall.n:])
+assert np.allclose(V_search[mccall.n:], mccall.wages / (1 - mccall.beta))
+
+fig, ax = plt.subplots()
+ax.plot(mccall.wages, V_search[:mccall.n], "o-", label="Supplied threshold = 3")
+ax.plot(mccall.wages, mccall.wages / (1 - mccall.beta), "s--", label="Accept every offer")
+ax.set(xlabel="Current wage offer", ylabel="Expected discounted income")
+ax.legend()
+ax.grid(alpha=0.2)
 plt.tight_layout()
 plt.show()
 
-def computed_policy(state):
-    return cake_policy[state]
+def estimate_value(model, policy, initial_state, repetitions=600, periods=100, seed=21):
+    rng = np.random.default_rng(seed)
+    returns = np.empty(repetitions)
+    for i in range(repetitions):
+        rollout_seed = int(rng.integers(0, 2**32))
+        _, rewards = model.simulate(policy, initial_state, periods, seed=rollout_seed)
+        returns[i] = discounted_return(rewards, model.beta)
+    _, r = policy_arrays(model, policy)
+    return {"mean": returns.mean(),
+            "standard_error": returns.std(ddof=1) / np.sqrt(repetitions),
+            "tail_bound": model.beta**periods * np.max(np.abs(r)) / (1 - model.beta)}
 
 
-P_computed, r_computed = cake_policy_arrays(cake, computed_policy)
-policy_value = evaluate_policy(P_computed, r_computed, cake.beta)
-optimal_path, optimal_rewards = cake.simulate(computed_policy, 2, periods=3)
-print("Stock path:", optimal_path)
-print("Discounted return:", discounted_return(optimal_rewards, cake.beta))
-print("Policy value:", policy_value)
-assert np.allclose(policy_value, cake_value)
-assert np.isclose(discounted_return(optimal_rewards, cake.beta), cake_value[2])
+search_estimate = estimate_value(mccall, search_policy, search_start)
+print("Exact infinite-horizon value:", V_search[search_start])
+print("Simulated mean:", search_estimate["mean"])
+print("Monte Carlo standard error:", search_estimate["standard_error"])
+print("Maximum omitted tail:", search_estimate["tail_bound"])
 
-def cake_backward_induction(model, horizon):
-    values = np.zeros((horizon + 1, len(model.states)))
-    policies = np.zeros((horizon, len(model.states)), dtype=int)
-    for t in range(horizon - 1, -1, -1):
-        policies[t] = cake_greedy_policy(model, values[t + 1])
-        values[t] = cake_bellman(model, values[t + 1])
-    return values, policies
+class ConsumptionSavingModel:
+    def __init__(self, M=5, B=3, alpha=0.5, beta=0.9):
+        if (not isinstance(M, (int, np.integer)) or M < 0
+                or not isinstance(B, (int, np.integer)) or B < 0
+                or not 0 < alpha < 1 or not 0 < beta < 1):
+            raise ValueError("Use nonnegative integer M and B, and alpha/beta in (0, 1).")
+        self.M, self.B = int(M), int(B)
+        self.alpha, self.beta = float(alpha), float(beta)
+        self.states = np.arange(self.M + self.B + 1)
+        self.incomes = np.arange(self.B + 1)
+        self.q = np.full(self.B + 1, 1 / (self.B + 1))
+
+    def actions(self, state):
+        if not isinstance(state, (int, np.integer)) or state not in range(len(self.states)):
+            raise ValueError("Invalid stock.")
+        return np.arange(min(state, self.M) + 1)
+
+    def reward(self, state, action):
+        if not isinstance(action, (int, np.integer)) or action not in self.actions(state):
+            raise ValueError("Saving must be a feasible whole number of units.")
+        return float((state - action)**self.alpha)
+
+    def transition_probabilities(self, state, action):
+        self.reward(state, action)  # Also check the saving constraint.
+        p = np.zeros(len(self.states))
+        p[action:action + self.B + 1] = self.q
+        return p
+
+    def step(self, state, action, rng):
+        reward = self.reward(state, action)
+        p = self.transition_probabilities(state, action)
+        next_state = int(rng.choice(len(self.states), p=p))
+        return next_state, reward
+
+    def simulate(self, policy, initial_state, periods, seed=7):
+        return simulate_policy(self, policy, initial_state, periods, seed)
+
+savings = ConsumptionSavingModel()
+print("Stocks:", savings.states)
+print("Possible income:", savings.incomes)
+print("Saving choices at stock 2:", savings.actions(2))
+print("Next-state probabilities after saving 1:", savings.transition_probabilities(2, 1))
 
 
-finite_values, finite_policies = cake_backward_induction(cake, horizon=2)
-print("Values at dates 0, 1, 2:", finite_values, sep="\n")
-print("Policies at dates 0, 1:", finite_policies, sep="\n")
-assert np.allclose(finite_values[0], cake_history[2])
-assert np.array_equal(finite_policies[1], [0, 1, 2])
-assert np.array_equal(finite_policies[0], [0, 1, 1])
+def save_half(state):
+    return min(state // 2, savings.M)  # // rounds down to whole units.
 
-def employment_values(alpha):
-    # Build P, define an update function, and return both value vectors.
+
+saving_start = 5
+saving_path, saving_rewards = savings.simulate(save_half, saving_start, periods=24, seed=7)
+saving_actions = np.array([save_half(s) for s in saving_path[:-1]])
+consumption = saving_path[:-1] - saving_actions
+income = saving_path[1:] - saving_actions
+print("First five stocks:", saving_path[:5])
+print("First five consumption choices:", consumption[:5])
+print("First five incomes:", income[:5])
+print("24-step return:", discounted_return(saving_rewards, savings.beta))
+assert np.allclose(saving_rewards, consumption**savings.alpha)
+assert np.all((0 <= income) & (income <= savings.B))
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 3.4))
+axes[0].step(range(len(saving_path)), saving_path, where="post", label="Stock")
+axes[0].set(xlabel="Step", ylabel="Units of goods", title="One rollout: save half")
+axes[1].step(range(len(consumption)), consumption, where="mid", label="Consumption")
+axes[1].step(range(len(income)), income, where="mid", label="Next-period income", alpha=0.7)
+axes[1].set(xlabel="Step", ylabel="Units of goods")
+for ax in axes:
+    ax.legend()
+    ax.grid(alpha=0.2)
+plt.tight_layout()
+plt.show()
+
+V_saving, P_saving, r_saving = evaluate_policy(savings, save_half)
+V_consume, _, _ = evaluate_policy(savings, lambda state: 0)
+print("Value from stock 5 under save-half:", V_saving[saving_start])
+print("Stock | saving | consumption | value")
+for state in savings.states:
+    action = save_half(state)
+    print(f"{state:5d} | {action:6d} | {state - action:11d} | {V_saving[state]:.4f}")
+
+fig, ax = plt.subplots()
+ax.plot(savings.states, V_saving, "o-", label="Save half (rounded down)")
+ax.plot(savings.states, V_consume, "s--", label="Consume everything")
+ax.set(xlabel="Initial stock", ylabel="Expected discounted utility")
+ax.legend()
+ax.grid(alpha=0.2)
+plt.tight_layout()
+plt.show()
+
+saving_estimate = estimate_value(savings, save_half, saving_start, seed=22)
+print("Exact infinite-horizon value:", V_saving[saving_start])
+print("Simulated mean:", saving_estimate["mean"])
+print("Monte Carlo standard error:", saving_estimate["standard_error"])
+print("Maximum omitted tail:", saving_estimate["tail_bound"])
+
+for label, model, V, P, r in [
+    ("McCall", mccall, V_search, P_search, r_search),
+    ("Consumption-saving", savings, V_saving, P_saving, r_saving),
+]:
+    residual = np.max(np.abs(V - r - model.beta * (P @ V)))
+    print(label, "maximum policy Bellman residual:", residual)
+    assert residual < 1e-10
+
+# Independent check: consume everything, so next stock equals the new income.
+mean_future_utility = savings.q @ (savings.incomes**savings.alpha)
+consume_benchmark = (savings.states**savings.alpha
+                     + savings.beta * mean_future_utility / (1 - savings.beta))
+assert np.allclose(V_consume, consume_benchmark)
+print("Analytical benchmarks passed.")
+
+def compare_thresholds(model, thresholds):
+    # For each threshold: construct a policy, evaluate it, and keep the U-state values.
     pass
 
-# direct, iterative = employment_values(0.40)
-# print("Direct:", direct, "Iterative:", iterative)
-# assert np.allclose(direct, iterative, atol=1e-8, rtol=0)
-# assert np.all(direct > employment_value)
+# Run after completing the function:
+# results = compare_thresholds(mccall, [2, 4])
+# for threshold, values in results.items():
+#     print(threshold, "value from offer 2:", values[1])
+#     plt.plot(mccall.wages, values, "o-", label=f"Threshold {threshold}")
+# plt.xlabel("Wage offer")
+# plt.ylabel("Expected discounted income")
+# plt.legend()
+# plt.show()
 
-#@title Solution 1: Employment values (Show code)
-#@markdown Select **Show code** to reveal the solution. Run this cell, then call `employment_solution()` to check it.
-def employment_solution():
-    def employment_values(alpha):
-        assert 0 <= alpha <= 1
-        P_new = np.array([[1 - alpha, alpha], [0.05, 0.95]])
-        r_new = np.array([0.0, 1.0])
-        beta_new = 0.9
-        direct = evaluate_policy(P_new, r_new, beta_new)
+#@title Solution 1: Compare McCall policies (Show code)
+#@markdown Select **Show code** to reveal the answer; call `mccall_solution()` to run it.
+def mccall_solution():
+    model = McCallModel()
+    results = {}
+    for threshold in [2, 4]:
+        policy = make_threshold_policy(model, threshold)
+        V, _, _ = evaluate_policy(model, policy)
+        results[threshold] = V[:model.n]
+        print(threshold, "value from offer 2:", V[1])
+        plt.plot(model.wages, V[:model.n], "o-", label=f"Threshold {threshold}")
+    plt.xlabel("Wage offer")
+    plt.ylabel("Expected discounted income")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+    return results
 
-        def update(value):
-            return r_new + beta_new * P_new @ value
-
-        iterative, history, residual = iterate_values(update, np.zeros(2), beta_new)
-        return direct, iterative
-
-    direct, iterative = employment_values(0.40)
-    assert np.allclose(direct, iterative, atol=1e-8, rtol=0)
-    assert np.all(direct > employment_value)
-    print("Direct:", direct, "Iterative:", iterative)
-    return direct, iterative
-
-def solve_cake(max_stock, beta):
-    # Create the model, define its Bellman update, and run value iteration.
-    # Return the value vector and the greedy action array.
+def evaluate_saving_target(model, target):
+    # Define the saving policy, evaluate it, and return V.
     pass
 
-# large_cake = CakeMDP(max_stock=4, beta=0.95)
-# large_value, large_policy = solve_cake(4, 0.95)
-# print("Values:", large_value)
-# print("Consumption:", large_policy)
-# Define a policy function using large_policy[state], then evaluate and simulate it.
+# Run after completing the function:
+# for target in [1, 3]:
+#     values = evaluate_saving_target(savings, target)
+#     print(target, "value from stock 5:", values[5])
+#     plt.plot(savings.states, values, "o-", label=f"Saving target {target}")
+# plt.xlabel("Initial stock")
+# plt.ylabel("Expected discounted utility")
+# plt.legend()
+# plt.show()
 
-#@title Solution 2: Larger cake-eating problem (Show code)
-#@markdown Select **Show code** to reveal the solution. Run this cell, then call `larger_cake_solution()` to check it.
-def larger_cake_solution():
-    def solve_cake(max_stock, beta):
-        model = CakeMDP(max_stock=max_stock, beta=beta)
-
-        def update(value):
-            return cake_bellman(model, value)
-
-        value, history, residual = iterate_values(update, np.zeros(len(model.states)), beta)
-        return value, cake_greedy_policy(model, value)
-
-    model = CakeMDP(max_stock=4, beta=0.95)
-    value, policy = solve_cake(4, 0.95)
-
-    def optimal_policy(state):
-        return policy[state]
-
-    P_opt, r_opt = cake_policy_arrays(model, optimal_policy)
-    evaluated = evaluate_policy(P_opt, r_opt, model.beta)
-    P_one, r_one = cake_policy_arrays(model, consume_one)
-    one_value = evaluate_policy(P_one, r_one, model.beta)
-    path, rewards = model.simulate(optimal_policy, 4, periods=5)
-    assert np.allclose(value, evaluated, atol=1e-8, rtol=0)
-    assert np.all(value >= one_value - 1e-8)
-    assert path[-1] == 0
-    assert np.isclose(discounted_return(rewards, model.beta), value[4])
-    print("Values:", value)
-    print("Consumption:", policy)
-    print("Stock path:", path)
-    print("Rewards:", rewards)
-    return value, policy, path
+#@title Solution 2: Compare saving targets (Show code)
+#@markdown Select **Show code** to reveal the answer; call `savings_solution()` to run it.
+def savings_solution():
+    model = ConsumptionSavingModel()
+    results = {}
+    for target in [1, 3]:
+        def policy(state):
+            return min(state, target, model.M)
+        V, _, _ = evaluate_policy(model, policy)
+        results[target] = V
+        print(target, "value from stock 5:", V[5])
+        plt.plot(model.states, V, "o-", label=f"Saving target {target}")
+    plt.xlabel("Initial stock")
+    plt.ylabel("Expected discounted utility")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+    return results

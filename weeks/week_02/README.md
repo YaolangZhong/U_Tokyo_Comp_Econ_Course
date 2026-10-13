@@ -8,7 +8,7 @@
 
 - **Lab**
 
-    - [Value Functions and Dynamic Programming](lab/starter/value_functions.ipynb)
+    - [Policy Evaluation: Job Search and Consumption–Saving](lab/starter/value_functions.ipynb)
     - [Open in Colab](https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_02/lab/starter/value_functions.ipynb)
     - [Lab exercise files](lab/starter)
 

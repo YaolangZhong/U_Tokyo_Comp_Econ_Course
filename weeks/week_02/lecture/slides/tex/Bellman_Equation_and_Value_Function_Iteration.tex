@@ -107,20 +107,19 @@
 \begin{itemize}
 \item \textbf{The Value Function}
   \begin{itemize}
-  \item MDPs, policy rollouts, and discounted rewards
+  \item Policy rollouts, reward streams, and discounted returns
   \item Expected return from a starting state
   \end{itemize}
 \item \textbf{The Bellman Equation}
   \begin{itemize}
-  \item Recursive returns and the policy Bellman equation
-  \item Policy evaluation as a linear system
-  \item Optimal value and Bellman optimality
+  \item Recursive returns and policy evaluation
+  \item The linear system for a fixed policy
+  \item Optimal value and the choice of an action
   \end{itemize}
-\item \textbf{Value Function Iteration}
+\item \textbf{Two Economic Models}
   \begin{itemize}
-  \item The Bellman operator and convergence
-  \item Iteration, stopping criteria, and policy recovery
-  \item Finite-horizon backward induction
+  \item Job search: the McCall model
+  \item Consumption and saving with uncertain income
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -217,13 +216,11 @@ Rollouts can differ when transitions or rewards are random.
 The \term{discounted accumulated reward}, or \term{return}, assigns a number to the reward stream of a rollout starting at date \(t\):
 \[G_t=R_{t+1}+\beta R_{t+2}+\cdots+\beta^{\tau-1}R_{t+\tau}+\cdots
  =\sum_{\tau=1}^{\infty}\beta^{\tau-1}R_{t+\tau}.\]
-\courseexample{Example: Maze Escape}
-\par The two policies generate deterministic rollouts reaching G after 14 and 16 moves. Each move earns \(-1\); rewards are zero after reaching G.
-\par\smallskip
-With \(\beta=0.9\),
-\[G_t^{\sigma_A}=-\sum_{\tau=1}^{14}0.9^{\tau-1}\approx-7.71,
-\qquad G_t^{\sigma_B}=-\sum_{\tau=1}^{16}0.9^{\tau-1}\approx-8.15.\]
-A return describes one rollout. To evaluate a policy, we will consider the expected return over its possible rollouts.
+\begin{itemize}
+\item The first reward has weight 1; the reward \(\tau\) steps ahead has weight \(\beta^{\tau-1}\).
+\item One rollout gives one realized return. Random transitions or rewards can produce different returns under the same policy.
+\item To evaluate a policy from a given state, we consider the expected return over its possible rollouts.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Discounting and a Finite Return}
@@ -299,201 +296,116 @@ For a finite state space, the \term{policy Bellman equation} is
 \end{frame}
 
 \begin{frame}{Policy Evaluation as a Linear System}
-From here, assume \(\Sset\) and each nonempty \(\Aset(s)\) are finite.
-\par\medskip
-Fix \(\sigma\). Recall its induced transition matrix and reward vector:
+For a finite state space, fix a policy \(\sigma\) and define
 \[P^\sigma_{ij}=P(j\mid i,\sigma(i)),\qquad r^\sigma_i=r(i,\sigma(i)).\]
-Treat \(V^\sigma\) and \(r^\sigma\) as \textbf{column vectors}. Then
-\[V^\sigma=r^\sigma+\beta P^\sigma V^\sigma
- \quad\Longleftrightarrow\quad (I-\beta P^\sigma)V^\sigma=r^\sigma.\]
 \begin{itemize}
-\item \(P^\sigma\) is row-stochastic, so \(\beta<1\) makes \(I-\beta P^\sigma\) invertible:
-\[V^\sigma=\sum_{\tau=1}^{\infty}\beta^{\tau-1}(P^\sigma)^{\tau-1} r^\sigma
-          =(I-\beta P^\sigma)^{-1}r^\sigma.\]
-\item In code, solve the linear system rather than forming the inverse.
+\item Row \(i\) of \(P^\sigma\) gives next-state probabilities when we follow \(\sigma\) from state \(i\).
+\item Entry \(i\) of \(r^\sigma\) is the current expected reward at that state.
 \end{itemize}
+Treat \(V^\sigma\) and \(r^\sigma\) as column vectors. The policy Bellman equations become
+\[V^\sigma=r^\sigma+\beta P^\sigma V^\sigma,
+\qquad (I-\beta P^\sigma)V^\sigma=r^\sigma.\]
+\term{Policy evaluation} computes the value of the specified policy by solving this linear system. We will do this for both economic models in the notebook.
 \end{frame}
 
-\begin{frame}{Example: Income Along an Employment Chain}
-\small
-\courseexample{Example: Employment and Unemployment}
-\par Take the earlier employment dynamics as given, and attach income 0 in U and 1 in E. There is no action choice in this calculation.
-\[P=\begin{pmatrix}0.8&0.2\\0.05&0.95\end{pmatrix},\qquad
-r=\begin{pmatrix}0\\1\end{pmatrix},\qquad\beta=0.9.\]
-Rollouts generate random income streams. Their expected returns solve
-\begin{align*}
-V(\mathrm U)&=0+0.9\big[0.8V(\mathrm U)+0.2V(\mathrm E)\big],\\
-V(\mathrm E)&=1+0.9\big[0.05V(\mathrm U)+0.95V(\mathrm E)\big].
-\end{align*}
-\[V(\mathrm U)=\frac{72}{13}\approx5.538,\qquad
-  V(\mathrm E)=\frac{112}{13}\approx8.615.\]
-\begin{itemize}
-\item Unemployment has positive value because future employment is possible.
-\item Employment is worth less than \(1/(1-0.9)=10\), because job loss is possible.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Iterative Policy Evaluation}
-We can also compute \(V^\sigma\) by repeated substitution, keeping \(\sigma\) fixed:
-\[v^{(n+1)}=r^\sigma+\beta P^\sigma v^{(n)},\qquad v^{(0)}=0.\]
-\begin{itemize}
-\item Use the old vector \(v^{(n)}\) for every state in a sweep.
-\item After \(n\) sweeps, \(v^{(n)}\) is the expected return of an \(n\)-step rollout under \(\sigma\), with zero value beyond it.
-\end{itemize}
-For the employment example:
-\[v^{(0)}=\begin{pmatrix}0\\0\end{pmatrix},\quad
-v^{(1)}=\begin{pmatrix}0\\1\end{pmatrix},\quad
-v^{(2)}=\begin{pmatrix}0.180\\1.855\end{pmatrix},\quad
-v^{(n)}\longrightarrow\begin{pmatrix}5.538\ldots\\8.615\ldots\end{pmatrix}.\]
-\medskip
-\(n\) counts computational iterations. The policy being evaluated does not change.
-\end{frame}
-
-\begin{frame}{From Policy Values to the Optimal Value}
-Let \(\Sigma\) be the set of feasible stationary deterministic policies. Define the \term{optimal value function} by
+\begin{frame}{From a Given Policy to the Optimal Value}
+For the finite-state, finite-action models below, let \(\Sigma\) denote the feasible stationary deterministic policies. The \term{optimal value function} is
 \[V^*(s)=\max_{\sigma\in\Sigma}V^\sigma(s).\]
-\begin{itemize}
-\item A policy \(\sigma^*\) is \term{optimal} if it achieves this value at every state:
-\[V^{\sigma^*}(s)=V^*(s)\qquad\text{for every }s\in\Sset.\]
-\item In a finite, time-homogeneous discounted MDP, such a stationary deterministic policy exists. Allowing randomized or history-dependent policies cannot improve the value.
-\item The policy may be nonunique when several actions are equally good.
-\end{itemize}
-\medskip
-The task now is to choose the policy with the highest expected rollout return from each state.
-\end{frame}
-
-\begin{frame}{The Bellman Optimality Equation}
-\small
-The \term{principle of optimality}: after the next state is observed, an optimal policy uses an optimal continuation from that state.
-\par\medskip
-Choose the current action \(a\), then continue optimally. Its expected return is
-\[r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V^*(s').\]
-Maximizing over the feasible current actions gives the \term{Bellman optimality equation}:
+Choose the current action, then follow an optimal policy from the next state. This gives the \term{Bellman optimality equation}:
 \[V^*(s)=\max_{a\in\Aset(s)}
- \left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V^*(s')\right\}.\]
+ \left\{r(s,a)+\beta\sum_{s'\in\Sset}P(s'\mid s,a)V^*(s')\right\}.\]
 \begin{itemize}
-\item The current action is chosen before the random next state is observed.
-\item Future actions can respond to that realized state. \(V^*(s')\) includes all those later choices.
+\item The first term is the current reward; the second is expected continuation value.
+\item The action is chosen before the next state is observed. Later actions can respond to the state that is realized.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Example: The Cake-Eating Bellman Equation}
+\begin{frame}{The McCall Search Model: Setup}
+An unemployed worker receives a wage offer at the beginning of each period and decides whether to accept it.
+\begin{itemize}
+\item Offers are independent across periods: \(w\in\mathcal W\), a finite wage set, with probability \(q(w)\).
+\item \textbf{Accept:} earn \(w\) immediately and keep the job at that wage forever. There is no job separation.
+\item \textbf{Reject:} receive unemployment benefit \(b\) now and draw a new offer next period.
+\item The worker maximizes expected discounted income. In our timing, \(R_{t+1}\) is the income generated by the decision at date \(t\).
+\end{itemize}
+Accepting gives income today; waiting preserves the opportunity to receive a better offer.
+\end{frame}
+
+\begin{frame}{The McCall Search Model as an MDP}
 \small
-\courseexample{Example: Cake Eating}
-\par Stock \(k\in\{0,1,2\}\), consumption \(c\in\{0,\ldots,k\}\), next stock \(k'=k-c\), reward \(\sqrt c\), and \(\beta=0.9\):
-\[V^*(k)=\max_{c\in\{0,\ldots,k\}}\{\sqrt c+0.9V^*(k-c)\}.\]
-At zero stock, \(V^*(0)=0.9V^*(0)\), so \(V^*(0)=0\). At one unit,
-\[V^*(1)=\max\{0.9V^*(1),\;1\}=1.\]
-At two units, check all three feasible actions:
-\[V^*(2)=\max\{\underbrace{0.9V^*(2)}_{c=0},\;
-\underbrace{1+0.9V^*(1)}_{c=1},\;
-\underbrace{\sqrt2}_{c=2}\}=1.9.\]
+The state records employment status and the current offered or accepted wage:
+\[\Sset=\{(\mathrm U,w),(\mathrm E,w):w\in\mathcal W\}.\]
 \begin{itemize}
-\item At this solution, the three candidate values are \(1.71,1.9,1.414\ldots\).
-\item Thus \(\sigma^*(2)=1\), \(\sigma^*(1)=1\), and \(\sigma^*(0)=0\).
+\item At \((\mathrm U,w)\), choose \textbf{accept} or \textbf{reject}. At \((\mathrm E,w)\), the only action is \textbf{work}.
+\item Current rewards are \(r((\mathrm U,w),\text{accept})=w\), \(r((\mathrm U,w),\text{reject})=b\), and \(r((\mathrm E,w),\text{work})=w\).
+\item The \term{transition kernel} is
+\begin{align*}
+P((\mathrm U,w')\mid(\mathrm U,w),\text{reject})&=q(w'),\\
+P((\mathrm E,w)\mid(\mathrm U,w),\text{accept})&=1,\\
+P((\mathrm E,w)\mid(\mathrm E,w),\text{work})&=1.
+\end{align*}
+All other transition probabilities are zero.
 \end{itemize}
+A policy \(\sigma\) specifies whether to accept each offer while unemployed.
 \end{frame}
 
-\begin{frame}{The Bellman Operator}
-An \term{operator} maps a candidate value function \(v\) to a new function.
-\[ (Tv)(s)=\max_{a\in\Aset(s)}
- \left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)v(s')\right\}.\]
-\begin{itemize}
-\item \(v(s')\) is our current assessment of future states. \(Tv\) updates that assessment using the best current action.
-\item Holding a policy fixed instead gives
-\[(T^\sigma v)(s)=r(s,\sigma(s))+
- \beta\sum_{s'}P(s'\mid s,\sigma(s))v(s').\]
-\item A \term{fixed point} is unchanged by its operator:
-\[V^*=TV^*,\qquad V^\sigma=T^\sigma V^\sigma.\]
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Why the Iteration Converges}
+\begin{frame}{The McCall Search Model: Recursive Values}
 \small
-Use the \term{maximum norm} \(\|v-w\|_\infty=\max_s|v(s)-w(s)|\). For any state and action,
-\[\left|\beta\sum_{s'}P(s'\mid s,a)\big[v(s')-w(s')\big]\right|
- \leq\beta\|v-w\|_\infty.\]
-Taking the maximum over actions preserves this bound, since
-\( |\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a| \). Hence
-\[\|Tv-Tw\|_\infty\leq\beta\|v-w\|_\infty.\]
+Write \(V^\sigma_{\mathrm U}(w)=V^\sigma((\mathrm U,w))\). Once employed, there is no further choice:
+\[V_{\mathrm E}(w)=w+\beta V_{\mathrm E}(w)=\frac{w}{1-\beta}.\]
+For a specified acceptance policy, the \term{policy Bellman equation} is
+\[V^\sigma_{\mathrm U}(w)=
+\begin{cases}
+w+\beta V_{\mathrm E}(w),&\sigma(\mathrm U,w)=\text{accept},\\
+b+\beta\sum_{w'\in\mathcal W}q(w')V^\sigma_{\mathrm U}(w'),&\sigma(\mathrm U,w)=\text{reject}.
+\end{cases}\]
+Allowing the worker to choose gives
+\[V^*_{\mathrm U}(w)=\max\left\{
+\underbrace{\frac{w}{1-\beta}}_{\text{accept}},\quad
+\underbrace{b+\beta\sum_{w'\in\mathcal W}q(w')V^*_{\mathrm U}(w')}_{\text{reject and continue}}\right\}.\]
+The notebook evaluates specified wage-threshold policies and their rollouts.
+\end{frame}
+
+\begin{frame}{Consumption and Saving: Setup}
+A household starts each period with a stock of a consumption good. It chooses how much to consume now and how much to save.
 \begin{itemize}
-\item \(T\) is a \term{contraction}: the new distance is at most \(\beta<1\) times the old distance.
-\item On the finite-dimensional value space, it has a unique fixed point \(V^*\), and
-\[\|T^n v^{(0)}-V^*\|_\infty\leq\beta^n\|v^{(0)}-V^*\|_\infty.\]
-\item The same argument applies to \(T^\sigma\) and its fixed point \(V^\sigma\).
+\item Saving carries goods into the next period one for one. There is no borrowing, and storage capacity is \(M\).
+\item After the saving decision, the household receives new income \(Y_{t+1}\), independent across periods and uniform on \(\{0,\ldots,B\}\).
+\item Consumption gives utility \(u(c)=c^\alpha\), where \(0<\alpha<1\). The household maximizes expected discounted utility.
+\item This extends the cake-eating problem: saved goods are replenished by new income, so consumption can continue over time.
+\end{itemize}
+Saving reduces current consumption but provides resources for future consumption when income is low.
+\end{frame}
+
+\begin{frame}{Consumption and Saving as an MDP}
+\small
+Use whole units of goods. The state is current stock \(s\); the action \(a\) is the amount \textbf{saved}:
+\[\Sset=\{0,\ldots,M+B\},\qquad
+\Aset(s)=\{0,\ldots,\min(s,M)\}.\]
+Consumption, reward, and the next state are
+\[c=s-a,\qquad r(s,a)=(s-a)^\alpha,\qquad s'=a+Y'.\]
+The \term{transition kernel} is
+\[P(s'\mid s,a)=
+\begin{cases}
+1/(B+1),&a\leq s'\leq a+B,\\
+0,&\text{otherwise}.
+\end{cases}\]
+\begin{itemize}
+\item \(\sigma(s)\) gives saving at stock \(s\); consumption is \(s-\sigma(s)\).
+\item The state space is closed: saving is at most \(M\), and next income is at most \(B\).
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Value Function Iteration}
-\small
-Given the finite MDP and a desired value-error tolerance \(\varepsilon>0\):
-\begin{enumerate}
-\item Choose \(v^{(0)}\), for example zero, and set \(n=0\).
-\item Update every state using the previous vector:
-\[v^{(n+1)}(s)=(Tv^{(n)})(s)
- =\max_{a\in\Aset(s)}\left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)v^{(n)}(s')\right\}.\]
-\item Calculate the \term{Bellman residual} of \(v^{(n)}\):
-\[d_n=\|Tv^{(n)}-v^{(n)}\|_\infty
-     =\|v^{(n+1)}-v^{(n)}\|_\infty.\]
-\item If \(d_n\leq(1-\beta)\varepsilon\), return \(v^{(n)}\). Otherwise increase \(n\) and repeat.
-\end{enumerate}
-The contraction inequality implies
-\[\|v^{(n)}-V^*\|_\infty\leq\frac{d_n}{1-\beta}\leq\varepsilon.\]
-This bound assumes exact expectations and maximization in the specified finite model.
-\end{frame}
-
-\begin{frame}{Example: Value Iteration for Cake Eating}
-\small
-\courseexample{Example: Cake Eating}
-\par Start from \(v^{(0)}(k)=0\), using \(\beta=0.9\).
-\begin{center}
-\renewcommand{\arraystretch}{1.1}
-\begin{tabular}{lccc}
-\toprule
-& Stock 0 & Stock 1 & Stock 2\\
-\midrule
-\(v^{(0)}\) & 0 & 0 & 0\\
-\(v^{(1)}=Tv^{(0)}\) & 0 & 1 & \(\sqrt2\approx1.414\)\\
-\(v^{(2)}=Tv^{(1)}\) & 0 & 1 & 1.9\\
-\(v^{(3)}=Tv^{(2)}\) & 0 & 1 & 1.9\\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{frame}{Consumption and Saving: Recursive Values}
+For a specified saving policy \(\sigma\),
+\[V^\sigma(s)=\bigl(s-\sigma(s)\bigr)^\alpha
+ +\frac{\beta}{B+1}\sum_{y=0}^{B}V^\sigma\bigl(\sigma(s)+y\bigr).\]
+Choosing saving optimally instead gives
+\[V^*(s)=\max_{a\in\{0,\ldots,\min(s,M)\}}
+\left\{(s-a)^\alpha+\frac{\beta}{B+1}\sum_{y=0}^{B}V^*(a+y)\right\}.\]
 \begin{itemize}
-\item The first update assigns zero continuation value, so consuming everything looks best.
-\item In the second update, saving one unit has value:
-\[1+0.9v^{(1)}(1)=1.9>\sqrt2.\]
-\item A further update leaves the vector unchanged: the Bellman residual is zero.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{A Finite Horizon: Backward Induction}
-\small
-If decisions end at date \(H-1\), let \(h(s_H)\) be a terminal payoff at date \(H\).
-The objective from \(s_t=s\) is
-\[\max_{\sigma_t,\ldots,\sigma_{H-1}}
-\E\!\left[\sum_{\tau=1}^{H-t}\beta^{\tau-1}R_{t+\tau}
-            +\beta^{H-t}h(s_H)\,\middle|\,s_t=s\right].\]
-\term{Backward induction} starts at the terminal date and works toward the present:
-\[V_H(s)=h(s),\]
-\[V_t(s)=\max_{a\in\Aset(s)}
- \left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V_{t+1}(s')\right\},
-\quad t=H-1,\ldots,0.\]
-\begin{itemize}
-\item The remaining horizon changes with \(t\); optimal decision rules can depend on time.
-\item With \(h=0\), \(T^H0\) is the value with \(H\) decisions remaining. This also explains the earlier cake iterations.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Recovering a Policy from Values}
-Once we have \(V^*\), choose an action that attains its Bellman maximum:
-\[\sigma^*(s)\in\argmax_{a\in\Aset(s)}
-\left\{r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V^*(s')\right\}.\]
-\begin{itemize}
-\item A \term{greedy policy with respect to \(v\)} uses the same expression with a candidate value \(v\) in place of \(V^*\).
-\item With an approximate value, the resulting policy is a candidate. Evaluate it by solving
-\[(I-\beta P^\sigma)V^\sigma=r^\sigma.\]
-\item The value function summarizes future rewards; the policy specifies the action to take. Computing both makes the solution usable.
+\item Saving more lowers current utility and changes the distribution of next-period resources.
+\item In the notebook, a chosen rule \(\sigma\) determines \(P^\sigma\) and \(r^\sigma\). Solving \((I-\beta P^\sigma)V^\sigma=r^\sigma\) gives its value at every stock.
 \end{itemize}
 \end{frame}
 
@@ -504,20 +416,16 @@ Once we have \(V^*\), choose an action that attains its Bellman maximum:
   {https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf}
   {\begin{itemize}
 \item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=69}{Chapter 3: Finite Markov Decision Processes (Sections 3.3, 3.5 and 3.6)}
-\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=95}{Chapter 4: Dynamic Programming (Sections 4.1 and 4.4)}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=96}{Section 4.1: Policy Evaluation (Prediction)}
 \item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=205}{Section 8.10: Rollout Algorithms}
 \end{itemize}}
 \coursereading{2}
   {Thomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]}
   {https://quantecon.org/lectures/}
   {\begin{itemize}
-\item \href{https://tools-techniques.quantecon.org/discrete_dp.html}{Discrete State Dynamic Programming}
-\end{itemize}}
-\coursereading{3}
-  {Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]}
-  {https://vonzhg.github.io/Macro-2026Fall/index.html}
-  {\begin{itemize}
-\item \href{https://vonzhg.github.io/Macro-2026Fall/slides/pdf/S01_B2_Dynamic_Programming.pdf}{Session 1, Deck 1.B2: Dynamic Programming: Why It Works and How It Computes}
+\item \href{https://python.quantecon.org/mccall_model.html\#the-mccall-model}{Job Search I: The McCall Search Model — The McCall Model}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#discrete-dps}{Discrete State Dynamic Programming — Discrete DPs}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#example-a-growth-model}{Discrete State Dynamic Programming — Example: A Growth Model}
 \end{itemize}}
 \end{frame}
 % END MANAGED READINGS: week2_value

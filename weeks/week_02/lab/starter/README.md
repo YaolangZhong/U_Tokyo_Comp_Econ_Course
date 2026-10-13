@@ -1,13 +1,15 @@
-# Value Functions and Dynamic Programming
+# Policy Evaluation: Job Search and Consumption–Saving
 
 [Open in Colab](https://colab.research.google.com/github/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_02/lab/starter/value_functions.ipynb) · [Read online](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_02/lab/starter/value_functions.html)
 
-Continue from Lab 1's employment and cake-eating models. Calculate discounted returns, evaluate fixed policies by linear algebra and iteration, implement the Bellman operator, recover an optimal policy, and use backward induction for a finite horizon.
+Define the McCall job-search and finite-state consumption–saving models, simulate policy rollouts, and evaluate supplied policies by solving their Bellman linear systems. Compare exact values with averages of simulated returns.
 
-The notebook includes the required Lab 1 definitions and runs independently. Complete two coding exercises: change employment transition probabilities, then solve a larger cake-eating model. Each has a hidden solution block; select **Show code** in Colab to reveal it. Solution functions leave your exercise definitions unchanged.
+The notebook continues Lab 1's `step`, `simulate`, and policy-function structure and includes all definitions needed to run independently. Complete two coding exercises: compare wage-acceptance thresholds and compare saving targets. Each has a hidden solution cell; select **Show code** in Colab to reveal it.
 
 ## Run locally
 
-Install dependencies with `python -m pip install -r requirements.txt`. Open the notebook in VS Code and select the same environment as its kernel, or run `python value_functions.py`. The script contains the notebook's code cells in order. Call `employment_solution()` or `larger_cake_solution()` separately to check the reference solutions.
+Install dependencies with `python -m pip install -r requirements.txt`. Open the notebook in VS Code and select that environment as its kernel, or run `python value_functions.py`. The script contains the notebook's code cells in order. Call `mccall_solution()` or `savings_solution()` separately to run the reference solutions.
 
-The lecture benchmarks are employment values `[72/13, 112/13]`, cake values `[0, 1, 1.9]`, and cake consumption `[0, 1, 1]`. Restart and run all cells after completing your code, then save, commit, and push your work. Keep local environments and caches out of Git.
+The class `McCallModel` uses status/wage states, IID offers, and permanent employment after acceptance. `ConsumptionSavingModel` uses integer stocks, a saving cap, and uniform IID income, following QuantEcon's **Example: A Growth Model**. Model rewards are current income and current consumption utility, respectively. Numerical parameters are small teaching examples.
+
+Model and reading sources are linked in the notebook and the [course references](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/references.html). Restart and run all cells before saving, committing, and pushing your work.
