@@ -128,13 +128,14 @@
 \begin{frame}{Recap: A Markov Decision Process}
 \small
 A time-homogeneous discounted \term{MDP} is specified by
-\[\bigl(\Sset,\{\Aset(s)\}_{s\in\Sset},P,r,\beta\bigr).\]
+\(\bigl(\Sset,\{\Aset(s)\}_{s\in\Sset},P,r,\beta\bigr)\).
+\par\medskip
 \begin{columns}[c]
 \begin{column}{.55\textwidth}
 \begin{itemize}
 \item \term{State space \(\Sset\):} free cells \(\Sset=\{\mathrm S,\mathrm G,1,\ldots,45\}\), including G. Walls are excluded.
 \item \term{Actions \(\Aset(s)\):} up, down, left, right.
-\item \term{Transition law \(P(s'\mid s,a)\):} move one cell; a wall or boundary leaves the state unchanged. G is absorbing.
+\item \term{Transition kernel \(P(s'\mid s,a)\):} probability 1 for the cell reached by action \(a\), and 0 for all other cells. For example, \(P(21\mid\mathrm S,\text{down})=1\). A wall or boundary keeps the current cell; G is absorbing.
 \item \term{Mean reward \(r(s,a)\):} \(-1\) per move from outside G (including entry into G); zero at G.
 \item \term{Discount factor \(\beta\in(0,1)\):} weights future rewards.
 \end{itemize}
