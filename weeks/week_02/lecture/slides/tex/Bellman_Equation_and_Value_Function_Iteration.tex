@@ -2,7 +2,6 @@
 \newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
 \input{\CourseTemplatePath course_preamble.tex}
 \title[Value Functions and the Bellman Equation]{Lecture: Value Functions and the Bellman Equation}
-\subtitle{Discounted rewards, policy evaluation, and value iteration}
 \newcommand{\E}{\mathbb E}
 \newcommand{\Sset}{\mathcal S}
 \newcommand{\Aset}{\mathcal A}
@@ -103,6 +102,28 @@
 }
 \begin{document}
 \makecoursetitle
+
+\begin{frame}{Lecture Overview}
+\begin{itemize}
+\item \textbf{The Value Function}
+  \begin{itemize}
+  \item MDPs, policies, and discounted rewards
+  \item Expected return from a starting state
+  \end{itemize}
+\item \textbf{The Bellman Equation}
+  \begin{itemize}
+  \item Recursive returns and the policy Bellman equation
+  \item Policy evaluation as a linear system
+  \item Optimal value and Bellman optimality
+  \end{itemize}
+\item \textbf{Value Function Iteration}
+  \begin{itemize}
+  \item The Bellman operator and convergence
+  \item Iteration, stopping criteria, and policy recovery
+  \item Finite-horizon backward induction
+  \end{itemize}
+\end{itemize}
+\end{frame}
 
 \begin{frame}{Recap: A Markov Decision Process}
 \small
