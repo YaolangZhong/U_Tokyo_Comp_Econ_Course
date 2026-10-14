@@ -191,10 +191,12 @@ A \term{stationary deterministic policy} is a rule \(\sigma\) with
 In reinforcement learning, a \term{rollout} follows a policy from a starting state, generating a \term{trajectory} of states, actions, and rewards.
 \par\smallskip
 To simulate a rollout from \(s_t=s\), repeat for \(\tau=1,2,\ldots\):
-\[a_{t+\tau-1}=\sigma(s_{t+\tau-1}),\qquad
-s_{t+\tau}\sim P(\,\cdot\mid s_{t+\tau-1},a_{t+\tau-1}).\]
-Each call to \(\sigma(s)\) draws an action; each call to \(R(s,a)\) draws a reward. Deterministic rules always return the same outcome. Here
-\[r_{t+\tau}=R(s_{t+\tau-1},a_{t+\tau-1}).\]
+\begin{align*}
+a_{t+\tau-1}&\sim\sigma(s_{t+\tau-1}),\\
+r_{t+\tau}&\sim R(s_{t+\tau-1},a_{t+\tau-1}),\\
+s_{t+\tau}&\sim P(\,\cdot\mid s_{t+\tau-1},a_{t+\tau-1}).
+\end{align*}
+Deterministic rules put probability one on a single outcome.
 \begin{figure}
 \centering
 \begin{tikzpicture}[font=\sffamily\small]
