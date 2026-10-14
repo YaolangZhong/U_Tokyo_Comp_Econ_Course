@@ -186,6 +186,18 @@ A \term{stationary deterministic policy} is a rule \(\sigma\) with
 \end{columns}
 \end{frame}
 
+\begin{frame}{Standing Assumptions}
+Unless explicitly stated otherwise, we assume:
+\begin{itemize}
+\item \term{Time-homogeneous dynamics.} For a given state and action, transition probabilities and the reward distribution are the same at every date:
+\[P_t(s'\mid s,a)=P(s'\mid s,a),\qquad R_t(s,a)\overset{d}{=}R(s,a).\]
+\item \term{A stationary policy.} At a given state, the action distribution does not change with the date:
+\[\sigma_t(s)\overset{d}{=}\sigma(s).\]
+Here \(\overset{d}{=}\) means equal in distribution. A deterministic policy assigns probability one to its chosen action.
+\item We omit date subscripts on \(P\), \(R\), and \(\sigma\). Over an infinite horizon, the expected return also does not depend on the starting date; we write \(V^\sigma(s)\).
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Rollouts: Simulating a Policy}
 \small
 In reinforcement learning, a \term{rollout} follows a policy from a starting state, generating a \term{trajectory} of states, actions, and rewards.
@@ -241,17 +253,7 @@ As \(\tau\to\infty\), \(\beta^\tau\to0\), so the infinite-horizon return satisfi
  =\frac{\bar r}{1-\beta}.\]
 \end{frame}
 
-\begin{frame}{Standing Assumptions}
-Unless explicitly stated otherwise, we assume:
-\begin{itemize}
-\item \term{Time-homogeneous dynamics.} For a given state and action, transition probabilities and the reward distribution are the same at every date:
-\[P_t(s'\mid s,a)=P(s'\mid s,a),\qquad R_t(s,a)\overset{d}{=}R(s,a).\]
-\item \term{A stationary policy.} At a given state, the action distribution does not change with the date:
-\[\sigma_t(s)\overset{d}{=}\sigma(s).\]
-Here \(\overset{d}{=}\) means equal in distribution. A deterministic policy assigns probability one to its chosen action.
-\item We omit date subscripts on \(P\), \(R\), and \(\sigma\). Over an infinite horizon, the expected return also does not depend on the starting date; we write \(V^\sigma(s)\).
-\end{itemize}
-\end{frame}
+
 
 \begin{frame}{The Value Function of a Policy}
 The \term{state-value function under policy \(\sigma\)} is the expected return over rollouts starting at \(s\):
