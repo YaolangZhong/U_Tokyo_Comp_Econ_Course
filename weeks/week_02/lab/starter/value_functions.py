@@ -1,5 +1,5 @@
 """Companion to value_functions.ipynb; code cells in notebook order.
-Evaluate specified policies in McCall job search and consumption-saving models.
+Evaluate specified policies in McCall job search and continuous consumption-saving.
 Call mccall_solution() or savings_solution() separately to run exercise solutions.
 """
 
@@ -152,37 +152,24 @@ print("Exact value:", V_search[search_start])
 print("Average simulated return:", search_returns.mean())
 
 class ConsumptionSavingModel:
-    def __init__(self, M=5, B=3, alpha=0.5, beta=0.9):
-        # M and B count whole units of goods.
-        assert M >= 0 and B >= 0, "Use nonnegative M and B."
+    def __init__(self, M=5.0, B=3.0, alpha=0.5, beta=0.9):
+        assert M >= 0 and B > 0, "Use M >= 0 and B > 0."
         assert 0 < alpha < 1 and 0 < beta < 1, "Keep alpha and beta between 0 and 1."
         self.M = M
         self.B = B
         self.alpha = alpha
         self.beta = beta
-        self.states = np.arange(M + B + 1)
-        self.incomes = np.arange(B + 1)
-        self.q = np.ones(B + 1) / (B + 1)  # Equal income probabilities.
-
-    def actions(self, state):
-        return np.arange(min(state, self.M) + 1)
 
     def reward(self, state, action):
-        assert action in self.actions(state), "Saving must be feasible."
+        assert 0 <= state <= self.M + self.B, "Stock must lie in [0, M+B]."
+        assert 0 <= action <= min(state, self.M), "Saving must be feasible."
         consumption = state - action
         return consumption ** self.alpha
 
-    def transition_probabilities(self, state, action):
-        p = np.zeros(len(self.states))
-        # Saving a gives next stocks a, a+1, ..., a+B.
-        # A slice includes its start but excludes its stop, hence the +1.
-        p[action:action + self.B + 1] = self.q
-        return p
-
     def step(self, state, action, rng):
         reward = self.reward(state, action)
-        p = self.transition_probabilities(state, action)
-        next_state = rng.choice(len(self.states), p=p)
+        income = rng.uniform(0, self.B)  # Draw a real number from Uniform[0, B].
+        next_state = action + income
         return next_state, reward
 
     def simulate(self, policy, initial_state, periods, seed=7):
@@ -192,10 +179,10 @@ savings = ConsumptionSavingModel()
 
 
 def save_half(state):
-    return min(state // 2, savings.M)  # // rounds down; min applies the storage cap.
+    return min(state / 2, savings.M)  # / keeps fractional units; min applies the cap.
 
 
-saving_start = 5
+saving_start = 5.5
 saving_path, saving_rewards = savings.simulate(save_half, saving_start, periods=24)
 
 # Drop the last state: a path has one more state than rewards.
@@ -218,31 +205,41 @@ for ax in axes:
 plt.tight_layout()
 plt.show()
 
-V_saving, P_saving, mu_saving = evaluate_policy(savings, save_half)
+def estimate_saving_values(model, policy, initial_stocks):
+    values = []
+    for stock in initial_stocks:
+        returns = simulate_returns(model, policy, stock)
+        values.append(returns.mean())  # Average rollouts from this initial stock.
+    return np.array(values)
+
+
 def consume_all(state):
-    return 0  # Save nothing.
+    return 0.0  # Save nothing.
 
 
-V_consume, _, _ = evaluate_policy(savings, consume_all)
-print("Value from stock 5 under save-half:", V_saving[saving_start])
-print("Stock | saving | consumption | value")
-# Each entry V_saving[state] is the value from that initial stock.
-for state in savings.states:
-    action = save_half(state)
-    print(f"{state:5d} | {action:6d} | {state - action:11d} | {V_saving[state]:.4f}")
+initial_stocks = np.array([0.0, 1.5, 3.0, 5.5, 8.0])
+V_saving = estimate_saving_values(savings, save_half, initial_stocks)
+V_consume = estimate_saving_values(savings, consume_all, initial_stocks)
+for stock, value in zip(initial_stocks, V_saving):  # Pair each stock with its estimate.
+    print(f"Initial stock {stock:.1f}: estimated value {value:.4f}")
 
 fig, ax = plt.subplots()
-ax.plot(savings.states, V_saving, "o-", label="Save half (rounded down)")
-ax.plot(savings.states, V_consume, "s--", label="Consume everything")
-ax.set(xlabel="Initial stock", ylabel="Expected discounted utility")
+ax.plot(initial_stocks, V_saving, "o-", label="Save half")
+ax.plot(initial_stocks, V_consume, "s--", label="Consume everything")
+ax.set(xlabel="Initial stock", ylabel="Estimated expected discounted utility")
 ax.legend()
 ax.grid(alpha=0.2)
 plt.tight_layout()
 plt.show()
 
-saving_returns = simulate_returns(savings, save_half, saving_start)
-print("Exact value:", V_saving[saving_start])
-print("Average simulated return:", saving_returns.mean())
+# Check against a known value: consume everything each period.
+# E[Y**alpha] = B**alpha / (alpha + 1) for uniform income.
+mean_income_utility = savings.B ** savings.alpha / (savings.alpha + 1)
+V_consume_exact = initial_stocks ** savings.alpha + (
+    savings.beta / (1 - savings.beta) * mean_income_utility
+)
+print("Consume-all estimates:", V_consume)
+print("Consume-all exact values:", V_consume_exact)
 
 def compare_thresholds(model, thresholds):
     results = {}  # A dictionary stores pairs: threshold -> value array.
@@ -278,17 +275,17 @@ def mccall_solution():
     plt.show()
     return results
 
-def evaluate_saving_target(model, target):
-    # Define the saving policy, evaluate it, and return V.
+def evaluate_saving_target(model, target, initial_stocks):
+    # Define the saving policy, estimate its values, and return the array.
     pass
 
 # Run after completing the function:
-# for target in [1, 3]:
-#     values = evaluate_saving_target(savings, target)
-#     print(target, "value from stock 5:", values[5])
-#     plt.plot(savings.states, values, "o-", label=f"Saving target {target}")
+# for target in [1.5, 3.5]:
+#     values = evaluate_saving_target(savings, target, initial_stocks)
+#     print(target, "estimated value from stock 5.5:", values[3])
+#     plt.plot(initial_stocks, values, "o-", label=f"Saving target {target}")
 # plt.xlabel("Initial stock")
-# plt.ylabel("Expected discounted utility")
+# plt.ylabel("Estimated expected discounted utility")
 # plt.legend()
 # plt.show()
 
@@ -296,16 +293,17 @@ def evaluate_saving_target(model, target):
 #@markdown Select **Show code** to reveal the answer; call `savings_solution()` to run it.
 def savings_solution():
     model = ConsumptionSavingModel()
+    stocks = np.array([0.0, 1.5, 3.0, 5.5, 8.0])
     results = {}
-    for target in [1, 3]:
+    for target in [1.5, 3.5]:
         def policy(state):
             return min(state, target, model.M)
-        V, _, _ = evaluate_policy(model, policy)
-        results[target] = V
-        print(target, "value from stock 5:", V[5])
-        plt.plot(model.states, V, "o-", label=f"Saving target {target}")
+        values = estimate_saving_values(model, policy, stocks)
+        results[target] = values
+        print(target, "estimated value from stock 5.5:", values[3])
+        plt.plot(stocks, values, "o-", label=f"Saving target {target}")
     plt.xlabel("Initial stock")
-    plt.ylabel("Expected discounted utility")
+    plt.ylabel("Estimated expected discounted utility")
     plt.legend()
     plt.tight_layout()
     plt.show()

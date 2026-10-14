@@ -194,7 +194,7 @@ Unless explicitly stated otherwise, we assume:
 \item \term{A stationary policy.} At a given state, the action distribution does not change with the date:
 \[\sigma_t(s)\overset{d}{=}\sigma(s).\]
 Here \(\overset{d}{=}\) means equal in distribution. A deterministic policy assigns probability one to its chosen action.
-\item We omit date subscripts on \(P\), \(R\), and \(\sigma\). Over an infinite horizon, the expected return also does not depend on the starting date; we write \(V^\sigma(s)\).
+\item We omit date subscripts on \(P\), \(R\), and \(\sigma\).
 \end{itemize}
 \end{frame}
 
@@ -206,9 +206,9 @@ To simulate a rollout from \(s_t=s\), repeat for \(\tau=1,2,\ldots\):
 \begin{align*}
 a_{t+\tau-1}&\sim\sigma(s_{t+\tau-1}),\\
 r_{t+\tau}&\sim R(s_{t+\tau-1},a_{t+\tau-1}),\\
-s_{t+\tau}&\sim P(\,\cdot\mid s_{t+\tau-1},a_{t+\tau-1}).
+s_{t+\tau}&\sim P(\,\cdot\mid s_{t+\tau-1},a_{t+\tau-1},r_{t+\tau}).
 \end{align*}
-Deterministic rules put probability one on a single outcome.
+The next-state draw conditions on the realized reward when the two are dependent.
 \begin{figure}
 \centering
 \begin{tikzpicture}[font=\sffamily\small]
@@ -216,9 +216,9 @@ Deterministic rules put probability one on a single outcome.
 \node[valueState] (s1) at (3.5,0) {$s_{t+1}$};
 \node[valueState] (s2) at (7,0) {$s_{t+2}$};
 \node (rest) at (10,0) {$\cdots$};
-\draw[valueFlow] (s0)--node[above]{$\sigma(s_t)$}node[below]{$r_{t+1}$}(s1);
-\draw[valueFlow] (s1)--node[above]{$\sigma(s_{t+1})$}node[below]{$r_{t+2}$}(s2);
-\draw[valueFlow] (s2)--node[above]{$\sigma(s_{t+2})$}node[below]{$r_{t+3}$}(rest);
+\draw[valueFlow] (s0)--node[above]{$a_t$}node[below]{$r_{t+1}$}(s1);
+\draw[valueFlow] (s1)--node[above]{$a_{t+1}$}node[below]{$r_{t+2}$}(s2);
+\draw[valueFlow] (s2)--node[above]{$a_{t+2}$}node[below]{$r_{t+3}$}(rest);
 \end{tikzpicture}
 \caption{A rollout under policy \(\sigma\).}
 \end{figure}
@@ -226,81 +226,17 @@ The associated \term{reward stream} is \(r_{t+1},r_{t+2},\ldots\).
 Rollouts can differ through actions, rewards, or state transitions.
 \end{frame}
 
-\begin{frame}{The Return of a Rollout}
-The \term{discounted accumulated reward}, or \term{return}, assigns a number to the reward stream of a rollout starting at date \(t\):
-\[G_t=r_{t+1}+\beta r_{t+2}+\cdots+\beta^{\tau-1}r_{t+\tau}+\cdots
- =\sum_{\tau=1}^{\infty}\beta^{\tau-1}r_{t+\tau}.\]
+\begin{frame}{Sources of Randomness in a Rollout}
+Fix the starting state \(s_t=s\). At each step, three draws can change the rollout:
 \begin{itemize}
-\item The first reward has weight 1; the reward \(\tau\) steps ahead has weight \(\beta^{\tau-1}\).
-\item One rollout gives one realized return. Random actions, rewards, or transitions can produce different returns under the same policy.
-\item To evaluate a policy from a given state, we consider the expected return over its possible rollouts.
+\item \textbf{Action:} \(a\sim\sigma(s)\). The policy may choose different actions at the same state.
+\item \textbf{Reward:} \(r\sim R(s,a)\). The same state and action may yield different rewards.
+\item \textbf{Next state:} \(s'\sim P(\,\cdot\mid s,a,r)\). Even after observing the reward, the next state may be uncertain.
 \end{itemize}
-\end{frame}
-
-\begin{frame}{Discounting and a Finite Return}
-Let \(\bar r<\infty\) be a \textbf{uniform bound on absolute rewards}: \(|r_{t+j}|\leq\bar r\) for every \(j\geq1\).
-\par\medskip
-For any rollout truncated after \(\tau\) periods,
-\begin{align*}
-\left|G_t^{(\tau)}\right|
- &=\left|\sum_{j=1}^{\tau}\beta^{j-1}r_{t+j}\right|
- \leq\sum_{j=1}^{\tau}\beta^{j-1}|r_{t+j}|\\
- &\leq\bar r\sum_{j=1}^{\tau}\beta^{j-1}
- =\frac{1-\beta^\tau}{1-\beta}\,\bar r.
-\end{align*}
-As \(\tau\to\infty\), \(\beta^\tau\to0\), so the infinite-horizon return satisfies
-\[|G_t|\leq\lim_{\tau\to\infty}\frac{1-\beta^\tau}{1-\beta}\,\bar r
- =\frac{\bar r}{1-\beta}.\]
-\end{frame}
-
-
-
-\begin{frame}{The Value Function of a Policy}
-The \term{state-value function under policy \(\sigma\)} is the expected return over rollouts starting at \(s\):
-\[V^\sigma(s)=\E_\sigma[G_t\mid s_t=s]
- =\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}r_{t+\tau}\,\middle|\,s_t=s\right].\]
-\begin{itemize}
-\item The subscript \(\sigma\) in \(\E_\sigma\) means that the expectation is over rollouts following this particular policy \(\sigma\).
-\item \(G_t\) is the return of one rollout. \(V^\sigma(s)\) averages over all possible rollouts from \(s\) under \(\sigma\).
-\item The expectation averages over random actions \(\sigma(s)\), rewards \(R(s,a)\), and next states drawn from \(P\), throughout the rollout. The starting state is held fixed.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{The Return Has a Recursive Form}
-Along a rollout, the return from date \(t\) is:
-\[G_t=r_{t+1}+\beta r_{t+2}+\beta^2r_{t+3}+\cdots.\]
-Separate the first reward from all later rewards:
-\begin{align*}
-G_t&=r_{t+1}+\beta\big(r_{t+2}+\beta r_{t+3}+\cdots\big)\\
-   &=r_{t+1}+\beta G_{t+1}.
-\end{align*}
-\begin{itemize}
-\item \(G_{t+1}\) is the return from the remainder of the same rollout.
-\item From the next state \(s'\), the expected remaining return is
-\[\E_\sigma[G_{t+1}\mid s_{t+1}=s']=V^\sigma(s').\]
-\end{itemize}
-This lets us replace an infinite reward sequence with a one-step equation.
-\end{frame}
-
-
-\begin{frame}{What Does the Expectation Average Over?}
 \small
-Fix the starting state \(s_t=s\). There are three possible sources of randomness:
-\begin{itemize}
-\item \textbf{Action:} \(\sigma(s)\) is a random action; \(a\) is one realization.
-\item \textbf{Reward:} the reward function \(R(s,a)\) may be random; \(r\) is one realized reward.
-\item \textbf{Next state:} \(s'\) is drawn from the transition kernel. Conditional on reward \(r\), use \(P(s'\mid s,a,r)\).
-\end{itemize}
-For discrete outcomes, expand \(V^\sigma(s)=\E_\sigma[G_t\mid s_t=s]\):
-\[V^\sigma(s)=
-\sum_a\underbrace{\Pr\{\sigma(s)=a\}}_{\text{action}}
-\sum_r\underbrace{\Pr\{R(s,a)=r\}}_{\text{reward}}
-\sum_{s'}\underbrace{P(s'\mid s,a,r)}_{\text{next state}}
-\bigl[r+\beta V^\sigma(s')\bigr].\]
-The mean reward and the original transition kernel are
-\[\E[R(s,a)]=\sum_r r\Pr\{R(s,a)=r\},\qquad
-P(s'\mid s,a)=\sum_r\Pr\{R(s,a)=r\}P(s'\mid s,a,r).\]
-\footnotesize Rewards and next states may be dependent. For continuous outcomes, replace the corresponding sums by integrals.
+Rewards and next states can be dependent. Averaging over the reward recovers the original transition kernel; for discrete rewards,
+\[P(s'\mid s,a)=\sum_r\Pr\{R(s,a)=r\}\,P(s'\mid s,a,r).\]
+A deterministic policy or reward function puts probability one on a single outcome.
 \end{frame}
 
 \begin{frame}{One Starting State, Many Possible Rollouts}
@@ -344,24 +280,80 @@ Restarting from the same \(s_0\) can generate different paths. Draw again at eac
 \end{itemize}
 \end{frame}
 
-\begin{frame}{The Bellman Equation for a Fixed Policy}
-For a deterministic policy \(a=\sigma(s)\), average \(G_t=r_{t+1}+\beta G_{t+1}\) conditional on \(s_t=s\):
-\begin{align*}
-V^\sigma(s)
- &=\E_\sigma[r_{t+1}+\beta G_{t+1}\mid s_t=s]\\
- &=\E[R(s,\sigma(s))]+\beta\E[V^\sigma(s_{t+1})\mid s_t=s,\;a_t=\sigma(s)].
-\end{align*}
-The second equality uses the law of iterated expectations and the Markov structure.
+\begin{frame}{The Return of a Rollout}
+The \term{discounted accumulated reward}, or \term{return}, assigns a number to the reward stream of a rollout starting at date \(t\):
+\[G_t=r_{t+1}+\beta r_{t+2}+\cdots+\beta^{\tau-1}r_{t+\tau}+\cdots
+ =\sum_{\tau=1}^{\infty}\beta^{\tau-1}r_{t+\tau}.\]
+\begin{itemize}
+\item The first reward has weight 1; the reward \(\tau\) steps ahead has weight \(\beta^{\tau-1}\).
+\item One rollout gives one realized return. Random actions, rewards, or transitions can produce different returns under the same policy.
+\item To evaluate a policy from a given state, we consider the expected return over its possible rollouts.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Discounting and a Finite Return}
+Let \(\bar r<\infty\) be a \textbf{uniform bound on absolute rewards}: \(|r_{t+j}|\leq\bar r\) for every \(j\geq1\).
 \par\medskip
-For a finite state space, the \term{policy Bellman equation} is
-\[V^\sigma(s)=\E[R(s,\sigma(s))]
- +\beta\sum_{s'\in\Sset}P(s'\mid s,\sigma(s))V^\sigma(s').\]
-\small Current expected reward plus discounted expected continuation value. For a continuous state space, replace the sum by an integral with respect to \(P(ds'\mid s,\sigma(s))\).
+For any rollout truncated after \(\tau\) periods,
+\begin{align*}
+\left|G_t^{(\tau)}\right|
+ &=\left|\sum_{j=1}^{\tau}\beta^{j-1}r_{t+j}\right|
+ \leq\sum_{j=1}^{\tau}\beta^{j-1}|r_{t+j}|\\
+ &\leq\bar r\sum_{j=1}^{\tau}\beta^{j-1}
+ =\frac{1-\beta^\tau}{1-\beta}\,\bar r.
+\end{align*}
+As \(\tau\to\infty\), \(\beta^\tau\to0\), so the infinite-horizon return satisfies
+\[|G_t|\leq\lim_{\tau\to\infty}\frac{1-\beta^\tau}{1-\beta}\,\bar r
+ =\frac{\bar r}{1-\beta}.\]
+\end{frame}
+
+\begin{frame}{The Value Function of a Policy}
+The \term{state-value function under policy \(\sigma\)} is the expected return over rollouts starting at \(s\):
+\[V^\sigma(s)=\E_\sigma[G_t\mid s_t=s]
+ =\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}r_{t+\tau}\,\middle|\,s_t=s\right].\]
+\begin{itemize}
+\item The subscript \(\sigma\) in \(\E_\sigma\) means that the expectation is over rollouts following this particular policy \(\sigma\).
+\item \(G_t\) is the return of one rollout. \(V^\sigma(s)\) averages over all possible rollouts from \(s\) under \(\sigma\).
+\item The expectation averages over random actions \(\sigma(s)\), rewards \(R(s,a)\), and next states drawn from \(P\), throughout the rollout. The starting state is held fixed.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Return Has a Recursive Form}
+Along a rollout, the return from date \(t\) is:
+\[G_t=r_{t+1}+\beta r_{t+2}+\beta^2r_{t+3}+\cdots.\]
+Separate the first reward from all later rewards:
+\begin{align*}
+G_t&=r_{t+1}+\beta\big(r_{t+2}+\beta r_{t+3}+\cdots\big)\\
+   &=r_{t+1}+\beta G_{t+1}.
+\end{align*}
+\begin{itemize}
+\item \(G_{t+1}\) is the return from the remainder of the same rollout.
+\item From the next state \(s'\), the expected remaining return is
+\[\E_\sigma[G_{t+1}\mid s_{t+1}=s']=V^\sigma(s').\]
+\end{itemize}
+This lets us replace an infinite reward sequence with a one-step equation.
+\end{frame}
+
+\begin{frame}{Expanding the Expectation}
+\small
+Using \(G_t=r_{t+1}+\beta G_{t+1}\), average over the remaining rollout after the first step:
+\[V^\sigma(s)=\E_\sigma\!\left[r_{t+1}+\beta V^\sigma(s_{t+1})\mid s_t=s\right].\]
+For discrete outcomes, the \term{policy Bellman equation} expands as
+\[V^\sigma(s)=
+\sum_a\underbrace{\Pr\{\sigma(s)=a\}}_{\text{action}}
+\sum_r\underbrace{\Pr\{R(s,a)=r\}}_{\text{reward}}
+\sum_{s'}\underbrace{P(s'\mid s,a,r)}_{\text{next state}}
+\bigl[r+\beta V^\sigma(s')\bigr].\]
+For a deterministic policy \(a=\sigma(s)\), collect the current and continuation terms:
+\[V^\sigma(s)=
+\underbrace{\sum_r r\Pr\{R(s,\sigma(s))=r\}}_{\text{expected current reward}}
++\beta\underbrace{\sum_{s'}P(s'\mid s,\sigma(s))V^\sigma(s')}_{\text{expected continuation value}}.\]
+\footnotesize For continuous outcomes, replace the corresponding sums by integrals with respect to their probability distributions.
 \end{frame}
 
 \begin{frame}{Policy Evaluation as a Linear System}
-For a finite state space, fix a deterministic policy \(\sigma\) and define
-\[P^\sigma_{ij}=P(j\mid i,\sigma(i)),\qquad \mu^\sigma_i=\E[R(i,\sigma(i))].\]
+For finite states and discrete rewards, fix a deterministic policy \(\sigma\) and define
+\[P^\sigma_{ij}=P(j\mid i,\sigma(i)),\qquad \mu^\sigma_i=\sum_r r\Pr\{R(i,\sigma(i))=r\}.\]
 \begin{itemize}
 \item Row \(i\) of \(P^\sigma\) gives next-state probabilities when we follow \(\sigma\) from state \(i\).
 \item Entry \(i\) of \(\mu^\sigma\) is the current expected reward at that state.
@@ -373,11 +365,11 @@ Treat \(V^\sigma\) and \(\mu^\sigma\) as column vectors. The policy Bellman equa
 \end{frame}
 
 \begin{frame}{From a Given Policy to the Optimal Value}
-For the finite-state, finite-action models below, let \(\Sigma\) denote the feasible stationary deterministic policies. The \term{optimal value function} is
+For a finite-state, finite-action MDP with discrete rewards, let \(\Sigma\) denote the feasible stationary deterministic policies. The \term{optimal value function} is
 \[V^*(s)=\max_{\sigma\in\Sigma}V^\sigma(s).\]
 Choose the current action, then follow an optimal policy from the next state. This gives the \term{Bellman optimality equation}:
 \[V^*(s)=\max_{a\in\Aset(s)}
- \left\{\E[R(s,a)]+\beta\sum_{s'\in\Sset}P(s'\mid s,a)V^*(s')\right\}.\]
+ \left\{\sum_r r\Pr\{R(s,a)=r\}+\beta\sum_{s'\in\Sset}P(s'\mid s,a)V^*(s')\right\}.\]
 \begin{itemize}
 \item The first term is expected current reward; the second is expected continuation value.
 \item The action is chosen before the next state is observed. Later actions can respond to the state that is realized.
@@ -432,45 +424,41 @@ Allowing the worker to choose gives
 \end{frame}
 
 \begin{frame}{Consumption and Saving: Setup}
-A household divides its current stock between consumption and saving.
+A household divides its current stock between consumption and saving. Goods are \textbf{continuously divisible}.
 \begin{itemize}
-\item \textbf{Choice:} from stock \(\modelvar{s}\), save \(\modelvar{a}\) and consume \(\modelvar{c=s-a}\). No borrowing; storage capacity \(\modelvar{M}\).
-\item \textbf{Next period:} savings carry over one for one, plus new income \(\modelvar{Y_{t+1}}\), drawn independently and uniformly from \(\modelvar{\{0,\ldots,B\}}\).
+\item \textbf{Choice:} from stock \(\modelvar{s}\), save \(\modelvar{a\in[0,\min(s,M)]}\) and consume \(\modelvar{c=s-a}\). No borrowing; storage capacity \(\modelvar{M\geq0}\).
+\item \textbf{Next period:} savings carry over one for one, plus income \(\modelvar{Y_{t+1}\sim\mathrm{Uniform}[0,B]}\), with \(\modelvar{B>0}\). Income draws are independent across periods.
 \item \textbf{Preferences:} utility \(\modelvar{u(c)=c^\alpha}\), with \(\modelvar{0<\alpha<1}\), and discount factor \(\modelvar{\beta}\).
 \item \textbf{Objective:} maximize expected discounted utility.
 \end{itemize}
-This extends cake eating with new income: consume now or save for periods when income is low.
+New income replenishes the stock: consume now or save for periods when income is low.
 \end{frame}
 
 \begin{frame}{Consumption and Saving as an MDP}
 \small
-Use whole units of goods. The state is current stock \(s\); the action \(a\) is the amount \textbf{saved}:
-\[\Sset=\{0,\ldots,M+B\},\qquad
-\Aset(s)=\{0,\ldots,\min(s,M)\}.\]
+The state is current stock \(s\); the action \(a\) is the amount \textbf{saved}. Both range over real intervals:
+\[\Sset=[0,M+B],\qquad \Aset(s)=[0,\min(s,M)].\]
 Consumption, reward, and the next state are
 \[c=s-a,\qquad R(s,a)=(s-a)^\alpha,\qquad s'=a+Y'.\]
-The \term{transition kernel} is
-\[P(s'\mid s,a)=
-\begin{cases}
-1/(B+1),&a\leq s'\leq a+B,\\
-0,&\text{otherwise}.
-\end{cases}\]
+Thus \(s'\mid(s,a)\sim\mathrm{Uniform}[a,a+B]\). For a measurable subset \(\bar S\subseteq\Sset\), the \term{transition kernel} is
+\[P(\bar S\mid s,a)=\frac{1}{B}\int_0^B
+\mathbf{1}\{a+y\in\bar S\}\,dy.\]
 \begin{itemize}
-\item \(\sigma(s)\) gives saving at stock \(s\); consumption is \(s-\sigma(s)\).
-\item The state space is closed: saving is at most \(M\), and next income is at most \(B\).
+\item The indicator is one when the next stock belongs to \(\bar S\), and zero otherwise.
+\item A deterministic policy \(\sigma(s)\in[0,\min(s,M)]\) specifies saving at every stock.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Consumption and Saving: Recursive Values}
-For a specified saving policy \(\sigma\),
+For a specified deterministic saving policy \(\sigma\),
 \[V^\sigma(s)=\bigl(s-\sigma(s)\bigr)^\alpha
- +\frac{\beta}{B+1}\sum_{y=0}^{B}V^\sigma\bigl(\sigma(s)+y\bigr).\]
-Choosing saving optimally instead gives
-\[V^*(s)=\max_{a\in\{0,\ldots,\min(s,M)\}}
-\left\{(s-a)^\alpha+\frac{\beta}{B+1}\sum_{y=0}^{B}V^*(a+y)\right\}.\]
+ +\frac{\beta}{B}\int_0^B V^\sigma\bigl(\sigma(s)+y\bigr)\,dy.\]
+Choosing saving optimally gives
+\[V^*(s)=\max_{a\in[0,\min(s,M)]}
+\left\{(s-a)^\alpha+\frac{\beta}{B}\int_0^B V^*(a+y)\,dy\right\}.\]
 \begin{itemize}
-\item Saving more lowers current utility and changes the distribution of next-period resources.
-\item A given saving rule \(\sigma\) determines \(P^\sigma\) and \(\mu^\sigma\). Solving \((I-\beta P^\sigma)V^\sigma=\mu^\sigma\) gives its value at every stock.
+\item The integral averages continuation values over continuously distributed income, whose density is \(1/B\) on \([0,B]\).
+\item Saving more lowers current utility and raises next-period resources for each income realization.
 \end{itemize}
 \end{frame}
 
@@ -491,6 +479,7 @@ Choosing saving optimally instead gives
 \item \href{https://python.quantecon.org/mccall_model.html\#the-mccall-model}{Job Search I: The McCall Search Model — The McCall Model}
 \item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#discrete-dps}{Discrete State Dynamic Programming — Discrete DPs}
 \item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#example-a-growth-model}{Discrete State Dynamic Programming — Example: A Growth Model}
+\item \href{https://dynamics.quantecon.org/ifp.html\#the-optimal-savings-problem}{The Income Fluctuation Problem I: Basic Model — The Optimal Savings Problem}
 \end{itemize}}
 \end{frame}
 % END MANAGED READINGS: week2_value
