@@ -41,8 +41,7 @@
 
 - **Lecture**
 
-    - [KKT Conditions, Euler Equation and Time Iteration](week_03/lecture/slides/pdf/KKT_Conditions_Euler_Equation_and_Time_Iteration.pdf)
-    - [Endogenous Grid Method](week_03/lecture/slides/pdf/Endogenous_Grid_Method.pdf)
+    - [Q Functions, Optimality, and Value Function Iteration](week_03/lecture/slides/pdf/Q_Functions_Optimality_and_Value_Function_Iteration.pdf)
 
 - **Lab**
 

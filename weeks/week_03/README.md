@@ -1,11 +1,10 @@
-# Week 3 (Oct 21): Euler equations and endogenous grids
+# Week 3 (Oct 21): Q functions, optimality, and value function iteration
 
 [Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_03/)
 
 - **Lecture**
 
-    - [KKT Conditions, Euler Equation and Time Iteration](lecture/slides/pdf/KKT_Conditions_Euler_Equation_and_Time_Iteration.pdf)
-    - [Endogenous Grid Method](lecture/slides/pdf/Endogenous_Grid_Method.pdf)
+    - [Q Functions, Optimality, and Value Function Iteration](lecture/slides/pdf/Q_Functions_Optimality_and_Value_Function_Iteration.pdf)
 
 - **Lab**
 

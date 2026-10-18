@@ -1,0 +1,447 @@
+% Topic content; common layout lives in the shared course preamble.
+\newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
+\input{\CourseTemplatePath course_preamble.tex}
+\title[Q Functions, Optimality, and VFI]{Lecture: Q Functions, Optimality,\newline and Value Function Iteration}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Sset}{\mathcal S}
+\newcommand{\Aset}{\mathcal A}
+\tikzset{valueState/.style={draw=SessionTeal,fill=SessionTealLight,rounded corners=1mm,minimum width=15mm,minimum height=9mm,align=center},valueFlow/.style={-{Stealth[length=2mm]},draw=SessionCharcoal,line width=.8pt},stateCircle/.style={circle,draw=SessionTeal,fill=white,minimum size=6mm,inner sep=1pt},actionCircle/.style={circle,draw=SessionTeal,fill=SessionTeal,minimum size=3mm,inner sep=0pt}}
+% The maze geometry and reward convention match the Week 1 example.
+\definecolor{ValueMazeWall}{HTML}{928580}
+\newcommand{\ValueMazeBase}{%
+  \fill[white] (0,0) rectangle (9,6);
+  \foreach \x/\y in {2/2,2/3,2/4,7/3,7/4,7/5,5/1}
+    \fill[ValueMazeWall] (\x,\y) rectangle +(1,1);
+  \draw[SessionLine,line width=.3pt,step=1] (0,0) grid (9,6);
+  \draw[SessionCharcoal,line width=.7pt] (0,0) rectangle (9,6);
+  % S and G label the endpoint states; other free cells are numbered.
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,5.92) {1};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,5.92) {2};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,5.92) {3};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,5.92) {4};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,5.92) {5};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,5.92) {6};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,5.92) {7};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,4.92) {8};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,4.92) {9};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,4.92) {10};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,4.92) {11};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,4.92) {12};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,4.92) {13};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,4.92) {14};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,3.92) {15};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,3.92) {16};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,3.92) {17};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,3.92) {18};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,3.92) {19};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,3.92) {20};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,2.92) {21};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,2.92) {22};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,2.92) {23};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,2.92) {24};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,2.92) {25};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,2.92) {26};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,2.92) {27};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,2.92) {28};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,1.92) {29};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,1.92) {30};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,1.92) {31};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,1.92) {32};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,1.92) {33};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,1.92) {34};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,1.92) {35};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,1.92) {36};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,0.92) {37};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,0.92) {38};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,0.92) {39};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,0.92) {40};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,0.92) {41};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,0.92) {42};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,0.92) {43};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,0.92) {44};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,0.92) {45};
+}
+\newcommand{\ValueMazeLabels}{%
+  \node[font=\sffamily\large,text=SessionCharcoal,fill=white,inner sep=0pt] at (.5,3.5) {S};
+  \node[font=\sffamily\large,text=SessionCharcoal,fill=white,inner sep=0pt] at (8.5,5.5) {G};
+}
+
+\begin{document}
+\makecoursetitle
+
+\begin{frame}{Lecture Overview}
+\begin{itemize}
+\item \textbf{Action Values: The Q Function}
+  \begin{itemize}\item Fixing the first action\item How \(Q^\sigma\) and \(V^\sigma\) are related\end{itemize}
+\item \textbf{The Principle of Optimality}
+  \begin{itemize}\item Optimal continuation from the next state\item Bellman optimality equations and branching diagrams\end{itemize}
+\item \textbf{Value Function Iteration}
+  \begin{itemize}\item The Bellman update, convergence, and a stopping rule\item Recovering a policy; job search and continuous saving\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Recap: Returns and State Values}
+From state \(s_t=s\), follow a stationary policy \(\sigma\):
+\[G_t=\sum_{\tau=1}^{\infty}\beta^{\tau-1}r_{t+\tau},
+\qquad V^\sigma(s)=\E_\sigma[G_t\mid s_t=s].\]
+\begin{itemize}
+\item \(V^\sigma(s)\) evaluates a \textbf{state} when every action follows \(\sigma\).
+\item Realized actions, rewards, and next states come from \(\sigma\), \(R\), and \(P\). The dynamics are time-homogeneous.
+\item Assume \(0<\beta<1\) and bounded absolute rewards. The return and value are then finite.
+\item We first use finite states and actions. The saving example later has a continuous state and action space.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Which First Move?}
+\begin{columns}[c]
+\begin{column}{.51\textwidth}
+At S, compare \textbf{up} with \textbf{down}, then follow the same continuation policy \(\sigma\).
+\begin{itemize}
+\item Both moves give reward \(-1\).
+\item Their next states differ, so their future returns can differ.
+\item \(V^\sigma(\mathrm S)\) gives one number for S. We need a value for \textbf{each first action}.
+\end{itemize}
+\small G is absorbing; rewards are zero there. Every move before reaching G costs one, including entry into G.
+\end{column}
+\begin{column}{.46\textwidth}
+\begin{figure}\centering
+\begin{tikzpicture}[x=.57cm,y=.57cm]
+\ValueMazeBase
+\draw[valueFlow,draw=SessionTeal,line width=1.3pt] (.5,3.65)--(.5,4.5);
+\draw[valueFlow,draw=SessionRed,line width=1.3pt] (.5,3.35)--(.5,2.5);
+\ValueMazeLabels
+\end{tikzpicture}
+\caption{Two choices at S.}
+\end{figure}
+\end{column}\end{columns}
+\end{frame}
+
+\begin{frame}{The Action-Value Function}
+The \term{action-value function} \(Q^\sigma(s,a)\) is the expected return when we start at \(s\), take action \(a\), and follow \(\sigma\) thereafter:
+\[Q^\sigma(s,a)=\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}r_{t+\tau}
+\,\middle|\,s_t=s,\ a_t=a\right].\]
+\begin{itemize}
+\item The first action \(a\) is \textbf{fixed}; actions from date \(t+1\) onward follow \(\sigma\).
+\item \(a\) may differ from the action that \(\sigma\) would choose at \(s\). Interpret the conditioning as deliberately taking \(a\), even if \(\sigma\) never selects it.
+\item Rewards and subsequent states can still be random.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Linking Q and V}
+\small
+Fixing the first action gives
+\[Q^\sigma(s,a)=\E\!\left[r_{t+1}+\beta V^\sigma(s_{t+1})\mid s_t=s,a_t=a\right].\]
+For discrete rewards and next states, expand this expectation:
+\[Q^\sigma(s,a)=\sum_r\Pr\{R(s,a)=r\}\sum_{s'}P(s'\mid s,a,r)
+\bigl[r+\beta V^\sigma(s')\bigr].\]
+Averaging the first action according to the policy recovers the state value:
+\[V^\sigma(s)=\sum_{a\in\Aset(s)}\Pr\{\sigma(s)=a\}\,Q^\sigma(s,a).\]
+For a deterministic policy, \(V^\sigma(s)=Q^\sigma(s,\sigma(s))\).
+\par\smallskip
+\footnotesize The conditional kernel allows reward--next-state dependence. Replace sums by probability integrals for continuous outcomes.
+\end{frame}
+
+\begin{frame}{Why Use Q?}
+\begin{itemize}
+\item \textbf{Compare actions at the same state.} \(Q^\sigma(s,a)\) includes the immediate reward and the consequences of following \(\sigma\) afterward.
+\item \textbf{Choose an action directly.} Given action values, a \term{greedy action} is
+\[a_{\mathrm g}(s)\in\argmax_{a\in\Aset(s)}Q^\sigma(s,a).\]
+\item \textbf{Learn from experience.} Returns from rollouts starting with \((s,a)\) can estimate \(Q^\sigma(s,a)\); an explicit transition model is not required for this estimation.
+\end{itemize}
+\small A greedy choice from \(Q^\sigma\) uses \(\sigma\)'s continuation values. It need not already be optimal. Storing action values also takes more space than storing one value per state.
+\end{frame}
+
+\begin{frame}{Example: An Optimal Continuation}
+\small
+Keep the route from S to cell 23 fixed. At cell 23, compare two continuations to G.
+\begin{columns}[c]
+\begin{column}{.56\textwidth}
+\begin{figure}\centering
+\begin{tikzpicture}[x=.62cm,y=.62cm]
+\ValueMazeBase
+\foreach \x/\y/\u/\v in {0/3/0/2,0/2/0/1,0/1/1/1,1/1/2/1,2/1/3/1,3/1/3/2}
+ \draw[valueFlow,shorten <=2pt,shorten >=2pt] (\x+.5,\y+.5)--(\u+.5,\v+.5);
+\foreach \x/\y/\u/\v in {3/2/4/2,4/2/5/2,5/2/6/2,6/2/7/2,7/2/8/2,8/2/8/3,8/3/8/4,8/4/8/5}
+ \draw[valueFlow,draw=SessionTeal,shorten <=2pt,shorten >=2pt] (\x+.5,\y+.5)--(\u+.5,\v+.5);
+\foreach \x/\y/\u/\v in {3/2/3/3,3/3/4/3,4/3/5/3,5/3/6/3,6/3/6/2}
+ \draw[valueFlow,draw=SessionRed,dashed,shorten <=2pt,shorten >=2pt] (\x+.5,\y+.5)--(\u+.5,\v+.5);
+\draw[CourseVariableColor,line width=1pt] (3.5,2.5) circle (.3);
+\ValueMazeLabels
+\end{tikzpicture}
+\caption{A common prefix and two continuations.}
+\end{figure}
+\end{column}
+\begin{column}{.41\textwidth}
+\begin{itemize}
+\item \textcolor{SessionTeal}{Solid continuation:} 8 moves.
+\item \textcolor{SessionRed}{Dashed detour:} 10 moves, including the shared final segment.
+\end{itemize}
+At cell 23, a continuation of \(L\) moves gives
+\[-\sum_{j=0}^{L-1}\beta^j.\]
+Replacing the detour raises return from S by \(\beta^6(\beta^8+\beta^9)>0\).
+\end{column}\end{columns}
+\end{frame}
+
+\begin{frame}{The Principle of Optimality}
+For an optimal policy, the continuation must be optimal from each state reached with positive probability.
+\begin{itemize}
+\item Suppose a better continuation is available at a reached state.
+\item Keep all earlier choices unchanged and switch to that better continuation.
+\item The original plan's expected return then increases, contradicting its optimality.
+\end{itemize}
+\par\medskip
+The \term{Markov state} contains the information needed for future decisions. Earlier rewards are already realized; they do not change which continuation is best.
+\par\smallskip
+\small With uncertainty, the continuation is a policy for every possible next state. Optimality concerns \textbf{expected return}, not whether each realized path is the shortest or luckiest.
+\end{frame}
+
+\begin{frame}{Optimal State and Action Values}
+For a finite discounted MDP, an optimal stationary deterministic policy exists. Define
+\[V^*(s)=\max_\sigma V^\sigma(s),\qquad
+Q^*(s,a)=\max_\sigma Q^\sigma(s,a).\]
+The principle of optimality gives
+\begin{align*}
+Q^*(s,a)&=\E\!\left[r_{t+1}+\beta V^*(s_{t+1})\mid s_t=s,a_t=a\right],\\
+V^*(s)&=\max_{a\in\Aset(s)}Q^*(s,a).
+\end{align*}
+\begin{itemize}
+\item \(Q^*\): fix the current action, then choose optimally afterward.
+\item \(V^*\): also choose the current action optimally.
+\item The expectation averages the outcomes of the chosen action; it does not let us choose the random outcome.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Optimality as a One-Step Look Ahead}
+\small
+\begin{columns}[T]
+\begin{column}{.49\textwidth}\centering
+\(V^*(s)=\max_a Q^*(s,a)\)
+\begin{figure}\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize]
+\node[stateCircle] (s) at (0,0) {\(s\)};
+\foreach \i/\x in {1/-1.35,2/1.35}{
+ \node[actionCircle,label={right:\(a_\i\)}] (a\i) at (\x,-1) {};
+ \draw[valueFlow] (s)--(a\i);
+ \foreach \j/\dx in {1/-.55,2/.55}{
+  \node[stateCircle] (t\i\j) at (\x+\dx,-2.2) {};
+  \draw[valueFlow] (a\i)--(t\i\j);
+ }
+}
+\node[text=SessionTeal] at (0,-.55) {maximize};
+\node[text=SessionMuted] at (0,-2.85) {average \(r+\beta V^*(s')\) for each action};
+\end{tikzpicture}
+\caption{Choose now, average outcomes.}
+\end{figure}\end{column}
+\begin{column}{.49\textwidth}\centering
+\(Q^*(s,a)=\E[r+\beta\max_{a'}Q^*(s',a')\mid s,a]\)
+\begin{figure}\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize]
+\node[actionCircle,label={above:\((s,a)\)}] (a) at (0,0) {};
+\foreach \i/\x in {1/-1.35,2/1.35}{
+ \node[stateCircle] (s\i) at (\x,-1) {\(s'_\i\)};
+ \draw[valueFlow] (a)--(s\i);
+ \foreach \j/\dx in {1/-.55,2/.55}{
+  \node[actionCircle] (b\i\j) at (\x+\dx,-2.2) {};
+  \draw[valueFlow] (s\i)--(b\i\j);
+ }
+ \node[text=SessionTeal] at (\x,-1.72) {maximize};
+}
+\node[text=SessionMuted] at (0,-.4) {average};
+\node[text=SessionMuted] at (0,-2.85) {choose \(a'\) after observing \(s'\)};
+\end{tikzpicture}
+\caption{Fix now, choose at the next state.}
+\end{figure}\end{column}\end{columns}
+\footnotesize Open circles: states. Filled circles: state--action pairs. Adapted from Sutton and Barto (2018), Figure 3.4; branches group reward and next-state outcomes.
+\end{frame}
+
+\begin{frame}{The Bellman Optimality Operator}
+An \term{operator} maps a candidate value function \(v\) to a new function:
+\[(Tv)(s)=\max_{a\in\Aset(s)}
+\sum_r\Pr\{R(s,a)=r\}\sum_{s'}P(s'\mid s,a,r)
+\bigl[r+\beta v(s')\bigr].\]
+\begin{itemize}
+\item \(v(s')\) is our current estimate of the continuation value.
+\item For each action, average current reward plus discounted continuation value; retain the largest result.
+\item The optimal value is a \term{fixed point}: \(TV^*=V^*\).
+\item Policy evaluation keeps a given policy fixed. This operator maximizes over actions at every update.
+\end{itemize}
+\small The sums describe discrete outcomes; probability integrals give the continuous version.
+\end{frame}
+
+\begin{frame}{Value Function Iteration}
+\small
+For a finite MDP with known reward and transition distributions:
+\begin{enumerate}
+\item Initialize \(v_0(s)=0\) for all states; keep absorbing zero-reward terminal states at zero.
+\item For every state \(s\), score each feasible action using the \textbf{old} function:
+\[q_k(s,a)=\sum_r\Pr\{R(s,a)=r\}\sum_{s'}P(s'\mid s,a,r)
+\bigl[r+\beta v_k(s')\bigr].\]
+\item Store the best score in a new function: \(v_{k+1}(s)=\max_a q_k(s,a)\).
+\item Check the stopping rule; otherwise replace \(v_k\) by \(v_{k+1}\) and repeat.
+\end{enumerate}
+Here \(q_k\) is an action score based on the current approximation; it need not equal \(Q^\sigma\) for a particular policy.
+\par\smallskip
+One \term{sweep} updates every state once. Using a separate new array makes these updates synchronous.
+\end{frame}
+
+\begin{frame}{Example: Values Move Back Through the Maze}
+\small
+Consider cells 28, 20, and 14 near G in the same maze. Set \(\beta=0.9\), \(v_0=0\); each move before G costs one.
+\begin{figure}\centering
+\begin{tikzpicture}[font=\sffamily\small]
+\foreach \i/\lab in {0/28,1/20,2/14,3/G}
+ \node[valueState] (s\i) at (2.6*\i,0) {\lab};
+\foreach \i/\j in {0/1,1/2,2/3}
+ \draw[valueFlow] (s\i)--node[above]{up}(s\j);
+\end{tikzpicture}
+\caption{The final corridor to G.}
+\end{figure}
+\begin{center}
+\begin{tabular}{lrrrr}\toprule
+ & Cell 28 & Cell 20 & Cell 14 & G\\\midrule
+\(v_0\)&0&0&0&0\\
+\(v_1\)&\(-1\)&\(-1\)&\(-1\)&0\\
+\(v_2\)&\(-1.9\)&\(-1.9\)&\(-1\)&0\\
+\(v_3\)&\(-2.71\)&\(-1.9\)&\(-1\)&0\\\bottomrule
+\end{tabular}
+\end{center}
+For example, \(v_3(28)=-1+0.9v_2(20)=-2.71\).
+With zero initialization, \(v_k\) is the optimal \(k\)-period return with zero value afterward.
+\end{frame}
+
+\begin{frame}{Why VFI Converges}
+\small
+For finite states, use \(\|v-w\|_\infty=\max_s|v(s)-w(s)|\). The difference between two scores for the \textbf{same action} satisfies
+\[\left|\beta\E[v(s')-w(s')\mid s,a]\right|\leq\beta\|v-w\|_\infty.\]
+Since \(|\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a|\),
+\[\|Tv-Tw\|_\infty\leq\beta\|v-w\|_\infty.\]
+Thus \(T\) is a \term{contraction}: it reduces the maximum distance by at least the factor \(\beta<1\).
+\begin{itemize}
+\item There is a unique fixed point \(V^*\); every initial finite vector converges to it.
+\item After \(k\) sweeps,
+\[\|v_k-V^*\|_\infty\leq\beta^k\|v_0-V^*\|_\infty.\]
+\item A discount factor closer to one gives a slower worst-case rate.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Stopping Rule With an Error Bound}
+\small
+After computing \(v_{k+1}=Tv_k\), measure the \term{Bellman residual} of \(v_k\):
+\[d_k=\|Tv_k-v_k\|_\infty=\|v_{k+1}-v_k\|_\infty.\]
+The contraction inequality gives
+\begin{align*}
+\|v_k-V^*\|_\infty
+&\leq\|v_k-Tv_k\|_\infty+\|Tv_k-TV^*\|_\infty\\
+&\leq d_k+\beta\|v_k-V^*\|_\infty,
+\end{align*}
+so \(\|v_k-V^*\|_\infty\leq d_k/(1-\beta)\).
+\begin{itemize}
+\item To guarantee value error at most \(\varepsilon\), stop when \(d_k\leq(1-\beta)\varepsilon\) and return \(v_k\).
+\item At \(\beta=0.9\) and \(\varepsilon=0.01\), require \(d_k\leq0.001\).
+\end{itemize}
+\footnotesize This guarantee uses exact expectations and maximization. Numerical approximation introduces additional errors.
+\end{frame}
+
+\begin{frame}{Recovering a Policy}
+For the returned value estimate \(v\), choose
+\[\widehat\sigma(s)\in\argmax_{a\in\Aset(s)}
+\sum_r\Pr\{R(s,a)=r\}\sum_{s'}P(s'\mid s,a,r)
+\bigl[r+\beta v(s')\bigr].\]
+\begin{itemize}
+\item With \(v=V^*\), any maximizing action is optimal; ties are allowed.
+\item With an approximate \(v\), this is a candidate policy. Evaluate it to check the return it actually achieves.
+\item Greedy means maximizing \textbf{current reward plus continuation value}, not just immediate reward.
+\item Recompute action scores using the returned \(v\), and break ties consistently.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example: VFI for McCall Job Search}
+\small
+The state is \((\mathrm U,w)\) or \((\mathrm E,w)\). Rejecting pays \(b\) and draws a new offer \(w'\) with probability \(q(w')\); accepting pays \(w\) forever.
+\[v_k((\mathrm E,w))=\frac{w}{1-\beta}\quad\text{for every }k.\]
+Use this known employed value and update unemployed states:
+\begin{align*}
+q_k((\mathrm U,w),\text{accept})&=\frac{w}{1-\beta},\\
+q_k((\mathrm U,w),\text{reject})&=b+\beta\sum_{w'}q(w')v_k((\mathrm U,w')),\\
+v_{k+1}((\mathrm U,w))&=\max\{q_k((\mathrm U,w),\text{accept}),\ q_k((\mathrm U,w),\text{reject})\}.
+\end{align*}
+\begin{itemize}
+\item Start unemployed-state values at zero; keep employed-state values fixed at their exact values.
+\item At convergence, accept when the acceptance score is at least the rejection score.
+\end{itemize}
+\footnotesize Lowercase \(q(w')\) is the offer probability; \(q_k(s,a)\) is the iteration's action score.
+\end{frame}
+
+\begin{frame}{Example: McCall Iterations}
+\small
+Use \(\beta=0.9\), \(b=1\), offers \((1,2,3,4,5)\), and probabilities \((0.1,0.2,0.4,0.2,0.1)\).
+\begin{center}
+\begin{tabular}{lrrrrr}\toprule
+ & \(w=1\)&\(w=2\)&\(w=3\)&\(w=4\)&\(w=5\)\\\midrule
+\(v_0\)&0.00&0.00&0.00&0.00&0.00\\
+\(v_1\)&10.00&20.00&30.00&40.00&50.00\\
+\(v_2\)&28.00&28.00&30.00&40.00&50.00\\
+\(v_3\)&31.06&31.06&31.06&40.00&50.00\\
+\(v_10\)&34.20&34.20&34.20&40.00&50.00\\
+\(V^*\)&34.32&34.32&34.32&40.00&50.00\\
+\bottomrule\end{tabular}
+\end{center}
+Columns give unemployed-state values; the last row is \(V^*\). Acceptance values are \((10,20,30,40,50)\).
+\begin{itemize}
+\item The first update values waiting at only \(1\); later updates incorporate the value of future offers.
+\item In the limit, reject offers 1--3 and accept 4--5. For rejected offers, the common value solves
+\[x=1+0.9\bigl(0.7x+0.2\times40+0.1\times50\bigr),\qquad x=\frac{12.7}{0.37}.\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example: VFI for Continuous Saving}
+\small
+Stock \(s\in[0,M+B]\); save \(a\in[0,\min(s,M)]\), consume \(s-a\), and draw \(Y'\sim\mathrm{Uniform}[0,B]\) independently. Next stock is \(s'=a+Y'\). Utility is \(c^\alpha\), with \(0<\alpha<1\), \(M\geq0\), and \(B>0\).
+\begin{align*}
+q_k(s,a)&=(s-a)^\alpha+\frac{\beta}{B}\int_0^B v_k(a+y)\,dy,\\
+v_{k+1}(s)&=\max_{a\in[0,\min(s,M)]}q_k(s,a),\\
+\widehat\sigma(s)&\in\argmax_{a\in[0,\min(s,M)]}
+\left\{(s-a)^\alpha+\frac{\beta}{B}\int_0^B v(a+y)\,dy\right\}.
+\end{align*}
+\begin{itemize}
+\item Every saving choice trades current consumption against future resources.
+\item The exact operator is a contraction on bounded continuous functions under the supremum norm. Rewards are bounded and feasible intervals are compact.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Computing the Continuous Update}
+The saving model has infinitely many states and actions. A computer needs a finite representation:
+\begin{enumerate}
+\item Store values at selected stock points and \term{interpolate} between them.
+\item Approximate the income integral by a weighted average, using \term{numerical quadrature} or sampled incomes.
+\item Maximize over the saving interval using numerical optimization or a feasible action grid.
+\end{enumerate}
+\par\medskip
+The model remains continuous. A small iteration residual measures convergence of the numerical update; it does not by itself establish accuracy for the original model.
+\par\smallskip
+Refine the state representation, integration, and maximization to check that values and choices are stable.
+\end{frame}
+
+% BEGIN MANAGED READINGS: week3_vfi
+\begin{frame}{References and Further Reading}
+\coursereading{1}
+  {Richard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]}
+  {https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf}
+  {\begin{itemize}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=80}{Section 3.5: Policies and Value Functions}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=84}{Section 3.6: Optimal Policies and Optimal Value Functions}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=104}{Section 4.4: Value Iteration}
+\end{itemize}}
+\coursereading{2}
+  {Thomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]}
+  {https://quantecon.org/lectures/}
+  {\begin{itemize}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#the-bellman-equation-and-the-principle-of-optimality}{Discrete State Dynamic Programming — The Bellman Equation and the Principle of Optimality}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#value-function-iteration}{Discrete State Dynamic Programming — Value Function Iteration}
+\item \href{https://python.quantecon.org/mccall_model.html\#the-mccall-model}{Job Search I: The McCall Search Model — The McCall Model}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#example-a-growth-model}{Discrete State Dynamic Programming — Example: A Growth Model}
+\item \href{https://dynamics.quantecon.org/ifp.html\#the-optimal-savings-problem}{The Income Fluctuation Problem I: Basic Model — The Optimal Savings Problem}
+\end{itemize}}
+\end{frame}
+% END MANAGED READINGS: week3_vfi
+\end{document}
