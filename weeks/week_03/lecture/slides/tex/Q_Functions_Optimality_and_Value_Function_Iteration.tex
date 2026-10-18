@@ -72,6 +72,26 @@
 \tikz[baseline=-.5ex]\draw[SessionLine,fill=MazeGoalFill] (0,0) rectangle (.22,.16);\ Goal (8)}
 }
 
+% The path follows the displayed policy; offset strokes keep cell text readable.
+\newcommand{\MazePolicyPath}{%
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (0.84,3.18) -- (0.84,2.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (0.84,2.18) -- (0.84,1.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (0.84,1.18) -- (1.84,1.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (1.84,1.18) -- (2.84,1.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (2.84,1.18) -- (3.84,1.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (3.84,1.18) -- (3.84,2.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (3.84,2.18) -- (3.84,3.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (3.84,3.18) -- (4.84,3.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (4.84,3.18) -- (5.84,3.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (5.84,3.18) -- (6.84,3.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (6.84,3.18) -- (6.84,2.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (6.84,2.18) -- (7.84,2.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (7.84,2.18) -- (8.84,2.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (8.84,2.18) -- (8.84,3.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (8.84,3.18) -- (8.84,4.18);
+  \draw[valueFlow,draw=CourseVariableColor,-{Stealth[length=1.4mm]},line width=.85pt] (8.84,4.18) -- (8.84,5.18);
+}
+
 % Concrete deterministic policy and its undiscounted, terminating values.
 \newcommand{\MazePolicy}{%
 \node[font=\sffamily\large,text=SessionCharcoal,inner sep=0pt] at (8.5,5.5) {U};
@@ -193,9 +213,9 @@ A fixed policy \(\sigma\) selects one action in every free cell. Set \(\beta=1\)
 \begin{column}{.60\textwidth}
 \begin{figure}\centering
 \begin{tikzpicture}[x=.76cm,y=.76cm]
-\ValueMazeBase\MazePolicy
+\ValueMazeBase\MazePolicy\MazePolicyPath
 \end{tikzpicture}\MazeLegend
-\caption{The action selected by \(\sigma\).}
+\caption{Actions and path under \(\sigma\).}
 \end{figure}
 \end{column}
 \begin{column}{.37\textwidth}
@@ -215,9 +235,9 @@ With \(\beta=1\), compute values backward from cell 8, following the actions of 
 \begin{column}{.60\textwidth}
 \begin{figure}\centering
 \begin{tikzpicture}[x=.76cm,y=.76cm]
-\ValueMazeBase\MazePolicyValues
+\ValueMazeBase\MazePolicyValues\MazePolicyPath
 \end{tikzpicture}\MazeLegend
-\caption{State values under the same policy.}
+\caption{Values and path under \(\sigma\).}
 \end{figure}
 \end{column}
 \begin{column}{.37\textwidth}
