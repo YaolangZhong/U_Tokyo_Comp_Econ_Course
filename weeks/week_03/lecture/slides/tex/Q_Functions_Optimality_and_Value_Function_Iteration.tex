@@ -206,9 +206,9 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Example: A Deterministic Maze Policy}
+\begin{frame}{Recap: Computing the Value Function of a Given Policy}
 \small
-A fixed policy \(\sigma\) selects one action in every free cell. Set \(\beta=1\) for this terminating example.
+Consider a specific deterministic policy \(\sigma\).
 \begin{columns}[c]
 \begin{column}{.60\textwidth}
 \begin{figure}\centering
@@ -222,13 +222,13 @@ A fixed policy \(\sigma\) selects one action in every free cell. Set \(\beta=1\)
 \begin{itemize}
 \item U: up; D: down;\\L: left; R: right.
 \item Each move gives \(-1\), including entry into cell 8.
-\item Cell 8 is absorbing, with reward zero; its U keeps the process there.
+\item Set \(\beta=1\) for simplicity.
 \item Following this policy reaches cell 8 from every free cell.
 \end{itemize}
 \end{column}\end{columns}
 \end{frame}
 
-\begin{frame}{Example: Computing the Policy's Values}
+\begin{frame}{Recap: Computing the Value Function of a Given Policy}
 \small
 With \(\beta=1\), compute values backward from cell 8, following the actions of \(\sigma\).
 \begin{columns}[c]
