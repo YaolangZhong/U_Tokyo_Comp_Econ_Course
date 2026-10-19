@@ -197,12 +197,12 @@
 
 \begin{frame}{Lecture Overview}
 \begin{itemize}
-\item \textbf{From State Values to Action Values}
-  \begin{itemize}\item Evaluate a maze policy and its state values\item Introduce \(\modelvar{Q^\sigma}\) to compare first actions and link it to \(\modelvar{V^\sigma}\)\end{itemize}
-\item \textbf{The Principle of Optimality}
-  \begin{itemize}\item Improve a continuation from a reached state\item Derive optimal state and action values\end{itemize}
+\item \textbf{From a Fixed Policy to Policy Improvement}
+  \begin{itemize}\item State values, state-action values, and the maze example\item Greedy choices and the policy improvement theorem\end{itemize}
+\item \textbf{Optimality and Policy Iteration}
+  \begin{itemize}\item Bellman optimality and the one-step deviation principle\item Exact policy evaluation and improvement\end{itemize}
 \item \textbf{Value Function Iteration}
-  \begin{itemize}\item Update values, check convergence, and recover a policy\item Apply the algorithm to job search and continuous saving\end{itemize}
+  \begin{itemize}\item Contraction, stopping errors, and policy recovery\item McCall job search and continuous saving\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -313,45 +313,52 @@ Choosing R first gives a higher return.
 \end{column}\end{columns}
 \end{frame}
 
-\begin{frame}{The Principle of Optimality}
-\small\setlength{\abovedisplayskip}{3pt}\setlength{\belowdisplayskip}{3pt}
-Let \(\modelvar{\widetilde\sigma}\) change only the action at cell 25 from U to R. Keep \(\modelvar{\beta=1}\).
-\begin{figure}\centering
-\begin{tikzpicture}[x=1cm,y=.65cm,font=\sffamily\footnotesize]
-\node[valueState,fill=MazeStartFill] (start) at (0,0) {16};
-\node[valueState,fill=CourseVariableColor!20] (branch) at (3.6,0) {25};
-\node[valueState,fill=MazeGoalFill] (goal) at (9.2,0) {8};
-\draw[valueFlow,draw=CourseVariableColor] (start)--node[above]{6 moves}(branch);
-\draw[valueFlow,draw=CourseVariableColor] (branch) to[bend left=17]
- node[above,text=CourseVariableColor]{U, then \(\sigma\): 10 moves} (goal);
-\draw[valueFlow,draw=SessionRed] (branch) to[bend right=17]
- node[below,text=SessionRed]{R, then \(\sigma\): 8 moves} (goal);
-\end{tikzpicture}
-\caption{Same first moves, better continuation.}
-\end{figure}
-\begin{align*}
-V^\sigma(16)&=-6+(-10)=-16,\\
-V^{\widetilde\sigma}(16)&=-6+(-8)=-14>V^\sigma(16).
-\end{align*}
-A better continuation improves the return from the start, so \(\modelvar{\sigma}\) was not optimal.
-\par\smallskip
-\term{Principle of optimality:} an optimal policy must have an optimal continuation from every state reached with positive probability.
+\begin{frame}{Greedy Policy Improvement}
+\small
+For the finite-state results, assume finite feasible action sets, bounded rewards, \(\modelvar{0<\beta<1}\), and time-homogeneous dynamics. Policies are stationary and deterministic.
+\par\medskip
+Given the exact value \(\modelvar{V^\sigma}\), choose a \term{greedy policy} at every state:
+\[\widetilde\sigma(s)\in\argmax_{a\in\Aset(s)}Q^\sigma(s,a).\]
+Because the old action remains feasible,
+\[Q^\sigma(s,\widetilde\sigma(s))\geq Q^\sigma(s,\sigma(s))=V^\sigma(s),
+\qquad \forall s.\]
+Greedy choices maximize immediate reward \textbf{plus continuation value}, rather than immediate reward alone.
+\par\medskip
+\term{Policy improvement theorem:} if the displayed inequality holds at every state, then
+\[V^{\widetilde\sigma}(s)\geq V^\sigma(s),\qquad\forall s.\]
 \end{frame}
 
-\begin{frame}{Optimal State and Action Values}
-For a finite discounted MDP, an optimal stationary deterministic policy exists. Define
+\begin{frame}{Why Policy Improvement Works}
+\small
+For any candidate continuation value \(\modelvar{v}\), the \term{policy evaluation operator} for \(\modelvar{\widetilde\sigma}\) is
+\[(T_{\widetilde\sigma}v)(s)=r(s,\widetilde\sigma(s))
++\beta\E[v(s')\mid s,a=\widetilde\sigma(s)].\]
+It is \term{monotone}: \(\modelvar{v\leq w}\) implies \(\modelvar{T_{\widetilde\sigma}v\leq T_{\widetilde\sigma}w}\), state by state.
+\par\medskip
+The improvement condition is \(\modelvar{V^\sigma\leq T_{\widetilde\sigma}V^\sigma}\). Applying the same operator repeatedly gives
+\[V^\sigma\leq T_{\widetilde\sigma}V^\sigma
+\leq T_{\widetilde\sigma}^{\,2}V^\sigma\leq\cdots
+\longrightarrow V^{\widetilde\sigma}.\]
+\begin{itemize}
+\item Each update follows the new policy for one more step; the influence of the initial continuation vanishes at rate \(\modelvar{\beta^n}\).
+\item A strict improvement in the first inequality at a state gives a strict value gain at that state.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Principle of Optimality}
+\small
+Define the \term{optimal values} over feasible policies:
 \[V^*(s)=\max_\sigma V^\sigma(s),\qquad
 Q^*(s,a)=\max_\sigma Q^\sigma(s,a).\]
-The principle of optimality gives
+In this setting, a stationary deterministic policy is optimal among all admissible policies.
+\par\medskip
+\term{Principle of optimality:} an optimal policy must have an optimal continuation from every state reached with positive probability.
 \begin{align*}
-Q^*(s,a)&=r(s,a)+\beta\,\E\!\left[V^*(s')\mid s,a\right],\\
+Q^*(s,a)&=r(s,a)+\beta\E[V^*(s')\mid s,a],\\
 V^*(s)&=\max_{a\in\Aset(s)}Q^*(s,a).
 \end{align*}
-\begin{itemize}
-\item \(\modelvar{Q^*}\): fix the current action, then choose optimally afterward.
-\item \(\modelvar{V^*}\): also choose the current action optimally.
-\item The expectation averages the outcomes of the chosen action; it does not let us choose the random outcome.
-\end{itemize}
+Combining them gives the \term{Bellman optimality equation}:
+\[V^*(s)=\max_{a\in\Aset(s)}\{r(s,a)+\beta\E[V^*(s')\mid s,a]\}.\]
 \end{frame}
 
 \begin{frame}{Optimality as a One-Step Look Ahead}
@@ -398,29 +405,75 @@ V^*(s)&=\max_{a\in\Aset(s)}Q^*(s,a).
 \end{frame}
 
 \begin{frame}{The Bellman Optimality Operator}
-Replace the unknown optimal continuation value by a candidate function \(\modelvar{v}\). The \term{Bellman optimality operator} produces
-\[(Tv)(s)=\max_{a\in\Aset(s)}\left\{
-r(s,a)+\beta\sum_{s'}P(s'\mid s,a)v(s')\right\}.\]
+Replace the optimal continuation by a candidate \(\modelvar{v}\). The \term{Bellman optimality operator} is
+\[(Tv)(s)=\max_{a\in\Aset(s)}\left\{r(s,a)
++\beta\sum_{s'\in\Sset}P(s'\mid s,a)v(s')\right\}.\]
 \begin{itemize}
-\item For each action, add the immediate reward to the expected discounted continuation value; take the largest result.
-\item The optimal value is a \term{fixed point}: \(\modelvar{TV^*=V^*}\).
+\item \(\modelvar{T_\sigma v}\) uses the prescribed action \(\modelvar{\sigma(s)}\); \(\modelvar{Tv}\) chooses the best action for continuation \(\modelvar{v}\).
+\item A policy greedy with respect to \(\modelvar{v}\) attains this maximum: \(\modelvar{T_\sigma v=Tv}\).
+\item The optimal value satisfies \(\modelvar{TV^*=V^*}\): it is a \term{fixed point} of \(\modelvar{T}\).
 \end{itemize}
-\small The sum describes discrete next states; use a probability integral for continuous next states. Unlike fixed-policy evaluation, \(\modelvar{T}\) maximizes over the current action.
+\end{frame}
+
+\begin{frame}{Contraction and Uniqueness}
+\small
+Use \(\modelvar{\|v-w\|_\infty=\max_s|v(s)-w(s)|}\). For the same state and action,
+\[\left|\beta\E[v(s')-w(s')\mid s,a]\right|\leq\beta\|v-w\|_\infty.\]
+Taking maxima cannot enlarge this bound, since
+\[|\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a|.\]
+Therefore \(\modelvar{T}\) is a \term{contraction}:
+\[\|Tv-Tw\|_\infty\leq\beta\|v-w\|_\infty.\]
+The contraction mapping theorem gives a unique fixed point, \(\modelvar{V^*}\), and convergence to it from any initial value vector. The same bound holds for each fixed-policy operator \(\modelvar{T_\sigma}\).
+\end{frame}
+
+\begin{frame}{When Is a Policy Optimal?}
+\small
+The \term{one-step deviation principle} gives a test using the policy's own value:
+\[\sigma(s)\in\argmax_{a\in\Aset(s)}Q^\sigma(s,a)\quad\forall s
+\quad\Longleftrightarrow\quad V^\sigma=V^*.\]
+\begin{itemize}
+\item \textbf{Sufficiency:} if no first-action change improves the return at any state, then
+\[V^\sigma=T_\sigma V^\sigma=TV^\sigma.\]
+The Bellman fixed point is unique, so \(\modelvar{V^\sigma=V^*}\).
+\item \textbf{Necessity:} if \(\modelvar{V^\sigma=V^*}\), then
+\[T_\sigma V^*=V^*=TV^*,\]
+so \(\modelvar{\sigma}\) attains the maximum at every state.
+\end{itemize}
+The comparison checks \textbf{all feasible actions at every state}, with the exact continuation value.
+\end{frame}
+
+\begin{frame}{Policy Iteration}
+\small
+Start from any feasible policy \(\modelvar{\sigma_0}\). Repeat:
+\begin{enumerate}
+\item \term{Policy evaluation:} solve exactly for the current policy's value,
+\[V^{\sigma_k}=T_{\sigma_k}V^{\sigma_k}.\]
+\item \term{Policy improvement:} choose
+\[\sigma_{k+1}(s)\in\argmax_{a\in\Aset(s)}Q^{\sigma_k}(s,a),\qquad\forall s.\]
+Keep the current action whenever it is a maximizer.
+\item If \(\modelvar{\sigma_{k+1}=\sigma_k}\), stop: the policy is optimal. Otherwise evaluate the new policy and repeat.
+\end{enumerate}
+\[V^{\sigma_0}\leq V^{\sigma_1}\leq V^{\sigma_2}\leq\cdots\leq V^*.\]
+Every nonoptimal policy is strictly improved at some state. There are finitely many deterministic policies, so the algorithm reaches an optimal policy in finitely many iterations.
 \end{frame}
 
 \begin{frame}{Value Function Iteration}
 \small
-Given a finite MDP, its reward function and transition kernel, and value-error tolerance \(\modelvar{\varepsilon>0}\):
+VFI updates a value estimate \(\modelvar{v_k}\), without evaluating a policy to completion.
 \begin{enumerate}
-\item Initialize \(\modelvar{v_0(s)=0}\) and set \(\modelvar{k=0}\). Keep zero-reward absorbing goal states at zero.
-\item Score every feasible action using the \textbf{old} value function:
-\[Q_k(s,a)=r(s,a)+\beta\,\E\!\left[v_k(s')\mid s,a\right].\]
-\item Store the best score in a new array: \(\modelvar{v_{k+1}(s)=\max_a Q_k(s,a)}\).
-\item Compute \(\modelvar{d_k=\max_s|v_{k+1}(s)-v_k(s)|}\). If \(\modelvar{d_k\leq(1-\beta)\varepsilon}\), return \(\modelvar{v_k}\); otherwise increase \(\modelvar{k}\) and repeat.
+\item Initialize \(\modelvar{v_0}\), for example at zero.
+\item Using the old values, compute the scores and the new values:
+\begin{align*}
+Q_k(s,a)&=r(s,a)+\beta\E[v_k(s')\mid s,a],\\
+v_{k+1}(s)&=\max_{a\in\Aset(s)}Q_k(s,a)=(Tv_k)(s).
+\end{align*}
+\item Repeat these updates until the required accuracy is reached.
 \end{enumerate}
-\(\modelvar{Q_k}\) uses the approximate continuation \(\modelvar{v_k}\); it need not equal \(\modelvar{Q^\sigma}\) for a particular policy.
-\par\smallskip
-A \term{sweep} updates every state once. The separate new array ensures all updates use the same \(\modelvar{v_k}\).
+A \term{sweep} updates all states using the same old \(\modelvar{v_k}\); store the results in a separate array.
+\par\medskip
+Contraction gives
+\[\|v_k-V^*\|_\infty\leq\beta^k\|v_0-V^*\|_\infty\longrightarrow0.\]
+\(\modelvar{v_k}\) need not equal any \(\modelvar{V^\sigma}\), and \(\modelvar{Q_k}\) need not equal any \(\modelvar{Q^\sigma}\). VFI convergence follows from contraction, not successive exact policy evaluations.
 \end{frame}
 
 \begin{frame}{Example: Values Move Back Through the Maze}
@@ -449,49 +502,20 @@ For example, \(\modelvar{v_3(30)=-1+0.9v_2(22)=-2.71}\).
 For this zero-initialized update, \(\modelvar{v_k}\) is the optimal \(\modelvar{k}\)-period return with zero value afterward.
 \end{frame}
 
-\begin{frame}{Why VFI Converges}
+\begin{frame}{Stopping VFI and Recovering a Policy}
 \small
-For finite states, use \(\modelvar{\|v-w\|_\infty=\max_s|v(s)-w(s)|}\). The difference between two scores for the \textbf{same action} satisfies
-\[\left|\beta\E[v(s')-w(s')\mid s,a]\right|\leq\beta\|v-w\|_\infty.\]
-Since \(\modelvar{|\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a|}\),
-\[\|Tv-Tw\|_\infty\leq\beta\|v-w\|_\infty.\]
-Thus \(\modelvar{T}\) is a \term{contraction}: the new maximum distance is at most \(\modelvar{\beta}\) times the old distance.
-\begin{itemize}
-\item There is a unique fixed point \(\modelvar{V^*}\); every initial finite vector converges to it.
-\item After \(\modelvar{k}\) sweeps,
-\[\|v_k-V^*\|_\infty\leq\beta^k\|v_0-V^*\|_\infty.\]
-\item A discount factor closer to one gives a slower worst-case rate.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{A Stopping Rule With an Error Bound}
-\small
-After computing \(\modelvar{v_{k+1}=Tv_k}\), measure the \term{Bellman residual} of \(\modelvar{v_k}\):
+After computing \(\modelvar{v_{k+1}=Tv_k}\), measure the \term{Bellman residual}:
 \[d_k=\|Tv_k-v_k\|_\infty=\|v_{k+1}-v_k\|_\infty.\]
-The contraction inequality gives
-\begin{align*}
-\|v_k-V^*\|_\infty
-&\leq\|v_k-Tv_k\|_\infty+\|Tv_k-TV^*\|_\infty\\
-&\leq d_k+\beta\|v_k-V^*\|_\infty,
-\end{align*}
-so \(\modelvar{\|v_k-V^*\|_\infty\leq d_k/(1-\beta)}\).
+Contraction implies
+\[\|v_k-V^*\|_\infty\leq d_k+\beta\|v_k-V^*\|_\infty,
+\quad\text{so}\quad\|v_k-V^*\|_\infty\leq\frac{d_k}{1-\beta}.\]
 \begin{itemize}
-\item To guarantee value error at most \(\modelvar{\varepsilon}\), stop when \(\modelvar{d_k\leq(1-\beta)\varepsilon}\) and return \(\modelvar{v_k}\).
-\item At \(\modelvar{\beta=0.9}\) and \(\modelvar{\varepsilon=0.01}\), require \(\modelvar{d_k\leq0.001}\).
-\end{itemize}
-\footnotesize This guarantee uses exact expectations and maximization. Numerical approximation introduces additional errors.
-\end{frame}
-
-\begin{frame}{Recovering a Policy}
-Use the action scores calculated from the returned \(\modelvar{v_k}\). A \term{greedy policy} chooses
+\item For value error at most \(\modelvar{\varepsilon}\), stop when \(\modelvar{d_k\leq(1-\beta)\varepsilon}\) and return \(\modelvar{v_k}\).
+\item Recover a policy from the scores computed using this returned value:
 \[\widehat\sigma(s)\in\argmax_{a\in\Aset(s)}Q_k(s,a).\]
-\begin{itemize}
-\item If \(\modelvar{v_k=V^*}\), then \(\modelvar{Q_k=Q^*}\), and every maximizing action is optimal.
-\item With approximate values, evaluate the resulting policy to check its achieved return.
-\item If several actions tie, choose one consistently.
+\item Evaluate \(\modelvar{V^{\widehat\sigma}}\) to check the policy's achieved return. Intermediate greedy policies in VFI need not improve monotonically.
 \end{itemize}
-\par\medskip
-VFI updates value estimates. The final maximization converts those estimates into a decision rule for each state.
+\footnotesize The bound assumes exact expectations and maximization; numerical approximations add errors.
 \end{frame}
 
 \begin{frame}{Example: VFI for McCall Job Search}
@@ -538,7 +562,7 @@ The update averages over income and maximizes over saving:
 Q_k(s,a)&=(s-a)^\alpha+\frac{\beta}{B}\int_0^B v_k(a+y)\,dy,\\
 v_{k+1}(s)&=\max_{a\in[0,\min(s,M)]}Q_k(s,a).
 \end{align*}
-\small The exact operator is a contraction under the supremum norm on continuous value functions. The state interval is compact, rewards are bounded, and \(\modelvar{0<\beta<1}\).
+\small Assume \(\modelvar{0<\beta<1}\). The state and feasible action sets are compact, and rewards are bounded. The exact operator maps continuous functions to continuous functions and is a contraction in the supremum norm.
 \end{frame}
 
 \begin{frame}{Computing the Continuous Update}
@@ -551,7 +575,7 @@ To implement the continuous saving model numerically:
 \par\medskip
 These approximations add errors beyond the VFI stopping error. Refine the stock grid, integration, and maximization to check that values and decisions are stable.
 \par\smallskip
-The economic model's states and actions remain continuous; the grid is a computational representation.
+The model remains continuous. Finite termination of policy iteration for finite MDPs does not automatically apply to this model.
 \end{frame}
 
 % BEGIN MANAGED READINGS: week3_vfi
@@ -562,13 +586,18 @@ The economic model's states and actions remain continuous; the grid is a computa
   {\begin{itemize}
 \item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=80}{Section 3.5: Policies and Value Functions}
 \item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=84}{Section 3.6: Optimal Policies and Optimal Value Functions}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=98}{Section 4.2: Policy Improvement}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=102}{Section 4.3: Policy Iteration}
 \item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=104}{Section 4.4: Value Iteration}
 \end{itemize}}
+\end{frame}
+\begin{frame}{References and Further Reading}
 \coursereading{2}
   {Thomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]}
   {https://quantecon.org/lectures/}
   {\begin{itemize}
 \item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#the-bellman-equation-and-the-principle-of-optimality}{Discrete State Dynamic Programming — The Bellman Equation and the Principle of Optimality}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#policy-function-iteration}{Discrete State Dynamic Programming — Policy Function Iteration}
 \item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#value-function-iteration}{Discrete State Dynamic Programming — Value Function Iteration}
 \item \href{https://python.quantecon.org/mccall_model.html\#the-mccall-model}{Job Search I: The McCall Search Model — The McCall Model}
 \item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#example-a-growth-model}{Discrete State Dynamic Programming — Example: A Growth Model}
