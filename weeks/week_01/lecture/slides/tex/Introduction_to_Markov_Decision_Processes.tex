@@ -1,0 +1,294 @@
+% Shared style; keep topic content and figures in this deck.
+\newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
+\input{\CourseTemplatePath course_preamble.tex}
+\title[Markov Decision Processes]{Lecture: Introduction to Markov Decision Processes}
+\subtitle{States, transitions, actions, and policies}
+\begin{document}
+\makecoursetitle
+
+
+\begin{frame}{The Markov Process: Motivative Examples}
+\begin{itemize}
+  \item \courseexample{Example: Days of the Week}
+    \[\mathcal S=\{\text{Mon},\ldots,\text{Sun}\}.\]
+    Tomorrow follows deterministically from today. Starting on Monday, we return to Monday after 7, 14, 21, \ldots\ days.
+    \par\textit{Idea: a Markov process can be deterministic and cyclical.}
+  \item \courseexample{Example: An AR(1) Process}
+    \[s_{t+1}=\rho s_t+\varepsilon_{t+1},\qquad \varepsilon_{t+1}\overset{\mathrm{i.i.d.}}\sim N(0,\sigma^2).\]
+    Assume \(\modelvar{\sigma>0}\); shocks are independent of the initial state. The current value determines the distribution of the next value.
+    \par\textit{Idea: states can be continuous.} The process is Markov for any fixed \(\modelvar{\rho}\); \(\modelvar{|\rho|<1}\) gives a stable AR(1) with a stationary distribution.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Markov Process: Motivative Examples}
+\courseexample{Example: Employment and Unemployment}
+\begin{itemize}
+  \item Each month, an unemployed worker finds a job with probability \(\modelvar{\alpha}\); an employed worker loses a job with probability \(\modelvar{\delta}\), where \(\modelvar{0<\alpha,\delta<1}\).
+  \item With states ordered as unemployed (U), employed (E),
+    \[P=\begin{pmatrix}1-\alpha&\alpha\\\delta&1-\delta\end{pmatrix}.\]
+    Rows give today's state; columns give next month's state. Each row sums to one.
+  \item \textit{Idea: transitions are random, even after we observe the state.}
+    These probabilities are taken as given; the worker chooses no action in this model.
+  \item How long does unemployment last? What fraction of time is spent unemployed in the long run?
+\end{itemize}
+{\footnotesize Source: \href{https://intro.quantecon.org/markov_chains_I.html}{QuantEcon, Markov Chains: Basic Concepts}.}
+\end{frame}
+
+\begin{frame}{The Markov Process: Motivative Examples}
+\small
+\setlength{\abovedisplayskip}{3pt}\setlength{\belowdisplayskip}{3pt}
+\courseexample{Example: U.S. Business Cycle Regimes}
+\par Monthly transition probabilities estimated by Hamilton (2005), as presented in \href{https://intro.quantecon.org/markov_chains_I.html}{QuantEcon}:
+\[P=\begin{pmatrix}0.971&0.029&0\\0.145&0.778&0.077\\0&0.508&0.492\end{pmatrix}.\]
+States: normal growth (ng), mild recession (mr), severe recession (sr).
+\par\textit{Idea: persistence differs across states.} The probability of staying one more month is 97.1\% in ng, 77.8\% in mr, and 49.2\% in sr.
+\par\vspace{2pt}{\centering
+\begin{tikzpicture}[scale=0.9,transform shape,font=\sffamily\small,
+          regime/.style={ellipse,draw=SessionCharcoal,fill=white,line width=0.7pt,
+            minimum width=1.2cm,minimum height=0.7cm},
+          transition/.style={draw=SessionCharcoal,line width=0.8pt,
+            -{Stealth[length=2mm,width=1.5mm]}}]
+          \node[regime] (ng) at (0,0) {ng};
+          \node[regime] (mr) at (2.8,0) {mr};
+          \node[regime] (sr) at (5.6,0) {sr};
+          \path[transition]
+            (ng) edge[loop above,min distance=8mm] node[above] {0.971} (ng)
+            (mr) edge[loop above,min distance=8mm] node[above] {0.778} (mr)
+            (sr) edge[loop above,min distance=8mm] node[above] {0.492} (sr)
+            (ng) edge node[above] {0.029} (mr)
+            (mr) edge[bend left=28] node[below] {0.145} (ng)
+            (mr) edge node[above] {0.077} (sr)
+            (sr) edge[bend left=28] node[below] {0.508} (mr);
+        \end{tikzpicture}
+\par}
+\end{frame}
+
+\begin{frame}{The Markov Process: Formal Definition}
+\small
+Let \(\modelvar{(s_t)_{t\geq0}}\) be a sequence of random variables taking values in \(\modelvar{\mathcal S}\).
+\begin{itemize}
+  \item We say the sequence satisfies the \term{Markov property} if, for every \(\modelvar{t}\) and every measurable subset \(\modelvar{\bar{\mathcal S}\subseteq\mathcal S}\),
+  \[\Pr(s_{t+1}\in\bar{\mathcal S}\mid s_0,\ldots,s_t)
+    =\Pr(s_{t+1}\in\bar{\mathcal S}\mid s_t)
+    =P_t(\bar{\mathcal S}\mid s_t),\]
+  where the \term{transition kernel} \(\modelvar{P_t(\bar{\mathcal S}\mid s)}\) gives the probability of entering \(\modelvar{\bar{\mathcal S}}\) from state \(\modelvar{s}\) at time \(\modelvar{t}\).
+  \par Such a sequence is a \term{Markov process}: the current state contains all information from the history needed to predict the next state.
+  \item We say a Markov process is \term{time-homogeneous} if \(\modelvar{P_t=P}\) for every \(\modelvar{t}\): its transition rule does not depend on calendar time.
+  \item To specify its probability law, provide an \term{initial distribution} \(\modelvar{s_0\sim\mu_0}\) and the transition kernels \(\modelvar{(P_t)_{t\geq0}}\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Markov Process: Transition Properties}
+\small
+Consider a time-homogeneous Markov process on a finite state space.
+\begin{itemize}
+  \item Its transition kernel is represented by a \term{transition matrix} \(\modelvar{P}\):
+  \[P_{ij}=\Pr(s_{t+1}=j\mid s_t=i),\qquad P_{ij}\geq0,\qquad\sum_jP_{ij}=1.\]
+  A matrix with nonnegative entries and unit row sums is called \term{row-stochastic}.
+  \item If \(\modelvar{\mu_t}\) is a row vector of state probabilities,
+  \[\mu_{t+1}=\mu_tP,\qquad \mu_{t+n}=\mu_tP^n.\]
+  \item The probability of moving from \(\modelvar{i}\) to \(\modelvar{j}\) in \(\modelvar{n}\) steps is \(\modelvar{(P^n)_{ij}}\).
+  Summing over intermediate states gives \(\modelvar{P^{n+m}=P^nP^m}\).
+  \item \term{Conditional expectation:} for a column vector \(\modelvar{g}\) of state-dependent outcomes,
+  \[\mathbb E[g(s_{t+1})\mid s_t=i]=\sum_jP_{ij}g(j)=(Pg)_i.\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Markov Process: Reachability and Periodicity}
+\small
+Consider a finite, time-homogeneous chain.
+\begin{itemize}
+  \item We say the chain is \term{irreducible} if every state can reach every other state:
+  \[\text{for every }i,j,\quad \exists n\geq0\text{ such that }(P^n)_{ij}>0.\]
+  Positive one-step probabilities between every pair are unnecessary; a path through other states is enough.
+  \item For a state \(\modelvar{i}\) with a possible return, define its \term{period} by
+  \[d(i)=\gcd\{n\geq1:(P^n)_{ii}>0\}.\]
+  An irreducible chain has a common period. We call it \term{aperiodic} if this period is 1, and \term{periodic} otherwise.
+  \item The days-of-the-week chain is irreducible with period 7. The employment chain is irreducible and aperiodic: both states communicate and have self-loops.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Markov Process: Stationarity and Long-run Behavior}
+\small
+\setbeamertemplate{itemize/enumerate body begin}{\setlength{\itemsep}{1pt}}
+\setlength{\abovedisplayskip}{4pt}\setlength{\belowdisplayskip}{4pt}
+For a finite, time-homogeneous chain:
+\begin{itemize}
+  \item A probability row vector \(\modelvar{\pi}\) is a \term{stationary distribution} of the chain if
+  \[\pi P=\pi,\qquad \pi_i\geq0,\qquad\sum_i\pi_i=1.\]
+  Every finite chain has at least one. If \(\modelvar{\mu_0=\pi}\), every \(\modelvar{\mu_t=\pi}\).
+  \item If the chain is \term{irreducible}, its stationary distribution is unique and
+  \[\frac1T\sum_{t=0}^{T-1}\mathbf1\{s_t=i\}\longrightarrow\pi_i
+    \quad\text{almost surely.}\]
+  \item If the chain is also \term{aperiodic}, then for every initial distribution \(\modelvar{\mu_0}\),
+  \[\mu_0P^n\longrightarrow\pi.\]
+  The weekly cycle has uniform visit frequencies but its distribution keeps cycling when started on Monday.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Markov Decision Process: Motivative Examples}
+\small
+\courseexample{Example: Maze Escape}
+\begin{columns}[c]
+\begin{column}{0.58\textwidth}
+\begin{itemize}
+  \item \textbf{State:} current free cell. \textbf{Action:} up, down, left, or right.
+  \item \textbf{Transition:} move one cell; hitting a wall or boundary leaves the position unchanged. The goal G is absorbing.
+  \item \textbf{Reward:} \(\modelvar{-1}\) per move while outside G; zero thereafter. Choose actions to reach G quickly, with discount factor \(\modelvar{0<\beta<1}\).
+\end{itemize}
+\end{column}
+\begin{column}{0.39\textwidth}
+\begin{figure}
+\centering
+\begin{tikzpicture}[x=0.5cm,y=0.5cm,font=\sffamily\large]
+      \definecolor{MazeWall}{HTML}{928580}
+      \fill[white] (0,0) rectangle (9,6);
+      \foreach \x/\y in {2/2,2/3,2/4,7/3,7/4,7/5,5/1}
+        \fill[MazeWall] (\x,\y) rectangle +(1,1);
+      \draw[SessionCharcoal,line width=0.3pt,step=1] (0,0) grid (9,6);
+      \draw[SessionCharcoal,line width=0.9pt] (0,0) rectangle (9,6);
+      \node[text=SessionCharcoal] at (0.5,3.5) {S};
+      \node[text=SessionCharcoal] at (8.5,5.5) {G};
+    \end{tikzpicture}
+\caption{Maze navigation.}
+\end{figure}
+\end{column}
+\end{columns}
+\medskip
+\textit{Idea: actions control the next state; rewards express the goal.}
+\end{frame}
+
+\begin{frame}{The Markov Decision Process: Motivative Examples}
+\small
+\courseexample{Example: McCall Job Search}
+\begin{itemize}
+  \item \textbf{State:} \(\modelvar{\mathrm U(w)}\), unemployed with current wage offer \(\modelvar{w}\), or \(\modelvar{\mathrm E(w)}\), employed at wage \(\modelvar{w}\).
+  \item \textbf{Action and reward:} at \(\modelvar{\mathrm U(w)}\), accept and earn \(\modelvar{w}\) today, or reject and receive benefit \(\modelvar{b}\) today.
+  \item \textbf{Transition:} rejection brings a new independent offer \(\modelvar{w'\sim F}\). Acceptance leads to \(\modelvar{\mathrm E(w)}\), with wage \(\modelvar{w}\) every period and no job separation. At \(\modelvar{\mathrm E(w)}\), the only action is to stay employed.
+  \item \textbf{Objective:} maximize expected discounted income, \(\modelvar{0<\beta<1}\). Assume wages have bounded support and \(\modelvar{b}\) is finite.
+  \item \textit{Idea: a discrete choice changes future opportunities.} Waiting preserves the chance of a better offer; accepting locks in income.
+\end{itemize}
+{\footnotesize Source: \href{https://python.quantecon.org/mccall_model.html}{QuantEcon, The McCall Search Model}.}
+\end{frame}
+
+\begin{frame}{The Markov Decision Process: Motivative Examples}
+\courseexample{Example: Cake Eating}
+\begin{itemize}
+  \item \textbf{State:} remaining stock \(\modelvar{k_t\in[0,\bar k]}\), where \(\modelvar{\bar k<\infty}\).
+  \item \textbf{Action:} consume \(\modelvar{c_t\in[0,k_t]}\).
+  \item \textbf{Transition:} \(\modelvar{k_{t+1}=k_t-c_t}\); the unconsumed stock is saved. There is no production or uncertainty.
+  \item \textbf{Reward:} \(\modelvar{u(c_t)=\sqrt{c_t}}\), including \(\modelvar{u(0)=0}\).
+  \item \textbf{Objective:} choose consumption over time to maximize
+  \[\sum_{t=0}^{\infty}\beta^t\sqrt{c_t},\qquad 0<\beta<1.\]
+  \item \textit{Idea: both states and actions can be continuous, and feasible actions depend on the state.} Consuming more today leaves less for tomorrow.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Markov Decision Process: Formal Definition}
+\small
+We focus on a fully observed, time-homogeneous, infinite-horizon discounted MDP:
+\[(\mathcal S,\{\mathcal A(s)\}_{s\in\mathcal S},P,r,\beta),\qquad 0<\beta<1.\]
+\begin{itemize}
+  \item \textbf{States and actions:} observe \(\modelvar{s_t\in\mathcal S}\), then choose \(\modelvar{a_t\in\mathcal A(s_t)}\), a nonempty feasible set.
+  \item The state dynamics satisfy the \term{controlled Markov property} if, for every \(\modelvar{t}\) and measurable \(\modelvar{\bar{\mathcal S}\subseteq\mathcal S}\),
+  \[\Pr(s_{t+1}\in\bar{\mathcal S}\mid s_0,a_0,\ldots,s_t,a_t)=P(\bar{\mathcal S}\mid s_t,a_t).\]
+  where \(\modelvar{P}\) is the time-independent \term{controlled transition kernel}.
+  \item The \term{reward function} \(\modelvar{r}\) specifies expected payoffs: receive \(\modelvar{R_{t+1}}\) after action \(\modelvar{a_t}\), with conditional mean \(\modelvar{r(s_t,a_t)}\) given the history and current action. Rewards and next states may be jointly random.
+  \item The \term{discount factor} \(\modelvar{\beta}\) weights future rewards. Time homogeneity means that both \(\modelvar{P}\) and \(\modelvar{r}\) are independent of \(\modelvar{t}\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Markov Decision Process: Timing}
+\begin{figure}
+    \centering
+    % Vector redraw preserving Sutton and Barto's Fig. 3.1 topology.
+    % Text inherits the same Source Sans 3 face as the slide body.
+    \begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\normalsize,
+      block/.style={draw=SessionCharcoal,line width=0.9pt,rounded corners=2mm,
+        fill=white,minimum height=1cm,inner sep=3mm,font=\sffamily\Large},
+      flow/.style={draw=SessionCharcoal,line width=1.1pt,-{Stealth[length=2.8mm,width=2mm]}},
+      wire/.style={draw=SessionCharcoal,line width=1.1pt}]
+      \node[block,minimum width=2.2cm] (agent) at (0,1.4) {Agent};
+      \node[block,minimum width=4.3cm,minimum height=1.25cm] (environment) at (0,-1) {Environment};
+      % Action: agent -> environment, on the right.
+      \draw[flow] (agent.east) -- (4.2,1.4) -- (4.2,-1) -- (environment.east);
+      \node[align=left,anchor=west] at (4.3,0.25) {action\\$A_t$};
+      % State: environment -> next-state label -> outer return path -> agent.
+      \draw[flow] ($(environment.west)+(0,-0.35)$) -- (-2.9,-1.35);
+      \draw[wire] (-2.9,-1.35) -- (-4.4,-1.35) -- (-4.4,1.62);
+      \draw[flow] (-4.4,1.62) -- ($(agent.west)+(0,0.22)$);
+      \node[align=left,anchor=east] at (-4.55,0.2) {state\\$S_t$};
+      \node[anchor=south,font=\sffamily\small] at (-2.55,-1.31) {$S_{t+1}$};
+      % Reward: the parallel inner return path.
+      \draw[flow] ($(environment.west)+(0,0.35)$) -- (-2.9,-0.65);
+      \draw[wire] (-2.9,-0.65) -- (-3.8,-0.65) -- (-3.8,1.18);
+      \draw[flow] (-3.8,1.18) -- ($(agent.west)+(0,-0.22)$);
+      \node[align=left,anchor=west] at (-3.7,0.2) {reward\\$R_t$};
+      \node[anchor=south,font=\sffamily\small] at (-2.55,-0.61) {$R_{t+1}$};
+      \draw[SessionMuted,densely dashed,line width=0.45pt] (-2.9,-1.8) -- (-2.9,-0.25);
+    \end{tikzpicture}
+    \caption{\footnotesize Agent–environment loop (adapted from \href{http://incompleteideas.net/book/the-book-2nd.html}{Sutton and Barto (2018)}, Fig. 3.1).}
+    \label{fig:sutton-mdp-loop}
+  \end{figure}
+\centering\small
+Observe \(\modelvar{s_t}\), choose \(\modelvar{a_t}\), then receive \(\modelvar{R_{t+1}}\) and observe \(\modelvar{s_{t+1}}\).\\
+\(\modelvar{r(s_t,a_t)}\) is the expected reward from that action.
+\end{frame}
+
+\begin{frame}{The Markov Decision Process: Policies}
+\small
+\begin{itemize}
+  \item A policy specifies how actions are chosen. It is a \term{Markov policy} if its action distribution depends only on the current state and time.
+  \item A Markov policy is \term{stationary} if it does not depend on time, and \term{deterministic} if it selects one action with probability one. Such a policy is a feasible rule
+  \[a_t=\sigma(s_t),\qquad \sigma(s)\in\mathcal A(s).\]
+  A stationary randomized policy instead specifies a distribution \(\modelvar{\sigma(\cdot\mid s)}\) over feasible actions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Markov Decision Process: A Policy Induces a Chain}
+\small
+For a finite state space, fix a stationary deterministic policy \(\modelvar{\sigma}\).
+\begin{itemize}
+  \item The induced transition matrix and expected reward vector are
+  \[P^\sigma_{ij}=P(j\mid i,\sigma(i)),\qquad r^\sigma_i=r(i,\sigma(i)).\]
+  \item \(\modelvar{P^\sigma}\) is row-stochastic: fixing the decision rule gives a time-homogeneous Markov chain. Thus \(\modelvar{\mu_{t+1}=\mu_tP^\sigma}\).
+  \item Different policies can change reachability and long-run behavior. An absorbing goal or accepted job can make \(\modelvar{P^\sigma}\) reducible; the earlier convergence conditions must be checked for each policy.
+\end{itemize}
+\end{frame}
+
+
+% BEGIN MANAGED READINGS: mdp
+\begin{frame}{References and Further Reading}
+\coursereading{1}
+  {Richard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]}
+  {https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf}
+  {\begin{itemize}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=69}{Chapter 3: Finite Markov Decision Processes}
+\end{itemize}}
+\coursereading{2}
+  {Dimitri P. Bertsekas (2019), Reinforcement Learning and Optimal Control. Athena Scientific. [Book]}
+  {https://faculty.engineering.asu.edu/bertsekas/books/reinforcement-learning-and-optimal-control}
+  {\begin{itemize}
+\item \href{https://faculty.engineering.asu.edu/sites/g/files/litvpz5506/files/2026-06/RL_1-SHORT-INTERNET-POSTED.pdf}{Chapter 1: Exact Dynamic Programming (selected sections)}
+\end{itemize}}
+\coursereading{3}
+  {Dimitri P. Bertsekas and Yuchao Li (2025), Topics in Reinforcement Learning. CSE 691, Arizona State University. [Online course]}
+  {https://web.mit.edu/dimitrib/www/RLbook.html}
+  {\begin{itemize}
+\item \href{https://web.mit.edu/dimitrib/www/RLTopics_2025_Lect1.pdf}{Lecture 1: Introduction to Sequential Decision Making (Reinforcement Learning, Dynamic Programming, Decision and Control)}
+\item \href{https://web.mit.edu/dimitrib/www/RLTopics_2025_Lect2.pdf}{Lecture 2: Stochastic Finite and Infinite Horizon DP, Approximation in Value Space}
+\end{itemize}}
+\end{frame}
+\begin{frame}{References and Further Reading}
+\coursereading{4}
+  {Thomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]}
+  {https://quantecon.org/lectures/}
+  {\begin{itemize}
+\item \href{https://intro.quantecon.org/markov_chains_I.html}{Markov Chains: Basic Concepts}
+\item \href{https://intro.quantecon.org/markov_chains_II.html}{Markov Chains: Irreducibility and Ergodicity}
+\item \href{https://python.quantecon.org/mccall_model.html}{Job Search I: The McCall Search Model}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html}{Discrete State Dynamic Programming}
+\end{itemize}}
+\end{frame}
+% END MANAGED READINGS: mdp
+\end{document}

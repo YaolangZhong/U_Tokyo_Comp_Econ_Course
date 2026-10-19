@@ -127,16 +127,16 @@
 \begin{frame}{Recap: A Markov Decision Process}
 \small
 A time-homogeneous discounted \term{MDP} is specified by
-\(\bigl(\Sset,\{\Aset(s)\}_{s\in\Sset},P,R,\beta\bigr)\).
+\(\modelvar{\bigl(\Sset,\{\Aset(s)\}_{s\in\Sset},P,R,\beta\bigr)}\).
 \par\medskip
 \begin{columns}[c]
 \begin{column}{.55\textwidth}
 \begin{itemize}
-\item \term{State space \(\Sset\):} free cells \(\Sset=\{\mathrm S,\mathrm G,1,\ldots,45\}\), including G. Walls are excluded.
-\item \term{Actions \(\Aset(s)\):} up, down, left, right.
-\item \term{Transition kernel \(P(s'\mid s,a)\):} probability 1 for the cell reached by action \(a\), and 0 for all other cells. For example, \(P(21\mid\mathrm S,\text{down})=1\). A wall or boundary keeps the current cell; G is absorbing.
-\item \term{Reward \(R(s,a)\):} \(-1\) per move from outside G (including entry into G); zero at G.
-\item \term{Discount factor \(\beta\in(0,1)\):} weights future rewards.
+\item \term{State space \(\modelvar{\Sset}\):} free cells \(\modelvar{\Sset=\{\mathrm S,\mathrm G,1,\ldots,45\}}\), including G. Walls are excluded.
+\item \term{Actions \(\modelvar{\Aset(s)}\):} up, down, left, right.
+\item \term{Transition kernel \(\modelvar{P(s'\mid s,a)}\):} probability 1 for the cell reached by action \(\modelvar{a}\), and 0 for all other cells. For example, \(\modelvar{P(21\mid\mathrm S,\text{down})=1}\). A wall or boundary keeps the current cell; G is absorbing.
+\item \term{Reward \(\modelvar{R(s,a)}\):} \(\modelvar{-1}\) per move from outside G (including entry into G); zero at G.
+\item \term{Discount factor \(\modelvar{\beta\in(0,1)}\):} weights future rewards.
 \end{itemize}
 \end{column}
 \begin{column}{.42\textwidth}
@@ -153,15 +153,15 @@ A time-homogeneous discounted \term{MDP} is specified by
 
 \begin{frame}{Recap: A Policy Chooses an Action at Each State}
 \small
-A \term{stationary deterministic policy} is a rule \(\sigma\) with
-\(\sigma(s)\in\Aset(s)\): at cell \(s\), take action \(a=\sigma(s)\).
+A \term{stationary deterministic policy} is a rule \(\modelvar{\sigma}\) with
+\(\modelvar{\sigma(s)\in\Aset(s)}\): at cell \(\modelvar{s}\), take action \(\modelvar{a=\sigma(s)}\).
 \par\smallskip
 \begin{columns}[T]
 \begin{column}{.49\textwidth}
 \centering
 \footnotesize
-\(\sigma_A=(\mathrm S\to\text{down},\;\text{cell 21}\to\text{down},\)\par
-\(\text{cell 29}\to\text{right},\ldots)\)
+\(\modelvar{\sigma_A=(\mathrm S\to\text{down},\;\text{cell 21}\to\text{down},}\)\par
+\(\modelvar{\text{cell 29}\to\text{right},\ldots)}\)
 \begin{figure}
 \centering
 \begin{tikzpicture}[x=.55cm,y=.55cm]
@@ -173,8 +173,8 @@ A \term{stationary deterministic policy} is a rule \(\sigma\) with
 \begin{column}{.49\textwidth}
 \centering
 \footnotesize
-\(\sigma_B=(\mathrm S\to\text{up},\;\text{cell 8}\to\text{up},\)\par
-\(\text{cell 1}\to\text{right},\ldots)\)
+\(\modelvar{\sigma_B=(\mathrm S\to\text{up},\;\text{cell 8}\to\text{up},}\)\par
+\(\modelvar{\text{cell 1}\to\text{right},\ldots)}\)
 \begin{figure}
 \centering
 \begin{tikzpicture}[x=.55cm,y=.55cm]
@@ -193,8 +193,8 @@ Unless explicitly stated otherwise, we assume:
 \[P_t(s'\mid s,a)=P(s'\mid s,a),\qquad R_t(s,a)\overset{d}{=}R(s,a).\]
 \item \term{A stationary policy.} At a given state, the action distribution does not change with the date:
 \[\sigma_t(s)\overset{d}{=}\sigma(s).\]
-Here \(\overset{d}{=}\) means equal in distribution. A deterministic policy assigns probability one to its chosen action.
-\item We omit date subscripts on \(P\), \(R\), and \(\sigma\).
+Here \(\modelvar{\overset{d}{=}}\) means equal in distribution. A deterministic policy assigns probability one to its chosen action.
+\item We omit date subscripts on \(\modelvar{P}\), \(\modelvar{R}\), and \(\modelvar{\sigma}\).
 \end{itemize}
 \end{frame}
 
@@ -202,7 +202,7 @@ Here \(\overset{d}{=}\) means equal in distribution. A deterministic policy assi
 \small
 In reinforcement learning, a \term{rollout} follows a policy from a starting state, generating a \term{trajectory} of states, actions, and rewards.
 \par\smallskip
-To simulate a rollout from \(s_t=s\), repeat for \(\tau=1,2,\ldots\):
+To simulate a rollout from \(\modelvar{s_t=s}\), repeat for \(\modelvar{\tau=1,2,\ldots}\):
 \begin{align*}
 a_{t+\tau-1}&\sim\sigma(s_{t+\tau-1}),\\
 r_{t+\tau}&\sim R(s_{t+\tau-1},a_{t+\tau-1}),\\
@@ -222,16 +222,16 @@ The next-state draw conditions on the realized reward when the two are dependent
 \end{tikzpicture}
 \caption{A rollout under policy \(\sigma\).}
 \end{figure}
-The associated \term{reward stream} is \(r_{t+1},r_{t+2},\ldots\).
+The associated \term{reward stream} is \(\modelvar{r_{t+1},r_{t+2},\ldots}\).
 Rollouts can differ through actions, rewards, or state transitions.
 \end{frame}
 
 \begin{frame}{Sources of Randomness in a Rollout}
-Fix the starting state \(s_t=s\). At each step, three draws can change the rollout:
+Fix the starting state \(\modelvar{s_t=s}\). At each step, three draws can change the rollout:
 \begin{itemize}
-\item \textbf{Action:} \(a\sim\sigma(s)\). The policy may choose different actions at the same state.
-\item \textbf{Reward:} \(r\sim R(s,a)\). The same state and action may yield different rewards.
-\item \textbf{Next state:} \(s'\sim P(\,\cdot\mid s,a,r)\). Even after observing the reward, the next state may be uncertain.
+\item \textbf{Action:} \(\modelvar{a\sim\sigma(s)}\). The policy may choose different actions at the same state.
+\item \textbf{Reward:} \(\modelvar{r\sim R(s,a)}\). The same state and action may yield different rewards.
+\item \textbf{Next state:} \(\modelvar{s'\sim P(\,\cdot\mid s,a,r)}\). Even after observing the reward, the next state may be uncertain.
 \end{itemize}
 \small
 Rewards and next states can be dependent. Averaging over the reward recovers the original transition kernel; for discrete rewards,
@@ -241,7 +241,7 @@ A deterministic policy or reward function puts probability one on a single outco
 
 \begin{frame}{One Starting State, Many Possible Rollouts}
 \small
-Restarting from the same \(s_0\) can generate different paths. Draw again at each new state.
+Restarting from the same \(\modelvar{s_0}\) can generate different paths. Draw again at each new state.
 \begin{figure}
 \centering
 \begin{tikzpicture}[x=1cm,y=.87cm,font=\sffamily\footnotesize,
@@ -276,25 +276,25 @@ Restarting from the same \(s_0\) can generate different paths. Draw again at eac
 \footnotesize
 \begin{itemize}
 \item Arrows show conditional draws; a rollout follows one branch at each step. Dots indicate further branches.
-\item Deterministic \(\sigma(s)\) or \(R(s,a)\) leaves one branch at that step.
+\item Deterministic \(\modelvar{\sigma(s)}\) or \(\modelvar{R(s,a)}\) leaves one branch at that step.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{The Return of a Rollout}
-The \term{discounted accumulated reward}, or \term{return}, assigns a number to the reward stream of a rollout starting at date \(t\):
+The \term{discounted accumulated reward}, or \term{return}, assigns a number to the reward stream of a rollout starting at date \(\modelvar{t}\):
 \[G_t=r_{t+1}+\beta r_{t+2}+\cdots+\beta^{\tau-1}r_{t+\tau}+\cdots
  =\sum_{\tau=1}^{\infty}\beta^{\tau-1}r_{t+\tau}.\]
 \begin{itemize}
-\item The first reward has weight 1; the reward \(\tau\) steps ahead has weight \(\beta^{\tau-1}\).
+\item The first reward has weight 1; the reward \(\modelvar{\tau}\) steps ahead has weight \(\modelvar{\beta^{\tau-1}}\).
 \item One rollout gives one realized return. Random actions, rewards, or transitions can produce different returns under the same policy.
 \item To evaluate a policy from a given state, we consider the expected return over its possible rollouts.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Discounting and a Finite Return}
-Let \(\bar r<\infty\) be a \textbf{uniform bound on absolute rewards}: \(|r_{t+j}|\leq\bar r\) for every \(j\geq1\).
+Let \(\modelvar{\bar r<\infty}\) be a \textbf{uniform bound on absolute rewards}: \(\modelvar{|r_{t+j}|\leq\bar r}\) for every \(\modelvar{j\geq1}\).
 \par\medskip
-For any rollout truncated after \(\tau\) periods,
+For any rollout truncated after \(\modelvar{\tau}\) periods,
 \begin{align*}
 \left|G_t^{(\tau)}\right|
  &=\left|\sum_{j=1}^{\tau}\beta^{j-1}r_{t+j}\right|
@@ -302,24 +302,24 @@ For any rollout truncated after \(\tau\) periods,
  &\leq\bar r\sum_{j=1}^{\tau}\beta^{j-1}
  =\frac{1-\beta^\tau}{1-\beta}\,\bar r.
 \end{align*}
-As \(\tau\to\infty\), \(\beta^\tau\to0\), so the infinite-horizon return satisfies
+As \(\modelvar{\tau\to\infty}\), \(\modelvar{\beta^\tau\to0}\), so the infinite-horizon return satisfies
 \[|G_t|\leq\lim_{\tau\to\infty}\frac{1-\beta^\tau}{1-\beta}\,\bar r
  =\frac{\bar r}{1-\beta}.\]
 \end{frame}
 
 \begin{frame}{The Value Function of a Policy}
-The \term{state-value function under policy \(\sigma\)} is the expected return over rollouts starting at \(s\):
+The \term{state-value function under policy \(\modelvar{\sigma}\)} is the expected return over rollouts starting at \(\modelvar{s}\):
 \[V^\sigma(s)=\E_\sigma[G_t\mid s_t=s]
  =\E_\sigma\!\left[\sum_{\tau=1}^{\infty}\beta^{\tau-1}r_{t+\tau}\,\middle|\,s_t=s\right].\]
 \begin{itemize}
-\item The subscript \(\sigma\) in \(\E_\sigma\) means that the expectation is over rollouts following this particular policy \(\sigma\).
-\item \(G_t\) is the return of one rollout. \(V^\sigma(s)\) averages over all possible rollouts from \(s\) under \(\sigma\).
-\item The expectation averages over random actions \(\sigma(s)\), rewards \(R(s,a)\), and next states drawn from \(P\), throughout the rollout. The starting state is held fixed.
+\item The subscript \(\modelvar{\sigma}\) in \(\modelvar{\E_\sigma}\) means that the expectation is over rollouts following this particular policy \(\modelvar{\sigma}\).
+\item \(\modelvar{G_t}\) is the return of one rollout. \(\modelvar{V^\sigma(s)}\) averages over all possible rollouts from \(\modelvar{s}\) under \(\modelvar{\sigma}\).
+\item The expectation averages over random actions \(\modelvar{\sigma(s)}\), rewards \(\modelvar{R(s,a)}\), and next states drawn from \(\modelvar{P}\), throughout the rollout. The starting state is held fixed.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{The Return Has a Recursive Form}
-Along a rollout, the return from date \(t\) is:
+Along a rollout, the return from date \(\modelvar{t}\) is:
 \[G_t=r_{t+1}+\beta r_{t+2}+\beta^2r_{t+3}+\cdots.\]
 Separate the first reward from all later rewards:
 \begin{align*}
@@ -327,8 +327,8 @@ G_t&=r_{t+1}+\beta\big(r_{t+2}+\beta r_{t+3}+\cdots\big)\\
    &=r_{t+1}+\beta G_{t+1}.
 \end{align*}
 \begin{itemize}
-\item \(G_{t+1}\) is the return from the remainder of the same rollout.
-\item From the next state \(s'\), the expected remaining return is
+\item \(\modelvar{G_{t+1}}\) is the return from the remainder of the same rollout.
+\item From the next state \(\modelvar{s'}\), the expected remaining return is
 \[\E_\sigma[G_{t+1}\mid s_{t+1}=s']=V^\sigma(s').\]
 \end{itemize}
 This lets us replace an infinite reward sequence with a one-step equation.
@@ -336,7 +336,7 @@ This lets us replace an infinite reward sequence with a one-step equation.
 
 \begin{frame}{Expanding the Expectation}
 \small
-Using \(G_t=r_{t+1}+\beta G_{t+1}\), average over the remaining rollout after the first step:
+Using \(\modelvar{G_t=r_{t+1}+\beta G_{t+1}}\), average over the remaining rollout after the first step:
 \[V^\sigma(s)=\E_\sigma\!\left[r_{t+1}+\beta V^\sigma(s_{t+1})\mid s_t=s\right].\]
 For discrete outcomes, the \term{policy Bellman equation} expands as
 \[V^\sigma(s)=
@@ -344,7 +344,7 @@ For discrete outcomes, the \term{policy Bellman equation} expands as
 \sum_r\underbrace{\Pr\{R(s,a)=r\}}_{\text{reward}}
 \sum_{s'}\underbrace{P(s'\mid s,a,r)}_{\text{next state}}
 \bigl[r+\beta V^\sigma(s')\bigr].\]
-For a deterministic policy \(a=\sigma(s)\), collect the current and continuation terms:
+For a deterministic policy \(\modelvar{a=\sigma(s)}\), collect the current and continuation terms:
 \[V^\sigma(s)=
 \underbrace{\sum_r r\Pr\{R(s,\sigma(s))=r\}}_{\text{expected current reward}}
 +\beta\underbrace{\sum_{s'}P(s'\mid s,\sigma(s))V^\sigma(s')}_{\text{expected continuation value}}.\]
@@ -352,20 +352,20 @@ For a deterministic policy \(a=\sigma(s)\), collect the current and continuation
 \end{frame}
 
 \begin{frame}{Policy Evaluation as a Linear System}
-For finite states and discrete rewards, fix a deterministic policy \(\sigma\) and define
+For finite states and discrete rewards, fix a deterministic policy \(\modelvar{\sigma}\) and define
 \[P^\sigma_{ij}=P(j\mid i,\sigma(i)),\qquad \mu^\sigma_i=\sum_r r\Pr\{R(i,\sigma(i))=r\}.\]
 \begin{itemize}
-\item Row \(i\) of \(P^\sigma\) gives next-state probabilities when we follow \(\sigma\) from state \(i\).
-\item Entry \(i\) of \(\mu^\sigma\) is the current expected reward at that state.
+\item Row \(\modelvar{i}\) of \(\modelvar{P^\sigma}\) gives next-state probabilities when we follow \(\modelvar{\sigma}\) from state \(\modelvar{i}\).
+\item Entry \(\modelvar{i}\) of \(\modelvar{\mu^\sigma}\) is the current expected reward at that state.
 \end{itemize}
-Treat \(V^\sigma\) and \(\mu^\sigma\) as column vectors. The policy Bellman equations become
+Treat \(\modelvar{V^\sigma}\) and \(\modelvar{\mu^\sigma}\) as column vectors. The policy Bellman equations become
 \[V^\sigma=\mu^\sigma+\beta P^\sigma V^\sigma,
 \qquad (I-\beta P^\sigma)V^\sigma=\mu^\sigma.\]
 \term{Policy evaluation} computes the value of the specified policy by solving this linear system.
 \end{frame}
 
 \begin{frame}{From a Given Policy to the Optimal Value}
-For a finite-state, finite-action MDP with discrete rewards, let \(\Sigma\) denote the feasible stationary deterministic policies. The \term{optimal value function} is
+For a finite-state, finite-action MDP with discrete rewards, let \(\modelvar{\Sigma}\) denote the feasible stationary deterministic policies. The \term{optimal value function} is
 \[V^*(s)=\max_{\sigma\in\Sigma}V^\sigma(s).\]
 Choose the current action, then follow an optimal policy from the next state. This gives the \term{Bellman optimality equation}:
 \[V^*(s)=\max_{a\in\Aset(s)}
@@ -386,7 +386,7 @@ An unemployed worker observes a wage offer and chooses whether to accept it.
 \end{itemize}
 Accept today or wait for a better offer.
 \par\medskip
-\small The decision at date \(t\) generates income \(r_{t+1}\).
+\small The decision at date \(\modelvar{t}\) generates income \(\modelvar{r_{t+1}}\).
 \end{frame}
 
 \begin{frame}{The McCall Search Model as an MDP}
@@ -394,8 +394,8 @@ Accept today or wait for a better offer.
 The state records employment status and the current offered or accepted wage:
 \[\Sset=\{(\mathrm U,w),(\mathrm E,w):w\in\mathcal W\}.\]
 \begin{itemize}
-\item At \((\mathrm U,w)\), choose \textbf{accept} or \textbf{reject}. At \((\mathrm E,w)\), the only action is \textbf{work}.
-\item Current rewards are \(R((\mathrm U,w),\text{accept})=w\), \(R((\mathrm U,w),\text{reject})=b\), and \(R((\mathrm E,w),\text{work})=w\).
+\item At \(\modelvar{(\mathrm U,w)}\), choose \textbf{accept} or \textbf{reject}. At \(\modelvar{(\mathrm E,w)}\), the only action is \textbf{work}.
+\item Current rewards are \(\modelvar{R((\mathrm U,w),\text{accept})=w}\), \(\modelvar{R((\mathrm U,w),\text{reject})=b}\), and \(\modelvar{R((\mathrm E,w),\text{work})=w}\).
 \item The \term{transition kernel} is
 \begin{align*}
 P((\mathrm U,w')\mid(\mathrm U,w),\text{reject})&=q(w'),\\
@@ -404,12 +404,12 @@ P((\mathrm E,w)\mid(\mathrm E,w),\text{work})&=1.
 \end{align*}
 All other transition probabilities are zero.
 \end{itemize}
-A policy \(\sigma\) specifies whether to accept each offer while unemployed.
+A policy \(\modelvar{\sigma}\) specifies whether to accept each offer while unemployed.
 \end{frame}
 
 \begin{frame}{The McCall Search Model: Recursive Values}
 \small
-Once employed, the state is \((\mathrm E,w)\) and there is no further choice:
+Once employed, the state is \(\modelvar{(\mathrm E,w)}\) and there is no further choice:
 \[V^\sigma((\mathrm E,w))=w+\beta V^\sigma((\mathrm E,w))=\frac{w}{1-\beta}.\]
 For a specified acceptance policy, the \term{policy Bellman equation} is
 \[V^\sigma((\mathrm U,w))=
@@ -436,28 +436,28 @@ New income replenishes the stock: consume now or save for periods when income is
 
 \begin{frame}{Consumption and Saving as an MDP}
 \small
-The state is current stock \(s\); the action \(a\) is the amount \textbf{saved}. Both range over real intervals:
+The state is current stock \(\modelvar{s}\); the action \(\modelvar{a}\) is the amount \textbf{saved}. Both range over real intervals:
 \[\Sset=[0,M+B],\qquad \Aset(s)=[0,\min(s,M)].\]
 Consumption, reward, and the next state are
 \[c=s-a,\qquad R(s,a)=(s-a)^\alpha,\qquad s'=a+Y'.\]
-Thus \(s'\mid(s,a)\sim\mathrm{Uniform}[a,a+B]\). For a measurable subset \(\bar S\subseteq\Sset\), the \term{transition kernel} is
+Thus \(\modelvar{s'\mid(s,a)\sim\mathrm{Uniform}[a,a+B]}\). For a measurable subset \(\modelvar{\bar S\subseteq\Sset}\), the \term{transition kernel} is
 \[P(\bar S\mid s,a)=\frac{1}{B}\int_0^B
 \mathbf{1}\{a+y\in\bar S\}\,dy.\]
 \begin{itemize}
-\item The indicator is one when the next stock belongs to \(\bar S\), and zero otherwise.
-\item A deterministic policy \(\sigma(s)\in[0,\min(s,M)]\) specifies saving at every stock.
+\item The indicator is one when the next stock belongs to \(\modelvar{\bar S}\), and zero otherwise.
+\item A deterministic policy \(\modelvar{\sigma(s)\in[0,\min(s,M)]}\) specifies saving at every stock.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Consumption and Saving: Recursive Values}
-For a specified deterministic saving policy \(\sigma\),
+For a specified deterministic saving policy \(\modelvar{\sigma}\),
 \[V^\sigma(s)=\bigl(s-\sigma(s)\bigr)^\alpha
  +\frac{\beta}{B}\int_0^B V^\sigma\bigl(\sigma(s)+y\bigr)\,dy.\]
 Choosing saving optimally gives
 \[V^*(s)=\max_{a\in[0,\min(s,M)]}
 \left\{(s-a)^\alpha+\frac{\beta}{B}\int_0^B V^*(a+y)\,dy\right\}.\]
 \begin{itemize}
-\item The integral averages continuation values over continuously distributed income, whose density is \(1/B\) on \([0,B]\).
+\item The integral averages continuation values over continuously distributed income, whose density is \(\modelvar{1/B}\) on \(\modelvar{[0,B]}\).
 \item Saving more lowers current utility and raises next-period resources for each income realization.
 \end{itemize}
 \end{frame}

@@ -198,7 +198,7 @@
 \begin{frame}{Lecture Overview}
 \begin{itemize}
 \item \textbf{From State Values to Action Values}
-  \begin{itemize}\item Evaluate a maze policy and its state values\item Introduce \(Q^\sigma\) to compare first actions and link it to \(V^\sigma\)\end{itemize}
+  \begin{itemize}\item Evaluate a maze policy and its state values\item Introduce \(\modelvar{Q^\sigma}\) to compare first actions and link it to \(\modelvar{V^\sigma}\)\end{itemize}
 \item \textbf{The Principle of Optimality}
   \begin{itemize}\item Improve a continuation from a reached state\item Derive optimal state and action values\end{itemize}
 \item \textbf{Value Function Iteration}
@@ -208,7 +208,7 @@
 
 \begin{frame}{Recap: Computing the Value Function of a Given Policy}
 \small
-Consider a specific deterministic policy \(\sigma\).
+Consider a specific deterministic policy \(\modelvar{\sigma}\).
 \begin{columns}[c]
 \begin{column}{.60\textwidth}
 \begin{figure}\centering
@@ -221,8 +221,8 @@ Consider a specific deterministic policy \(\sigma\).
 \begin{column}{.37\textwidth}
 \begin{itemize}
 \item U: up; D: down;\\L: left; R: right.
-\item Each move gives \(-1\), including entry into cell 8.
-\item Set \(\beta=1\) for simplicity.
+\item Each move gives \(\modelvar{-1}\), including entry into cell 8.
+\item Set \(\modelvar{\beta=1}\) for simplicity.
 \item Following this policy reaches cell 8 from every free cell.
 \end{itemize}
 \end{column}\end{columns}
@@ -230,7 +230,7 @@ Consider a specific deterministic policy \(\sigma\).
 
 \begin{frame}{Recap: Computing the Value Function of a Given Policy}
 \small
-With \(\beta=1\), compute values backward from cell 8, following the actions of \(\sigma\).
+With \(\modelvar{\beta=1}\), compute values backward from cell 8, following the actions of \(\modelvar{\sigma}\).
 \begin{columns}[c]
 \begin{column}{.60\textwidth}
 \begin{figure}\centering
@@ -241,51 +241,51 @@ With \(\beta=1\), compute values backward from cell 8, following the actions of 
 \end{figure}
 \end{column}
 \begin{column}{.37\textwidth}
-\(V^\sigma(8)=0\). For every other cell,
+\(\modelvar{V^\sigma(8)=0}\). For every other cell,
 \[V^\sigma(s)=-1+V^\sigma(s').\]
 \begin{align*}
 V^\sigma(15)&=-1+0=-1,\\
 V^\sigma(22)&=-1+(-1)=-2,\\
 V^\sigma(30)&=-1+(-2)=-3.
 \end{align*}
-Continuing backward gives \(V^\sigma(16)=-16\).
+Continuing backward gives \(\modelvar{V^\sigma(16)=-16}\).
 \par\smallskip
-Each value is minus the number of moves to cell 8 under \(\sigma\).
+Each value is minus the number of moves to cell 8 under \(\modelvar{\sigma}\).
 \end{column}\end{columns}
 \end{frame}
 
 \begin{frame}{From State Values to Action Values}
 \small
-The \term{state value function} \(V^\sigma(s)\): follow the deterministic policy \(\sigma\) now and afterward.
+The \term{state value function} \(\modelvar{V^\sigma(s)}\): follow the deterministic policy \(\modelvar{\sigma}\) now and afterward.
 \[
 V^\sigma(s)=
 \underbrace{r\bigl(s,\sigma(s)\bigr)}_{\text{Immediate reward}}
 +\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,\ a=\sigma(s)\right]}_{\text{Discounted continuation value}}.
 \]
 \par\medskip
-The \term{state-action value function} \(Q^\sigma(s,a)\): choose \(a\) now, then follow \(\sigma\).
+The \term{state-action value function} \(\modelvar{Q^\sigma(s,a)}\): choose \(\modelvar{a}\) now, then follow \(\modelvar{\sigma}\).
 \[
 Q^\sigma(s,a)=
 \underbrace{r(s,a)}_{\text{Immediate reward}}
 +\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,a\right]}_{\text{Discounted continuation value}}.
 \]
 \par\medskip
-The first action \(a\) is deliberately chosen; it need not be an action that \(\sigma\) selects at \(s\).
+The first action \(\modelvar{a}\) is deliberately chosen; it need not be an action that \(\modelvar{\sigma}\) selects at \(\modelvar{s}\).
 \end{frame}
 
 \begin{frame}{Linking Q and V}
-Suppose the first action \(a\) is also chosen according to \(\sigma\). Then the policy governs the entire rollout.
+Suppose the first action \(\modelvar{a}\) is also chosen according to \(\modelvar{\sigma}\). Then the policy governs the entire rollout.
 \begin{itemize}
-\item \textbf{Deterministic policy:} \(a=\sigma(s)\), so
+\item \textbf{Deterministic policy:} \(\modelvar{a=\sigma(s)}\), so
 \[V^\sigma(s)=Q^\sigma(s,\sigma(s)).\]
-\item \textbf{Randomized policy:} \(a\sim\sigma(s)\). For a finite action set,
+\item \textbf{Randomized policy:} \(\modelvar{a\sim\sigma(s)}\). For a finite action set,
 \[V^\sigma(s)=\sum_{a\in\Aset(s)}\Pr\{\sigma(s)=a\}\,Q^\sigma(s,a).\]
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Example: Comparing First Actions}
 \small
-At cell 25, \(\sigma(25)=\mathrm U\). Compare U and R, then follow \(\sigma\). Set \(\beta=1\).
+At cell 25, \(\modelvar{\sigma(25)=\mathrm U}\). Compare U and R, then follow \(\modelvar{\sigma}\). Set \(\modelvar{\beta=1}\).
 \begin{columns}[c]
 \begin{column}{.58\textwidth}
 \begin{figure}\centering
@@ -307,7 +307,7 @@ At cell 25, \(\sigma(25)=\mathrm U\). Compare U and R, then follow \(\sigma\). S
 \textcolor{SessionRed}{\textbf{Right to cell 26:}}
 \[Q^\sigma(25,\mathrm R)=-1-7=-8.\]
 \par\medskip
-The policy chooses U, so \(V^\sigma(25)=-10\).
+The policy chooses U, so \(\modelvar{V^\sigma(25)=-10}\).
 \par\smallskip
 Choosing R first gives a higher return.
 \end{column}\end{columns}
@@ -336,8 +336,8 @@ Q^*(s,a)&=r(s,a)+\beta\,\E\!\left[V^*(s')\mid s,a\right],\\
 V^*(s)&=\max_{a\in\Aset(s)}Q^*(s,a).
 \end{align*}
 \begin{itemize}
-\item \(Q^*\): fix the current action, then choose optimally afterward.
-\item \(V^*\): also choose the current action optimally.
+\item \(\modelvar{Q^*}\): fix the current action, then choose optimally afterward.
+\item \(\modelvar{V^*}\): also choose the current action optimally.
 \item The expectation averages the outcomes of the chosen action; it does not let us choose the random outcome.
 \end{itemize}
 \end{frame}
@@ -386,34 +386,34 @@ V^*(s)&=\max_{a\in\Aset(s)}Q^*(s,a).
 \end{frame}
 
 \begin{frame}{The Bellman Optimality Operator}
-Replace the unknown optimal continuation value by a candidate function \(v\). The \term{Bellman optimality operator} produces
+Replace the unknown optimal continuation value by a candidate function \(\modelvar{v}\). The \term{Bellman optimality operator} produces
 \[(Tv)(s)=\max_{a\in\Aset(s)}\left\{
 r(s,a)+\beta\sum_{s'}P(s'\mid s,a)v(s')\right\}.\]
 \begin{itemize}
 \item For each action, add the immediate reward to the expected discounted continuation value; take the largest result.
-\item The optimal value is a \term{fixed point}: \(TV^*=V^*\).
+\item The optimal value is a \term{fixed point}: \(\modelvar{TV^*=V^*}\).
 \end{itemize}
-\small The sum describes discrete next states; use a probability integral for continuous next states. Unlike fixed-policy evaluation, \(T\) maximizes over the current action.
+\small The sum describes discrete next states; use a probability integral for continuous next states. Unlike fixed-policy evaluation, \(\modelvar{T}\) maximizes over the current action.
 \end{frame}
 
 \begin{frame}{Value Function Iteration}
 \small
-Given a finite MDP, its reward function and transition kernel, and value-error tolerance \(\varepsilon>0\):
+Given a finite MDP, its reward function and transition kernel, and value-error tolerance \(\modelvar{\varepsilon>0}\):
 \begin{enumerate}
-\item Initialize \(v_0(s)=0\) and set \(k=0\). Keep zero-reward absorbing goal states at zero.
+\item Initialize \(\modelvar{v_0(s)=0}\) and set \(\modelvar{k=0}\). Keep zero-reward absorbing goal states at zero.
 \item Score every feasible action using the \textbf{old} value function:
 \[Q_k(s,a)=r(s,a)+\beta\,\E\!\left[v_k(s')\mid s,a\right].\]
-\item Store the best score in a new array: \(v_{k+1}(s)=\max_a Q_k(s,a)\).
-\item Compute \(d_k=\max_s|v_{k+1}(s)-v_k(s)|\). If \(d_k\leq(1-\beta)\varepsilon\), return \(v_k\); otherwise increase \(k\) and repeat.
+\item Store the best score in a new array: \(\modelvar{v_{k+1}(s)=\max_a Q_k(s,a)}\).
+\item Compute \(\modelvar{d_k=\max_s|v_{k+1}(s)-v_k(s)|}\). If \(\modelvar{d_k\leq(1-\beta)\varepsilon}\), return \(\modelvar{v_k}\); otherwise increase \(\modelvar{k}\) and repeat.
 \end{enumerate}
-\(Q_k\) uses the approximate continuation \(v_k\); it need not equal \(Q^\sigma\) for a particular policy.
+\(\modelvar{Q_k}\) uses the approximate continuation \(\modelvar{v_k}\); it need not equal \(\modelvar{Q^\sigma}\) for a particular policy.
 \par\smallskip
-A \term{sweep} updates every state once. The separate new array ensures all updates use the same \(v_k\).
+A \term{sweep} updates every state once. The separate new array ensures all updates use the same \(\modelvar{v_k}\).
 \end{frame}
 
 \begin{frame}{Example: Values Move Back Through the Maze}
 \small
-Consider cells 30, 22, and 15 near the goal (8) in the same maze. Set \(\beta=0.9\), \(v_0=0\); each move before the goal costs one.
+Consider cells 30, 22, and 15 near the goal (8) in the same maze. Set \(\modelvar{\beta=0.9}\), \(\modelvar{v_0=0}\); each move before the goal costs one.
 \begin{figure}\centering
 \begin{tikzpicture}[font=\sffamily\small]
 \foreach \i/\lab in {0/30,1/22,2/15,3/8}
@@ -433,20 +433,20 @@ Consider cells 30, 22, and 15 near the goal (8) in the same maze. Set \(\beta=0.
 \(v_3\)&\(-2.71\)&\(-1.9\)&\(-1\)&0\\\bottomrule
 \end{tabular}
 \end{center}
-For example, \(v_3(30)=-1+0.9v_2(22)=-2.71\).
-For this zero-initialized update, \(v_k\) is the optimal \(k\)-period return with zero value afterward.
+For example, \(\modelvar{v_3(30)=-1+0.9v_2(22)=-2.71}\).
+For this zero-initialized update, \(\modelvar{v_k}\) is the optimal \(\modelvar{k}\)-period return with zero value afterward.
 \end{frame}
 
 \begin{frame}{Why VFI Converges}
 \small
-For finite states, use \(\|v-w\|_\infty=\max_s|v(s)-w(s)|\). The difference between two scores for the \textbf{same action} satisfies
+For finite states, use \(\modelvar{\|v-w\|_\infty=\max_s|v(s)-w(s)|}\). The difference between two scores for the \textbf{same action} satisfies
 \[\left|\beta\E[v(s')-w(s')\mid s,a]\right|\leq\beta\|v-w\|_\infty.\]
-Since \(|\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a|\),
+Since \(\modelvar{|\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a|}\),
 \[\|Tv-Tw\|_\infty\leq\beta\|v-w\|_\infty.\]
-Thus \(T\) is a \term{contraction}: the new maximum distance is at most \(\beta\) times the old distance.
+Thus \(\modelvar{T}\) is a \term{contraction}: the new maximum distance is at most \(\modelvar{\beta}\) times the old distance.
 \begin{itemize}
-\item There is a unique fixed point \(V^*\); every initial finite vector converges to it.
-\item After \(k\) sweeps,
+\item There is a unique fixed point \(\modelvar{V^*}\); every initial finite vector converges to it.
+\item After \(\modelvar{k}\) sweeps,
 \[\|v_k-V^*\|_\infty\leq\beta^k\|v_0-V^*\|_\infty.\]
 \item A discount factor closer to one gives a slower worst-case rate.
 \end{itemize}
@@ -454,7 +454,7 @@ Thus \(T\) is a \term{contraction}: the new maximum distance is at most \(\beta\
 
 \begin{frame}{A Stopping Rule With an Error Bound}
 \small
-After computing \(v_{k+1}=Tv_k\), measure the \term{Bellman residual} of \(v_k\):
+After computing \(\modelvar{v_{k+1}=Tv_k}\), measure the \term{Bellman residual} of \(\modelvar{v_k}\):
 \[d_k=\|Tv_k-v_k\|_\infty=\|v_{k+1}-v_k\|_\infty.\]
 The contraction inequality gives
 \begin{align*}
@@ -462,19 +462,19 @@ The contraction inequality gives
 &\leq\|v_k-Tv_k\|_\infty+\|Tv_k-TV^*\|_\infty\\
 &\leq d_k+\beta\|v_k-V^*\|_\infty,
 \end{align*}
-so \(\|v_k-V^*\|_\infty\leq d_k/(1-\beta)\).
+so \(\modelvar{\|v_k-V^*\|_\infty\leq d_k/(1-\beta)}\).
 \begin{itemize}
-\item To guarantee value error at most \(\varepsilon\), stop when \(d_k\leq(1-\beta)\varepsilon\) and return \(v_k\).
-\item At \(\beta=0.9\) and \(\varepsilon=0.01\), require \(d_k\leq0.001\).
+\item To guarantee value error at most \(\modelvar{\varepsilon}\), stop when \(\modelvar{d_k\leq(1-\beta)\varepsilon}\) and return \(\modelvar{v_k}\).
+\item At \(\modelvar{\beta=0.9}\) and \(\modelvar{\varepsilon=0.01}\), require \(\modelvar{d_k\leq0.001}\).
 \end{itemize}
 \footnotesize This guarantee uses exact expectations and maximization. Numerical approximation introduces additional errors.
 \end{frame}
 
 \begin{frame}{Recovering a Policy}
-Use the action scores calculated from the returned \(v_k\). A \term{greedy policy} chooses
+Use the action scores calculated from the returned \(\modelvar{v_k}\). A \term{greedy policy} chooses
 \[\widehat\sigma(s)\in\argmax_{a\in\Aset(s)}Q_k(s,a).\]
 \begin{itemize}
-\item If \(v_k=V^*\), then \(Q_k=Q^*\), and every maximizing action is optimal.
+\item If \(\modelvar{v_k=V^*}\), then \(\modelvar{Q_k=Q^*}\), and every maximizing action is optimal.
 \item With approximate values, evaluate the resulting policy to check its achieved return.
 \item If several actions tie, choose one consistently.
 \end{itemize}
@@ -484,7 +484,7 @@ VFI updates value estimates. The final maximization converts those estimates int
 
 \begin{frame}{Example: VFI for McCall Job Search}
 \small
-The state is \((\mathrm U,w)\) or \((\mathrm E,w)\). Rejecting pays \(b\) and draws a new offer \(w'\) with probability \(q(w')\); accepting pays \(w\) forever.
+The state is \(\modelvar{(\mathrm U,w)}\) or \(\modelvar{(\mathrm E,w)}\). Rejecting pays \(\modelvar{b}\) and draws a new offer \(\modelvar{w'}\) with probability \(\modelvar{q(w')}\); accepting pays \(\modelvar{w}\) forever.
 \[v_k((\mathrm E,w))=\frac{w}{1-\beta}\quad\text{for every }k.\]
 Use this known employed value and update unemployed states:
 \begin{align*}
@@ -492,12 +492,12 @@ Q_k((\mathrm U,w),\text{accept})&=\frac{w}{1-\beta},\\
 Q_k((\mathrm U,w),\text{reject})&=b+\beta\sum_{w'}q(w')v_k((\mathrm U,w')),\\
 v_{k+1}((\mathrm U,w))&=\max\{Q_k((\mathrm U,w),\text{accept}),\ Q_k((\mathrm U,w),\text{reject})\}.
 \end{align*}
-Initialize \(v_0((\mathrm U,w))=0\). Employed-state values stay fixed at their known values; only unemployed-state values need iteration.
+Initialize \(\modelvar{v_0((\mathrm U,w))=0}\). Employed-state values stay fixed at their known values; only unemployed-state values need iteration.
 \end{frame}
 
 \begin{frame}{Example: McCall Iterations}
 \small
-Use \(\beta=0.9\), \(b=1\), offers \((1,2,3,4,5)\), and probabilities \((0.1,0.2,0.4,0.2,0.1)\).
+Use \(\modelvar{\beta=0.9}\), \(\modelvar{b=1}\), offers \(\modelvar{(1,2,3,4,5)}\), and probabilities \(\modelvar{(0.1,0.2,0.4,0.2,0.1)}\).
 \begin{center}
 \begin{tabular}{lrrrrr}\toprule
  & \(w=1\)&\(w=2\)&\(w=3\)&\(w=4\)&\(w=5\)\\\midrule
@@ -509,7 +509,7 @@ Use \(\beta=0.9\), \(b=1\), offers \((1,2,3,4,5)\), and probabilities \((0.1,0.2
 \(V^*\)&34.32&34.32&34.32&40.00&50.00\\
 \bottomrule\end{tabular}
 \end{center}
-The columns give \(v_k((\mathrm U,w))\). After the first update, the probability-weighted mean is 30. For offer 2, the next update is
+The columns give \(\modelvar{v_k((\mathrm U,w))}\). After the first update, the probability-weighted mean is 30. For offer 2, the next update is
 \[v_2((\mathrm U,2))=\max\{20,\ 1+0.9\times30\}=28.\]
 At convergence, waiting is worth about 34.32: reject offers 1--3 and accept 4--5.
 \end{frame}
@@ -526,13 +526,13 @@ The update averages over income and maximizes over saving:
 Q_k(s,a)&=(s-a)^\alpha+\frac{\beta}{B}\int_0^B v_k(a+y)\,dy,\\
 v_{k+1}(s)&=\max_{a\in[0,\min(s,M)]}Q_k(s,a).
 \end{align*}
-\small The exact operator is a contraction under the supremum norm on continuous value functions. The state interval is compact, rewards are bounded, and \(0<\beta<1\).
+\small The exact operator is a contraction under the supremum norm on continuous value functions. The state interval is compact, rewards are bounded, and \(\modelvar{0<\beta<1}\).
 \end{frame}
 
 \begin{frame}{Computing the Continuous Update}
 To implement the continuous saving model numerically:
 \begin{enumerate}
-\item \textbf{Represent \(v_k\):} store values at stock points and \term{interpolate} between them.
+\item \textbf{Represent \(\modelvar{v_k}\):} store values at stock points and \term{interpolate} between them.
 \item \textbf{Compute the expectation:} approximate the income integral using \term{numerical quadrature} or sampled incomes.
 \item \textbf{Choose saving:} maximize over the feasible interval using numerical optimization or an action grid.
 \end{enumerate}
