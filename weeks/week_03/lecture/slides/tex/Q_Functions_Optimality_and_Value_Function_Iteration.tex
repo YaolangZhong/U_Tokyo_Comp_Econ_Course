@@ -198,23 +198,12 @@
 \begin{frame}{Lecture Overview}
 \begin{itemize}
 \item \textbf{From State Values to Action Values}
-  \begin{itemize}\item Evaluate a maze policy, then compare first actions\item Define \(Q^\sigma\) and link it to \(V^\sigma\)\end{itemize}
+  \begin{itemize}\item Evaluate a maze policy and its state values\item Introduce \(Q^\sigma\) to compare first actions and link it to \(V^\sigma\)\end{itemize}
 \item \textbf{The Principle of Optimality}
   \begin{itemize}\item Improve a continuation from a reached state\item Derive optimal state and action values\end{itemize}
 \item \textbf{Value Function Iteration}
   \begin{itemize}\item Update values, check convergence, and recover a policy\item Apply the algorithm to job search and continuous saving\end{itemize}
 \end{itemize}
-\end{frame}
-
-\begin{frame}{Recap: The Value Function}
-For a given deterministic policy \(\sigma\),
-\[
-V^\sigma(s)=
-\underbrace{r\bigl(s,\sigma(s)\bigr)}_{\text{Immediate reward}}
-+\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,\ a=\sigma(s)\right]}_{\text{Discounted continuation value}}.
-\]
-\par\medskip
-\(s'\) is the next state, drawn from \(P(\cdot\mid s,\sigma(s))\).
 \end{frame}
 
 \begin{frame}{Recap: Computing the Value Function of a Given Policy}
@@ -266,21 +255,40 @@ Each value is minus the number of moves to cell 8 under \(\sigma\).
 \end{column}\end{columns}
 \end{frame}
 
+\begin{frame}{From State Values to Action Values}
+\small
+\(V^\sigma(s)\): follow the deterministic policy \(\sigma\) now and afterward.
+\[
+V^\sigma(s)=
+\underbrace{r\bigl(s,\sigma(s)\bigr)}_{\text{Immediate reward}}
++\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,\ a=\sigma(s)\right]}_{\text{Discounted continuation value}}.
+\]
+\par\medskip
+The \term{action-value function} \(Q^\sigma(s,a)\): choose \(a\) now, then follow \(\sigma\).
+\[
+Q^\sigma(s,a)=
+\underbrace{r(s,a)}_{\text{Immediate reward}}
++\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,a\right]}_{\text{Discounted continuation value}}.
+\]
+\par\medskip
+Only the first action changes. In both equations, \(s'\) is drawn from the transition kernel for that action, and \(V^\sigma(s')\) evaluates following \(\sigma\) afterward.
+\end{frame}
+
 \begin{frame}{Example: Comparing First Actions}
 At cell 25, the displayed policy chooses U. Compare U with R, then follow \(\sigma\) from the next cell. Keep \(\beta=1\).
 \begin{itemize}
 \item \textbf{Up:} move to cell 18, whose value is \(V^\sigma(18)=-9\):
-\[-1+V^\sigma(18)=-10.\]
+\[Q^\sigma(25,\mathrm U)=-1+V^\sigma(18)=-10.\]
 \item \textbf{Right:} move to cell 26, whose value is \(V^\sigma(26)=-7\):
-\[-1+V^\sigma(26)=-8.\]
+\[Q^\sigma(25,\mathrm R)=-1+V^\sigma(26)=-8.\]
 \end{itemize}
 Both actions cost one now. Right gives a better continuation.
 \par\medskip
-\(V^\sigma(25)=-10\) evaluates the policy's choice. An \textbf{action value} evaluates each possible first choice separately.
+Since \(\sigma(25)=\mathrm U\), \(V^\sigma(25)=Q^\sigma(25,\mathrm U)=-10\). Choosing R first improves the return to \(-8\).
 \end{frame}
 
-\begin{frame}{The Action-Value Function}
-The \term{action-value function} \(Q^\sigma(s,a)\) is the expected return from state \(s\), taking action \(a\) first and following \(\sigma\) afterward:
+\begin{frame}{Action Values and Rollouts}
+Start at \(s\), take action \(a\), then follow \(\sigma\). The resulting rollout gives
 \[Q^\sigma(s,a)=\E_\sigma[G_t\mid s_t=s,\ a_t=a],
 \qquad G_t=\sum_{\tau=0}^{\infty}\beta^{\tau}r(s_{t+\tau},a_{t+\tau}).\]
 \begin{itemize}
@@ -292,9 +300,7 @@ The \term{action-value function} \(Q^\sigma(s,a)\) is the expected return from s
 \end{frame}
 
 \begin{frame}{Linking Q and V}
-Fix the first action; evaluate the remaining rollout by its state value:
-\[Q^\sigma(s,a)=r(s,a)+\beta\,\E\!\left[V^\sigma(s')\mid s,a\right].\]
-For a finite action set, average the first action according to the policy:
+For a randomized policy with a finite action set, average the first action according to the policy:
 \[V^\sigma(s)=\sum_{a\in\Aset(s)}\Pr\{\sigma(s)=a\}\,Q^\sigma(s,a).\]
 For a deterministic policy,
 \[V^\sigma(s)=Q^\sigma(s,\sigma(s)).\]
