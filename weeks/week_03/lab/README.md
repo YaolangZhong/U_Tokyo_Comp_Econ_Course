@@ -1,5 +1,7 @@
-# Research tools lab
+# Lab 3: Value Function Iteration in VS Code
 
-This lab will explore LLM-agent tools for research alongside Git and other research tools. The activity, setup instructions, and deliverable will be announced on the weekly course page.
+Open the [working folder](starter/) in VS Code and follow its [setup instructions](starter/README.md).
 
-Tool requirements and activities will be announced on the weekly page.
+The [notebook](starter/lab_03.ipynb) imports Python modules for the maze, McCall job search, continuous saving, and the shared VFI algorithm. Run the cells to inspect values, policies, convergence, and simulation figures.
+
+[Download the complete working folder](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_03/week_03-lab.zip)

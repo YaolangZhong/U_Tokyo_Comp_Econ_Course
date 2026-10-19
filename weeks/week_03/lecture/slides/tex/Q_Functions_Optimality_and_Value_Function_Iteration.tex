@@ -202,7 +202,7 @@
 \item \textbf{Optimality and Policy Iteration}
   \begin{itemize}\item Bellman optimality and the one-step deviation principle\item Exact policy evaluation and improvement\end{itemize}
 \item \textbf{Value Function Iteration}
-  \begin{itemize}\item Contraction, stopping errors, and policy recovery\item McCall job search and continuous saving\end{itemize}
+  \begin{itemize}\item Synchronous updates and convergence\item Stopping errors and policy recovery\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -476,32 +476,6 @@ Contraction gives
 \(\modelvar{v_k}\) need not equal any \(\modelvar{V^\sigma}\), and \(\modelvar{Q_k}\) need not equal any \(\modelvar{Q^\sigma}\). VFI convergence follows from contraction, not successive exact policy evaluations.
 \end{frame}
 
-\begin{frame}{Example: Values Move Back Through the Maze}
-\small
-Consider cells 30, 22, and 15 near the goal (8) in the same maze. Set \(\modelvar{\beta=0.9}\), \(\modelvar{v_0=0}\); each move before the goal costs one.
-\begin{figure}\centering
-\begin{tikzpicture}[font=\sffamily\small]
-\foreach \i/\lab in {0/30,1/22,2/15,3/8}
- \node[valueState] (s\i) at (2.6*\i,0) {\lab};
-\node[valueState,fill=MazeGoalFill] at (7.8,0) {8};
-\foreach \i/\j in {0/1,1/2,2/3}
- \draw[valueFlow] (s\i)--node[above]{up}(s\j);
-\end{tikzpicture}
-\caption{The final corridor to the goal.}
-\end{figure}
-\begin{center}
-\begin{tabular}{lrrrr}\toprule
- & Cell 30 & Cell 22 & Cell 15 & Cell 8\\\midrule
-\(v_0\)&0&0&0&0\\
-\(v_1\)&\(-1\)&\(-1\)&\(-1\)&0\\
-\(v_2\)&\(-1.9\)&\(-1.9\)&\(-1\)&0\\
-\(v_3\)&\(-2.71\)&\(-1.9\)&\(-1\)&0\\\bottomrule
-\end{tabular}
-\end{center}
-For example, \(\modelvar{v_3(30)=-1+0.9v_2(22)=-2.71}\).
-For this zero-initialized update, \(\modelvar{v_k}\) is the optimal \(\modelvar{k}\)-period return with zero value afterward.
-\end{frame}
-
 \begin{frame}{Stopping VFI and Recovering a Policy}
 \small
 After computing \(\modelvar{v_{k+1}=Tv_k}\), measure the \term{Bellman residual}:
@@ -516,66 +490,6 @@ Contraction implies
 \item Evaluate \(\modelvar{V^{\widehat\sigma}}\) to check the policy's achieved return. Intermediate greedy policies in VFI need not improve monotonically.
 \end{itemize}
 \footnotesize The bound assumes exact expectations and maximization; numerical approximations add errors.
-\end{frame}
-
-\begin{frame}{Example: VFI for McCall Job Search}
-\small
-The state is \(\modelvar{(\mathrm U,w)}\) or \(\modelvar{(\mathrm E,w)}\). Rejecting pays \(\modelvar{b}\) and draws a new offer \(\modelvar{w'}\) with probability \(\modelvar{q(w')}\); accepting pays \(\modelvar{w}\) forever.
-\[v_k((\mathrm E,w))=\frac{w}{1-\beta}\quad\text{for every }k.\]
-Use this known employed value and update unemployed states:
-\begin{align*}
-Q_k((\mathrm U,w),\text{accept})&=\frac{w}{1-\beta},\\
-Q_k((\mathrm U,w),\text{reject})&=b+\beta\sum_{w'}q(w')v_k((\mathrm U,w')),\\
-v_{k+1}((\mathrm U,w))&=\max\{Q_k((\mathrm U,w),\text{accept}),\ Q_k((\mathrm U,w),\text{reject})\}.
-\end{align*}
-Initialize \(\modelvar{v_0((\mathrm U,w))=0}\). Employed-state values stay fixed at their known values; only unemployed-state values need iteration.
-\end{frame}
-
-\begin{frame}{Example: McCall Iterations}
-\small
-Use \(\modelvar{\beta=0.9}\), \(\modelvar{b=1}\), offers \(\modelvar{(1,2,3,4,5)}\), and probabilities \(\modelvar{(0.1,0.2,0.4,0.2,0.1)}\).
-\begin{center}
-\begin{tabular}{lrrrrr}\toprule
- & \(w=1\)&\(w=2\)&\(w=3\)&\(w=4\)&\(w=5\)\\\midrule
-\(v_0\)&0.00&0.00&0.00&0.00&0.00\\
-\(v_1\)&10.00&20.00&30.00&40.00&50.00\\
-\(v_2\)&28.00&28.00&30.00&40.00&50.00\\
-\(v_3\)&31.06&31.06&31.06&40.00&50.00\\
-\(v_{10}\)&34.20&34.20&34.20&40.00&50.00\\
-\(V^*\)&34.32&34.32&34.32&40.00&50.00\\
-\bottomrule\end{tabular}
-\end{center}
-The columns give \(\modelvar{v_k((\mathrm U,w))}\). After the first update, the probability-weighted mean is 30. For offer 2, the next update is
-\[v_2((\mathrm U,2))=\max\{20,\ 1+0.9\times30\}=28.\]
-At convergence, waiting is worth about 34.32: reject offers 1--3 and accept 4--5.
-\end{frame}
-
-\begin{frame}{Example: VFI for Continuous Saving}
-\small
-With storage capacity \(\modelvar{M\geq0}\), stock is \(\modelvar{s\in[0,M+B]}\). Choose saving \(\modelvar{a\in[0,\min(s,M)]}\) and consume \(\modelvar{c=s-a}\).
-\begin{itemize}
-\item Income \(\modelvar{Y'\sim\mathrm{Uniform}[0,B]}\), \(\modelvar{B>0}\), is independent across periods; next stock is \(\modelvar{s'=a+Y'}\).
-\item Reward is \(\modelvar{r(s,a)=(s-a)^\alpha}\), with \(\modelvar{0<\alpha<1}\).
-\end{itemize}
-The update averages over income and maximizes over saving:
-\begin{align*}
-Q_k(s,a)&=(s-a)^\alpha+\frac{\beta}{B}\int_0^B v_k(a+y)\,dy,\\
-v_{k+1}(s)&=\max_{a\in[0,\min(s,M)]}Q_k(s,a).
-\end{align*}
-\small Assume \(\modelvar{0<\beta<1}\). The state and feasible action sets are compact, and rewards are bounded. The exact operator maps continuous functions to continuous functions and is a contraction in the supremum norm.
-\end{frame}
-
-\begin{frame}{Computing the Continuous Update}
-To implement the continuous saving model numerically:
-\begin{enumerate}
-\item \textbf{Represent \(\modelvar{v_k}\):} store values at stock points and \term{interpolate} between them.
-\item \textbf{Compute the expectation:} approximate the income integral using \term{numerical quadrature} or sampled incomes.
-\item \textbf{Choose saving:} maximize over the feasible interval using numerical optimization or an action grid.
-\end{enumerate}
-\par\medskip
-These approximations add errors beyond the VFI stopping error. Refine the stock grid, integration, and maximization to check that values and decisions are stable.
-\par\smallskip
-The model remains continuous. Finite termination of policy iteration for finite MDPs does not automatically apply to this model.
 \end{frame}
 
 % BEGIN MANAGED READINGS: week3_vfi
@@ -594,9 +508,6 @@ The model remains continuous. Finite termination of policy iteration for finite 
 \item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#the-bellman-equation-and-the-principle-of-optimality}{Discrete State Dynamic Programming — The Bellman Equation and the Principle of Optimality}
 \item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#policy-function-iteration}{Discrete State Dynamic Programming — Policy Function Iteration}
 \item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#value-function-iteration}{Discrete State Dynamic Programming — Value Function Iteration}
-\item \href{https://python.quantecon.org/mccall_model.html\#the-mccall-model}{Job Search I: The McCall Search Model — The McCall Model}
-\item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#example-a-growth-model}{Discrete State Dynamic Programming — Example: A Growth Model}
-\item \href{https://dynamics.quantecon.org/ifp.html\#the-optimal-savings-problem}{The Income Fluctuation Problem I: Basic Model — The Optimal Savings Problem}
 \end{itemize}}
 \end{frame}
 % END MANAGED READINGS: week3_vfi
