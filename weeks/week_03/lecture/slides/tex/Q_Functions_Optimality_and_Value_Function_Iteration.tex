@@ -285,7 +285,7 @@ Suppose the first action \(\modelvar{a}\) is also chosen according to \(\modelva
 
 \begin{frame}{Example: Comparing First Actions}
 \small
-At cell 25, \(\modelvar{\sigma(25)=\mathrm U}\). Compare U and R, then follow \(\modelvar{\sigma}\). Set \(\modelvar{\beta=1}\).
+At cell 25, \(\modelvar{\sigma(25)=\mathrm U}\). Compare U and R, then follow \(\modelvar{\sigma}\).
 \begin{columns}[c]
 \begin{column}{.58\textwidth}
 \begin{figure}\centering
@@ -315,14 +315,12 @@ Choosing R first gives a higher return.
 
 \begin{frame}{Greedy Policy Improvement}
 \small
-For the finite-state results, assume finite feasible action sets, bounded rewards, \(\modelvar{0<\beta<1}\), and time-homogeneous dynamics. Policies are stationary and deterministic.
-\par\medskip
 Given the exact value \(\modelvar{V^\sigma}\), choose a \term{greedy policy} at every state:
 \[\widetilde\sigma(s)\in\argmax_{a\in\Aset(s)}Q^\sigma(s,a).\]
 Because the old action remains feasible,
 \[Q^\sigma(s,\widetilde\sigma(s))\geq Q^\sigma(s,\sigma(s))=V^\sigma(s),
 \qquad \forall s.\]
-Greedy choices maximize immediate reward \textbf{plus continuation value}, rather than immediate reward alone.
+Greedy choices maximize immediate reward \textbf{plus continuation value}.
 \par\medskip
 \term{Policy improvement theorem:} if the displayed inequality holds at every state, then
 \[V^{\widetilde\sigma}(s)\geq V^\sigma(s),\qquad\forall s.\]
@@ -330,7 +328,7 @@ Greedy choices maximize immediate reward \textbf{plus continuation value}, rathe
 
 \begin{frame}{Why Policy Improvement Works}
 \small
-For any candidate continuation value \(\modelvar{v}\), the \term{policy evaluation operator} for \(\modelvar{\widetilde\sigma}\) is
+The \term{policy evaluation operator} for \(\modelvar{\widetilde\sigma}\) is
 \[(T_{\widetilde\sigma}v)(s)=r(s,\widetilde\sigma(s))
 +\beta\E[v(s')\mid s,a=\widetilde\sigma(s)].\]
 It is \term{monotone}: \(\modelvar{v\leq w}\) implies \(\modelvar{T_{\widetilde\sigma}v\leq T_{\widetilde\sigma}w}\), state by state.
@@ -340,7 +338,7 @@ The improvement condition is \(\modelvar{V^\sigma\leq T_{\widetilde\sigma}V^\sig
 \leq T_{\widetilde\sigma}^{\,2}V^\sigma\leq\cdots
 \longrightarrow V^{\widetilde\sigma}.\]
 \begin{itemize}
-\item Each update follows the new policy for one more step; the influence of the initial continuation vanishes at rate \(\modelvar{\beta^n}\).
+\item Each update follows the new policy for one more step. With \(\modelvar{0<\beta<1}\), the initial continuation has vanishing influence as \(\modelvar{n\to\infty}\).
 \item A strict improvement in the first inequality at a state gives a strict value gain at that state.
 \end{itemize}
 \end{frame}
@@ -350,7 +348,6 @@ The improvement condition is \(\modelvar{V^\sigma\leq T_{\widetilde\sigma}V^\sig
 Define the \term{optimal values} over feasible policies:
 \[V^*(s)=\max_\sigma V^\sigma(s),\qquad
 Q^*(s,a)=\max_\sigma Q^\sigma(s,a).\]
-In this setting, a stationary deterministic policy is optimal among all admissible policies.
 \par\medskip
 \term{Principle of optimality:} an optimal policy must have an optimal continuation from every state reached with positive probability.
 \begin{align*}
@@ -439,7 +436,6 @@ The Bellman fixed point is unique, so \(\modelvar{V^\sigma=V^*}\).
 \[T_\sigma V^*=V^*=TV^*,\]
 so \(\modelvar{\sigma}\) attains the maximum at every state.
 \end{itemize}
-The comparison checks \textbf{all feasible actions at every state}, with the exact continuation value.
 \end{frame}
 
 \begin{frame}{Policy Iteration}
@@ -454,7 +450,7 @@ Keep the current action whenever it is a maximizer.
 \item If \(\modelvar{\sigma_{k+1}=\sigma_k}\), stop: the policy is optimal. Otherwise evaluate the new policy and repeat.
 \end{enumerate}
 \[V^{\sigma_0}\leq V^{\sigma_1}\leq V^{\sigma_2}\leq\cdots\leq V^*.\]
-Every nonoptimal policy is strictly improved at some state. There are finitely many deterministic policies, so the algorithm reaches an optimal policy in finitely many iterations.
+Each nonoptimal policy improves strictly at some state. With finitely many policies, this process terminates at an optimum.
 \end{frame}
 
 \begin{frame}{Value Function Iteration}
@@ -473,7 +469,7 @@ A \term{sweep} updates all states using the same old \(\modelvar{v_k}\); store t
 \par\medskip
 Contraction gives
 \[\|v_k-V^*\|_\infty\leq\beta^k\|v_0-V^*\|_\infty\longrightarrow0.\]
-\(\modelvar{v_k}\) need not equal any \(\modelvar{V^\sigma}\), and \(\modelvar{Q_k}\) need not equal any \(\modelvar{Q^\sigma}\). VFI convergence follows from contraction, not successive exact policy evaluations.
+The estimates \(\modelvar{v_k}\) and \(\modelvar{Q_k}\) need not be the values of a particular policy.
 \end{frame}
 
 \begin{frame}{Stopping VFI and Recovering a Policy}
@@ -489,7 +485,6 @@ Contraction implies
 \[\widehat\sigma(s)\in\argmax_{a\in\Aset(s)}Q_k(s,a).\]
 \item Evaluate \(\modelvar{V^{\widehat\sigma}}\) to check the policy's achieved return. Intermediate greedy policies in VFI need not improve monotonically.
 \end{itemize}
-\footnotesize The bound assumes exact expectations and maximization; numerical approximations add errors.
 \end{frame}
 
 % BEGIN MANAGED READINGS: week3_vfi
