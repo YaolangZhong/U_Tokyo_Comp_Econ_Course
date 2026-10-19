@@ -294,56 +294,22 @@ At cell 25, \(\sigma(25)=\mathrm U\). Compare U and R, then follow \(\sigma\). S
 \fill[CourseVariableColor!20] (3.01,2.01) rectangle (3.99,2.99);
 \node[anchor=north west,inner sep=0pt,font=\sffamily\bfseries\fontsize{6}{6}\selectfont,text=CourseVariableColor] at (3.09,2.92) {25};
 \MazePolicyValues
-\draw[valueFlow,draw=SessionRed,shorten <=2pt,shorten >=2pt] (3.5,2.5)--(3.5,3.5);
-\draw[valueFlow,draw=SessionTeal,shorten <=2pt,shorten >=2pt] (3.5,2.5)--(4.5,2.5);
+\MazePolicyPath
+\foreach \x/\y/\u/\v in {3/2/4/2,4/2/5/2,5/2/6/2}
+ \draw[valueFlow,draw=SessionRed,shorten <=2pt,shorten >=2pt] (\x+.5,\y+.5)--(\u+.5,\v+.5);
 \end{tikzpicture}\MazeLegend
-\caption{Two first actions at cell 25.}
+\caption{Policy path and shortcut from cell 25.}
 \end{figure}
 \end{column}
 \begin{column}{.40\textwidth}
-\textcolor{SessionRed}{\textbf{Up to cell 18:}}
+\textcolor{CourseVariableColor}{\textbf{Up to cell 18:}}
 \[Q^\sigma(25,\mathrm U)=-1-9=-10.\]
-\textcolor{SessionTeal}{\textbf{Right to cell 26:}}
+\textcolor{SessionRed}{\textbf{Right to cell 26:}}
 \[Q^\sigma(25,\mathrm R)=-1-7=-8.\]
 \par\medskip
 The policy chooses U, so \(V^\sigma(25)=-10\).
 \par\smallskip
 Choosing R first gives a higher return.
-\end{column}\end{columns}
-\end{frame}
-
-\begin{frame}{Example: Improving the Continuation}
-\small
-Let \(\widetilde\sigma\) change the action at cell 25 from U to R. All other actions stay the same.
-\begin{columns}[c]
-\begin{column}{.56\textwidth}
-\begin{figure}\centering
-\begin{tikzpicture}[x=.62cm,y=.62cm]
-\ValueMazeBase
-\foreach \x/\y/\u/\v in {0/3/0/2,0/2/0/1,0/1/1/1,1/1/2/1,2/1/3/1,3/1/3/2}
- \draw[valueFlow,shorten <=2pt,shorten >=2pt] (\x+.5,\y+.5)--(\u+.5,\v+.5);
-\foreach \x/\y/\u/\v in {3/2/4/2,4/2/5/2,5/2/6/2,6/2/7/2,7/2/8/2,8/2/8/3,8/3/8/4,8/4/8/5}
- \draw[valueFlow,draw=SessionTeal,shorten <=2pt,shorten >=2pt] (\x+.5,\y+.5)--(\u+.5,\v+.5);
-\foreach \x/\y/\u/\v in {3/2/3/3,3/3/4/3,4/3/5/3,5/3/6/3,6/3/6/2}
- \draw[valueFlow,draw=SessionRed,dashed,shorten <=2pt,shorten >=2pt] (\x+.5,\y+.5)--(\u+.5,\v+.5);
-\draw[CourseVariableColor,line width=1pt] (3.5,2.5) circle (.3);
-
-\end{tikzpicture}\MazeLegend
-\caption{A common prefix and two continuations.}
-\end{figure}
-\end{column}
-\begin{column}{.41\textwidth}
-\begin{itemize}
-\item \textcolor{SessionTeal}{Solid continuation:} 8 moves.
-\item \textcolor{SessionRed}{Dashed detour:} 10 moves, including the shared final segment.
-\end{itemize}
-With \(\beta=1\),
-\begin{align*}
-V^\sigma(25)&=-10,\\
-V^{\widetilde\sigma}(25)&=-8.
-\end{align*}
-Keeping the six-move prefix gives
-\[V^{\widetilde\sigma}(16)=-6-8=-14.\]
 \end{column}\end{columns}
 \end{frame}
 
