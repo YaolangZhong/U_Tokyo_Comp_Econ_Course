@@ -195,17 +195,6 @@
 \begin{document}
 \makecoursetitle
 
-\begin{frame}{Recap: The Value Function}
-For a given deterministic policy \(\sigma\),
-\[
-V^\sigma(s)=
-\underbrace{r\bigl(s,\sigma(s)\bigr)}_{\text{Immediate reward}}
-+\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,\ a=\sigma(s)\right]}_{\text{Discounted continuation value}}.
-\]
-\par\medskip
-\(s'\) is the next state, drawn from \(P(\cdot\mid s,\sigma(s))\).
-\end{frame}
-
 \begin{frame}{Lecture Overview}
 \begin{itemize}
 \item \textbf{From State Values to Action Values}
@@ -215,6 +204,17 @@ V^\sigma(s)=
 \item \textbf{Value Function Iteration}
   \begin{itemize}\item Update values, check convergence, and recover a policy\item Apply the algorithm to job search and continuous saving\end{itemize}
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Recap: The Value Function}
+For a given deterministic policy \(\sigma\),
+\[
+V^\sigma(s)=
+\underbrace{r\bigl(s,\sigma(s)\bigr)}_{\text{Immediate reward}}
++\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,\ a=\sigma(s)\right]}_{\text{Discounted continuation value}}.
+\]
+\par\medskip
+\(s'\) is the next state, drawn from \(P(\cdot\mid s,\sigma(s))\).
 \end{frame}
 
 \begin{frame}{Recap: Computing the Value Function of a Given Policy}
