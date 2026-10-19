@@ -1,654 +1,45 @@
 [
   {
-    "objectID": "weeks/week_02/lab/starter/value_functions.html",
-    "href": "weeks/week_02/lab/starter/value_functions.html",
-    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "objectID": "weeks/week_03/lab/starter/lab_03.html",
+    "href": "weeks/week_03/lab/starter/lab_03.html",
+    "title": "Lab 3: Value Function Iteration in VS Code",
     "section": "",
-    "text": "Build two models, simulate a policy, and compute its value. Run the cells in order, then complete the two coding exercises."
+    "text": "Open this working folder in VS Code, install requirements.txt, and select the .venv notebook kernel. Follow setup instructions for setup.\nThe .py files define the environments and computations. This notebook imports them, chooses parameters, and displays results. After editing a script, save it, restart the kernel, and run all cells again."
   },
   {
-    "objectID": "weeks/week_02/lab/starter/value_functions.html#simulate-a-policy",
-    "href": "weeks/week_02/lab/starter/value_functions.html#simulate-a-policy",
-    "title": "Policy Evaluation: Job Search and Consumption–Saving",
-    "section": "1. Simulate a policy",
-    "text": "1. Simulate a policy\nAs in Lab 1, a policy takes a state and returns an action. step returns the next state and one reward; simulate repeats this step.\n\\(R(s,a)\\) is the reward function; rewards[j] is the realized reward \\(r_{t+j+1}\\). Both models below have deterministic rewards given state and action.\ndef simulate_policy(model, policy, initial_state, periods, seed=7):\n    rng = np.random.default_rng(seed)  # Same seed gives the same random draws.\n    state = initial_state\n    path = [state]\n    rewards = []\n\n    for t in range(periods):\n        action = policy(state)\n        state, reward = model.step(state, action, rng)\n        path.append(state)       # append adds one item to a list.\n        rewards.append(reward)\n\n    return np.array(path), np.array(rewards)\n\n\ndef discounted_return(rewards, beta):\n    # For H rewards: weights = [1, beta, beta**2, ..., beta**(H-1)].\n    weights = beta ** np.arange(len(rewards))\n    return np.sum(weights * rewards)"
+    "objectID": "weeks/week_03/lab/starter/lab_03.html#one-algorithm-three-environments",
+    "href": "weeks/week_03/lab/starter/lab_03.html#one-algorithm-three-environments",
+    "title": "Lab 3: Value Function Iteration in VS Code",
+    "section": "One algorithm, three environments",
+    "text": "One algorithm, three environments\nEach model supplies initial_values() and bellman(v). The second method returns \\(Tv\\) and a policy greedy with respect to \\(v\\):\n\\[Q_k(s,a)=r(s,a)+\\beta\\mathbb{E}[v_k(s')\\mid s,a],\\qquad v_{k+1}(s)=\\max_a Q_k(s,a).\\]\nOpen vfi.py beside the notebook. Its loop updates values until the Bellman residual is small; result[\"values\"] and result[\"policy\"] retrieve entries from the returned dictionary."
   },
   {
-    "objectID": "weeks/week_02/lab/starter/value_functions.html#mccall-job-search",
-    "href": "weeks/week_02/lab/starter/value_functions.html#mccall-job-search",
-    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "objectID": "weeks/week_03/lab/starter/lab_03.html#maze",
+    "href": "weeks/week_03/lab/starter/lab_03.html#maze",
+    "title": "Lab 3: Value Function Iteration in VS Code",
+    "section": "1. Maze",
+    "text": "1. Maze\nUse the lecture maze with \\(\\beta=0.9\\). Moving costs \\(1\\), including entry into the goal; subsequent rewards are zero. Cell 16 is the start and cell 8 is the goal. Python index \\(i\\) corresponds to lecture cell \\(i+1\\).\nmaze = Maze(beta=0.9)\nmaze_result = value_iteration(maze)\nprint(\"Value at start:\", maze_result[\"values\"][maze.start])\nprint(\"Path (lecture cell numbers):\", [int(s) + 1 for s in maze.path(maze_result[\"policy\"])])\nplot_maze(maze, maze_result)\nplt.show()\nValue at start: -7.7123207545039\nPath (lecture cell numbers): [16, 23, 31, 32, 33, 34, 25, 26, 27, 28, 29, 30, 22, 15, 8]\n\n\n\nNotebook figure\n\n\n\nWatch values propagate\nThe final corridor is 30 → 22 → 15 → 8. history[k] stores the value vector after \\(k\\) updates.\ncorridor = np.array([30, 22, 15, 8]) - 1\nprint(\"Columns: cells 30, 22, 15, 8\")\nfor k in range(4):\n    print(f\"v_{k}:\", maze_result[\"history\"][k, corridor])\nplot_convergence(maze_result, \"Maze convergence\")\nplt.show()\nColumns: cells 30, 22, 15, 8\nv_0: [0. 0. 0. 0.]\nv_1: [-1. -1. -1.  0.]\nv_2: [-1.9 -1.9 -1.   0. ]\nv_3: [-2.71 -1.9  -1.    0.  ]\n\n\n\nNotebook figure"
+  },
+  {
+    "objectID": "weeks/week_03/lab/starter/lab_03.html#mccall-job-search",
+    "href": "weeks/week_03/lab/starter/lab_03.html#mccall-job-search",
+    "title": "Lab 3: Value Function Iteration in VS Code",
     "section": "2. McCall job search",
-    "text": "2. McCall job search\nState \\((\\mathrm U,w)\\): accept wage \\(w\\) forever, or reject for benefit \\(b\\) and draw a new offer from \\(q\\). State \\((\\mathrm E,w)\\): remain employed.\n\\[V^\\sigma((\\mathrm E,w))=\\frac{w}{1-\\beta},\\] \\[V^\\sigma((\\mathrm U,w))=\n\\begin{cases}\nw+\\beta V^\\sigma((\\mathrm E,w)),&\\sigma((\\mathrm U,w))=\\text{accept},\\\\\nb+\\beta\\sum_{w'}q(w')V^\\sigma((\\mathrm U,w')),&\\sigma((\\mathrm U,w))=\\text{reject}.\n\\end{cases}\\]\nThe code uses integer indices: the first n states are unemployed, the next n employed. states[i] gives the full state. In a class, self refers to the current model; __init__ stores its parameters.\nclass McCallModel:\n    def __init__(self, wages=(1, 2, 3, 4, 5),\n                 probabilities=(0.1, 0.2, 0.4, 0.2, 0.1), benefit=1.0, beta=0.9):\n        self.wages = np.array(wages)\n        self.q = np.array(probabilities)\n        self.benefit = benefit\n        self.beta = beta\n        self.n = len(wages)  # Number of possible wage offers.\n\n        # assert stops the cell if a check fails.\n        # Each wage needs one probability; probabilities must sum to one.\n        assert len(self.q) == self.n, \"One probability per wage.\"\n        assert np.all(self.q &gt;= 0) and np.isclose(self.q.sum(), 1), \"Check probabilities.\"\n        assert 0 &lt; beta &lt; 1, \"Use a discount factor between 0 and 1.\"\n\n        # Join two lists: unemployed states first, then employed states.\n        self.states = [(\"U\", w) for w in wages] + [(\"E\", w) for w in wages]\n\n    def actions(self, state):\n        if state &lt; self.n:\n            return [\"accept\", \"reject\"]\n        return [\"work\"]\n\n    def reward(self, state, action):\n        assert action in self.actions(state), \"Choose an available action.\"\n        status, wage = self.states[state]  # Unpack the full state.\n        if action == \"reject\":\n            return self.benefit\n        return wage\n\n    def transition_probabilities(self, state, action):\n        p = np.zeros(len(self.states))\n        if action == \"reject\":\n            p[:self.n] = self.q       # A new offer: first n states only.\n        elif action == \"accept\":\n            p[state + self.n] = 1    # Move to employment at the same wage.\n        else:\n            p[state] = 1             # Already employed: stay here.\n        return p\n\n    def step(self, state, action, rng):\n        reward = self.reward(state, action)\n        p = self.transition_probabilities(state, action)\n        next_state = rng.choice(len(self.states), p=p)  # Sample using probabilities p.\n        return next_state, reward\n\n    def simulate(self, policy, initial_state, periods, seed=7):\n        return simulate_policy(self, policy, initial_state, periods, seed)\nmccall = McCallModel()\nfor i, state in enumerate(mccall.states):  # enumerate gives the index and its item.\n    print(i, state)\n\n# Index 1 means (U, 2).\nprint(\"Reject:\", mccall.transition_probabilities(1, \"reject\"))\nprint(\"Accept:\", mccall.transition_probabilities(1, \"accept\"))\n\nChoose a policy\nAccept offers of at least 3. make_threshold_policy returns a function, so we can change the threshold without rewriting the rule.\ndef make_threshold_policy(model, threshold):\n    def policy(state):\n        status, wage = model.states[state]\n        if status == \"E\":\n            return \"work\"\n        if wage &gt;= threshold:\n            return \"accept\"\n        return \"reject\"\n    return policy  # Return the function itself; call it later with a state.\n\n\nsearch_policy = make_threshold_policy(mccall, threshold=3)\nsearch_start = 1  # (U, 2)\nsearch_path, search_rewards = mccall.simulate(search_policy, search_start, periods=12)\nprint(\"States:\", [mccall.states[i] for i in search_path])\nprint(\"Rewards:\", search_rewards)\nprint(\"Return:\", discounted_return(search_rewards, mccall.beta))"
+    "text": "2. McCall job search\nAs in Lab 2, the full state is \\((U,w)\\) or \\((E,w)\\). Accepting earns \\(w\\) forever; rejecting earns \\(b\\) and draws a new offer with probabilities \\(q\\).\n\\[v_{k+1}((U,w))=\\max\\left\\{\\frac{w}{1-\\beta},\\ b+\\beta\\sum_{w'}q(w')v_k((U,w'))\\right\\}.\\]\nStart unemployed-state values at zero and keep the known employed-state values \\(v_k((E,w))=w/(1-\\beta)\\). mccall.py uses the same reward and transition methods as Lab 2.\nsearch = McCallModel(benefit=1.0, beta=0.9)\nsearch_result = value_iteration(search)\nfor i in range(search.n):\n    print(search.states[i], \"value:\", round(search_result[\"values\"][i], 4),\n          \"action:\", search_result[\"policy\"][i])\nplot_mccall(search, search_result)\nplt.show()\n('U', 1.0) value: 34.3243 action: reject\n('U', 2.0) value: 34.3243 action: reject\n('U', 3.0) value: 34.3243 action: reject\n('U', 4.0) value: 40.0 action: accept\n('U', 5.0) value: 50.0 action: accept\n\n\n\nNotebook figure\n\n\n# Reproduce the first updates; [:search.n] selects unemployed states.\nfor k in [0, 1, 2, 3, 10]:\n    print(f\"v_{k}((U,w)):\", search_result[\"history\"][k, :search.n])\nplot_convergence(search_result, \"McCall convergence\")\nplt.show()\nv_0((U,w)): [0. 0. 0. 0. 0.]\nv_1((U,w)): [10. 20. 30. 40. 50.]\nv_2((U,w)): [28. 28. 30. 40. 50.]\nv_3((U,w)): [31.06 31.06 31.06 40.   50.  ]\nv_10((U,w)): [34.1957 34.1957 34.1957 40.     50.    ]\n\n\n\nNotebook figure\n\n\n\nChange a parameter\nRaise the benefit and solve again. The environment changes; the VFI function stays the same.\nhigher_benefit = McCallModel(benefit=4.0, beta=0.9)\nhigher_result = value_iteration(higher_benefit)\nfor i in range(search.n):\n    print(search.states[i], \"b=1:\", search_result[\"policy\"][i],\n          \"b=4:\", higher_result[\"policy\"][i])\n('U', 1.0) b=1: reject b=4: reject\n('U', 2.0) b=1: reject b=4: reject\n('U', 3.0) b=1: reject b=4: reject\n('U', 4.0) b=1: accept b=4: reject\n('U', 5.0) b=1: accept b=4: accept\n\n\nSimulate the recovered policy\nA policy function selects an action from the current state, just as in Lab 2.\ndef search_policy(state):\n    return search_result[\"policy\"][state]\n\npath, rewards = simulate_policy(search, search_policy, initial_state=1, periods=12)\nprint(\"States:\", [search.states[i] for i in path])\nprint(\"Rewards:\", rewards)\nStates: [('U', 2.0), ('U', 3.0), ('U', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0)]\nRewards: [1. 1. 4. 4. 4. 4. 4. 4. 4. 4. 4. 4.]"
   },
   {
-    "objectID": "weeks/week_02/lab/starter/value_functions.html#compute-mccall-policy-values",
-    "href": "weeks/week_02/lab/starter/value_functions.html#compute-mccall-policy-values",
-    "title": "Policy Evaluation: Job Search and Consumption–Saving",
-    "section": "3. Compute McCall policy values",
-    "text": "3. Compute McCall policy values\nFor this finite-state model, build \\(P^\\sigma\\) and \\(\\mu_i^\\sigma=\\mathbb E[R(i,\\sigma(i))]\\), then solve \\[(I-\\beta P^\\sigma)V^\\sigma=\\mu^\\sigma.\\]\nHere, reward is deterministic, so it also gives the mean reward.\ndef policy_arrays(model, policy):\n    n = len(model.states)\n    P = np.zeros((n, n))  # One row for each current state.\n    mu = np.zeros(n)\n    for state in range(n):\n        action = policy(state)\n        mu[state] = model.reward(state, action)\n        P[state] = model.transition_probabilities(state, action)\n    return P, mu\n\n\ndef evaluate_policy(model, policy):\n    P, mu = policy_arrays(model, policy)\n    I = np.eye(len(mu))   # Identity matrix: ones on the diagonal.\n    V = np.linalg.solve(I - model.beta * P, mu)\n    return V, P, mu       # solve(A, b) finds the vector x satisfying A @ x = b.\n\n\nV_search, P_search, mu_search = evaluate_policy(mccall, search_policy)\nfor i in range(mccall.n):\n    print(mccall.states[i], \"value:\", round(V_search[i], 4))\n\n# A known value: permanent employment pays w every period.\nassert np.allclose(V_search[mccall.n:], mccall.wages / (1 - mccall.beta))\n# [:mccall.n] selects the unemployed-state values.\nfig, ax = plt.subplots()\nax.plot(mccall.wages, V_search[:mccall.n], \"o-\", label=\"Supplied threshold = 3\")\nax.plot(mccall.wages, mccall.wages / (1 - mccall.beta), \"s--\", label=\"Accept every offer\")\nax.set(xlabel=\"Current wage offer\", ylabel=\"Expected discounted income\")\nax.legend()\nax.grid(alpha=0.2)\nplt.tight_layout()\nplt.show()\n\nAverage simulated returns\nTheir mean approximates \\(V^\\sigma(s)\\). More rollouts reduce sampling noise; more periods reduce the omitted tail.\ndef simulate_returns(model, policy, initial_state, repetitions=600, periods=100):\n    returns = []\n    for seed in range(repetitions):  # Use a different seed for each rollout.\n        path, rewards = model.simulate(policy, initial_state, periods, seed=seed)\n        returns.append(discounted_return(rewards, model.beta))\n    return np.array(returns)\n\n\nsearch_returns = simulate_returns(mccall, search_policy, search_start)\nprint(\"Exact value:\", V_search[search_start])\nprint(\"Average simulated return:\", search_returns.mean())"
+    "objectID": "weeks/week_03/lab/starter/lab_03.html#continuous-consumption-saving",
+    "href": "weeks/week_03/lab/starter/lab_03.html#continuous-consumption-saving",
+    "title": "Lab 3: Value Function Iteration in VS Code",
+    "section": "3. Continuous consumption-saving",
+    "text": "3. Continuous consumption-saving\nStock is \\(s\\in[0,M+B]\\). Save \\(a\\in[0,\\min(s,M)]\\), consume \\(s-a\\), and draw \\(Y'\\sim\\mathrm{Uniform}[0,B]\\). Next stock is \\(s'=a+Y'\\); reward is \\((s-a)^\\alpha\\).\n\\[v_{k+1}(s)=\\max_{0\\leq a\\leq\\min(s,M)}\\left\\{(s-a)^\\alpha+\\frac{\\beta}{B}\\int_0^Bv_k(a+y)\\,dy\\right\\}.\\]\nIn saving.py, linear interpolation supplies values between stock points, midpoint integration approximates the income average, and an action grid approximates maximization. The model’s states and actions remain continuous.\nsaving = ConsumptionSavingModel(M=5, B=3, alpha=0.5, beta=0.9)\nsaving_result = value_iteration(saving, tolerance=1e-5)\nprint(\"Completed updates:\", saving_result[\"updates\"])\nprint(\"Numerical-operator error bound:\", saving_result[\"error_bound\"])\nplot_saving(saving, saving_result)\nplot_convergence(saving_result, \"Saving: numerical Bellman residual\")\nplt.show()\nCompleted updates: 133\nNumerical-operator error bound: 9.66462458507067e-06\n\n\n\nNotebook figure\n\n\n\n\n\nNotebook figure\n\n\n\nRefine the numerical approximation\nDouble the stock and action intervals and use more income points. A small residual controls iteration error for the numerical operator; it does not remove grid and integration error.\nfiner = ConsumptionSavingModel(n_states=201, n_actions=161, n_income=81)\nfiner_result = value_iteration(finer, tolerance=1e-5)\nfiner_values_at_old_points = np.interp(saving.states, finer.states, finer_result[\"values\"])\nprint(\"Largest value difference on baseline points:\",\n      np.max(np.abs(saving_result[\"values\"] - finer_values_at_old_points)))\nplot_saving(saving, saving_result, finer, finer_result)\nplt.show()\nLargest value difference on baseline points: 0.0026763881026781178\n\n\n\nNotebook figure\n\n\n\n\nRun a continuous-state simulation\nInterpolate the computed saving choices to define an action at any stock. The income draws are real numbers, not the integration points used by the solver.\ndef saving_policy(stock):\n    return np.interp(stock, saving.states, saving_result[\"policy\"])\n\nstocks, rewards = simulate_policy(saving, saving_policy, initial_state=5.5,\n                                  periods=30, seed=7)\nactions = np.array([saving_policy(s) for s in stocks[:-1]])\nplot_saving_rollout(stocks, actions)\nplt.show()\n\n\n\nNotebook figure"
   },
   {
-    "objectID": "weeks/week_02/lab/starter/value_functions.html#consumption-and-saving",
-    "href": "weeks/week_02/lab/starter/value_functions.html#consumption-and-saving",
-    "title": "Policy Evaluation: Job Search and Consumption–Saving",
-    "section": "4. Consumption and saving",
-    "text": "4. Consumption and saving\nStock and saving are real-valued. Save \\(a\\) from stock \\(s\\), consume \\(s-a\\), and receive independent income \\(Y'\\sim\\mathrm{Uniform}[0,B]\\).\n\\[s\\in[0,M+B],\\quad a\\in[0,\\min(s,M)],\\quad s'=a+Y',\\quad R(s,a)=(s-a)^\\alpha.\\]\n\\(M\\) is storage capacity. The policy returns saving; states are amounts of goods, without integer indices.\nclass ConsumptionSavingModel:\n    def __init__(self, M=5.0, B=3.0, alpha=0.5, beta=0.9):\n        assert M &gt;= 0 and B &gt; 0, \"Use M &gt;= 0 and B &gt; 0.\"\n        assert 0 &lt; alpha &lt; 1 and 0 &lt; beta &lt; 1, \"Keep alpha and beta between 0 and 1.\"\n        self.M = M\n        self.B = B\n        self.alpha = alpha\n        self.beta = beta\n\n    def reward(self, state, action):\n        assert 0 &lt;= state &lt;= self.M + self.B, \"Stock must lie in [0, M+B].\"\n        assert 0 &lt;= action &lt;= min(state, self.M), \"Saving must be feasible.\"\n        consumption = state - action\n        return consumption ** self.alpha\n\n    def step(self, state, action, rng):\n        reward = self.reward(state, action)\n        income = rng.uniform(0, self.B)  # Draw a real number from Uniform[0, B].\n        next_state = action + income\n        return next_state, reward\n\n    def simulate(self, policy, initial_state, periods, seed=7):\n        return simulate_policy(self, policy, initial_state, periods, seed)\nsavings = ConsumptionSavingModel()\n\n\ndef save_half(state):\n    return min(state / 2, savings.M)  # / keeps fractional units; min applies the cap.\n\n\nsaving_start = 5.5\nsaving_path, saving_rewards = savings.simulate(save_half, saving_start, periods=24)\n\n# Drop the last state: a path has one more state than rewards.\nsaving_actions = np.array([save_half(s) for s in saving_path[:-1]])\nconsumption = saving_path[:-1] - saving_actions\nincome = saving_path[1:] - saving_actions  # Next stock minus saving is new income.\nprint(\"First five stocks:\", saving_path[:5])\nprint(\"First five consumption choices:\", consumption[:5])\nprint(\"Return:\", discounted_return(saving_rewards, savings.beta))\nfig, axes = plt.subplots(1, 2, figsize=(10, 3.4))\naxes[0].step(range(len(saving_path)), saving_path, where=\"post\", label=\"Stock\")\naxes[0].set(xlabel=\"Step\", ylabel=\"Units of goods\", title=\"One rollout: save half\")\naxes[1].step(range(len(consumption)), consumption, where=\"mid\", label=\"Consumption\")\naxes[1].step(range(len(income)), income, where=\"mid\", label=\"Next-period income\", alpha=0.7)\naxes[1].set(xlabel=\"Step\", ylabel=\"Units of goods\")\nfor ax in axes:\n    ax.legend()\n    ax.grid(alpha=0.2)\nplt.tight_layout()\nplt.show()\n\nEstimate the saving rule’s value\n\\[V^\\sigma(s)=(s-\\sigma(s))^\\alpha+\n\\frac{\\beta}{B}\\int_0^B V^\\sigma(\\sigma(s)+y)\\,dy.\\]\nAverage 600 simulated returns, each lasting 100 periods. The selected initial stocks below are evaluation points; simulated stocks can take any value in \\([0,M+B]\\).\ndef estimate_saving_values(model, policy, initial_stocks):\n    values = []\n    for stock in initial_stocks:\n        returns = simulate_returns(model, policy, stock)\n        values.append(returns.mean())  # Average rollouts from this initial stock.\n    return np.array(values)\n\n\ndef consume_all(state):\n    return 0.0  # Save nothing.\n\n\ninitial_stocks = np.array([0.0, 1.5, 3.0, 5.5, 8.0])\nV_saving = estimate_saving_values(savings, save_half, initial_stocks)\nV_consume = estimate_saving_values(savings, consume_all, initial_stocks)\nfor stock, value in zip(initial_stocks, V_saving):  # Pair each stock with its estimate.\n    print(f\"Initial stock {stock:.1f}: estimated value {value:.4f}\")\n\nfig, ax = plt.subplots()\nax.plot(initial_stocks, V_saving, \"o-\", label=\"Save half\")\nax.plot(initial_stocks, V_consume, \"s--\", label=\"Consume everything\")\nax.set(xlabel=\"Initial stock\", ylabel=\"Estimated expected discounted utility\")\nax.legend()\nax.grid(alpha=0.2)\nplt.tight_layout()\nplt.show()\n# Check against a known value: consume everything each period.\n# E[Y**alpha] = B**alpha / (alpha + 1) for uniform income.\nmean_income_utility = savings.B ** savings.alpha / (savings.alpha + 1)\nV_consume_exact = initial_stocks ** savings.alpha + (\n    savings.beta / (1 - savings.beta) * mean_income_utility\n)\nprint(\"Consume-all estimates:\", V_consume)\nprint(\"Consume-all exact values:\", V_consume_exact)"
-  },
-  {
-    "objectID": "weeks/week_02/lab/starter/value_functions.html#exercise-1-change-the-acceptance-threshold",
-    "href": "weeks/week_02/lab/starter/value_functions.html#exercise-1-change-the-acceptance-threshold",
-    "title": "Policy Evaluation: Job Search and Consumption–Saving",
-    "section": "Exercise 1: Change the acceptance threshold",
-    "text": "Exercise 1: Change the acceptance threshold\nComplete compare_thresholds. Return a dictionary mapping each threshold to its unemployed-state values. For thresholds 2 and 4, print the value at \\((\\mathrm U,2)\\) and plot both arrays.\ndef compare_thresholds(model, thresholds):\n    results = {}  # A dictionary stores pairs: threshold -&gt; value array.\n    # Loop over thresholds; use make_threshold_policy and evaluate_policy.\n    # Store V[:model.n] in results[threshold], then return results.\n    pass\n\n# Run after completing the function:\n# results = compare_thresholds(mccall, [2, 4])\n# for threshold, values in results.items():\n#     print(threshold, \"value from offer 2:\", values[1])\n#     plt.plot(mccall.wages, values, \"o-\", label=f\"Threshold {threshold}\")\n# plt.xlabel(\"Wage offer\")\n# plt.ylabel(\"Expected discounted income\")\n# plt.legend()\n# plt.show()\n\n\nSolution 1: Compare McCall policies (Show code)\n\n#@title Solution 1: Compare McCall policies (Show code)\n#@markdown Select **Show code** to reveal the answer; call `mccall_solution()` to run it.\ndef mccall_solution():\n    model = McCallModel()\n    results = {}\n    for threshold in [2, 4]:\n        policy = make_threshold_policy(model, threshold)\n        V, _, _ = evaluate_policy(model, policy)\n        results[threshold] = V[:model.n]\n        print(threshold, \"value from offer 2:\", V[1])\n        plt.plot(model.wages, V[:model.n], \"o-\", label=f\"Threshold {threshold}\")\n    plt.xlabel(\"Wage offer\")\n    plt.ylabel(\"Expected discounted income\")\n    plt.legend()\n    plt.tight_layout()\n    plt.show()\n    return results"
-  },
-  {
-    "objectID": "weeks/week_02/lab/starter/value_functions.html#exercise-2-change-the-saving-target",
-    "href": "weeks/week_02/lab/starter/value_functions.html#exercise-2-change-the-saving-target",
-    "title": "Policy Evaluation: Job Search and Consumption–Saving",
-    "section": "Exercise 2: Change the saving target",
-    "text": "Exercise 2: Change the saving target\nComplete evaluate_saving_target using min(state, target, model.M) and estimate_saving_values. For targets 1.5 and 3.5, print the estimated value at stock 5.5 and plot the estimates at initial_stocks.\ndef evaluate_saving_target(model, target, initial_stocks):\n    # Define the saving policy, estimate its values, and return the array.\n    pass\n\n# Run after completing the function:\n# for target in [1.5, 3.5]:\n#     values = evaluate_saving_target(savings, target, initial_stocks)\n#     print(target, \"estimated value from stock 5.5:\", values[3])\n#     plt.plot(initial_stocks, values, \"o-\", label=f\"Saving target {target}\")\n# plt.xlabel(\"Initial stock\")\n# plt.ylabel(\"Estimated expected discounted utility\")\n# plt.legend()\n# plt.show()\n\n\nSolution 2: Compare saving targets (Show code)\n\n#@title Solution 2: Compare saving targets (Show code)\n#@markdown Select **Show code** to reveal the answer; call `savings_solution()` to run it.\ndef savings_solution():\n    model = ConsumptionSavingModel()\n    stocks = np.array([0.0, 1.5, 3.0, 5.5, 8.0])\n    results = {}\n    for target in [1.5, 3.5]:\n        def policy(state):\n            return min(state, target, model.M)\n        values = estimate_saving_values(model, policy, stocks)\n        results[target] = values\n        print(target, \"estimated value from stock 5.5:\", values[3])\n        plt.plot(stocks, values, \"o-\", label=f\"Saving target {target}\")\n    plt.xlabel(\"Initial stock\")\n    plt.ylabel(\"Estimated expected discounted utility\")\n    plt.legend()\n    plt.tight_layout()\n    plt.show()\n    return results"
-  },
-  {
-    "objectID": "weeks/week_02/lab/starter/value_functions.html#references",
-    "href": "weeks/week_02/lab/starter/value_functions.html#references",
-    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "objectID": "weeks/week_03/lab/starter/lab_03.html#references",
+    "href": "weeks/week_03/lab/starter/lab_03.html#references",
+    "title": "Lab 3: Value Function Iteration in VS Code",
     "section": "References",
-    "text": "References\n\nThomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]\n\nJob Search I: The McCall Search Model — The McCall Model.\nThe Income Fluctuation Problem I: Basic Model — The Optimal Savings Problem.\nDiscrete State Dynamic Programming — Example: A Growth Model.\n\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction, 2nd ed., MIT Press. [Book]\n\nSection 4.1: Policy Evaluation (Prediction).\n\n\nThe saving example adapts the capped-storage growth model to continuous goods and uniform income on \\([0,B]\\)."
-  },
-  {
-    "objectID": "weeks/week_14/index.html",
-    "href": "weeks/week_14/index.html",
-    "title": "Course session",
-    "section": "",
-    "text": "Course Session — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_14/index.html#lecture",
-    "href": "weeks/week_14/index.html#lecture",
-    "title": "Course session",
-    "section": "",
-    "text": "Course Session — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_14/index.html#lab",
-    "href": "weeks/week_14/index.html#lab",
-    "title": "Course session",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_14/index.html#homework",
-    "href": "weeks/week_14/index.html#homework",
-    "title": "Course session",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_12/index.html",
-    "href": "weeks/week_12/index.html",
-    "title": "ML computational literature — methods session",
-    "section": "",
-    "text": "ML Computational Literature — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_12/index.html#lecture",
-    "href": "weeks/week_12/index.html#lecture",
-    "title": "ML computational literature — methods session",
-    "section": "",
-    "text": "ML Computational Literature — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_12/index.html#lab",
-    "href": "weeks/week_12/index.html#lab",
-    "title": "ML computational literature — methods session",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_12/index.html#homework",
-    "href": "weeks/week_12/index.html#homework",
-    "title": "ML computational literature — methods session",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_10/index.html",
-    "href": "weeks/week_10/index.html",
-    "title": "Methods synthesis",
-    "section": "",
-    "text": "Methods Synthesis — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_10/index.html#lecture",
-    "href": "weeks/week_10/index.html#lecture",
-    "title": "Methods synthesis",
-    "section": "",
-    "text": "Methods Synthesis — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_10/index.html#lab",
-    "href": "weeks/week_10/index.html#lab",
-    "title": "Methods synthesis",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_10/index.html#homework",
-    "href": "weeks/week_10/index.html#homework",
-    "title": "Methods synthesis",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_08/index.html",
-    "href": "weeks/week_08/index.html",
-    "title": "Reinforcement learning",
-    "section": "",
-    "text": "Reinforcement Learning"
-  },
-  {
-    "objectID": "weeks/week_08/index.html#lecture",
-    "href": "weeks/week_08/index.html#lecture",
-    "title": "Reinforcement learning",
-    "section": "",
-    "text": "Reinforcement Learning"
-  },
-  {
-    "objectID": "weeks/week_08/index.html#lab",
-    "href": "weeks/week_08/index.html#lab",
-    "title": "Reinforcement learning",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_08/index.html#homework",
-    "href": "weeks/week_08/index.html#homework",
-    "title": "Reinforcement learning",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_06/index.html",
-    "href": "weeks/week_06/index.html",
-    "title": "Function approximation and neural networks",
-    "section": "",
-    "text": "Parameterization and Neural Networks"
-  },
-  {
-    "objectID": "weeks/week_06/index.html#lecture",
-    "href": "weeks/week_06/index.html#lecture",
-    "title": "Function approximation and neural networks",
-    "section": "",
-    "text": "Parameterization and Neural Networks"
-  },
-  {
-    "objectID": "weeks/week_06/index.html#lab",
-    "href": "weeks/week_06/index.html#lab",
-    "title": "Function approximation and neural networks",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_06/index.html#homework",
-    "href": "weeks/week_06/index.html#homework",
-    "title": "Function approximation and neural networks",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_04/index.html",
-    "href": "weeks/week_04/index.html",
-    "title": "Approximating expectations",
-    "section": "",
-    "text": "Approximating Expectations"
-  },
-  {
-    "objectID": "weeks/week_04/index.html#lecture",
-    "href": "weeks/week_04/index.html#lecture",
-    "title": "Approximating expectations",
-    "section": "",
-    "text": "Approximating Expectations"
-  },
-  {
-    "objectID": "weeks/week_04/index.html#lab",
-    "href": "weeks/week_04/index.html#lab",
-    "title": "Approximating expectations",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_04/index.html#homework",
-    "href": "weeks/week_04/index.html#homework",
-    "title": "Approximating expectations",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_02/index.html",
-    "href": "weeks/week_02/index.html",
-    "title": "Value Functions and the Bellman Equation",
-    "section": "",
-    "text": "Value Functions and the Bellman Equation"
-  },
-  {
-    "objectID": "weeks/week_02/index.html#lecture",
-    "href": "weeks/week_02/index.html#lecture",
-    "title": "Value Functions and the Bellman Equation",
-    "section": "",
-    "text": "Value Functions and the Bellman Equation"
-  },
-  {
-    "objectID": "weeks/week_02/index.html#lab",
-    "href": "weeks/week_02/index.html#lab",
-    "title": "Value Functions and the Bellman Equation",
-    "section": "Lab",
-    "text": "Lab\nLab exercise files\n\nPolicy Evaluation: Job Search and Consumption–Saving\nRead online Open in Colab Download notebook\nIn Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project."
-  },
-  {
-    "objectID": "weeks/week_02/index.html#homework",
-    "href": "weeks/week_02/index.html#homework",
-    "title": "Value Functions and the Bellman Equation",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "topics.html",
-    "href": "topics.html",
-    "title": "Supplementary topics",
-    "section": "",
-    "text": "These handouts support work across several weeks."
-  },
-  {
-    "objectID": "topics.html#discretizing-ar1",
-    "href": "topics.html#discretizing-ar1",
-    "title": "Supplementary topics",
-    "section": "Discretizing Ar1",
-    "text": "Discretizing Ar1\n\nTopic Discretizing AR1 Processes"
-  },
-  {
-    "objectID": "topics.html#git",
-    "href": "topics.html#git",
-    "title": "Supplementary topics",
-    "section": "Git",
-    "text": "Git\n\nLab Topic on Git"
-  },
-  {
-    "objectID": "topics.html#google-ai",
-    "href": "topics.html#google-ai",
-    "title": "Supplementary topics",
-    "section": "Google Ai",
-    "text": "Google Ai\n\nGoogle AI"
-  },
-  {
-    "objectID": "project.html",
-    "href": "project.html",
-    "title": "Grading",
-    "section": "",
-    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
-  },
-  {
-    "objectID": "project.html#replicate-a-research-paper",
-    "href": "project.html#replicate-a-research-paper",
-    "title": "Grading",
-    "section": "",
-    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
-  },
-  {
-    "objectID": "project.html#agree-on-a-paper",
-    "href": "project.html#agree-on-a-paper",
-    "title": "Grading",
-    "section": "Agree on a paper",
-    "text": "Agree on a paper\nEmail Yaolang Zhong with the paper you intend to replicate. If proposing your own paper, attach it and arrange a brief discussion before proceeding.\nSuggested project readings will be announced on the course website."
-  },
-  {
-    "objectID": "project.html#submission-checklist",
-    "href": "project.html#submission-checklist",
-    "title": "Grading",
-    "section": "Submission checklist",
-    "text": "Submission checklist\nSubmit a compressed project folder containing:\n\nThe paper being replicated.\nA concise technical note covering the research question, equations, data, and computational approach.\nA README explaining the workflow and mapping code to the paper’s algorithms or results.\nA requirements.txt describing the Python dependencies.\nSupporting scripts and a notebook or main.py that reproduces the replication output."
-  },
-  {
-    "objectID": "project.html#replication-presentation",
-    "href": "project.html#replication-presentation",
-    "title": "Grading",
-    "section": "Replication presentation",
-    "text": "Replication presentation\nA 15-minute presentation of the replication work is required. Present the research question, computational method, main replication results, and any differences from the original paper.\nPresentations will take place during the last one or two lecture weeks, depending on the number of submissions. The presentation schedule will be announced once that number is known."
-  },
-  {
-    "objectID": "project.html#evaluation",
-    "href": "project.html#evaluation",
-    "title": "Grading",
-    "section": "Evaluation",
-    "text": "Evaluation\nTechnical understanding and runnable, readable code matter more than exact numerical agreement with the paper. Explain what you reproduced, how you tested it, and any remaining differences."
-  },
-  {
-    "objectID": "project.html#deadline-and-submission",
-    "href": "project.html#deadline-and-submission",
-    "title": "Grading",
-    "section": "Deadline and submission",
-    "text": "Deadline and submission\nThe deadline and submission channel for the next offering will be confirmed by the instructor.\nStudent projects will be shared only with the approval of the student group, as described in the existing course policy."
-  },
-  {
-    "objectID": "syllabus.html",
-    "href": "syllabus.html",
-    "title": "Course syllabus",
-    "section": "",
-    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
-  },
-  {
-    "objectID": "syllabus.html#course-direction",
-    "href": "syllabus.html#course-direction",
-    "title": "Course syllabus",
-    "section": "",
-    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
-  },
-  {
-    "objectID": "syllabus.html#topic-decks-and-weekly-sessions",
-    "href": "syllabus.html#topic-decks-and-weekly-sessions",
-    "title": "Course syllabus",
-    "section": "Topic decks and weekly sessions",
-    "text": "Topic decks and weekly sessions\nThe schedule is organized by week, while slides are organized by topic. A topic may occupy part of a week or continue across several weeks. Classes meet on Wednesdays in Period 4, International Academic Research Building, Seminar Room 514."
-  },
-  {
-    "objectID": "syllabus.html#schedule-20262027",
-    "href": "syllabus.html#schedule-20262027",
-    "title": "Course syllabus",
-    "section": "Schedule · 2026–2027",
-    "text": "Schedule · 2026–2027\n\n\nWeek 1 (Oct 7)\n\nLecture\n\nIntroduction to Markov Decision Processes (MDP)\n\nLab\n\nIntroduction to Git\nIntroduction to Python\nFirst Steps in Python: Markov Processes and Decisions (Colab)\n\nHomework\n\nSetting Up Git and Python\n\n\n\n\nWeek 2 (Oct 14)\n\nLecture\n\nValue Functions and the Bellman Equation\n\nLab\n\nPolicy Evaluation: Job Search and Consumption–Saving (Colab)\n\nHomework\n\nTBD\n\n\n\n\nWeek 3 (Oct 21)\n\nLecture\n\nQ Functions, Optimality, and Value Function Iteration\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 4 (Oct 28)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 5 (Nov 4)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 6 (Nov 11)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 7 (Nov 18)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 8 (Dec 9)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 9 (Dec 16)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 10 (Dec 23)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 11 (Jan 6)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 12 (Jan 13)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 13 (Jan 20)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 14 (Jan 27)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Computational Economics",
-    "section": "",
-    "text": "Graduate School of Economics · The University of Tokyo"
-  },
-  {
-    "objectID": "index.html#course-information",
-    "href": "index.html#course-information",
-    "title": "Computational Economics",
-    "section": "Course information",
-    "text": "Course information\nOctober 7, 2026 – January 27, 2027 · Wednesdays, Period 4\nInternational Academic Research Building, Seminar Room 514.\nInstructor: Yaolang Zhong\nThe course combines lectures, practical labs, and reading or exercise activities. Materials are organized by week, with slide decks named by topic.\nUse the top menu to browse the syllabus, grading requirements, and references. The syllabus links to materials for each week."
-  },
-  {
-    "objectID": "index.html#open-the-course-on-your-phone",
-    "href": "index.html#open-the-course-on-your-phone",
-    "title": "Computational Economics",
-    "section": "Open the course on your phone",
-    "text": "Open the course on your phone"
-  },
-  {
-    "objectID": "getting-started.html",
-    "href": "getting-started.html",
-    "title": "Research tools lab",
-    "section": "",
-    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
-  },
-  {
-    "objectID": "getting-started.html#what-the-labs-are-for",
-    "href": "getting-started.html#what-the-labs-are-for",
-    "title": "Research tools lab",
-    "section": "",
-    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
-  },
-  {
-    "objectID": "getting-started.html#before-the-first-lab",
-    "href": "getting-started.html#before-the-first-lab",
-    "title": "Research tools lab",
-    "section": "Before the first lab",
-    "text": "Before the first lab\nSetup instructions and tool requirements will be announced before the first lab."
-  },
-  {
-    "objectID": "getting-started.html#weekly-structure",
-    "href": "getting-started.html#weekly-structure",
-    "title": "Research tools lab",
-    "section": "Weekly structure",
-    "text": "Weekly structure\nEach week’s lab will specify the research task, the tools and workflow, an in-class activity, and the expected deliverable. Each weekly page also reserves separate homework reading and exercise sections."
-  },
-  {
-    "objectID": "getting-started.html#optional-background",
-    "href": "getting-started.html#optional-background",
-    "title": "Research tools lab",
-    "section": "Optional background",
-    "text": "Optional background\nStudents who need Python background can consult Sargent and Stachurski (n.d.) and Turrell (n.d.). Any optional programming exercises will be linked from the relevant weekly page when available."
-  },
-  {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]\nDimitri P. Bertsekas (2019), Reinforcement Learning and Optimal Control. Athena Scientific. [Book]\nScott Chacon and Ben Straub, Pro Git. 2nd ed. [Book]\n\n\n\n\n\nFeng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nThomas J. Sargent and John Stachurski, QuantEcon. [Online lectures] Includes Python Programming for Economics and Finance.\nDimitri P. Bertsekas and Yuchao Li (2025), Topics in Reinforcement Learning. CSE 691, Arizona State University. [Online course]\n\n\n\n\n\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\n\n\n\n\n\nGit, Reference. [Official documentation]\nGitHub, GitHub Docs. [Webpage]\nMicrosoft, Visual Studio Code Documentation. [Webpages]\nPython Software Foundation, Python.org and Python Documentation. [Webpages]\nGoogle, Colaboratory. [Online notebook service]\nNumPy Developers, NumPy User Guide. [Documentation]\n\n\n\n\nResearch-paper readings will be announced here."
-  },
-  {
-    "objectID": "references.html#books-and-online-books",
-    "href": "references.html#books-and-online-books",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]\nDimitri P. Bertsekas (2019), Reinforcement Learning and Optimal Control. Athena Scientific. [Book]\nScott Chacon and Ben Straub, Pro Git. 2nd ed. [Book]"
-  },
-  {
-    "objectID": "references.html#online-courses",
-    "href": "references.html#online-courses",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nThomas J. Sargent and John Stachurski, QuantEcon. [Online lectures] Includes Python Programming for Economics and Finance.\nDimitri P. Bertsekas and Yuchao Li (2025), Topics in Reinforcement Learning. CSE 691, Arizona State University. [Online course]"
-  },
-  {
-    "objectID": "references.html#lecture-notes-and-teaching-resources",
-    "href": "references.html#lecture-notes-and-teaching-resources",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Jesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]"
-  },
-  {
-    "objectID": "references.html#documentation-and-tools",
-    "href": "references.html#documentation-and-tools",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Git, Reference. [Official documentation]\nGitHub, GitHub Docs. [Webpage]\nMicrosoft, Visual Studio Code Documentation. [Webpages]\nPython Software Foundation, Python.org and Python Documentation. [Webpages]\nGoogle, Colaboratory. [Online notebook service]\nNumPy Developers, NumPy User Guide. [Documentation]"
-  },
-  {
-    "objectID": "references.html#papers",
-    "href": "references.html#papers",
-    "title": "Readings and references",
-    "section": "",
-    "text": "Research-paper readings will be announced here."
-  },
-  {
-    "objectID": "weeks/week_01/index.html",
-    "href": "weeks/week_01/index.html",
-    "title": "Course introduction and Markov decision processes",
-    "section": "",
-    "text": "The opening session introduces the module and Markov decision processes, followed by practical work with Git and Python."
-  },
-  {
-    "objectID": "weeks/week_01/index.html#lecture",
-    "href": "weeks/week_01/index.html#lecture",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Lecture",
-    "text": "Lecture\n\nCourse Introduction\nIntroduction to Markov Decision Processes (MDP)"
-  },
-  {
-    "objectID": "weeks/week_01/index.html#lab",
-    "href": "weeks/week_01/index.html#lab",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Lab",
-    "text": "Lab\n\nIntroduction to Git\nIntroduction to Python\n\nLab exercise files\n\nFirst Steps in Python: Markov Processes and Decisions\nRead online Open in Colab Download notebook\nIn Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project."
-  },
-  {
-    "objectID": "weeks/week_01/index.html#homework",
-    "href": "weeks/week_01/index.html#homework",
-    "title": "Course introduction and Markov decision processes",
-    "section": "Homework",
-    "text": "Homework\n\nSetting Up Git and Python"
-  },
-  {
-    "objectID": "weeks/week_03/index.html",
-    "href": "weeks/week_03/index.html",
-    "title": "Q functions, optimality, and value function iteration",
-    "section": "",
-    "text": "Q Functions, Optimality, and Value Function Iteration"
-  },
-  {
-    "objectID": "weeks/week_03/index.html#lecture",
-    "href": "weeks/week_03/index.html#lecture",
-    "title": "Q functions, optimality, and value function iteration",
-    "section": "",
-    "text": "Q Functions, Optimality, and Value Function Iteration"
-  },
-  {
-    "objectID": "weeks/week_03/index.html#lab",
-    "href": "weeks/week_03/index.html#lab",
-    "title": "Q functions, optimality, and value function iteration",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_03/index.html#homework",
-    "href": "weeks/week_03/index.html#homework",
-    "title": "Q functions, optimality, and value function iteration",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_05/index.html",
-    "href": "weeks/week_05/index.html",
-    "title": "Simulation-based methods",
-    "section": "",
-    "text": "Simulation-Based Learning"
-  },
-  {
-    "objectID": "weeks/week_05/index.html#lecture",
-    "href": "weeks/week_05/index.html#lecture",
-    "title": "Simulation-based methods",
-    "section": "",
-    "text": "Simulation-Based Learning"
-  },
-  {
-    "objectID": "weeks/week_05/index.html#lab",
-    "href": "weeks/week_05/index.html#lab",
-    "title": "Simulation-based methods",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_05/index.html#homework",
-    "href": "weeks/week_05/index.html#homework",
-    "title": "Simulation-based methods",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_07/index.html",
-    "href": "weeks/week_07/index.html",
-    "title": "Machine-learning foundations",
-    "section": "",
-    "text": "Supervised Learning\nUnsupervised Learning"
-  },
-  {
-    "objectID": "weeks/week_07/index.html#lecture",
-    "href": "weeks/week_07/index.html#lecture",
-    "title": "Machine-learning foundations",
-    "section": "",
-    "text": "Supervised Learning\nUnsupervised Learning"
-  },
-  {
-    "objectID": "weeks/week_07/index.html#lab",
-    "href": "weeks/week_07/index.html#lab",
-    "title": "Machine-learning foundations",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_07/index.html#homework",
-    "href": "weeks/week_07/index.html#homework",
-    "title": "Machine-learning foundations",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_09/index.html",
-    "href": "weeks/week_09/index.html",
-    "title": "Heterogeneous-agent applications",
-    "section": "",
-    "text": "Heterogeneous-Agent Models"
-  },
-  {
-    "objectID": "weeks/week_09/index.html#lecture",
-    "href": "weeks/week_09/index.html#lecture",
-    "title": "Heterogeneous-agent applications",
-    "section": "",
-    "text": "Heterogeneous-Agent Models"
-  },
-  {
-    "objectID": "weeks/week_09/index.html#lab",
-    "href": "weeks/week_09/index.html#lab",
-    "title": "Heterogeneous-agent applications",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_09/index.html#homework",
-    "href": "weeks/week_09/index.html#homework",
-    "title": "Heterogeneous-agent applications",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_11/index.html",
-    "href": "weeks/week_11/index.html",
-    "title": "ML computational literature — reading session",
-    "section": "",
-    "text": "ML Computational Literature — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_11/index.html#lecture",
-    "href": "weeks/week_11/index.html#lecture",
-    "title": "ML computational literature — reading session",
-    "section": "",
-    "text": "ML Computational Literature — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_11/index.html#lab",
-    "href": "weeks/week_11/index.html#lab",
-    "title": "ML computational literature — reading session",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_11/index.html#homework",
-    "href": "weeks/week_11/index.html#homework",
-    "title": "ML computational literature — reading session",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
-  },
-  {
-    "objectID": "weeks/week_13/index.html",
-    "href": "weeks/week_13/index.html",
-    "title": "ML computational literature — discussion session",
-    "section": "",
-    "text": "ML Computational Literature — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_13/index.html#lecture",
-    "href": "weeks/week_13/index.html#lecture",
-    "title": "ML computational literature — discussion session",
-    "section": "",
-    "text": "ML Computational Literature — slides forthcoming."
-  },
-  {
-    "objectID": "weeks/week_13/index.html#lab",
-    "href": "weeks/week_13/index.html#lab",
-    "title": "ML computational literature — discussion session",
-    "section": "Lab",
-    "text": "Lab\nLab activities will be announced here."
-  },
-  {
-    "objectID": "weeks/week_13/index.html#homework",
-    "href": "weeks/week_13/index.html#homework",
-    "title": "ML computational literature — discussion session",
-    "section": "Homework",
-    "text": "Homework\nReadings and exercises will be announced here."
+    "text": "References\n\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. Chapter 3: Finite Markov Decision Processes; Chapter 4: Dynamic Programming.\nThomas J. Sargent and John Stachurski, QuantEcon. Discrete State Dynamic Programming: Value Function Iteration; Job Search I: The McCall Search Model; The Income Fluctuation Problem I: Basic Model.\n\nThe saving example uses the bounded-storage specification from Lab 2; the QuantEcon saving lecture provides related background."
   },
   {
     "objectID": "weeks/week_01/lab/starter/markov_processes.html",
@@ -754,5 +145,656 @@
     "title": "First Steps in Python: Markov Processes and Decisions",
     "section": "Save your work",
     "text": "Save your work\nAfter completing the exercises, restart and run all cells. Save and download the notebook. The companion markov_processes.py contains the same code; its solution functions run only when called.\nFor local use, install numpy, matplotlib, and ipykernel in your project environment and select it in VS Code. Commit and push your completed work.\nReading: Lecture slides · Python tutorial · NumPy basics."
+  },
+  {
+    "objectID": "weeks/week_13/index.html",
+    "href": "weeks/week_13/index.html",
+    "title": "ML computational literature — discussion session",
+    "section": "",
+    "text": "ML Computational Literature — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_13/index.html#lecture",
+    "href": "weeks/week_13/index.html#lecture",
+    "title": "ML computational literature — discussion session",
+    "section": "",
+    "text": "ML Computational Literature — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_13/index.html#lab",
+    "href": "weeks/week_13/index.html#lab",
+    "title": "ML computational literature — discussion session",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_13/index.html#homework",
+    "href": "weeks/week_13/index.html#homework",
+    "title": "ML computational literature — discussion session",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_11/index.html",
+    "href": "weeks/week_11/index.html",
+    "title": "ML computational literature — reading session",
+    "section": "",
+    "text": "ML Computational Literature — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_11/index.html#lecture",
+    "href": "weeks/week_11/index.html#lecture",
+    "title": "ML computational literature — reading session",
+    "section": "",
+    "text": "ML Computational Literature — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_11/index.html#lab",
+    "href": "weeks/week_11/index.html#lab",
+    "title": "ML computational literature — reading session",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_11/index.html#homework",
+    "href": "weeks/week_11/index.html#homework",
+    "title": "ML computational literature — reading session",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_09/index.html",
+    "href": "weeks/week_09/index.html",
+    "title": "Heterogeneous-agent applications",
+    "section": "",
+    "text": "Heterogeneous-Agent Models"
+  },
+  {
+    "objectID": "weeks/week_09/index.html#lecture",
+    "href": "weeks/week_09/index.html#lecture",
+    "title": "Heterogeneous-agent applications",
+    "section": "",
+    "text": "Heterogeneous-Agent Models"
+  },
+  {
+    "objectID": "weeks/week_09/index.html#lab",
+    "href": "weeks/week_09/index.html#lab",
+    "title": "Heterogeneous-agent applications",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_09/index.html#homework",
+    "href": "weeks/week_09/index.html#homework",
+    "title": "Heterogeneous-agent applications",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_07/index.html",
+    "href": "weeks/week_07/index.html",
+    "title": "Machine-learning foundations",
+    "section": "",
+    "text": "Supervised Learning\nUnsupervised Learning"
+  },
+  {
+    "objectID": "weeks/week_07/index.html#lecture",
+    "href": "weeks/week_07/index.html#lecture",
+    "title": "Machine-learning foundations",
+    "section": "",
+    "text": "Supervised Learning\nUnsupervised Learning"
+  },
+  {
+    "objectID": "weeks/week_07/index.html#lab",
+    "href": "weeks/week_07/index.html#lab",
+    "title": "Machine-learning foundations",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_07/index.html#homework",
+    "href": "weeks/week_07/index.html#homework",
+    "title": "Machine-learning foundations",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_05/index.html",
+    "href": "weeks/week_05/index.html",
+    "title": "Simulation-based methods",
+    "section": "",
+    "text": "Simulation-Based Learning"
+  },
+  {
+    "objectID": "weeks/week_05/index.html#lecture",
+    "href": "weeks/week_05/index.html#lecture",
+    "title": "Simulation-based methods",
+    "section": "",
+    "text": "Simulation-Based Learning"
+  },
+  {
+    "objectID": "weeks/week_05/index.html#lab",
+    "href": "weeks/week_05/index.html#lab",
+    "title": "Simulation-based methods",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_05/index.html#homework",
+    "href": "weeks/week_05/index.html#homework",
+    "title": "Simulation-based methods",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_03/index.html",
+    "href": "weeks/week_03/index.html",
+    "title": "Q functions, optimality, and value function iteration",
+    "section": "",
+    "text": "Q Functions, Optimality, and Value Function Iteration"
+  },
+  {
+    "objectID": "weeks/week_03/index.html#lecture",
+    "href": "weeks/week_03/index.html#lecture",
+    "title": "Q functions, optimality, and value function iteration",
+    "section": "",
+    "text": "Q Functions, Optimality, and Value Function Iteration"
+  },
+  {
+    "objectID": "weeks/week_03/index.html#lab",
+    "href": "weeks/week_03/index.html#lab",
+    "title": "Q functions, optimality, and value function iteration",
+    "section": "Lab",
+    "text": "Lab\nLab 3 working folder (ZIP)\n\nLab 3: Value Function Iteration in VS Code\nNotebook and results\nDownload the complete working folder above, unzip it, and open it in VS Code. Follow README.md to install the packages and select the notebook kernel."
+  },
+  {
+    "objectID": "weeks/week_03/index.html#homework",
+    "href": "weeks/week_03/index.html#homework",
+    "title": "Q functions, optimality, and value function iteration",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_01/index.html",
+    "href": "weeks/week_01/index.html",
+    "title": "Course introduction and Markov decision processes",
+    "section": "",
+    "text": "The opening session introduces the module and Markov decision processes, followed by practical work with Git and Python."
+  },
+  {
+    "objectID": "weeks/week_01/index.html#lecture",
+    "href": "weeks/week_01/index.html#lecture",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Lecture",
+    "text": "Lecture\n\nCourse Introduction\nIntroduction to Markov Decision Processes (MDP)"
+  },
+  {
+    "objectID": "weeks/week_01/index.html#lab",
+    "href": "weeks/week_01/index.html#lab",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Lab",
+    "text": "Lab\n\nIntroduction to Git\nIntroduction to Python\n\nLab exercise files\n\nFirst Steps in Python: Markov Processes and Decisions\nRead online Open in Colab Download notebook\nIn Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project."
+  },
+  {
+    "objectID": "weeks/week_01/index.html#homework",
+    "href": "weeks/week_01/index.html#homework",
+    "title": "Course introduction and Markov decision processes",
+    "section": "Homework",
+    "text": "Homework\n\nSetting Up Git and Python"
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]\nDimitri P. Bertsekas (2019), Reinforcement Learning and Optimal Control. Athena Scientific. [Book]\nScott Chacon and Ben Straub, Pro Git. 2nd ed. [Book]\n\n\n\n\n\nFeng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nThomas J. Sargent and John Stachurski, QuantEcon. [Online lectures] Includes Python Programming for Economics and Finance.\nDimitri P. Bertsekas and Yuchao Li (2025), Topics in Reinforcement Learning. CSE 691, Arizona State University. [Online course]\n\n\n\n\n\nJesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]\n\n\n\n\n\nGit, Reference. [Official documentation]\nGitHub, GitHub Docs. [Webpage]\nMicrosoft, Visual Studio Code Documentation. [Webpages]\nPython Software Foundation, Python.org and Python Documentation. [Webpages]\nGoogle, Colaboratory. [Online notebook service]\nNumPy Developers, NumPy User Guide. [Documentation]\n\n\n\n\nResearch-paper readings will be announced here."
+  },
+  {
+    "objectID": "references.html#books-and-online-books",
+    "href": "references.html#books-and-online-books",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Kenneth L. Judd (1998), Numerical Methods in Economics. MIT Press. [Book]\nGareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani and Jonathan Taylor (2023), An Introduction to Statistical Learning: with Applications in Python. Springer. [Book]\nArthur Turrell, Coding for Economists. [Online book]\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]\nDimitri P. Bertsekas (2019), Reinforcement Learning and Optimal Control. Athena Scientific. [Book]\nScott Chacon and Ben Straub, Pro Git. 2nd ed. [Book]"
+  },
+  {
+    "objectID": "references.html#online-courses",
+    "href": "references.html#online-courses",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Feng (2026), Foundations of Macroeconomics: ECON 282E, Fall 2026. [Online course]\nFeng (2026), AI for Economic Research: Dynamic Models, Language, and Agents. [Online course]\nThomas J. Sargent and John Stachurski, QuantEcon. [Online lectures] Includes Python Programming for Economics and Finance.\nDimitri P. Bertsekas and Yuchao Li (2025), Topics in Reinforcement Learning. CSE 691, Arizona State University. [Online course]"
+  },
+  {
+    "objectID": "references.html#lecture-notes-and-teaching-resources",
+    "href": "references.html#lecture-notes-and-teaching-resources",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Jesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. [Web resource]"
+  },
+  {
+    "objectID": "references.html#documentation-and-tools",
+    "href": "references.html#documentation-and-tools",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Git, Reference. [Official documentation]\nGitHub, GitHub Docs. [Webpage]\nMicrosoft, Visual Studio Code Documentation. [Webpages]\nPython Software Foundation, Python.org and Python Documentation. [Webpages]\nGoogle, Colaboratory. [Online notebook service]\nNumPy Developers, NumPy User Guide. [Documentation]"
+  },
+  {
+    "objectID": "references.html#papers",
+    "href": "references.html#papers",
+    "title": "Readings and references",
+    "section": "",
+    "text": "Research-paper readings will be announced here."
+  },
+  {
+    "objectID": "getting-started.html",
+    "href": "getting-started.html",
+    "title": "Research tools lab",
+    "section": "",
+    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
+  },
+  {
+    "objectID": "getting-started.html#what-the-labs-are-for",
+    "href": "getting-started.html#what-the-labs-are-for",
+    "title": "Research tools lab",
+    "section": "",
+    "text": "The labs will help students use LLM-agent tools in economic research, alongside Git and other conventional research tools. The emphasis is on planning a research task, using tools effectively, checking results, and keeping work reproducible.\nPython supports the computational work throughout the labs."
+  },
+  {
+    "objectID": "getting-started.html#before-the-first-lab",
+    "href": "getting-started.html#before-the-first-lab",
+    "title": "Research tools lab",
+    "section": "Before the first lab",
+    "text": "Before the first lab\nSetup instructions and tool requirements will be announced before the first lab."
+  },
+  {
+    "objectID": "getting-started.html#weekly-structure",
+    "href": "getting-started.html#weekly-structure",
+    "title": "Research tools lab",
+    "section": "Weekly structure",
+    "text": "Weekly structure\nEach week’s lab will specify the research task, the tools and workflow, an in-class activity, and the expected deliverable. Each weekly page also reserves separate homework reading and exercise sections."
+  },
+  {
+    "objectID": "getting-started.html#optional-background",
+    "href": "getting-started.html#optional-background",
+    "title": "Research tools lab",
+    "section": "Optional background",
+    "text": "Optional background\nStudents who need Python background can consult Sargent and Stachurski (n.d.) and Turrell (n.d.). Any optional programming exercises will be linked from the relevant weekly page when available."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Computational Economics",
+    "section": "",
+    "text": "Graduate School of Economics · The University of Tokyo"
+  },
+  {
+    "objectID": "index.html#course-information",
+    "href": "index.html#course-information",
+    "title": "Computational Economics",
+    "section": "Course information",
+    "text": "Course information\nOctober 7, 2026 – January 27, 2027 · Wednesdays, Period 4\nInternational Academic Research Building, Seminar Room 514.\nInstructor: Yaolang Zhong\nThe course combines lectures, practical labs, and reading or exercise activities. Materials are organized by week, with slide decks named by topic.\nUse the top menu to browse the syllabus, grading requirements, and references. The syllabus links to materials for each week."
+  },
+  {
+    "objectID": "index.html#open-the-course-on-your-phone",
+    "href": "index.html#open-the-course-on-your-phone",
+    "title": "Computational Economics",
+    "section": "Open the course on your phone",
+    "text": "Open the course on your phone"
+  },
+  {
+    "objectID": "syllabus.html",
+    "href": "syllabus.html",
+    "title": "Course syllabus",
+    "section": "",
+    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
+  },
+  {
+    "objectID": "syllabus.html#course-direction",
+    "href": "syllabus.html#course-direction",
+    "title": "Course syllabus",
+    "section": "",
+    "text": "The course combines computational economic methods with practical research workflows. Lectures move through the core methods earlier, leaving a closing block for recent computational literature using machine-learning tools. Labs develop students’ use of LLM agents for research, alongside Git and other regular tools. Python supports the computational work."
+  },
+  {
+    "objectID": "syllabus.html#topic-decks-and-weekly-sessions",
+    "href": "syllabus.html#topic-decks-and-weekly-sessions",
+    "title": "Course syllabus",
+    "section": "Topic decks and weekly sessions",
+    "text": "Topic decks and weekly sessions\nThe schedule is organized by week, while slides are organized by topic. A topic may occupy part of a week or continue across several weeks. Classes meet on Wednesdays in Period 4, International Academic Research Building, Seminar Room 514."
+  },
+  {
+    "objectID": "syllabus.html#schedule-20262027",
+    "href": "syllabus.html#schedule-20262027",
+    "title": "Course syllabus",
+    "section": "Schedule · 2026–2027",
+    "text": "Schedule · 2026–2027\n\n\nWeek 1 (Oct 7)\n\nLecture\n\nIntroduction to Markov Decision Processes (MDP)\n\nLab\n\nIntroduction to Git\nIntroduction to Python\nFirst Steps in Python: Markov Processes and Decisions (Colab)\n\nHomework\n\nSetting Up Git and Python\n\n\n\n\nWeek 2 (Oct 14)\n\nLecture\n\nValue Functions and the Bellman Equation\n\nLab\n\nPolicy Evaluation: Job Search and Consumption–Saving (Colab)\n\nHomework\n\nTBD\n\n\n\n\nWeek 3 (Oct 21)\n\nLecture\n\nQ Functions, Optimality, and Value Function Iteration\n\nLab\n\nLab 3 working folder (ZIP)\nLab 3: Value Function Iteration in VS Code\n\nHomework\n\nTBD\n\n\n\n\nWeek 4 (Oct 28)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 5 (Nov 4)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 6 (Nov 11)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 7 (Nov 18)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 8 (Dec 9)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 9 (Dec 16)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 10 (Dec 23)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 11 (Jan 6)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 12 (Jan 13)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 13 (Jan 20)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD\n\n\n\n\nWeek 14 (Jan 27)\n\nLecture\n\nTBD\n\nLab\n\nTBD\n\nHomework\n\nTBD"
+  },
+  {
+    "objectID": "project.html",
+    "href": "project.html",
+    "title": "Grading",
+    "section": "",
+    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
+  },
+  {
+    "objectID": "project.html#replicate-a-research-paper",
+    "href": "project.html#replicate-a-research-paper",
+    "title": "Grading",
+    "section": "",
+    "text": "Choose a paper relevant to your interests and implement its main computational or quantitative methods. The project is assessed on the quality of the replication effort, technical understanding, and the clarity and runability of the code.\nThe project accounts for 100% of the course grade. Teams of 2–3 are permitted; a team should replicate as many papers as it has members."
+  },
+  {
+    "objectID": "project.html#agree-on-a-paper",
+    "href": "project.html#agree-on-a-paper",
+    "title": "Grading",
+    "section": "Agree on a paper",
+    "text": "Agree on a paper\nEmail Yaolang Zhong with the paper you intend to replicate. If proposing your own paper, attach it and arrange a brief discussion before proceeding.\nSuggested project readings will be announced on the course website."
+  },
+  {
+    "objectID": "project.html#submission-checklist",
+    "href": "project.html#submission-checklist",
+    "title": "Grading",
+    "section": "Submission checklist",
+    "text": "Submission checklist\nSubmit a compressed project folder containing:\n\nThe paper being replicated.\nA concise technical note covering the research question, equations, data, and computational approach.\nA README explaining the workflow and mapping code to the paper’s algorithms or results.\nA requirements.txt describing the Python dependencies.\nSupporting scripts and a notebook or main.py that reproduces the replication output."
+  },
+  {
+    "objectID": "project.html#replication-presentation",
+    "href": "project.html#replication-presentation",
+    "title": "Grading",
+    "section": "Replication presentation",
+    "text": "Replication presentation\nA 15-minute presentation of the replication work is required. Present the research question, computational method, main replication results, and any differences from the original paper.\nPresentations will take place during the last one or two lecture weeks, depending on the number of submissions. The presentation schedule will be announced once that number is known."
+  },
+  {
+    "objectID": "project.html#evaluation",
+    "href": "project.html#evaluation",
+    "title": "Grading",
+    "section": "Evaluation",
+    "text": "Evaluation\nTechnical understanding and runnable, readable code matter more than exact numerical agreement with the paper. Explain what you reproduced, how you tested it, and any remaining differences."
+  },
+  {
+    "objectID": "project.html#deadline-and-submission",
+    "href": "project.html#deadline-and-submission",
+    "title": "Grading",
+    "section": "Deadline and submission",
+    "text": "Deadline and submission\nThe deadline and submission channel for the next offering will be confirmed by the instructor.\nStudent projects will be shared only with the approval of the student group, as described in the existing course policy."
+  },
+  {
+    "objectID": "topics.html",
+    "href": "topics.html",
+    "title": "Supplementary topics",
+    "section": "",
+    "text": "These handouts support work across several weeks."
+  },
+  {
+    "objectID": "topics.html#discretizing-ar1",
+    "href": "topics.html#discretizing-ar1",
+    "title": "Supplementary topics",
+    "section": "Discretizing Ar1",
+    "text": "Discretizing Ar1\n\nTopic Discretizing AR1 Processes"
+  },
+  {
+    "objectID": "topics.html#git",
+    "href": "topics.html#git",
+    "title": "Supplementary topics",
+    "section": "Git",
+    "text": "Git\n\nLab Topic on Git"
+  },
+  {
+    "objectID": "topics.html#google-ai",
+    "href": "topics.html#google-ai",
+    "title": "Supplementary topics",
+    "section": "Google Ai",
+    "text": "Google Ai\n\nGoogle AI"
+  },
+  {
+    "objectID": "weeks/week_02/index.html",
+    "href": "weeks/week_02/index.html",
+    "title": "Value Functions and the Bellman Equation",
+    "section": "",
+    "text": "Value Functions and the Bellman Equation"
+  },
+  {
+    "objectID": "weeks/week_02/index.html#lecture",
+    "href": "weeks/week_02/index.html#lecture",
+    "title": "Value Functions and the Bellman Equation",
+    "section": "",
+    "text": "Value Functions and the Bellman Equation"
+  },
+  {
+    "objectID": "weeks/week_02/index.html#lab",
+    "href": "weeks/week_02/index.html#lab",
+    "title": "Value Functions and the Bellman Equation",
+    "section": "Lab",
+    "text": "Lab\nLab exercise files\n\nPolicy Evaluation: Job Search and Consumption–Saving\nRead online Open in Colab Download notebook\nIn Colab, sign in with a Google account, save a copy in Drive, and run the cells in order. Download your completed notebook to keep it with your project."
+  },
+  {
+    "objectID": "weeks/week_02/index.html#homework",
+    "href": "weeks/week_02/index.html#homework",
+    "title": "Value Functions and the Bellman Equation",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_04/index.html",
+    "href": "weeks/week_04/index.html",
+    "title": "Approximating expectations",
+    "section": "",
+    "text": "Approximating Expectations"
+  },
+  {
+    "objectID": "weeks/week_04/index.html#lecture",
+    "href": "weeks/week_04/index.html#lecture",
+    "title": "Approximating expectations",
+    "section": "",
+    "text": "Approximating Expectations"
+  },
+  {
+    "objectID": "weeks/week_04/index.html#lab",
+    "href": "weeks/week_04/index.html#lab",
+    "title": "Approximating expectations",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_04/index.html#homework",
+    "href": "weeks/week_04/index.html#homework",
+    "title": "Approximating expectations",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_06/index.html",
+    "href": "weeks/week_06/index.html",
+    "title": "Function approximation and neural networks",
+    "section": "",
+    "text": "Parameterization and Neural Networks"
+  },
+  {
+    "objectID": "weeks/week_06/index.html#lecture",
+    "href": "weeks/week_06/index.html#lecture",
+    "title": "Function approximation and neural networks",
+    "section": "",
+    "text": "Parameterization and Neural Networks"
+  },
+  {
+    "objectID": "weeks/week_06/index.html#lab",
+    "href": "weeks/week_06/index.html#lab",
+    "title": "Function approximation and neural networks",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_06/index.html#homework",
+    "href": "weeks/week_06/index.html#homework",
+    "title": "Function approximation and neural networks",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_08/index.html",
+    "href": "weeks/week_08/index.html",
+    "title": "Reinforcement learning",
+    "section": "",
+    "text": "Reinforcement Learning"
+  },
+  {
+    "objectID": "weeks/week_08/index.html#lecture",
+    "href": "weeks/week_08/index.html#lecture",
+    "title": "Reinforcement learning",
+    "section": "",
+    "text": "Reinforcement Learning"
+  },
+  {
+    "objectID": "weeks/week_08/index.html#lab",
+    "href": "weeks/week_08/index.html#lab",
+    "title": "Reinforcement learning",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_08/index.html#homework",
+    "href": "weeks/week_08/index.html#homework",
+    "title": "Reinforcement learning",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_10/index.html",
+    "href": "weeks/week_10/index.html",
+    "title": "Methods synthesis",
+    "section": "",
+    "text": "Methods Synthesis — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_10/index.html#lecture",
+    "href": "weeks/week_10/index.html#lecture",
+    "title": "Methods synthesis",
+    "section": "",
+    "text": "Methods Synthesis — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_10/index.html#lab",
+    "href": "weeks/week_10/index.html#lab",
+    "title": "Methods synthesis",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_10/index.html#homework",
+    "href": "weeks/week_10/index.html#homework",
+    "title": "Methods synthesis",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_12/index.html",
+    "href": "weeks/week_12/index.html",
+    "title": "ML computational literature — methods session",
+    "section": "",
+    "text": "ML Computational Literature — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_12/index.html#lecture",
+    "href": "weeks/week_12/index.html#lecture",
+    "title": "ML computational literature — methods session",
+    "section": "",
+    "text": "ML Computational Literature — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_12/index.html#lab",
+    "href": "weeks/week_12/index.html#lab",
+    "title": "ML computational literature — methods session",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_12/index.html#homework",
+    "href": "weeks/week_12/index.html#homework",
+    "title": "ML computational literature — methods session",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_14/index.html",
+    "href": "weeks/week_14/index.html",
+    "title": "Course session",
+    "section": "",
+    "text": "Course Session — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_14/index.html#lecture",
+    "href": "weeks/week_14/index.html#lecture",
+    "title": "Course session",
+    "section": "",
+    "text": "Course Session — slides forthcoming."
+  },
+  {
+    "objectID": "weeks/week_14/index.html#lab",
+    "href": "weeks/week_14/index.html#lab",
+    "title": "Course session",
+    "section": "Lab",
+    "text": "Lab\nLab activities will be announced here."
+  },
+  {
+    "objectID": "weeks/week_14/index.html#homework",
+    "href": "weeks/week_14/index.html#homework",
+    "title": "Course session",
+    "section": "Homework",
+    "text": "Homework\nReadings and exercises will be announced here."
+  },
+  {
+    "objectID": "weeks/week_02/lab/starter/value_functions.html",
+    "href": "weeks/week_02/lab/starter/value_functions.html",
+    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "section": "",
+    "text": "Build two models, simulate a policy, and compute its value. Run the cells in order, then complete the two coding exercises."
+  },
+  {
+    "objectID": "weeks/week_02/lab/starter/value_functions.html#simulate-a-policy",
+    "href": "weeks/week_02/lab/starter/value_functions.html#simulate-a-policy",
+    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "section": "1. Simulate a policy",
+    "text": "1. Simulate a policy\nAs in Lab 1, a policy takes a state and returns an action. step returns the next state and one reward; simulate repeats this step.\n\\(R(s,a)\\) is the reward function; rewards[j] is the realized reward \\(r_{t+j+1}\\). Both models below have deterministic rewards given state and action.\ndef simulate_policy(model, policy, initial_state, periods, seed=7):\n    rng = np.random.default_rng(seed)  # Same seed gives the same random draws.\n    state = initial_state\n    path = [state]\n    rewards = []\n\n    for t in range(periods):\n        action = policy(state)\n        state, reward = model.step(state, action, rng)\n        path.append(state)       # append adds one item to a list.\n        rewards.append(reward)\n\n    return np.array(path), np.array(rewards)\n\n\ndef discounted_return(rewards, beta):\n    # For H rewards: weights = [1, beta, beta**2, ..., beta**(H-1)].\n    weights = beta ** np.arange(len(rewards))\n    return np.sum(weights * rewards)"
+  },
+  {
+    "objectID": "weeks/week_02/lab/starter/value_functions.html#mccall-job-search",
+    "href": "weeks/week_02/lab/starter/value_functions.html#mccall-job-search",
+    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "section": "2. McCall job search",
+    "text": "2. McCall job search\nState \\((\\mathrm U,w)\\): accept wage \\(w\\) forever, or reject for benefit \\(b\\) and draw a new offer from \\(q\\). State \\((\\mathrm E,w)\\): remain employed.\n\\[V^\\sigma((\\mathrm E,w))=\\frac{w}{1-\\beta},\\] \\[V^\\sigma((\\mathrm U,w))=\n\\begin{cases}\nw+\\beta V^\\sigma((\\mathrm E,w)),&\\sigma((\\mathrm U,w))=\\text{accept},\\\\\nb+\\beta\\sum_{w'}q(w')V^\\sigma((\\mathrm U,w')),&\\sigma((\\mathrm U,w))=\\text{reject}.\n\\end{cases}\\]\nThe code uses integer indices: the first n states are unemployed, the next n employed. states[i] gives the full state. In a class, self refers to the current model; __init__ stores its parameters.\nclass McCallModel:\n    def __init__(self, wages=(1, 2, 3, 4, 5),\n                 probabilities=(0.1, 0.2, 0.4, 0.2, 0.1), benefit=1.0, beta=0.9):\n        self.wages = np.array(wages)\n        self.q = np.array(probabilities)\n        self.benefit = benefit\n        self.beta = beta\n        self.n = len(wages)  # Number of possible wage offers.\n\n        # assert stops the cell if a check fails.\n        # Each wage needs one probability; probabilities must sum to one.\n        assert len(self.q) == self.n, \"One probability per wage.\"\n        assert np.all(self.q &gt;= 0) and np.isclose(self.q.sum(), 1), \"Check probabilities.\"\n        assert 0 &lt; beta &lt; 1, \"Use a discount factor between 0 and 1.\"\n\n        # Join two lists: unemployed states first, then employed states.\n        self.states = [(\"U\", w) for w in wages] + [(\"E\", w) for w in wages]\n\n    def actions(self, state):\n        if state &lt; self.n:\n            return [\"accept\", \"reject\"]\n        return [\"work\"]\n\n    def reward(self, state, action):\n        assert action in self.actions(state), \"Choose an available action.\"\n        status, wage = self.states[state]  # Unpack the full state.\n        if action == \"reject\":\n            return self.benefit\n        return wage\n\n    def transition_probabilities(self, state, action):\n        p = np.zeros(len(self.states))\n        if action == \"reject\":\n            p[:self.n] = self.q       # A new offer: first n states only.\n        elif action == \"accept\":\n            p[state + self.n] = 1    # Move to employment at the same wage.\n        else:\n            p[state] = 1             # Already employed: stay here.\n        return p\n\n    def step(self, state, action, rng):\n        reward = self.reward(state, action)\n        p = self.transition_probabilities(state, action)\n        next_state = rng.choice(len(self.states), p=p)  # Sample using probabilities p.\n        return next_state, reward\n\n    def simulate(self, policy, initial_state, periods, seed=7):\n        return simulate_policy(self, policy, initial_state, periods, seed)\nmccall = McCallModel()\nfor i, state in enumerate(mccall.states):  # enumerate gives the index and its item.\n    print(i, state)\n\n# Index 1 means (U, 2).\nprint(\"Reject:\", mccall.transition_probabilities(1, \"reject\"))\nprint(\"Accept:\", mccall.transition_probabilities(1, \"accept\"))\n\nChoose a policy\nAccept offers of at least 3. make_threshold_policy returns a function, so we can change the threshold without rewriting the rule.\ndef make_threshold_policy(model, threshold):\n    def policy(state):\n        status, wage = model.states[state]\n        if status == \"E\":\n            return \"work\"\n        if wage &gt;= threshold:\n            return \"accept\"\n        return \"reject\"\n    return policy  # Return the function itself; call it later with a state.\n\n\nsearch_policy = make_threshold_policy(mccall, threshold=3)\nsearch_start = 1  # (U, 2)\nsearch_path, search_rewards = mccall.simulate(search_policy, search_start, periods=12)\nprint(\"States:\", [mccall.states[i] for i in search_path])\nprint(\"Rewards:\", search_rewards)\nprint(\"Return:\", discounted_return(search_rewards, mccall.beta))"
+  },
+  {
+    "objectID": "weeks/week_02/lab/starter/value_functions.html#compute-mccall-policy-values",
+    "href": "weeks/week_02/lab/starter/value_functions.html#compute-mccall-policy-values",
+    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "section": "3. Compute McCall policy values",
+    "text": "3. Compute McCall policy values\nFor this finite-state model, build \\(P^\\sigma\\) and \\(\\mu_i^\\sigma=\\mathbb E[R(i,\\sigma(i))]\\), then solve \\[(I-\\beta P^\\sigma)V^\\sigma=\\mu^\\sigma.\\]\nHere, reward is deterministic, so it also gives the mean reward.\ndef policy_arrays(model, policy):\n    n = len(model.states)\n    P = np.zeros((n, n))  # One row for each current state.\n    mu = np.zeros(n)\n    for state in range(n):\n        action = policy(state)\n        mu[state] = model.reward(state, action)\n        P[state] = model.transition_probabilities(state, action)\n    return P, mu\n\n\ndef evaluate_policy(model, policy):\n    P, mu = policy_arrays(model, policy)\n    I = np.eye(len(mu))   # Identity matrix: ones on the diagonal.\n    V = np.linalg.solve(I - model.beta * P, mu)\n    return V, P, mu       # solve(A, b) finds the vector x satisfying A @ x = b.\n\n\nV_search, P_search, mu_search = evaluate_policy(mccall, search_policy)\nfor i in range(mccall.n):\n    print(mccall.states[i], \"value:\", round(V_search[i], 4))\n\n# A known value: permanent employment pays w every period.\nassert np.allclose(V_search[mccall.n:], mccall.wages / (1 - mccall.beta))\n# [:mccall.n] selects the unemployed-state values.\nfig, ax = plt.subplots()\nax.plot(mccall.wages, V_search[:mccall.n], \"o-\", label=\"Supplied threshold = 3\")\nax.plot(mccall.wages, mccall.wages / (1 - mccall.beta), \"s--\", label=\"Accept every offer\")\nax.set(xlabel=\"Current wage offer\", ylabel=\"Expected discounted income\")\nax.legend()\nax.grid(alpha=0.2)\nplt.tight_layout()\nplt.show()\n\nAverage simulated returns\nTheir mean approximates \\(V^\\sigma(s)\\). More rollouts reduce sampling noise; more periods reduce the omitted tail.\ndef simulate_returns(model, policy, initial_state, repetitions=600, periods=100):\n    returns = []\n    for seed in range(repetitions):  # Use a different seed for each rollout.\n        path, rewards = model.simulate(policy, initial_state, periods, seed=seed)\n        returns.append(discounted_return(rewards, model.beta))\n    return np.array(returns)\n\n\nsearch_returns = simulate_returns(mccall, search_policy, search_start)\nprint(\"Exact value:\", V_search[search_start])\nprint(\"Average simulated return:\", search_returns.mean())"
+  },
+  {
+    "objectID": "weeks/week_02/lab/starter/value_functions.html#consumption-and-saving",
+    "href": "weeks/week_02/lab/starter/value_functions.html#consumption-and-saving",
+    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "section": "4. Consumption and saving",
+    "text": "4. Consumption and saving\nStock and saving are real-valued. Save \\(a\\) from stock \\(s\\), consume \\(s-a\\), and receive independent income \\(Y'\\sim\\mathrm{Uniform}[0,B]\\).\n\\[s\\in[0,M+B],\\quad a\\in[0,\\min(s,M)],\\quad s'=a+Y',\\quad R(s,a)=(s-a)^\\alpha.\\]\n\\(M\\) is storage capacity. The policy returns saving; states are amounts of goods, without integer indices.\nclass ConsumptionSavingModel:\n    def __init__(self, M=5.0, B=3.0, alpha=0.5, beta=0.9):\n        assert M &gt;= 0 and B &gt; 0, \"Use M &gt;= 0 and B &gt; 0.\"\n        assert 0 &lt; alpha &lt; 1 and 0 &lt; beta &lt; 1, \"Keep alpha and beta between 0 and 1.\"\n        self.M = M\n        self.B = B\n        self.alpha = alpha\n        self.beta = beta\n\n    def reward(self, state, action):\n        assert 0 &lt;= state &lt;= self.M + self.B, \"Stock must lie in [0, M+B].\"\n        assert 0 &lt;= action &lt;= min(state, self.M), \"Saving must be feasible.\"\n        consumption = state - action\n        return consumption ** self.alpha\n\n    def step(self, state, action, rng):\n        reward = self.reward(state, action)\n        income = rng.uniform(0, self.B)  # Draw a real number from Uniform[0, B].\n        next_state = action + income\n        return next_state, reward\n\n    def simulate(self, policy, initial_state, periods, seed=7):\n        return simulate_policy(self, policy, initial_state, periods, seed)\nsavings = ConsumptionSavingModel()\n\n\ndef save_half(state):\n    return min(state / 2, savings.M)  # / keeps fractional units; min applies the cap.\n\n\nsaving_start = 5.5\nsaving_path, saving_rewards = savings.simulate(save_half, saving_start, periods=24)\n\n# Drop the last state: a path has one more state than rewards.\nsaving_actions = np.array([save_half(s) for s in saving_path[:-1]])\nconsumption = saving_path[:-1] - saving_actions\nincome = saving_path[1:] - saving_actions  # Next stock minus saving is new income.\nprint(\"First five stocks:\", saving_path[:5])\nprint(\"First five consumption choices:\", consumption[:5])\nprint(\"Return:\", discounted_return(saving_rewards, savings.beta))\nfig, axes = plt.subplots(1, 2, figsize=(10, 3.4))\naxes[0].step(range(len(saving_path)), saving_path, where=\"post\", label=\"Stock\")\naxes[0].set(xlabel=\"Step\", ylabel=\"Units of goods\", title=\"One rollout: save half\")\naxes[1].step(range(len(consumption)), consumption, where=\"mid\", label=\"Consumption\")\naxes[1].step(range(len(income)), income, where=\"mid\", label=\"Next-period income\", alpha=0.7)\naxes[1].set(xlabel=\"Step\", ylabel=\"Units of goods\")\nfor ax in axes:\n    ax.legend()\n    ax.grid(alpha=0.2)\nplt.tight_layout()\nplt.show()\n\nEstimate the saving rule’s value\n\\[V^\\sigma(s)=(s-\\sigma(s))^\\alpha+\n\\frac{\\beta}{B}\\int_0^B V^\\sigma(\\sigma(s)+y)\\,dy.\\]\nAverage 600 simulated returns, each lasting 100 periods. The selected initial stocks below are evaluation points; simulated stocks can take any value in \\([0,M+B]\\).\ndef estimate_saving_values(model, policy, initial_stocks):\n    values = []\n    for stock in initial_stocks:\n        returns = simulate_returns(model, policy, stock)\n        values.append(returns.mean())  # Average rollouts from this initial stock.\n    return np.array(values)\n\n\ndef consume_all(state):\n    return 0.0  # Save nothing.\n\n\ninitial_stocks = np.array([0.0, 1.5, 3.0, 5.5, 8.0])\nV_saving = estimate_saving_values(savings, save_half, initial_stocks)\nV_consume = estimate_saving_values(savings, consume_all, initial_stocks)\nfor stock, value in zip(initial_stocks, V_saving):  # Pair each stock with its estimate.\n    print(f\"Initial stock {stock:.1f}: estimated value {value:.4f}\")\n\nfig, ax = plt.subplots()\nax.plot(initial_stocks, V_saving, \"o-\", label=\"Save half\")\nax.plot(initial_stocks, V_consume, \"s--\", label=\"Consume everything\")\nax.set(xlabel=\"Initial stock\", ylabel=\"Estimated expected discounted utility\")\nax.legend()\nax.grid(alpha=0.2)\nplt.tight_layout()\nplt.show()\n# Check against a known value: consume everything each period.\n# E[Y**alpha] = B**alpha / (alpha + 1) for uniform income.\nmean_income_utility = savings.B ** savings.alpha / (savings.alpha + 1)\nV_consume_exact = initial_stocks ** savings.alpha + (\n    savings.beta / (1 - savings.beta) * mean_income_utility\n)\nprint(\"Consume-all estimates:\", V_consume)\nprint(\"Consume-all exact values:\", V_consume_exact)"
+  },
+  {
+    "objectID": "weeks/week_02/lab/starter/value_functions.html#exercise-1-change-the-acceptance-threshold",
+    "href": "weeks/week_02/lab/starter/value_functions.html#exercise-1-change-the-acceptance-threshold",
+    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "section": "Exercise 1: Change the acceptance threshold",
+    "text": "Exercise 1: Change the acceptance threshold\nComplete compare_thresholds. Return a dictionary mapping each threshold to its unemployed-state values. For thresholds 2 and 4, print the value at \\((\\mathrm U,2)\\) and plot both arrays.\ndef compare_thresholds(model, thresholds):\n    results = {}  # A dictionary stores pairs: threshold -&gt; value array.\n    # Loop over thresholds; use make_threshold_policy and evaluate_policy.\n    # Store V[:model.n] in results[threshold], then return results.\n    pass\n\n# Run after completing the function:\n# results = compare_thresholds(mccall, [2, 4])\n# for threshold, values in results.items():\n#     print(threshold, \"value from offer 2:\", values[1])\n#     plt.plot(mccall.wages, values, \"o-\", label=f\"Threshold {threshold}\")\n# plt.xlabel(\"Wage offer\")\n# plt.ylabel(\"Expected discounted income\")\n# plt.legend()\n# plt.show()\n\n\nSolution 1: Compare McCall policies (Show code)\n\n#@title Solution 1: Compare McCall policies (Show code)\n#@markdown Select **Show code** to reveal the answer; call `mccall_solution()` to run it.\ndef mccall_solution():\n    model = McCallModel()\n    results = {}\n    for threshold in [2, 4]:\n        policy = make_threshold_policy(model, threshold)\n        V, _, _ = evaluate_policy(model, policy)\n        results[threshold] = V[:model.n]\n        print(threshold, \"value from offer 2:\", V[1])\n        plt.plot(model.wages, V[:model.n], \"o-\", label=f\"Threshold {threshold}\")\n    plt.xlabel(\"Wage offer\")\n    plt.ylabel(\"Expected discounted income\")\n    plt.legend()\n    plt.tight_layout()\n    plt.show()\n    return results"
+  },
+  {
+    "objectID": "weeks/week_02/lab/starter/value_functions.html#exercise-2-change-the-saving-target",
+    "href": "weeks/week_02/lab/starter/value_functions.html#exercise-2-change-the-saving-target",
+    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "section": "Exercise 2: Change the saving target",
+    "text": "Exercise 2: Change the saving target\nComplete evaluate_saving_target using min(state, target, model.M) and estimate_saving_values. For targets 1.5 and 3.5, print the estimated value at stock 5.5 and plot the estimates at initial_stocks.\ndef evaluate_saving_target(model, target, initial_stocks):\n    # Define the saving policy, estimate its values, and return the array.\n    pass\n\n# Run after completing the function:\n# for target in [1.5, 3.5]:\n#     values = evaluate_saving_target(savings, target, initial_stocks)\n#     print(target, \"estimated value from stock 5.5:\", values[3])\n#     plt.plot(initial_stocks, values, \"o-\", label=f\"Saving target {target}\")\n# plt.xlabel(\"Initial stock\")\n# plt.ylabel(\"Estimated expected discounted utility\")\n# plt.legend()\n# plt.show()\n\n\nSolution 2: Compare saving targets (Show code)\n\n#@title Solution 2: Compare saving targets (Show code)\n#@markdown Select **Show code** to reveal the answer; call `savings_solution()` to run it.\ndef savings_solution():\n    model = ConsumptionSavingModel()\n    stocks = np.array([0.0, 1.5, 3.0, 5.5, 8.0])\n    results = {}\n    for target in [1.5, 3.5]:\n        def policy(state):\n            return min(state, target, model.M)\n        values = estimate_saving_values(model, policy, stocks)\n        results[target] = values\n        print(target, \"estimated value from stock 5.5:\", values[3])\n        plt.plot(stocks, values, \"o-\", label=f\"Saving target {target}\")\n    plt.xlabel(\"Initial stock\")\n    plt.ylabel(\"Estimated expected discounted utility\")\n    plt.legend()\n    plt.tight_layout()\n    plt.show()\n    return results"
+  },
+  {
+    "objectID": "weeks/week_02/lab/starter/value_functions.html#references",
+    "href": "weeks/week_02/lab/starter/value_functions.html#references",
+    "title": "Policy Evaluation: Job Search and Consumption–Saving",
+    "section": "References",
+    "text": "References\n\nThomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]\n\nJob Search I: The McCall Search Model — The McCall Model.\nThe Income Fluctuation Problem I: Basic Model — The Optimal Savings Problem.\nDiscrete State Dynamic Programming — Example: A Growth Model.\n\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction, 2nd ed., MIT Press. [Book]\n\nSection 4.1: Policy Evaluation (Prediction).\n\n\nThe saving example adapts the capped-storage growth model to continuous goods and uniform income on \\([0,B]\\)."
   }
 ]
