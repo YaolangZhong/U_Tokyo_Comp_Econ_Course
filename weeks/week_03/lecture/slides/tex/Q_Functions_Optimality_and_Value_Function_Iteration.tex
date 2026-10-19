@@ -270,43 +270,47 @@ Q^\sigma(s,a)=
 +\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,a\right]}_{\text{Discounted continuation value}}.
 \]
 \par\medskip
-Only the first action changes. In both equations, \(s'\) is drawn from the transition kernel for that action, and \(V^\sigma(s')\) evaluates following \(\sigma\) afterward.
-\end{frame}
-
-\begin{frame}{Example: Comparing First Actions}
-At cell 25, the displayed policy chooses U. Compare U with R, then follow \(\sigma\) from the next cell. Keep \(\beta=1\).
-\begin{itemize}
-\item \textbf{Up:} move to cell 18, whose value is \(V^\sigma(18)=-9\):
-\[Q^\sigma(25,\mathrm U)=-1+V^\sigma(18)=-10.\]
-\item \textbf{Right:} move to cell 26, whose value is \(V^\sigma(26)=-7\):
-\[Q^\sigma(25,\mathrm R)=-1+V^\sigma(26)=-8.\]
-\end{itemize}
-Both actions cost one now. Right gives a better continuation.
-\par\medskip
-Since \(\sigma(25)=\mathrm U\), \(V^\sigma(25)=Q^\sigma(25,\mathrm U)=-10\). Choosing R first improves the return to \(-8\).
-\end{frame}
-
-\begin{frame}{Action Values and Rollouts}
-Start at \(s\), take action \(a\), then follow \(\sigma\). The resulting rollout gives
-\[Q^\sigma(s,a)=\E_\sigma[G_t\mid s_t=s,\ a_t=a],
-\qquad G_t=\sum_{\tau=0}^{\infty}\beta^{\tau}r(s_{t+\tau},a_{t+\tau}).\]
-\begin{itemize}
-\item The first action is deliberately chosen; it need not be an action that \(\sigma\) selects at \(s\).
-\item The expectation covers transitions and later actions under \(\sigma\).
-\item Averaging returns from repeated rollouts starting with \((s,a)\) provides an estimate of \(Q^\sigma(s,a)\).
-\end{itemize}
-\small For the general discounted setting, assume bounded rewards, \(0<\beta<1\), time-homogeneous dynamics, and a stationary policy. The terminating maze permits \(\beta=1\).
+The first action \(a\) is deliberately chosen; it need not be an action that \(\sigma\) selects at \(s\).
 \end{frame}
 
 \begin{frame}{Linking Q and V}
-For a randomized policy with a finite action set, average the first action according to the policy:
-\[V^\sigma(s)=\sum_{a\in\Aset(s)}\Pr\{\sigma(s)=a\}\,Q^\sigma(s,a).\]
-For a deterministic policy,
-\[V^\sigma(s)=Q^\sigma(s,\sigma(s)).\]
+Suppose the first action \(a\) is also chosen according to \(\sigma\). Then the policy governs the entire rollout.
 \begin{itemize}
-\item \(V^\sigma\) evaluates a state; \(Q^\sigma\) distinguishes actions at that state.
-\item Once \(Q^\sigma\) is known, compare actions directly. The best first action maximizes \(Q^\sigma(s,a)\), with \(\sigma\) governing the continuation.
+\item \textbf{Deterministic policy:} \(a=\sigma(s)\), so
+\[V^\sigma(s)=Q^\sigma(s,\sigma(s)).\]
+\item \textbf{Randomized policy:} \(a\sim\sigma(s)\). For a finite action set,
+\[V^\sigma(s)=\sum_{a\in\Aset(s)}\Pr\{\sigma(s)=a\}\,Q^\sigma(s,a).\]
 \end{itemize}
+The state value is the action value of the policy's choice, or its probability-weighted average when the policy randomizes.
+\end{frame}
+
+\begin{frame}{Example: Comparing First Actions}
+\small
+At cell 25, \(\sigma(25)=\mathrm U\). Compare U and R, then follow \(\sigma\). Set \(\beta=1\).
+\begin{columns}[c]
+\begin{column}{.58\textwidth}
+\begin{figure}\centering
+\begin{tikzpicture}[x=.71cm,y=.71cm]
+\ValueMazeBase
+\fill[CourseVariableColor!20] (3.01,2.01) rectangle (3.99,2.99);
+\node[anchor=north west,inner sep=0pt,font=\sffamily\bfseries\fontsize{6}{6}\selectfont,text=CourseVariableColor] at (3.09,2.92) {25};
+\MazePolicyValues
+\draw[valueFlow,draw=SessionRed,shorten <=2pt,shorten >=2pt] (3.5,2.5)--(3.5,3.5);
+\draw[valueFlow,draw=SessionTeal,shorten <=2pt,shorten >=2pt] (3.5,2.5)--(4.5,2.5);
+\end{tikzpicture}\MazeLegend
+\caption{Two first actions at cell 25.}
+\end{figure}
+\end{column}
+\begin{column}{.40\textwidth}
+\textcolor{SessionRed}{\textbf{Up to cell 18:}}
+\[Q^\sigma(25,\mathrm U)=-1-9=-10.\]
+\textcolor{SessionTeal}{\textbf{Right to cell 26:}}
+\[Q^\sigma(25,\mathrm R)=-1-7=-8.\]
+\par\medskip
+The policy chooses U, so \(V^\sigma(25)=-10\).
+\par\smallskip
+Choosing R first gives a higher return.
+\end{column}\end{columns}
 \end{frame}
 
 \begin{frame}{Example: Improving the Continuation}
