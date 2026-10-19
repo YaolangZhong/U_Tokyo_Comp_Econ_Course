@@ -242,8 +242,7 @@ With \(\beta=1\), compute values backward from cell 8, following the actions of 
 \end{column}
 \begin{column}{.37\textwidth}
 \(V^\sigma(8)=0\). For every other cell,
-\[V^\sigma(s)=-1+V^\sigma(s'),\]
-where \(s'\) is its chosen next cell.
+\[V^\sigma(s)=-1+V^\sigma(s').\]
 \begin{align*}
 V^\sigma(15)&=-1+0=-1,\\
 V^\sigma(22)&=-1+(-1)=-2,\\
@@ -257,14 +256,14 @@ Each value is minus the number of moves to cell 8 under \(\sigma\).
 
 \begin{frame}{From State Values to Action Values}
 \small
-\(V^\sigma(s)\): follow the deterministic policy \(\sigma\) now and afterward.
+The \term{state value function} \(V^\sigma(s)\): follow the deterministic policy \(\sigma\) now and afterward.
 \[
 V^\sigma(s)=
 \underbrace{r\bigl(s,\sigma(s)\bigr)}_{\text{Immediate reward}}
 +\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,\ a=\sigma(s)\right]}_{\text{Discounted continuation value}}.
 \]
 \par\medskip
-The \term{action-value function} \(Q^\sigma(s,a)\): choose \(a\) now, then follow \(\sigma\).
+The \term{state-action value function} \(Q^\sigma(s,a)\): choose \(a\) now, then follow \(\sigma\).
 \[
 Q^\sigma(s,a)=
 \underbrace{r(s,a)}_{\text{Immediate reward}}
