@@ -314,16 +314,28 @@ Choosing R first gives a higher return.
 \end{frame}
 
 \begin{frame}{The Principle of Optimality}
-In a finite MDP, an optimal policy must have an optimal continuation from every state reached with positive probability.
-\begin{enumerate}
-\item Suppose a better continuation is available at a reached state.
-\item Keep the earlier decisions unchanged and use the better continuation there.
-\item The expected return increases, contradicting the original policy's optimality.
-\end{enumerate}
-\par\medskip
-This argument uses the \term{Markov state}: it contains the information needed to evaluate future choices.
+\small\setlength{\abovedisplayskip}{3pt}\setlength{\belowdisplayskip}{3pt}
+Let \(\modelvar{\widetilde\sigma}\) change only the action at cell 25 from U to R. Keep \(\modelvar{\beta=1}\).
+\begin{figure}\centering
+\begin{tikzpicture}[x=1cm,y=.65cm,font=\sffamily\footnotesize]
+\node[valueState,fill=MazeStartFill] (start) at (0,0) {16};
+\node[valueState,fill=CourseVariableColor!20] (branch) at (3.6,0) {25};
+\node[valueState,fill=MazeGoalFill] (goal) at (9.2,0) {8};
+\draw[valueFlow,draw=CourseVariableColor] (start)--node[above]{6 moves}(branch);
+\draw[valueFlow,draw=CourseVariableColor] (branch) to[bend left=17]
+ node[above,text=CourseVariableColor]{U, then \(\sigma\): 10 moves} (goal);
+\draw[valueFlow,draw=SessionRed] (branch) to[bend right=17]
+ node[below,text=SessionRed]{R, then \(\sigma\): 8 moves} (goal);
+\end{tikzpicture}
+\caption{Same first moves, better continuation.}
+\end{figure}
+\begin{align*}
+V^\sigma(16)&=-6+(-10)=-16,\\
+V^{\widetilde\sigma}(16)&=-6+(-8)=-14>V^\sigma(16).
+\end{align*}
+A better continuation improves the return from the start, so \(\modelvar{\sigma}\) was not optimal.
 \par\smallskip
-With uncertain transitions, choose a continuation for each possible next state. Optimality concerns expected return across those outcomes.
+\term{Principle of optimality:} an optimal policy must have an optimal continuation from every state reached with positive probability.
 \end{frame}
 
 \begin{frame}{Optimal State and Action Values}
