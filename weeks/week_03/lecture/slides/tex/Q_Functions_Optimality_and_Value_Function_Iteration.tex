@@ -199,8 +199,8 @@
 \begin{itemize}
 \item \textbf{From a Fixed Policy to Policy Improvement}
   \begin{itemize}\item State values, state-action values, and the maze example\item Greedy choices and the policy improvement theorem\end{itemize}
-\item \textbf{Optimality and Policy Iteration}
-  \begin{itemize}\item Bellman optimality and the one-step deviation principle\item Exact policy evaluation and improvement\end{itemize}
+\item \textbf{Optimality and the Bellman Equation}
+  \begin{itemize}\item The principle of optimality and next-state subproblems\item The Bellman operator and an optimality criterion\end{itemize}
 \item \textbf{Value Function Iteration}
   \begin{itemize}\item Synchronous updates and convergence\item Stopping errors and policy recovery\end{itemize}
 \end{itemize}
@@ -427,33 +427,21 @@ The contraction mapping theorem therefore gives:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{When Can Policy Improvement Stop?}
+\begin{frame}{An Optimality Criterion}
 \small
-Policy improvement raises values. To turn it into an algorithm, we need a condition that tells us when the current policy is optimal.
+For a given policy \(\modelvar{\sigma}\), use its values \(\modelvar{V^\sigma}\) and \(\modelvar{Q^\sigma}\) to determine whether it is optimal.
 \par\medskip
-The \term{one-step deviation principle} provides this stopping condition:
+The \term{one-step deviation principle} states:
 \[\sigma(s)\in\argmax_{a\in\Aset(s)}Q^\sigma(s,a)\quad\forall s
 \quad\Longleftrightarrow\quad V^\sigma=V^*.\]
-If no action gives a higher \(\modelvar{Q^\sigma}\) at any state, then
+A policy is optimal exactly when no change of the first action improves the return at any state, with \(\modelvar{\sigma}\) followed afterward.
+\par\medskip
+If this condition holds, then
 \[V^\sigma(s)=\max_{a\in\Aset(s)}Q^\sigma(s,a)=(TV^\sigma)(s).\]
 Thus \(\modelvar{V^\sigma}\) is a fixed point of \(\modelvar{T}\). Uniqueness implies \(\modelvar{V^\sigma=V^*}\).
 \par\medskip
-\textbf{Stopping rule for policy iteration:} if the greedy improvement step leaves the policy unchanged, stop; the current policy is optimal.
-\end{frame}
-
-\begin{frame}{Policy Iteration}
-\small
-Start from any feasible policy \(\modelvar{\sigma_0}\). Repeat:
-\begin{enumerate}
-\item \term{Policy evaluation:} solve exactly for the current policy's value,
-\[V^{\sigma_k}(s)=r(s,\sigma_k(s))+\beta\E[V^{\sigma_k}(s')\mid s,a=\sigma_k(s)].\]
-\item \term{Policy improvement:} choose
-\[\sigma_{k+1}(s)\in\argmax_{a\in\Aset(s)}Q^{\sigma_k}(s,a),\qquad\forall s.\]
-Keep the current action whenever it is a maximizer.
-\item If \(\modelvar{\sigma_{k+1}=\sigma_k}\), stop: the policy is optimal. Otherwise evaluate the new policy and repeat.
-\end{enumerate}
-\[V^{\sigma_0}\leq V^{\sigma_1}\leq V^{\sigma_2}\leq\cdots\leq V^*.\]
-Each nonoptimal policy improves strictly at some state. With finitely many policies, this process terminates at an optimum.
+Once \(\modelvar{V^*}\) is known, recover an optimal policy by
+\[\sigma^*(s)\in\argmax_{a\in\Aset(s)}\{r(s,a)+\beta\E[V^*(s')\mid s,a]\}.\]
 \end{frame}
 
 \begin{frame}{Value Function Iteration: Inputs and Updates}
