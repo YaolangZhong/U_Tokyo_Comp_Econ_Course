@@ -256,31 +256,26 @@ Each value is minus the number of moves to cell 8 under \(\modelvar{\sigma}\).
 
 \begin{frame}{From State Values to Action Values}
 \small
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
 The \term{state value function} \(\modelvar{V^\sigma(s)}\): follow the deterministic policy \(\modelvar{\sigma}\) now and afterward.
 \[
 V^\sigma(s)=
 \underbrace{r\bigl(s,\sigma(s)\bigr)}_{\text{Immediate reward}}
 +\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,\ a=\sigma(s)\right]}_{\text{Discounted continuation value}}.
 \]
-\par\medskip
+\par\smallskip
 The \term{state-action value function} \(\modelvar{Q^\sigma(s,a)}\): choose \(\modelvar{a}\) now, then follow \(\modelvar{\sigma}\).
 \[
-Q^\sigma(s,a)=
-\underbrace{r(s,a)}_{\text{Immediate reward}}
-+\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,a\right]}_{\text{Discounted continuation value}}.
+Q^\sigma(s,a)=r(s,a)+\beta\,\E\!\left[V^\sigma(s')\mid s,a\right].
 \]
-\par\medskip
-The first action \(\modelvar{a}\) is deliberately chosen; it need not be an action that \(\modelvar{\sigma}\) selects at \(\modelvar{s}\).
-\end{frame}
-
-\begin{frame}{Linking Q and V}
-Suppose the first action \(\modelvar{a}\) is also chosen according to \(\modelvar{\sigma}\). Then the policy governs the entire rollout.
-\begin{itemize}
-\item \textbf{Deterministic policy:} \(\modelvar{a=\sigma(s)}\), so
-\[V^\sigma(s)=Q^\sigma(s,\sigma(s)).\]
-\item \textbf{Randomized policy:} \(\modelvar{a\sim\sigma(s)}\). For a finite action set,
-\[V^\sigma(s)=\sum_{a\in\Aset(s)}\Pr\{\sigma(s)=a\}\,Q^\sigma(s,a).\]
-\end{itemize}
+The first action \(\modelvar{a}\) need not be the action selected by \(\modelvar{\sigma}\).
+\par\smallskip
+If the first action also follows \(\modelvar{\sigma}\), then
+\begin{align*}
+\text{Deterministic:}\quad V^\sigma(s)&=Q^\sigma(s,\sigma(s)),\\[2pt]
+\text{Randomized:}\quad V^\sigma(s)&=\sum_{a\in\Aset(s)}\Pr\{\sigma(s)=a\}\,Q^\sigma(s,a).
+\end{align*}
 \end{frame}
 
 \begin{frame}{Example: Comparing First Actions}
