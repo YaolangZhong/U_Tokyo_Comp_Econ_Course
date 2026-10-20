@@ -312,10 +312,10 @@ Choosing R first gives a higher return.
 
 \begin{frame}{Greedy Policy Improvement}
 \small
-Fix a policy \(\modelvar{\sigma}\) and select one state \(\modelvar{s}\).
-A \term{policy improvement step} at \(\modelvar{s}\) chooses
+For a given policy \(\modelvar{\sigma}\) and a particular state \(\modelvar{s}\),
+a \term{policy improvement step} at \(\modelvar{s}\) chooses
 \[\widetilde a\in\argmax_{a\in\Aset(s)}Q^\sigma(s,a).\]
-The candidate policy uses \(\modelvar{\widetilde a}\) at \(\modelvar{s}\) and keeps \(\modelvar{\sigma}\) at every other state:
+The new policy \(\modelvar{\widetilde\sigma}\) uses \(\modelvar{\widetilde a}\) at \(\modelvar{s}\) and keeps \(\modelvar{\sigma}\) at every other state:
 \[
 \widetilde\sigma(x)=
 \begin{cases}
