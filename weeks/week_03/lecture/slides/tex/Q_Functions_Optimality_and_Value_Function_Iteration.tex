@@ -334,23 +334,27 @@ then the updated policy satisfies
 \small
 \setlength{\abovedisplayskip}{3pt}
 \setlength{\belowdisplayskip}{3pt}
-An \term{operator} maps a function to another function. The \term{policy evaluation operator} \(\modelvar{T_{\widetilde\sigma}}\) maps a continuation-value function \(\modelvar{v}\) to the updated function \(\modelvar{T_{\widetilde\sigma}v}\):
-\[(T_{\widetilde\sigma}v)(x)=r(x,\widetilde\sigma(x))
-+\beta\E[v(x')\mid x,a=\widetilde\sigma(x)].\]
-Since \(\modelvar{\widetilde\sigma}\) changes the action only at \(\modelvar{s}\),
+The \term{Bellman operator for the fixed policy} \(\modelvar{\widetilde\sigma}\) maps an input continuation-value function \(\modelvar{V}\) to a new function \(\modelvar{T_{\widetilde\sigma}V}\):
+\[(T_{\widetilde\sigma}V)(x)=r(x,\widetilde\sigma(x))
++\beta\E[V(x')\mid x,a=\widetilde\sigma(x)].\]
+Starting from the known \(\modelvar{V^\sigma}\), one application follows \(\modelvar{\widetilde\sigma}\) for one step, then \(\modelvar{\sigma}\) afterward. Since only the action at \(\modelvar{s}\) changes,
 \[
-(T_{\widetilde\sigma}V^\sigma)(x)-V^\sigma(x)=
+(T_{\widetilde\sigma}V^\sigma)(x)=
 \begin{cases}
-Q^\sigma(s,\widetilde a)-V^\sigma(s),&x=s,\\
-0,&x\neq s.
+Q^\sigma(s,\widetilde a),&x=s,\\
+V^\sigma(x),&x\neq s,
 \end{cases}
-\quad\geq0.
+\qquad\geq V^\sigma(x).
 \]
-The operator is \term{monotone}: \(\modelvar{v\leq w}\) implies \(\modelvar{T_{\widetilde\sigma}v\leq T_{\widetilde\sigma}w}\), with inequalities holding at every state. Hence
+\term{Monotonicity} means preserving the ordering of two candidate value functions \(\modelvar{V_1,V_2}\):
+\[V_1(x)\leq V_2(x)\ \forall x
+\quad\Longrightarrow\quad
+(T_{\widetilde\sigma}V_1)(x)\leq(T_{\widetilde\sigma}V_2)(x)\ \forall x.\]
+Higher continuation values cannot lower the updated value. Applying this repeatedly gives
 \[V^\sigma\leq T_{\widetilde\sigma}V^\sigma
 \leq T_{\widetilde\sigma}^{\,2}V^\sigma\leq\cdots.
 \]
-Here \(\modelvar{T_{\widetilde\sigma}^{\,n}}\) means applying the operator \(\modelvar{n}\) times. With \(\modelvar{0<\beta<1}\), the initial continuation has vanishing weight \(\modelvar{\beta^n}\), so
+\(\modelvar{T_{\widetilde\sigma}^{\,n}V^\sigma}\) is the value of following \(\modelvar{\widetilde\sigma}\) for \(\modelvar{n}\) steps, then \(\modelvar{\sigma}\). With \(\modelvar{0<\beta<1}\), the remaining continuation has vanishing weight \(\modelvar{\beta^n}\), so
 \[\lim_{n\to\infty}(T_{\widetilde\sigma}^{\,n}V^\sigma)(x)=V^{\widetilde\sigma}(x)
 \geq V^\sigma(x),\qquad\forall x.\]
 \end{frame}
@@ -414,24 +418,26 @@ Combining them gives the \term{Bellman optimality equation}:
 \end{frame}
 
 \begin{frame}{The Bellman Optimality Operator}
-Replace the optimal continuation by a candidate \(\modelvar{v}\). The \term{Bellman optimality operator} is
-\[(Tv)(s)=\max_{a\in\Aset(s)}\left\{r(s,a)
-+\beta\sum_{s'\in\Sset}P(s'\mid s,a)v(s')\right\}.\]
+Replace the optimal continuation by a candidate \(\modelvar{V}\). The \term{Bellman optimality operator} is
+\[(TV)(s)=\max_{a\in\Aset(s)}\left\{r(s,a)
++\beta\sum_{s'\in\Sset}P(s'\mid s,a)V(s')\right\}.\]
 \begin{itemize}
-\item \(\modelvar{T_\sigma v}\) uses the prescribed action \(\modelvar{\sigma(s)}\); \(\modelvar{Tv}\) chooses the best action for continuation \(\modelvar{v}\).
-\item A policy greedy with respect to \(\modelvar{v}\) attains this maximum: \(\modelvar{T_\sigma v=Tv}\).
+\item \(\modelvar{T_\sigma V}\) uses the prescribed action \(\modelvar{\sigma(s)}\); \(\modelvar{TV}\) chooses the best action for continuation \(\modelvar{V}\).
+\item A policy greedy with respect to \(\modelvar{V}\) attains this maximum: \(\modelvar{T_\sigma V=TV}\).
 \item The optimal value satisfies \(\modelvar{TV^*=V^*}\): it is a \term{fixed point} of \(\modelvar{T}\).
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Contraction and Uniqueness}
 \small
-Use \(\modelvar{\|v-w\|_\infty=\max_s|v(s)-w(s)|}\). For the same state and action,
-\[\left|\beta\E[v(s')-w(s')\mid s,a]\right|\leq\beta\|v-w\|_\infty.\]
+For two candidate value functions \(\modelvar{V_1,V_2}\), use the maximum distance
+\[\|V_1-V_2\|_\infty=\max_s|V_1(s)-V_2(s)|.\]
+For the same state and action,
+\[\left|\beta\E[V_1(s')-V_2(s')\mid s,a]\right|\leq\beta\|V_1-V_2\|_\infty.\]
 Taking maxima cannot enlarge this bound, since
 \[|\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a|.\]
 Therefore \(\modelvar{T}\) is a \term{contraction}:
-\[\|Tv-Tw\|_\infty\leq\beta\|v-w\|_\infty.\]
+\[\|TV_1-TV_2\|_\infty\leq\beta\|V_1-V_2\|_\infty.\]
 The contraction mapping theorem gives a unique fixed point, \(\modelvar{V^*}\), and convergence to it from any initial value vector. The same bound holds for each fixed-policy operator \(\modelvar{T_\sigma}\).
 \end{frame}
 
@@ -467,32 +473,32 @@ Each nonoptimal policy improves strictly at some state. With finitely many polic
 
 \begin{frame}{Value Function Iteration}
 \small
-VFI updates a value estimate \(\modelvar{v_k}\), without evaluating a policy to completion.
+VFI updates a value estimate \(\modelvar{V_k}\), without evaluating a policy to completion.
 \begin{enumerate}
-\item Initialize \(\modelvar{v_0}\), for example at zero.
+\item Initialize \(\modelvar{V_0}\), for example at zero.
 \item Using the old values, compute the scores and the new values:
 \begin{align*}
-Q_k(s,a)&=r(s,a)+\beta\E[v_k(s')\mid s,a],\\
-v_{k+1}(s)&=\max_{a\in\Aset(s)}Q_k(s,a)=(Tv_k)(s).
+Q_k(s,a)&=r(s,a)+\beta\E[V_k(s')\mid s,a],\\
+V_{k+1}(s)&=\max_{a\in\Aset(s)}Q_k(s,a)=(TV_k)(s).
 \end{align*}
 \item Repeat these updates until the required accuracy is reached.
 \end{enumerate}
-A \term{sweep} updates all states using the same old \(\modelvar{v_k}\); store the results in a separate array.
+A \term{sweep} updates all states using the same old \(\modelvar{V_k}\); store the results in a separate array.
 \par\medskip
 Contraction gives
-\[\|v_k-V^*\|_\infty\leq\beta^k\|v_0-V^*\|_\infty\longrightarrow0.\]
-The estimates \(\modelvar{v_k}\) and \(\modelvar{Q_k}\) need not be the values of a particular policy.
+\[\|V_k-V^*\|_\infty\leq\beta^k\|V_0-V^*\|_\infty\longrightarrow0.\]
+The estimates \(\modelvar{V_k}\) and \(\modelvar{Q_k}\) need not be the values of a particular policy.
 \end{frame}
 
 \begin{frame}{Stopping VFI and Recovering a Policy}
 \small
-After computing \(\modelvar{v_{k+1}=Tv_k}\), measure the \term{Bellman residual}:
-\[d_k=\|Tv_k-v_k\|_\infty=\|v_{k+1}-v_k\|_\infty.\]
+After computing \(\modelvar{V_{k+1}=TV_k}\), measure the \term{Bellman residual}:
+\[d_k=\|TV_k-V_k\|_\infty=\|V_{k+1}-V_k\|_\infty.\]
 Contraction implies
-\[\|v_k-V^*\|_\infty\leq d_k+\beta\|v_k-V^*\|_\infty,
-\quad\text{so}\quad\|v_k-V^*\|_\infty\leq\frac{d_k}{1-\beta}.\]
+\[\|V_k-V^*\|_\infty\leq d_k+\beta\|V_k-V^*\|_\infty,
+\quad\text{so}\quad\|V_k-V^*\|_\infty\leq\frac{d_k}{1-\beta}.\]
 \begin{itemize}
-\item For value error at most \(\modelvar{\varepsilon}\), stop when \(\modelvar{d_k\leq(1-\beta)\varepsilon}\) and return \(\modelvar{v_k}\).
+\item For value error at most \(\modelvar{\varepsilon}\), stop when \(\modelvar{d_k\leq(1-\beta)\varepsilon}\) and return \(\modelvar{V_k}\).
 \item Recover a policy from the scores computed using this returned value:
 \[\widehat\sigma(s)\in\argmax_{a\in\Aset(s)}Q_k(s,a).\]
 \item Evaluate \(\modelvar{V^{\widehat\sigma}}\) to check the policy's achieved return. Intermediate greedy policies in VFI need not improve monotonically.
