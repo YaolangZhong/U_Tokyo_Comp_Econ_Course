@@ -326,11 +326,11 @@ For a given policy \(\modelvar{\sigma}\), let \(\modelvar{V^\sigma}\) and \(\mod
 \]
 i.e., the new policy uses \(\modelvar{\widetilde a}\) at \(\modelvar{s}\) and keeps \(\modelvar{\sigma}\) at every other state.
 \par\medskip
-\term{Policy improvement theorem.} More generally, let \(\modelvar{\sigma}\) and \(\modelvar{\widetilde\sigma}\) be any two stationary deterministic policies. Assume \(\modelvar{|r(x,a)|\leq\bar r<\infty}\) for all feasible \(\modelvar{(x,a)}\), and \(\modelvar{0<\beta<1}\). If
-\[Q^\sigma(x,\widetilde\sigma(x))\geq V^\sigma(x)\qquad\forall x\in\Sset,\]
+\term{Policy improvement theorem.} More generally, let \(\modelvar{\sigma}\) and \(\modelvar{\widetilde\sigma}\) be any two stationary deterministic policies. Assume \(\modelvar{|r(s,a)|\leq\bar r<\infty}\) for all feasible \(\modelvar{(s,a)}\), and \(\modelvar{0<\beta<1}\). If
+\[Q^\sigma(s,\widetilde\sigma(s))\geq V^\sigma(s)\qquad\forall s\in\Sset,\]
 then
-\[V^{\widetilde\sigma}(x)\geq V^\sigma(x)\qquad\forall x\in\Sset.\]
-If, at every state \(\modelvar{x}\), taking \(\modelvar{\widetilde\sigma(x)}\) once and then following \(\modelvar{\sigma}\) is no worse than following \(\modelvar{\sigma}\) throughout, then following \(\modelvar{\widetilde\sigma}\) at every step is also no worse.
+\[V^{\widetilde\sigma}(s)\geq V^\sigma(s)\qquad\forall s\in\Sset.\]
+If, at every state \(\modelvar{s}\), taking \(\modelvar{\widetilde\sigma(s)}\) once and then following \(\modelvar{\sigma}\) is no worse than following \(\modelvar{\sigma}\) throughout, then following \(\modelvar{\widetilde\sigma}\) at every step is also no worse.
 \end{frame}
 
 \begin{frame}{Policy Improvement: Proof}
