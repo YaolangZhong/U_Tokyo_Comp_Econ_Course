@@ -393,31 +393,38 @@ Each dashed box starts a new subproblem at \(\modelvar{s'}\). The continuation o
 \end{tikzpicture}
 \caption{Choose the best first action.}
 \end{figure}\end{column}\end{columns}
-\footnotesize Open circles: states. Filled circles: state--action pairs. Adapted from Sutton and Barto (2018), Figure 3.4; branches show possible next states.
+\footnotesize Adapted from Sutton and Barto (2018), Figure 3.4; branches show possible next states.
 \end{frame}
 
 \begin{frame}{The Bellman Optimality Operator}
-Replace the optimal continuation by a candidate \(\modelvar{V}\). The \term{Bellman optimality operator} is
-\[(TV)(s)=\max_{a\in\Aset(s)}\left\{r(s,a)
-+\beta\sum_{s'\in\Sset}P(s'\mid s,a)V(s')\right\}.\]
-\begin{itemize}
-\item \(\modelvar{T_\sigma V}\) uses the prescribed action \(\modelvar{\sigma(s)}\); \(\modelvar{TV}\) chooses the best action for continuation \(\modelvar{V}\).
-\item A policy greedy with respect to \(\modelvar{V}\) attains this maximum: \(\modelvar{T_\sigma V=TV}\).
-\item The optimal value satisfies \(\modelvar{TV^*=V^*}\): it is a \term{fixed point} of \(\modelvar{T}\).
-\end{itemize}
+\small
+The Bellman equation characterizes \(\modelvar{V^*}\), but \(\modelvar{V^*}\) is still unknown. To compute it, start with a candidate continuation-value function \(\modelvar{V}\).
+\par\medskip
+The \term{Bellman optimality operator} \(\modelvar{T}\) maps \(\modelvar{V}\) to an updated value function \(\modelvar{TV}\):
+\[(TV)(s)=\max_{a\in\Aset(s)}\{r(s,a)+\beta\E[V(s')\mid s,a]\}.\]
+At each state, evaluate each first action using \(\modelvar{V}\) for the continuation, then keep the highest value.
+\par\medskip
+At the optimal value, the update changes nothing:
+\[TV^*=V^*.\]
+Thus \(\modelvar{V^*}\) is a \term{fixed point} of \(\modelvar{T}\).
+\par\medskip
+This suggests repeated updates, \(\modelvar{V_{k+1}=TV_k}\). We need to establish that they converge to \(\modelvar{V^*}\), regardless of the initial guess \(\modelvar{V_0}\).
 \end{frame}
 
-\begin{frame}{Contraction and Uniqueness}
+\begin{frame}{Convergence of Bellman Updates}
 \small
-For two candidate value functions \(\modelvar{V_1,V_2}\), use the maximum distance
+To justify repeated updates, compare how \(\modelvar{T}\) transforms two candidate value functions \(\modelvar{V_1,V_2}\). Their largest difference across states is
 \[\|V_1-V_2\|_\infty=\max_s|V_1(s)-V_2(s)|.\]
-For the same state and action,
-\[\left|\beta\E[V_1(s')-V_2(s')\mid s,a]\right|\leq\beta\|V_1-V_2\|_\infty.\]
-Taking maxima cannot enlarge this bound, since
-\[|\max_a x_a-\max_a y_a|\leq\max_a|x_a-y_a|.\]
-Therefore \(\modelvar{T}\) is a \term{contraction}:
-\[\|TV_1-TV_2\|_\infty\leq\beta\|V_1-V_2\|_\infty.\]
-The contraction mapping theorem gives a unique fixed point, \(\modelvar{V^*}\), and convergence to it from any initial value vector. The same bound holds for each fixed-policy operator \(\modelvar{T_\sigma}\).
+Averaging cannot increase this difference; discounting multiplies it by \(\modelvar{\beta}\). Maximizing over actions preserves the bound:
+\[\|TV_1-TV_2\|_\infty\leq\beta\|V_1-V_2\|_\infty,\qquad 0<\beta<1.\]
+This is the \term{contraction property}: the largest difference after an update is at most \(\modelvar{\beta}\) times its previous size.
+\par\medskip
+The contraction mapping theorem therefore gives:
+\begin{itemize}
+\item \textbf{A unique solution.} \(\modelvar{V^*}\) is the only fixed point of \(\modelvar{T}\), hence the only solution to the Bellman optimality equation.
+\item \textbf{Convergence.} Starting from any \(\modelvar{V_0}\), the updates \(\modelvar{V_{k+1}=TV_k}\) satisfy
+\[\|V_k-V^*\|_\infty\leq\beta^k\|V_0-V^*\|_\infty\longrightarrow0.\]
+\end{itemize}
 \end{frame}
 
 \begin{frame}{When Is a Policy Optimal?}
@@ -427,10 +434,10 @@ The \term{one-step deviation principle} gives a test using the policy's own valu
 \quad\Longleftrightarrow\quad V^\sigma=V^*.\]
 \begin{itemize}
 \item \textbf{Sufficiency:} if no first-action change improves the return at any state, then
-\[V^\sigma=T_\sigma V^\sigma=TV^\sigma.\]
+\[V^\sigma(s)=Q^\sigma(s,\sigma(s))=\max_a Q^\sigma(s,a)=(TV^\sigma)(s).\]
 The Bellman fixed point is unique, so \(\modelvar{V^\sigma=V^*}\).
 \item \textbf{Necessity:} if \(\modelvar{V^\sigma=V^*}\), then
-\[T_\sigma V^*=V^*=TV^*,\]
+\[Q^\sigma=Q^*,\qquad Q^\sigma(s,\sigma(s))=V^*(s)=\max_a Q^\sigma(s,a),\]
 so \(\modelvar{\sigma}\) attains the maximum at every state.
 \end{itemize}
 \end{frame}
@@ -440,7 +447,7 @@ so \(\modelvar{\sigma}\) attains the maximum at every state.
 Start from any feasible policy \(\modelvar{\sigma_0}\). Repeat:
 \begin{enumerate}
 \item \term{Policy evaluation:} solve exactly for the current policy's value,
-\[V^{\sigma_k}=T_{\sigma_k}V^{\sigma_k}.\]
+\[V^{\sigma_k}(s)=r(s,\sigma_k(s))+\beta\E[V^{\sigma_k}(s')\mid s,a=\sigma_k(s)].\]
 \item \term{Policy improvement:} choose
 \[\sigma_{k+1}(s)\in\argmax_{a\in\Aset(s)}Q^{\sigma_k}(s,a),\qquad\forall s.\]
 Keep the current action whenever it is a maximizer.
@@ -464,8 +471,6 @@ V_{k+1}(s)&=\max_{a\in\Aset(s)}Q_k(s,a)=(TV_k)(s).
 \end{enumerate}
 A \term{sweep} updates all states using the same old \(\modelvar{V_k}\); store the results in a separate array.
 \par\medskip
-Contraction gives
-\[\|V_k-V^*\|_\infty\leq\beta^k\|V_0-V^*\|_\infty\longrightarrow0.\]
 The estimates \(\modelvar{V_k}\) and \(\modelvar{Q_k}\) need not be the values of a particular policy.
 \end{frame}
 
