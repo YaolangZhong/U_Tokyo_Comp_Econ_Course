@@ -212,8 +212,8 @@ window.Quarto = {
 
 
 <!-- Generated from the adjacent notebook; edit the notebook. -->
-<p>Open this working folder in <strong>VS Code</strong>, install <code>requirements.txt</code>, and select the <code>.venv</code> notebook kernel. Follow <a href="https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_03/lab/starter/README.md">setup instructions</a> for setup.</p>
-<p>The <code>.py</code> files define the environments and computations. This notebook imports them, chooses parameters, and displays results. After editing a script, save it, restart the kernel, and run all cells again.</p>
+<p>Open this project folder in <strong>VS Code</strong> and follow <a href="https://github.com/YaolangZhong/U_Tokyo_Comp_Econ_Course/blob/main/weeks/week_03/lab/starter/README.md">setup instructions</a> for setup. Run the notebook from top to bottom.</p>
+<p><code>mdp.py</code> defines the input format. The three model files build the inputs; <code>vfi.py</code> contains the only VFI algorithm. This notebook imports those files and displays the results.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> maze <span class="im">import</span> Maze</span>
@@ -224,46 +224,97 @@ window.Quarto = {
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                     plot_saving, plot_saving_rollout)</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>np.set_printoptions(precision<span class="op">=</span><span class="dv">4</span>, suppress<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="one-algorithm-three-environments" class="level2">
-<h2 class="anchored" data-anchor-id="one-algorithm-three-environments">One algorithm, three environments</h2>
-<p>Each model supplies <code>initial_values()</code> and <code>bellman(v)</code>. The second method returns <span class="math inline">\(Tv\)</span> and a policy greedy with respect to <span class="math inline">\(v\)</span>:</p>
-<p><span class="math display">\[Q_k(s,a)=r(s,a)+\beta\mathbb{E}[v_k(s')\mid s,a],\qquad v_{k+1}(s)=\max_a Q_k(s,a).\]</span></p>
-<p>Open <code>vfi.py</code> beside the notebook. Its loop updates values until the Bellman residual is small; <code>result["values"]</code> and <code>result["policy"]</code> retrieve entries from the returned dictionary.</p>
+<section id="the-shared-mdp-input" class="level2">
+<h2 class="anchored" data-anchor-id="the-shared-mdp-input">The shared MDP input</h2>
+<p>Each model inherits the same <code>MDP</code> container. Python row <code>i</code> represents state <span class="math inline">\(s_i\)</span>; column <code>j</code> represents a possible action.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Attribute</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>states[i]</code></td>
+<td>State label</td>
+</tr>
+<tr class="even">
+<td><code>actions[i, j]</code></td>
+<td>Actual action at that row and column</td>
+</tr>
+<tr class="odd">
+<td><code>feasible[i, j]</code></td>
+<td>Whether this action is allowed</td>
+</tr>
+<tr class="even">
+<td><code>rewards[i, j]</code></td>
+<td>Reward <span class="math inline">\(r(s_i,a_j)\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>P[i, j, next_i]</code></td>
+<td>Transition probability to the next state</td>
+</tr>
+<tr class="even">
+<td><code>beta</code></td>
+<td>Discount factor</td>
+</tr>
+</tbody>
+</table>
+<p>In <code>vfi.py</code>, <code>P @ V</code> takes the probability-weighted sum over next states:</p>
+<p><span class="math display">\[Q_k(s,a)=r(s,a)+\beta\sum_{s'}P(s'\mid s,a)V_k(s'),\qquad V_{k+1}(s)=\max_a Q_k(s,a).\]</span></p>
+<p>The code follows Steps 0–7 of the lecture algorithm. <code>value_iteration(model)</code> starts at zero. To supply a value vector, use <code>value_iteration(model, initial_V=V0)</code>. The returned dictionary includes <code>values</code>, <code>policy</code>, and convergence diagnostics.</p>
 </section>
 <section id="maze" class="level2">
 <h2 class="anchored" data-anchor-id="maze">1. Maze</h2>
-<p>Use the lecture maze with <span class="math inline">\(\beta=0.9\)</span>. Moving costs <span class="math inline">\(1\)</span>, including entry into the goal; subsequent rewards are zero. Cell 16 is the start and cell 8 is the goal. Python index <span class="math inline">\(i\)</span> corresponds to lecture cell <span class="math inline">\(i+1\)</span>.</p>
+<p>Use the lecture maze with <span class="math inline">\(\beta=0.9\)</span>. Each move costs <span class="math inline">\(1\)</span>, including entry into the absorbing goal; later rewards are zero. The start is cell 16 and the goal is cell 8. Python index <code>i</code> corresponds to lecture cell <code>i + 1</code>. Action codes 0, 1, 2, 3 mean U, D, L, R.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>maze <span class="op">=</span> Maze(beta<span class="op">=</span><span class="fl">0.9</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>maze_result <span class="op">=</span> value_iteration(maze)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Value at start:"</span>, maze_result[<span class="st">"values"</span>][maze.start])</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Path (lecture cell numbers):"</span>, [<span class="bu">int</span>(s) <span class="op">+</span> <span class="dv">1</span> <span class="cf">for</span> s <span class="kw">in</span> maze.path(maze_result[<span class="st">"policy"</span>])])</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>plot_maze(maze, maze_result)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Reward table:"</span>, maze.rewards.shape)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Transition table:"</span>, maze.P.shape)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the MDP input for the action R at the start.</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>i, j <span class="op">=</span> maze.start, <span class="dv">3</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Reward:"</span>, maze.rewards[i, j])</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Possible next cells:"</span>, np.flatnonzero(maze.P[i, j]) <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Their probabilities:"</span>, maze.P[i, j, maze.P[i, j] <span class="op">&gt;</span> <span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="text"><code>Reward table: (47, 4)
+Transition table: (47, 4, 47)
+Reward: -1.0
+Possible next cells: [17]
+Their probabilities: [1.]</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>maze_result <span class="op">=</span> value_iteration(maze)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> maze.path(maze_result[<span class="st">"policy"</span>])</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Value at start:"</span>, maze_result[<span class="st">"values"</span>][maze.start])</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Moves to goal:"</span>, <span class="bu">len</span>(path) <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Path (lecture cell numbers):"</span>, [<span class="bu">int</span>(i) <span class="op">+</span> <span class="dv">1</span> <span class="cf">for</span> i <span class="kw">in</span> path])</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>plot_maze(maze, maze_result)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="text"><code>Value at start: -7.7123207545039
+Moves to goal: 14
 Path (lecture cell numbers): [16, 23, 31, 32, 33, 34, 25, 26, 27, 28, 29, 30, 22, 15, 8]</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-4-1.png" class="img-fluid figure-img"></p>
+<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-5-1.png" class="img-fluid figure-img"></p>
 <figcaption>Notebook figure</figcaption>
 </figure>
 </div>
 <section id="watch-values-propagate" class="level3">
 <h3 class="anchored" data-anchor-id="watch-values-propagate">Watch values propagate</h3>
-<p>The final corridor is 30 → 22 → 15 → 8. <code>history[k]</code> stores the value vector after <span class="math inline">\(k\)</span> updates.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>corridor <span class="op">=</span> np.array([<span class="dv">30</span>, <span class="dv">22</span>, <span class="dv">15</span>, <span class="dv">8</span>]) <span class="op">-</span> <span class="dv">1</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Columns: cells 30, 22, 15, 8"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"v_</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">:"</span>, maze_result[<span class="st">"history"</span>][k, corridor])</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plot_convergence(maze_result, <span class="st">"Maze convergence"</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>history[k]</code> stores <span class="math inline">\(V_k\)</span>. The final corridor is 30 → 22 → 15 → 8.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>corridor <span class="op">=</span> np.array([<span class="dv">30</span>, <span class="dv">22</span>, <span class="dv">15</span>, <span class="dv">8</span>]) <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Columns: cells 30, 22, 15, 8"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"V_</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">:"</span>, maze_result[<span class="st">"history"</span>][k, corridor])</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plot_convergence(maze_result, <span class="st">"Maze convergence"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="text"><code>Columns: cells 30, 22, 15, 8
-v_0: [0. 0. 0. 0.]
-v_1: [-1. -1. -1.  0.]
-v_2: [-1.9 -1.9 -1.   0. ]
-v_3: [-2.71 -1.9  -1.    0.  ]</code></pre>
+V_0: [0. 0. 0. 0.]
+V_1: [-1. -1. -1.  0.]
+V_2: [-1.9 -1.9 -1.   0. ]
+V_3: [-2.71 -1.9  -1.    0.  ]</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-6-1.png" class="img-fluid figure-img"></p>
+<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-7-1.png" class="img-fluid figure-img"></p>
 <figcaption>Notebook figure</figcaption>
 </figure>
 </div>
@@ -271,16 +322,17 @@ v_3: [-2.71 -1.9  -1.    0.  ]</code></pre>
 </section>
 <section id="mccall-job-search" class="level2">
 <h2 class="anchored" data-anchor-id="mccall-job-search">2. McCall job search</h2>
-<p>As in Lab 2, the full state is <span class="math inline">\((U,w)\)</span> or <span class="math inline">\((E,w)\)</span>. Accepting earns <span class="math inline">\(w\)</span> forever; rejecting earns <span class="math inline">\(b\)</span> and draws a new offer with probabilities <span class="math inline">\(q\)</span>.</p>
-<p><span class="math display">\[v_{k+1}((U,w))=\max\left\{\frac{w}{1-\beta},\ b+\beta\sum_{w'}q(w')v_k((U,w'))\right\}.\]</span></p>
-<p>Start unemployed-state values at zero and keep the known employed-state values <span class="math inline">\(v_k((E,w))=w/(1-\beta)\)</span>. <code>mccall.py</code> uses the same reward and transition methods as Lab 2.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>search <span class="op">=</span> McCallModel(benefit<span class="op">=</span><span class="fl">1.0</span>, beta<span class="op">=</span><span class="fl">0.9</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>search_result <span class="op">=</span> value_iteration(search)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(search.n):</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(search.states[i], <span class="st">"value:"</span>, <span class="bu">round</span>(search_result[<span class="st">"values"</span>][i], <span class="dv">4</span>),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">"action:"</span>, search_result[<span class="st">"policy"</span>][i])</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plot_mccall(search, search_result)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The state is <span class="math inline">\((U,w)\)</span> or <span class="math inline">\((E,w)\)</span>. Accepting pays <span class="math inline">\(w\)</span> now and leads to permanent employment at <span class="math inline">\(w\)</span>. Rejecting pays <span class="math inline">\(b\)</span> and draws another offer with probabilities <span class="math inline">\(q\)</span>.</p>
+<p><span class="math display">\[V_{k+1}((U,w))=\max\left\{w+\beta V_k((E,w)),\ b+\beta\sum_{w'}q(w')V_k((U,w'))\right\},\]</span> <span class="math display">\[V_{k+1}((E,w))=w+\beta V_k((E,w)).\]</span></p>
+<p><code>mccall.py</code> supplies the reward and transition tables. The same solver starts <strong>all</strong> state values at zero.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>search <span class="op">=</span> McCallModel(benefit<span class="op">=</span><span class="fl">1.0</span>, beta<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>search_result <span class="op">=</span> value_iteration(search)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(search.n):</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(search.states[i], <span class="st">"value:"</span>, <span class="bu">round</span>(search_result[<span class="st">"values"</span>][i], <span class="dv">4</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">"action:"</span>, search_result[<span class="st">"policy"</span>][i])</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>plot_mccall(search, search_result)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>plot_convergence(search_result, <span class="st">"McCall convergence"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="text"><code>('U', 1.0) value: 34.3243 action: reject
 ('U', 2.0) value: 34.3243 action: reject
 ('U', 3.0) value: 34.3243 action: reject
@@ -288,34 +340,40 @@ v_3: [-2.71 -1.9  -1.    0.  ]</code></pre>
 ('U', 5.0) value: 50.0 action: accept</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-8-1.png" class="img-fluid figure-img"></p>
-<figcaption>Notebook figure</figcaption>
-</figure>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reproduce the first updates; [:search.n] selects unemployed states.</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">10</span>]:</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"v_</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">((U,w)):"</span>, search_result[<span class="st">"history"</span>][k, :search.n])</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>plot_convergence(search_result, <span class="st">"McCall convergence"</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre class="text"><code>v_0((U,w)): [0. 0. 0. 0. 0.]
-v_1((U,w)): [10. 20. 30. 40. 50.]
-v_2((U,w)): [28. 28. 30. 40. 50.]
-v_3((U,w)): [31.06 31.06 31.06 40.   50.  ]
-v_10((U,w)): [34.1957 34.1957 34.1957 40.     50.    ]</code></pre>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
 <p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-9-1.png" class="img-fluid figure-img"></p>
 <figcaption>Notebook figure</figcaption>
 </figure>
 </div>
-<section id="change-a-parameter" class="level3">
-<h3 class="anchored" data-anchor-id="change-a-parameter">Change a parameter</h3>
-<p>Raise the benefit and solve again. The environment changes; the VFI function stays the same.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>higher_benefit <span class="op">=</span> McCallModel(benefit<span class="op">=</span><span class="fl">4.0</span>, beta<span class="op">=</span><span class="fl">0.9</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>higher_result <span class="op">=</span> value_iteration(higher_benefit)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(search.n):</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(search.states[i], <span class="st">"b=1:"</span>, search_result[<span class="st">"policy"</span>][i],</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">"b=4:"</span>, higher_result[<span class="st">"policy"</span>][i])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-9-2.png" class="img-fluid figure-img"></p>
+<figcaption>Notebook figure</figcaption>
+</figure>
+</div>
+<section id="supply-an-initial-value-vector" class="level3">
+<h3 class="anchored" data-anchor-id="supply-an-initial-value-vector">Supply an initial value vector</h3>
+<p>Employed-state values are known: <span class="math inline">\(V^*((E,w))=w/(1-\beta)\)</span>. Initialize those entries at their exact values, leave the unemployed entries at zero, and rerun the same solver.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>V0 <span class="op">=</span> np.zeros(<span class="bu">len</span>(search.states))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>V0[search.n:] <span class="op">=</span> search.wages <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> search.beta)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>initialized_result <span class="op">=</span> value_iteration(search, initial_V<span class="op">=</span>V0)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Bellman evaluations from zero:"</span>, search_result[<span class="st">"iterations"</span>])</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Bellman evaluations with supplied V0:"</span>, initialized_result[<span class="st">"iterations"</span>])</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Largest final value difference:"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      np.<span class="bu">max</span>(np.<span class="bu">abs</span>(search_result[<span class="st">"values"</span>] <span class="op">-</span> initialized_result[<span class="st">"values"</span>])))</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Same policy:"</span>, np.array_equal(search_result[<span class="st">"policy"</span>], initialized_result[<span class="st">"policy"</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="text"><code>Bellman evaluations from zero: 170
+Bellman evaluations with supplied V0: 40
+Largest final value difference: 9.246004566421107e-07
+Same policy: True</code></pre>
+</section>
+<section id="change-the-benefit" class="level3">
+<h3 class="anchored" data-anchor-id="change-the-benefit">Change the benefit</h3>
+<p>Raise the benefit and solve again. Only the model inputs change.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>higher_benefit <span class="op">=</span> McCallModel(benefit<span class="op">=</span><span class="fl">4.0</span>, beta<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>higher_result <span class="op">=</span> value_iteration(higher_benefit)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(search.n):</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(search.states[i], <span class="st">"b=1:"</span>, search_result[<span class="st">"policy"</span>][i],</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">"b=4:"</span>, higher_result[<span class="st">"policy"</span>][i])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="text"><code>('U', 1.0) b=1: reject b=4: reject
 ('U', 2.0) b=1: reject b=4: reject
 ('U', 3.0) b=1: reject b=4: reject
@@ -324,13 +382,13 @@ v_10((U,w)): [34.1957 34.1957 34.1957 40.     50.    ]</code></pre>
 </section>
 <section id="simulate-the-recovered-policy" class="level3">
 <h3 class="anchored" data-anchor-id="simulate-the-recovered-policy">Simulate the recovered policy</h3>
-<p>A policy function selects an action from the current state, just as in Lab 2.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> search_policy(state):</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> search_result[<span class="st">"policy"</span>][state]</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>path, rewards <span class="op">=</span> simulate_policy(search, search_policy, initial_state<span class="op">=</span><span class="dv">1</span>, periods<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"States:"</span>, [search.states[i] <span class="cf">for</span> i <span class="kw">in</span> path])</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Rewards:"</span>, rewards)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>As in Lab 2, a policy function maps the current state to an action. The simulation uses the model’s <code>step</code> method.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> search_policy(state):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> search_result[<span class="st">"policy"</span>][state]</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>path, rewards <span class="op">=</span> simulate_policy(search, search_policy, initial_state<span class="op">=</span><span class="dv">1</span>, periods<span class="op">=</span><span class="dv">12</span>, seed<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"States:"</span>, [search.states[i] <span class="cf">for</span> i <span class="kw">in</span> path])</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Rewards:"</span>, rewards)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="text"><code>States: [('U', 2.0), ('U', 3.0), ('U', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0), ('E', 4.0)]
 Rewards: [1. 1. 4. 4. 4. 4. 4. 4. 4. 4. 4. 4.]</code></pre>
 </section>
@@ -338,73 +396,94 @@ Rewards: [1. 1. 4. 4. 4. 4. 4. 4. 4. 4. 4. 4.]</code></pre>
 <section id="continuous-consumption-saving" class="level2">
 <h2 class="anchored" data-anchor-id="continuous-consumption-saving">3. Continuous consumption-saving</h2>
 <p>Stock is <span class="math inline">\(s\in[0,M+B]\)</span>. Save <span class="math inline">\(a\in[0,\min(s,M)]\)</span>, consume <span class="math inline">\(s-a\)</span>, and draw <span class="math inline">\(Y'\sim\mathrm{Uniform}[0,B]\)</span>. Next stock is <span class="math inline">\(s'=a+Y'\)</span>; reward is <span class="math inline">\((s-a)^\alpha\)</span>.</p>
-<p><span class="math display">\[v_{k+1}(s)=\max_{0\leq a\leq\min(s,M)}\left\{(s-a)^\alpha+\frac{\beta}{B}\int_0^Bv_k(a+y)\,dy\right\}.\]</span></p>
-<p>In <code>saving.py</code>, linear interpolation supplies values between stock points, midpoint integration approximates the income average, and an action grid approximates maximization. The model’s states and actions remain continuous.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>saving <span class="op">=</span> ConsumptionSavingModel(M<span class="op">=</span><span class="dv">5</span>, B<span class="op">=</span><span class="dv">3</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, beta<span class="op">=</span><span class="fl">0.9</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>saving_result <span class="op">=</span> value_iteration(saving, tolerance<span class="op">=</span><span class="fl">1e-5</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Completed updates:"</span>, saving_result[<span class="st">"updates"</span>])</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Numerical-operator error bound:"</span>, saving_result[<span class="st">"error_bound"</span>])</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>plot_saving(saving, saving_result)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>plot_convergence(saving_result, <span class="st">"Saving: numerical Bellman residual"</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre class="text"><code>Completed updates: 133
-Numerical-operator error bound: 9.66462458507067e-06</code></pre>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-15-1.png" class="img-fluid figure-img"></p>
-<figcaption>Notebook figure</figcaption>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-15-2.png" class="img-fluid figure-img"></p>
-<figcaption>Notebook figure</figcaption>
-</figure>
-</div>
-<section id="refine-the-numerical-approximation" class="level3">
-<h3 class="anchored" data-anchor-id="refine-the-numerical-approximation">Refine the numerical approximation</h3>
-<p>Double the stock and action intervals and use more income points. A small residual controls iteration error for the numerical operator; it does not remove grid and integration error.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>finer <span class="op">=</span> ConsumptionSavingModel(n_states<span class="op">=</span><span class="dv">201</span>, n_actions<span class="op">=</span><span class="dv">161</span>, n_income<span class="op">=</span><span class="dv">81</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>finer_result <span class="op">=</span> value_iteration(finer, tolerance<span class="op">=</span><span class="fl">1e-5</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>finer_values_at_old_points <span class="op">=</span> np.interp(saving.states, finer.states, finer_result[<span class="st">"values"</span>])</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Largest value difference on baseline points:"</span>,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>      np.<span class="bu">max</span>(np.<span class="bu">abs</span>(saving_result[<span class="st">"values"</span>] <span class="op">-</span> finer_values_at_old_points)))</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>plot_saving(saving, saving_result, finer, finer_result)</span>
+<p><span class="math display">\[V_{k+1}(s)=\max_{0\leq a\leq\min(s,M)}\left\{(s-a)^\alpha+\frac{\beta}{B}\int_0^B V_k(a+y)\,dy\right\}.\]</span></p>
+<p><code>saving.py</code> converts this continuous problem to a <strong>numerical MDP</strong>:</p>
+<ul>
+<li>Store values on a stock grid and consider a grid of feasible saving choices.</li>
+<li>Approximate the income average with equally weighted midpoint draws.</li>
+<li>Split each off-grid next stock between its two neighboring grid points. These interpolation weights form <code>P</code>.</li>
+</ul>
+<p>Then <code>P @ V</code> computes the average interpolated continuation value, and the same VFI solver applies.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>saving <span class="op">=</span> ConsumptionSavingModel(M<span class="op">=</span><span class="dv">5</span>, B<span class="op">=</span><span class="dv">3</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, beta<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>saving_result <span class="op">=</span> value_iteration(saving, tolerance<span class="op">=</span><span class="fl">1e-5</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Transition table:"</span>, saving.P.shape)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Numerical-MDP value error bound:"</span>, saving_result[<span class="st">"error_bound"</span>])</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>plot_saving(saving, saving_result)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>plot_convergence(saving_result, <span class="st">"Saving: numerical Bellman residual"</span>)</span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre class="text"><code>Largest value difference on baseline points: 0.0026763881026781178</code></pre>
+<pre class="text"><code>Transition table: (101, 81, 101)
+Numerical-MDP value error bound: 9.66462458507067e-06</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-17-1.png" class="img-fluid figure-img"></p>
 <figcaption>Notebook figure</figcaption>
 </figure>
 </div>
-</section>
-<section id="run-a-continuous-state-simulation" class="level3">
-<h3 class="anchored" data-anchor-id="run-a-continuous-state-simulation">Run a continuous-state simulation</h3>
-<p>Interpolate the computed saving choices to define an action at any stock. The income draws are real numbers, not the integration points used by the solver.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> saving_policy(stock):</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.interp(stock, saving.states, saving_result[<span class="st">"policy"</span>])</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>stocks, rewards <span class="op">=</span> simulate_policy(saving, saving_policy, initial_state<span class="op">=</span><span class="fl">5.5</span>,</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                                  periods<span class="op">=</span><span class="dv">30</span>, seed<span class="op">=</span><span class="dv">7</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>actions <span class="op">=</span> np.array([saving_policy(s) <span class="cf">for</span> s <span class="kw">in</span> stocks[:<span class="op">-</span><span class="dv">1</span>]])</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>plot_saving_rollout(stocks, actions)</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-19-0.png" class="img-fluid figure-img"></p>
+<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-17-2.png" class="img-fluid figure-img"></p>
+<figcaption>Notebook figure</figcaption>
+</figure>
+</div>
+<section id="refine-the-approximation" class="level3">
+<h3 class="anchored" data-anchor-id="refine-the-approximation">Refine the approximation</h3>
+<p>A small residual controls iteration error for the supplied numerical MDP. Compare finer grids to assess the separate discretization and integration errors.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>finer <span class="op">=</span> ConsumptionSavingModel(n_states<span class="op">=</span><span class="dv">201</span>, n_actions<span class="op">=</span><span class="dv">161</span>, n_income<span class="op">=</span><span class="dv">81</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>finer_result <span class="op">=</span> value_iteration(finer, tolerance<span class="op">=</span><span class="fl">1e-5</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>finer_values_at_old_points <span class="op">=</span> np.interp(saving.states, finer.states, finer_result[<span class="st">"values"</span>])</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Largest value difference on baseline points:"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>      np.<span class="bu">max</span>(np.<span class="bu">abs</span>(saving_result[<span class="st">"values"</span>] <span class="op">-</span> finer_values_at_old_points)))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>plot_saving(saving, saving_result, finer, finer_result)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="text"><code>Largest value difference on baseline points: 0.0026763881026781178</code></pre>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-19-1.png" class="img-fluid figure-img"></p>
+<figcaption>Notebook figure</figcaption>
+</figure>
+</div>
+</section>
+<section id="simulate-the-continuous-model" class="level3">
+<h3 class="anchored" data-anchor-id="simulate-the-continuous-model">Simulate the continuous model</h3>
+<p>Interpolate the saving policy between stock points. Simulation draws income from the original continuous distribution.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> saving_policy(stock):</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.interp(stock, saving.states, saving_result[<span class="st">"policy"</span>])</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>stocks, rewards <span class="op">=</span> simulate_policy(saving, saving_policy, initial_state<span class="op">=</span><span class="fl">5.5</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                                  periods<span class="op">=</span><span class="dv">30</span>, seed<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>actions <span class="op">=</span> np.array([saving_policy(s) <span class="cf">for</span> s <span class="kw">in</span> stocks[:<span class="op">-</span><span class="dv">1</span>]])</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mean realized utility on this path:"</span>, rewards.mean())</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>plot_saving_rollout(stocks, actions)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="text"><code>Mean realized utility on this path: 1.2566066557328108</code></pre>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../../../downloads/week_03/lab/notebook_figures/lab_03-21-1.png" class="img-fluid figure-img"></p>
 <figcaption>Notebook figure</figcaption>
 </figure>
 </div>
 </section>
 </section>
+<section id="solver-performance" class="level2">
+<h2 class="anchored" data-anchor-id="solver-performance">Solver performance</h2>
+<p>Compare Bellman evaluations, runtime, and the final value-error bound. Runtime measures the solver only; building each model’s input tables is excluded. For saving, the bound applies to the numerical MDP. Timings vary by computer.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>runs <span class="op">=</span> {<span class="st">"Maze"</span>: maze_result, <span class="st">"McCall"</span>: search_result, <span class="st">"Saving"</span>: saving_result}</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Model'</span><span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Evaluations'</span><span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Seconds'</span><span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Value bound'</span><span class="sc">:&gt;14}</span><span class="ss">"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, result <span class="kw">in</span> runs.items():</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span>result[<span class="st">'iterations'</span>]<span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span>result[<span class="st">'seconds'</span>]<span class="sc">:&gt;12.4f}</span><span class="ss"> "</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>result[<span class="st">'error_bound'</span>]<span class="sc">:&gt;14.3e}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="text"><code>Model         Evaluations      Seconds    Value bound
+Maze                   16       0.0001      0.000e+00
+McCall                170       0.0006      9.246e-07
+Saving                134       0.0055      9.665e-06</code></pre>
+</section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <ol type="1">
 <li><strong>Richard S. Sutton and Andrew G. Barto (2018), <em>Reinforcement Learning: An Introduction</em>. 2nd ed.&nbsp;MIT Press.</strong> <a href="https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf#page=69">Chapter 3: Finite Markov Decision Processes</a>; <a href="https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf#page=95">Chapter 4: Dynamic Programming</a>.</li>
-<li><strong>Thomas J. Sargent and John Stachurski, QuantEcon.</strong> <a href="https://tools-techniques.quantecon.org/discrete_dp.html#value-function-iteration">Discrete State Dynamic Programming: Value Function Iteration</a>; <a href="https://python.quantecon.org/mccall_model.html#the-mccall-model">Job Search I: The McCall Search Model</a>; <a href="https://dynamics.quantecon.org/ifp.html#the-optimal-savings-problem">The Income Fluctuation Problem I: Basic Model</a>.</li>
+<li><strong>Thomas J. Sargent and John Stachurski, QuantEcon.</strong> <a href="https://tools-techniques.quantecon.org/discrete_dp.html#value-function-iteration">Discrete State Dynamic Programming: Value Function Iteration</a>; <a href="https://python.quantecon.org/mccall_model.html#the-mccall-model">Job Search I: The McCall Search Model</a>; <a href="https://tools-techniques.quantecon.org/discrete_dp.html#example-a-growth-model">Discrete State Dynamic Programming: Example—A Growth Model</a>.</li>
 </ol>
-<p>The saving example uses the bounded-storage specification from Lab 2; the QuantEcon saving lecture provides related background.</p>
+<p>The consumption-saving model extends the bounded-storage example to continuous stock, saving, and uniform income.</p>
 
 
 </section>
