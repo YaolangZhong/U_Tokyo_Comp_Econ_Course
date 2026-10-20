@@ -335,29 +335,50 @@ If, at every state \(\modelvar{s}\), taking \(\modelvar{\widetilde\sigma(s)}\) o
 
 \begin{frame}{The Principle of Optimality}
 \small
-\setlength{\abovedisplayskip}{4pt}
-\setlength{\belowdisplayskip}{4pt}
-An \term{optimal policy} \(\modelvar{\sigma^*}\) attains the highest value from every state. Its associated state and state--action values are
-\begin{align*}
-V^*(s)&=V^{\sigma^*}(s)=\max_\sigma V^\sigma(s),\\
-Q^*(s,a)&=Q^{\sigma^*}(s,a)=\max_\sigma Q^\sigma(s,a).
-\end{align*}
-\term{Principle of optimality:} start at \(\modelvar{s}\) and follow \(\modelvar{\sigma^*}\). If we later reach \(\modelvar{s'}\), the \textbf{same policy} \(\modelvar{\sigma^*}\) is optimal for the remaining problem starting at \(\modelvar{s'}\). Hence the optimal continuation value is \(\modelvar{V^*(s')}\).
-\begin{align*}
-Q^*(s,a)&=r(s,a)+\beta\E[V^*(s')\mid s,a],\\
-V^*(s)&=Q^*(s,\sigma^*(s))=\max_{a\in\Aset(s)}Q^*(s,a).
-\end{align*}
-Combining them gives the \term{Bellman optimality equation}:
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+Let \(\modelvar{\sigma^*}\) be an \term{optimal policy}, with associated values
+\[V^*(s)=V^{\sigma^*}(s)=\max_\sigma V^\sigma(s),\qquad
+Q^*(s,a)=Q^{\sigma^*}(s,a).\]
+\term{Principle of optimality:} an optimal policy must also be optimal for every remaining \textbf{subproblem}. After reaching \(\modelvar{s'}\), the same \(\modelvar{\sigma^*}\) solves the remaining problem starting at \(\modelvar{s'}\), with value \(\modelvar{V^*(s')}\).
+\par\smallskip
+\textbf{1. Fix the first action \(\modelvar{a}\).} Receive \(\modelvar{r(s,a)}\), then solve the next-state subproblem optimally. Averaging over possible next states gives
+\[Q^*(s,a)=r(s,a)+\beta\E[V^*(s')\mid s,a].\]
+\textbf{2. Choose the best first action.} The optimal policy \(\modelvar{\sigma^*}\) attains the maximum:
+\[V^*(s)=Q^*(s,\sigma^*(s))=\max_{a\in\Aset(s)}Q^*(s,a).\]
+Substituting the first equation into the second gives the \term{Bellman optimality equation}:
 \[V^*(s)=\max_{a\in\Aset(s)}\{r(s,a)+\beta\E[V^*(s')\mid s,a]\}.\]
 \end{frame}
 
-\begin{frame}{Optimality as a One-Step Look Ahead}
+\begin{frame}{Optimality in the Remaining Subproblems}
 \small
+Each dashed box starts a new subproblem at \(\modelvar{s'}\). The continuation of \(\modelvar{\sigma^*}\) solves it optimally, giving \(\modelvar{V^*(s')}\).
+\par\smallskip
 \begin{columns}[T]
 \begin{column}{.49\textwidth}\centering
-\(V^*(s)=Q^*(s,\sigma^*(s))\)
+\(Q^*(s,a)=r(s,a)+\beta\E[V^*(s')\mid s,a]\)
 \begin{figure}\centering
-\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize]
+\begin{tikzpicture}[x=1cm,y=.8cm,font=\sffamily\footnotesize]
+\node[actionCircle,label={above:\((s,a)\)}] (a) at (0,0) {};
+\foreach \i/\x in {1/-1.35,2/1.35}{
+ \draw[draw=SessionTeal!55,dashed,rounded corners=3pt] (\x-.93,-.57) rectangle (\x+.93,-2.58);
+ \node[stateCircle] (s\i) at (\x,-1) {\(s'_\i\)};
+ \draw[valueFlow] (a)--(s\i);
+ \foreach \j/\dx in {1/-.55,2/.55}{
+  \node[actionCircle] (b\i\j) at (\x+\dx,-2.2) {};
+  \draw[valueFlow] (s\i)--(b\i\j);
+ }
+ \node[text=SessionTeal] at (\x,-1.72) {maximize};
+ \node[text=SessionMuted] at (\x,-2.87) {\(V^*(s'_\i)\)};
+}
+\node[text=SessionMuted] at (0,-.4) {average};
+\end{tikzpicture}
+\caption{Fix \(a\); continue optimally.}
+\end{figure}\end{column}
+\begin{column}{.49\textwidth}\centering
+\(V^*(s)=Q^*(s,\sigma^*(s))=\max_a Q^*(s,a)\)
+\begin{figure}\centering
+\begin{tikzpicture}[x=1cm,y=.8cm,font=\sffamily\footnotesize]
 \node[stateCircle] (s) at (0,0) {\(s\)};
 \foreach \i/\x in {1/-1.35,2/1.35}{
  \node[actionCircle,label={right:\(a_\i\)}] (a\i) at (\x,-1) {};
@@ -368,28 +389,9 @@ Combining them gives the \term{Bellman optimality equation}:
  }
 }
 \node[text=SessionTeal] at (0,-.55) {maximize};
-\node[text=SessionMuted] at (0,-2.85) {average \(V^*(s')\) for each action};
+\node[text=SessionMuted] at (0,-2.87) {average \(V^*(s')\) for each action};
 \end{tikzpicture}
-\caption{Choose the optimal action at \(s\).}
-\end{figure}\end{column}
-\begin{column}{.49\textwidth}\centering
-\(Q^*(s,a)=r(s,a)+\beta\E[V^*(s')\mid s,a]\)
-\begin{figure}\centering
-\begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize]
-\node[actionCircle,label={above:\((s,a)\)}] (a) at (0,0) {};
-\foreach \i/\x in {1/-1.35,2/1.35}{
- \node[stateCircle] (s\i) at (\x,-1) {\(s'_\i\)};
- \draw[valueFlow] (a)--(s\i);
- \foreach \j/\dx in {1/-.55,2/.55}{
-  \node[actionCircle] (b\i\j) at (\x+\dx,-2.2) {};
-  \draw[valueFlow] (s\i)--(b\i\j);
- }
- \node[text=SessionTeal] at (\x,-1.72) {maximize};
-}
-\node[text=SessionMuted] at (0,-.4) {average};
-\node[text=SessionMuted] at (0,-2.85) {\(V^*(s')=Q^*(s',\sigma^*(s'))\)};
-\end{tikzpicture}
-\caption{Take \(a\), then follow \(\sigma^*\).}
+\caption{Choose the best first action.}
 \end{figure}\end{column}\end{columns}
 \footnotesize Open circles: states. Filled circles: state--action pairs. Adapted from Sutton and Barto (2018), Figure 3.4; branches show possible next states.
 \end{frame}
