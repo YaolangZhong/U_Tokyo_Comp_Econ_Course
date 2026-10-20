@@ -267,7 +267,9 @@ V^\sigma(s)=
 \par\smallskip
 The \term{state-action value function} \(\modelvar{Q^\sigma(s,a)}\): choose \(\modelvar{a}\) now, then follow \(\modelvar{\sigma}\).
 \[
-Q^\sigma(s,a)=r(s,a)+\beta\,\E\!\left[V^\sigma(s')\mid s,a\right].
+Q^\sigma(s,a)=
+\underbrace{r(s,a)}_{\text{Immediate reward}}
++\underbrace{\beta\,\E\!\left[V^\sigma(s')\mid s,a\right]}_{\text{Discounted continuation value}}.
 \]
 The first action \(\modelvar{a}\) need not be the action selected by \(\modelvar{\sigma}\).
 \par\smallskip
