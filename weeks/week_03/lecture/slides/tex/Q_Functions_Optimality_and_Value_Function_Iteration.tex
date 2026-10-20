@@ -337,7 +337,7 @@ If, at every state \(\modelvar{s}\), taking \(\modelvar{\widetilde\sigma(s)}\) o
 \small
 \setlength{\abovedisplayskip}{3pt}
 \setlength{\belowdisplayskip}{3pt}
-The \term{Bellman operator for the fixed policy} \(\modelvar{\widetilde\sigma}\) maps an input continuation-value function \(\modelvar{V}\) to a new function \(\modelvar{T_{\widetilde\sigma}V}\):
+The \term{Bellman operator} \(\modelvar{T_{\widetilde\sigma}}\) for the fixed policy \(\modelvar{\widetilde\sigma}\) maps an input continuation-value function \(\modelvar{V}\) to a new function \(\modelvar{T_{\widetilde\sigma}V}\):
 \[(T_{\widetilde\sigma}V)(x)=r(x,\widetilde\sigma(x))
 +\beta\E[V(x')\mid x,a=\widetilde\sigma(x)].\]
 Starting from \(\modelvar{V^\sigma}\), one application follows \(\modelvar{\widetilde\sigma}\) for one step, then \(\modelvar{\sigma}\) afterward. The theorem's condition gives
