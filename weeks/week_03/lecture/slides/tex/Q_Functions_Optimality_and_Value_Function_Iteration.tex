@@ -333,29 +333,6 @@ then
 If, at every state \(\modelvar{s}\), taking \(\modelvar{\widetilde\sigma(s)}\) once and then following \(\modelvar{\sigma}\) is no worse than following \(\modelvar{\sigma}\) throughout, then following \(\modelvar{\widetilde\sigma}\) at every step is also no worse.
 \end{frame}
 
-\begin{frame}{Policy Improvement: Proof}
-\small
-\setlength{\abovedisplayskip}{3pt}
-\setlength{\belowdisplayskip}{3pt}
-The \term{Bellman operator} \(\modelvar{T_{\widetilde\sigma}}\) for the fixed policy \(\modelvar{\widetilde\sigma}\) maps an input continuation-value function \(\modelvar{V}\) to a new function \(\modelvar{T_{\widetilde\sigma}V}\):
-\[(T_{\widetilde\sigma}V)(x)=r(x,\widetilde\sigma(x))
-+\beta\E[V(x')\mid x,a=\widetilde\sigma(x)].\]
-Starting from \(\modelvar{V^\sigma}\), one application follows \(\modelvar{\widetilde\sigma}\) for one step, then \(\modelvar{\sigma}\) afterward. The theorem's condition gives
-\[(T_{\widetilde\sigma}V^\sigma)(x)
-=Q^\sigma(x,\widetilde\sigma(x))\geq V^\sigma(x),\qquad\forall x.\]
-\term{Monotonicity} means preserving the ordering of two candidate value functions \(\modelvar{V_1,V_2}\):
-\[V_1(x)\leq V_2(x)\ \forall x
-\quad\Longrightarrow\quad
-(T_{\widetilde\sigma}V_1)(x)\leq(T_{\widetilde\sigma}V_2)(x)\ \forall x.\]
-Higher continuation values cannot lower the updated value. Applying this repeatedly gives
-\[V^\sigma\leq T_{\widetilde\sigma}V^\sigma
-\leq T_{\widetilde\sigma}^{\,2}V^\sigma\leq\cdots.
-\]
-\(\modelvar{T_{\widetilde\sigma}^{\,n}V^\sigma}\) is the value of following \(\modelvar{\widetilde\sigma}\) for \(\modelvar{n}\) steps, then \(\modelvar{\sigma}\). The remaining continuation has vanishing weight \(\modelvar{\beta^n}\), so
-\[\lim_{n\to\infty}(T_{\widetilde\sigma}^{\,n}V^\sigma)(x)=V^{\widetilde\sigma}(x)
-\geq V^\sigma(x),\qquad\forall x.\]
-\end{frame}
-
 \begin{frame}{The Principle of Optimality}
 \small
 Define the \term{optimal values} over feasible policies:
