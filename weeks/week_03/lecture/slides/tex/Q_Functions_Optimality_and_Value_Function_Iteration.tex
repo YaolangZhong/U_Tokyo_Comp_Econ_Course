@@ -427,19 +427,18 @@ The contraction mapping theorem therefore gives:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{When Is a Policy Optimal?}
+\begin{frame}{When Can Policy Improvement Stop?}
 \small
-The \term{one-step deviation principle} gives a test using the policy's own value:
+Policy improvement raises values. To turn it into an algorithm, we need a condition that tells us when the current policy is optimal.
+\par\medskip
+The \term{one-step deviation principle} provides this stopping condition:
 \[\sigma(s)\in\argmax_{a\in\Aset(s)}Q^\sigma(s,a)\quad\forall s
 \quad\Longleftrightarrow\quad V^\sigma=V^*.\]
-\begin{itemize}
-\item \textbf{Sufficiency:} if no first-action change improves the return at any state, then
-\[V^\sigma(s)=Q^\sigma(s,\sigma(s))=\max_a Q^\sigma(s,a)=(TV^\sigma)(s).\]
-The Bellman fixed point is unique, so \(\modelvar{V^\sigma=V^*}\).
-\item \textbf{Necessity:} if \(\modelvar{V^\sigma=V^*}\), then
-\[Q^\sigma=Q^*,\qquad Q^\sigma(s,\sigma(s))=V^*(s)=\max_a Q^\sigma(s,a),\]
-so \(\modelvar{\sigma}\) attains the maximum at every state.
-\end{itemize}
+If no action gives a higher \(\modelvar{Q^\sigma}\) at any state, then
+\[V^\sigma(s)=\max_{a\in\Aset(s)}Q^\sigma(s,a)=(TV^\sigma)(s).\]
+Thus \(\modelvar{V^\sigma}\) is a fixed point of \(\modelvar{T}\). Uniqueness implies \(\modelvar{V^\sigma=V^*}\).
+\par\medskip
+\textbf{Stopping rule for policy iteration:} if the greedy improvement step leaves the policy unchanged, stop; the current policy is optimal.
 \end{frame}
 
 \begin{frame}{Policy Iteration}
@@ -457,36 +456,43 @@ Keep the current action whenever it is a maximizer.
 Each nonoptimal policy improves strictly at some state. With finitely many policies, this process terminates at an optimum.
 \end{frame}
 
-\begin{frame}{Value Function Iteration}
+\begin{frame}{Value Function Iteration: Inputs and Updates}
 \small
-VFI updates a value estimate \(\modelvar{V_k}\), without evaluating a policy to completion.
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
 \begin{enumerate}
-\item Initialize \(\modelvar{V_0}\), for example at zero.
-\item Using the old values, compute the scores and the new values:
-\begin{align*}
-Q_k(s,a)&=r(s,a)+\beta\E[V_k(s')\mid s,a],\\
-V_{k+1}(s)&=\max_{a\in\Aset(s)}Q_k(s,a)=(TV_k)(s).
-\end{align*}
-\item Repeat these updates until the required accuracy is reached.
+\setcounter{enumi}{-1}
+\item \textbf{Input.} State set \(\modelvar{\Sset}\), feasible actions \(\modelvar{\Aset(s)}\), rewards \(\modelvar{r(s,a)}\), transition probabilities \(\modelvar{P(s'\mid s,a)}\), discount factor \(\modelvar{\beta}\), and target value error \(\modelvar{\varepsilon>0}\).
+\item \textbf{Initialize.} Set \(\modelvar{k=0}\) and \(\modelvar{V_0(s)=0}\) for every \(\modelvar{s\in\Sset}\).
+\item \textbf{Compute action values.} For every \(\modelvar{s\in\Sset}\) and \(\modelvar{a\in\Aset(s)}\), compute
+\[Q_k(s,a)=r(s,a)+\beta\sum_{s'\in\Sset}P(s'\mid s,a)V_k(s').\]
+Use the same \(\modelvar{V_k}\) for all states and actions.
+\item \textbf{Update state values.} For every \(\modelvar{s\in\Sset}\), compute
+\[V_{k+1}(s)=\max_{a\in\Aset(s)}Q_k(s,a).\]
+Store \(\modelvar{V_{k+1}}\) separately; keep \(\modelvar{V_k}\) for the stopping check.
 \end{enumerate}
-A \term{sweep} updates all states using the same old \(\modelvar{V_k}\); store the results in a separate array.
-\par\medskip
-The estimates \(\modelvar{V_k}\) and \(\modelvar{Q_k}\) need not be the values of a particular policy.
 \end{frame}
 
-\begin{frame}{Stopping VFI and Recovering a Policy}
+\begin{frame}{Value Function Iteration: Stopping and Outputs}
 \small
-After computing \(\modelvar{V_{k+1}=TV_k}\), measure the \term{Bellman residual}:
-\[d_k=\|TV_k-V_k\|_\infty=\|V_{k+1}-V_k\|_\infty.\]
-Contraction implies
-\[\|V_k-V^*\|_\infty\leq d_k+\beta\|V_k-V^*\|_\infty,
-\quad\text{so}\quad\|V_k-V^*\|_\infty\leq\frac{d_k}{1-\beta}.\]
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item \textbf{Measure the update.} Compute the \term{Bellman residual}:
+\[d_k=\max_{s\in\Sset}|V_{k+1}(s)-V_k(s)|.\]
+\item \textbf{Check the tolerance.}
 \begin{itemize}
-\item For value error at most \(\modelvar{\varepsilon}\), stop when \(\modelvar{d_k\leq(1-\beta)\varepsilon}\) and return \(\modelvar{V_k}\).
-\item Recover a policy from the scores computed using this returned value:
-\[\widehat\sigma(s)\in\argmax_{a\in\Aset(s)}Q_k(s,a).\]
-\item Evaluate \(\modelvar{V^{\widehat\sigma}}\) to check the policy's achieved return. Intermediate greedy policies in VFI need not improve monotonically.
+\item If \(\modelvar{d_k>(1-\beta)\varepsilon}\), set \(\modelvar{k\leftarrow k+1}\) and return to \textbf{Step 2}.
+\item Otherwise, continue to \textbf{Step 6}.
 \end{itemize}
+\item \textbf{Extract the policy.} For every \(\modelvar{s\in\Sset}\), select
+\[\widehat\sigma(s)\in\argmax_{a\in\Aset(s)}Q_k(s,a).\]
+Use a fixed action order to break ties.
+\item \textbf{Return and stop.} Output
+\[\widehat V=V_k,\qquad\widehat\sigma.\]
+The returned value is the one used to compute \(\modelvar{Q_k}\) and satisfies \(\modelvar{\|\widehat V-V^*\|_\infty\leq\varepsilon}\).
+\end{enumerate}
 \end{frame}
 
 % BEGIN MANAGED READINGS: week3_vfi
