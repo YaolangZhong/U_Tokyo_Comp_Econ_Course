@@ -312,17 +312,22 @@ Choosing R first gives a higher return.
 
 \begin{frame}{Greedy Policy Improvement}
 \small
-Fix a policy \(\modelvar{\sigma}\) and its state-action value function \(\modelvar{Q^\sigma}\).
-At state \(\modelvar{s}\), a \term{policy improvement step} selects
-\[\widetilde\sigma(s)\in\argmax_{a\in\Aset(s)}Q^\sigma(s,a).\]
-Applying this step at every state defines a \term{greedy policy} with respect to \(\modelvar{Q^\sigma}\).
+Fix a policy \(\modelvar{\sigma}\) and select one state \(\modelvar{s}\).
+A \term{policy improvement step} at \(\modelvar{s}\) chooses
+\[\widetilde a\in\argmax_{a\in\Aset(s)}Q^\sigma(s,a).\]
+The candidate policy uses \(\modelvar{\widetilde a}\) at \(\modelvar{s}\) and keeps \(\modelvar{\sigma}\) at every other state:
+\[
+\widetilde\sigma(x)=
+\begin{cases}
+\widetilde a,&x=s,\\
+\sigma(x),&x\neq s.
+\end{cases}
+\]
 \par\medskip
-\term{Policy improvement theorem.} For any candidate policy \(\modelvar{\widetilde\sigma}\), if
-\[Q^\sigma(s,\widetilde\sigma(s))\geq V^\sigma(s)\qquad\text{for every }s,\]
-then
-\[V^{\widetilde\sigma}(s)\geq V^\sigma(s)\qquad\text{for every }s.\]
-The greedy choice satisfies the theorem's condition because
-\[\max_{a\in\Aset(s)}Q^\sigma(s,a)\geq Q^\sigma(s,\sigma(s))=V^\sigma(s).\]
+\term{Policy improvement theorem (one-state update).} If
+\[Q^\sigma(s,\widetilde a)\geq V^\sigma(s),\]
+then the updated policy satisfies
+\[V^{\widetilde\sigma}(x)\geq V^\sigma(x)\qquad\text{for every state }x.\]
 \end{frame}
 
 \begin{frame}{Why Policy Improvement Works}
