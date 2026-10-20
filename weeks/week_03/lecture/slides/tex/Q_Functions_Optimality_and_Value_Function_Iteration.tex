@@ -335,14 +335,17 @@ If, at every state \(\modelvar{s}\), taking \(\modelvar{\widetilde\sigma(s)}\) o
 
 \begin{frame}{The Principle of Optimality}
 \small
-Define the \term{optimal values} over feasible policies:
-\[V^*(s)=\max_\sigma V^\sigma(s),\qquad
-Q^*(s,a)=\max_\sigma Q^\sigma(s,a).\]
-\par\medskip
-\term{Principle of optimality:} an optimal policy must have an optimal continuation from every state reached with positive probability.
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+An \term{optimal policy} \(\modelvar{\sigma^*}\) attains the highest value from every state. Its associated state and state--action values are
+\begin{align*}
+V^*(s)&=V^{\sigma^*}(s)=\max_\sigma V^\sigma(s),\\
+Q^*(s,a)&=Q^{\sigma^*}(s,a)=\max_\sigma Q^\sigma(s,a).
+\end{align*}
+\term{Principle of optimality:} after reaching a state \(\modelvar{s'}\), the remaining decisions under \(\modelvar{\sigma^*}\) must be optimal for the problem starting at \(\modelvar{s'}\). A better continuation would improve the original policy.
 \begin{align*}
 Q^*(s,a)&=r(s,a)+\beta\E[V^*(s')\mid s,a],\\
-V^*(s)&=\max_{a\in\Aset(s)}Q^*(s,a).
+V^*(s)&=Q^*(s,\sigma^*(s))=\max_{a\in\Aset(s)}Q^*(s,a).
 \end{align*}
 Combining them gives the \term{Bellman optimality equation}:
 \[V^*(s)=\max_{a\in\Aset(s)}\{r(s,a)+\beta\E[V^*(s')\mid s,a]\}.\]
@@ -352,7 +355,7 @@ Combining them gives the \term{Bellman optimality equation}:
 \small
 \begin{columns}[T]
 \begin{column}{.49\textwidth}\centering
-\(V^*(s)=\max_a Q^*(s,a)\)
+\(V^*(s)=Q^*(s,\sigma^*(s))\)
 \begin{figure}\centering
 \begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize]
 \node[stateCircle] (s) at (0,0) {\(s\)};
@@ -367,10 +370,10 @@ Combining them gives the \term{Bellman optimality equation}:
 \node[text=SessionTeal] at (0,-.55) {maximize};
 \node[text=SessionMuted] at (0,-2.85) {average \(V^*(s')\) for each action};
 \end{tikzpicture}
-\caption{Choose now, average outcomes.}
+\caption{Choose the optimal action at \(s\).}
 \end{figure}\end{column}
 \begin{column}{.49\textwidth}\centering
-\(Q^*(s,a)=r(s,a)+\beta\E[\max_{a'}Q^*(s',a')\mid s,a]\)
+\(Q^*(s,a)=r(s,a)+\beta\E[V^*(s')\mid s,a]\)
 \begin{figure}\centering
 \begin{tikzpicture}[x=1cm,y=1cm,font=\sffamily\footnotesize]
 \node[actionCircle,label={above:\((s,a)\)}] (a) at (0,0) {};
@@ -384,9 +387,9 @@ Combining them gives the \term{Bellman optimality equation}:
  \node[text=SessionTeal] at (\x,-1.72) {maximize};
 }
 \node[text=SessionMuted] at (0,-.4) {average};
-\node[text=SessionMuted] at (0,-2.85) {choose \(a'\) after observing \(s'\)};
+\node[text=SessionMuted] at (0,-2.85) {\(V^*(s')=Q^*(s',\sigma^*(s'))\)};
 \end{tikzpicture}
-\caption{Fix now, choose at the next state.}
+\caption{Take \(a\), then follow \(\sigma^*\).}
 \end{figure}\end{column}\end{columns}
 \footnotesize Open circles: states. Filled circles: state--action pairs. Adapted from Sutton and Barto (2018), Figure 3.4; branches show possible next states.
 \end{frame}
