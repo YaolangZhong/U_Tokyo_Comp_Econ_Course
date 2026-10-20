@@ -330,21 +330,29 @@ then the updated policy satisfies
 \[V^{\widetilde\sigma}(x)\geq V^\sigma(x)\qquad\text{for every state }x.\]
 \end{frame}
 
-\begin{frame}{Why Policy Improvement Works}
+\begin{frame}{Policy Improvement: Proof}
 \small
-The \term{policy evaluation operator} for \(\modelvar{\widetilde\sigma}\) is
-\[(T_{\widetilde\sigma}v)(s)=r(s,\widetilde\sigma(s))
-+\beta\E[v(s')\mid s,a=\widetilde\sigma(s)].\]
-It is \term{monotone}: \(\modelvar{v\leq w}\) implies \(\modelvar{T_{\widetilde\sigma}v\leq T_{\widetilde\sigma}w}\), state by state.
-\par\medskip
-The improvement condition is \(\modelvar{V^\sigma\leq T_{\widetilde\sigma}V^\sigma}\). Applying the same operator repeatedly gives
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+An \term{operator} maps a function to another function. The \term{policy evaluation operator} \(\modelvar{T_{\widetilde\sigma}}\) maps a continuation-value function \(\modelvar{v}\) to the updated function \(\modelvar{T_{\widetilde\sigma}v}\):
+\[(T_{\widetilde\sigma}v)(x)=r(x,\widetilde\sigma(x))
++\beta\E[v(x')\mid x,a=\widetilde\sigma(x)].\]
+Since \(\modelvar{\widetilde\sigma}\) changes the action only at \(\modelvar{s}\),
+\[
+(T_{\widetilde\sigma}V^\sigma)(x)-V^\sigma(x)=
+\begin{cases}
+Q^\sigma(s,\widetilde a)-V^\sigma(s),&x=s,\\
+0,&x\neq s.
+\end{cases}
+\quad\geq0.
+\]
+The operator is \term{monotone}: \(\modelvar{v\leq w}\) implies \(\modelvar{T_{\widetilde\sigma}v\leq T_{\widetilde\sigma}w}\), with inequalities holding at every state. Hence
 \[V^\sigma\leq T_{\widetilde\sigma}V^\sigma
-\leq T_{\widetilde\sigma}^{\,2}V^\sigma\leq\cdots
-\longrightarrow V^{\widetilde\sigma}.\]
-\begin{itemize}
-\item Each update follows the new policy for one more step. With \(\modelvar{0<\beta<1}\), the initial continuation has vanishing influence as \(\modelvar{n\to\infty}\).
-\item A strict improvement in the first inequality at a state gives a strict value gain at that state.
-\end{itemize}
+\leq T_{\widetilde\sigma}^{\,2}V^\sigma\leq\cdots.
+\]
+Here \(\modelvar{T_{\widetilde\sigma}^{\,n}}\) means applying the operator \(\modelvar{n}\) times. With \(\modelvar{0<\beta<1}\), the initial continuation has vanishing weight \(\modelvar{\beta^n}\), so
+\[\lim_{n\to\infty}(T_{\widetilde\sigma}^{\,n}V^\sigma)(x)=V^{\widetilde\sigma}(x)
+\geq V^\sigma(x),\qquad\forall x.\]
 \end{frame}
 
 \begin{frame}{The Principle of Optimality}
