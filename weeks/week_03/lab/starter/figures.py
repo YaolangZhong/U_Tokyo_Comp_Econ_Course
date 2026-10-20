@@ -31,7 +31,7 @@ def plot_maze(model, result):
                 ax.add_patch(Rectangle((x, y), 1, 1, facecolor=color,
                                        edgecolor="#cccccc", linewidth=0.5))
             ax.text(x + .08, y + .90, str(i + 1), va="top", fontsize=6, color="#888888")
-            label = (model.actions[result["policy"][i]] if ax is axes[0]
+            label = (model.action_names[result["policy"][i]] if ax is axes[0]
                      else f'{result["values"][i]:.1f}')
             if i == model.goal and ax is axes[0]:
                 label = "·"  # No move is needed after reaching the goal.
@@ -51,7 +51,7 @@ def plot_mccall(model, result):
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.4))
     for k in [1, 2, 3, 10]:
         if k < len(result["history"]):
-            axes[0].plot(model.wages, result["history"][k, :model.n], "o--", alpha=.55, label=f"v_{k}")
+            axes[0].plot(model.wages, result["history"][k, :model.n], "o--", alpha=.55, label=f"V_{k}")
     axes[0].plot(model.wages, result["values"][:model.n], "o-", color=BLUE, label="Converged")
     axes[0].set(xlabel="Offer w in state (U, w)", ylabel="Expected discounted income", title="Unemployed-state values")
     accept = result["policy"][:model.n] == "accept"

@@ -1,45 +1,37 @@
-"""The 47-cell lecture maze; array index 0 corresponds to cell 1."""
+"""The 47-cell lecture maze as a standard finite MDP."""
 
 import numpy as np
+from mdp import MDP
 
 
-class Maze:
+class Maze(MDP):
     def __init__(self, beta=0.9):
-        assert 0 < beta < 1
-        self.beta = beta
         self.walls = {(2, 2), (2, 3), (2, 4), (7, 3), (7, 4), (7, 5), (5, 1)}
         self.cells = [(x, y) for y in range(5, -1, -1) for x in range(9)
                       if (x, y) not in self.walls]
-        self.states = np.arange(len(self.cells))
-        self.start, self.goal = 15, 7  # Lecture cell numbers 16 and 8.
-        self.actions = ["U", "D", "L", "R"]
-        self.directions = [(0, 1), (0, -1), (-1, 0), (1, 0)]
+        n = len(self.cells)
+        self.start, self.goal = 15, 7  # Lecture cells 16 and 8; Python starts at 0.
+        self.action_names = ["U", "D", "L", "R"]
+        directions = [(0, 1), (0, -1), (-1, 0), (1, 0)]
         lookup = {cell: i for i, cell in enumerate(self.cells)}
-        self.next_states = np.zeros((len(self.states), 4), dtype=int)
-        for s, (x, y) in enumerate(self.cells):
-            for a, (dx, dy) in enumerate(self.directions):
-                # Hitting a wall or the boundary leaves the agent in place.
-                self.next_states[s, a] = lookup.get((x + dx, y + dy), s)
-        self.next_states[self.goal, :] = self.goal  # Absorbing goal.
-        self.rewards = -np.ones(len(self.states))
-        self.rewards[self.goal] = 0  # Entering the goal still costs one.
-
-    def initial_values(self):
-        return np.zeros(len(self.states))
-
-    def q_values(self, v):
-        # Rows are states; columns are actions. Rewards broadcast across columns.
-        return self.rewards[:, None] + self.beta * v[self.next_states]
-
-    def bellman(self, v):
-        q = self.q_values(v)
-        return q.max(axis=1), q.argmax(axis=1)
+        self.next_states = np.zeros((n, 4), dtype=int)
+        P = np.zeros((n, 4, n))
+        for i, (x, y) in enumerate(self.cells):
+            for j, (dx, dy) in enumerate(directions):
+                # Hitting a wall leaves the agent in place; the goal is absorbing.
+                next_i = self.goal if i == self.goal else lookup.get((x + dx, y + dy), i)
+                self.next_states[i, j] = next_i
+                P[i, j, next_i] = 1
+        actions = np.tile(np.arange(4), (n, 1))
+        rewards = -np.ones((n, 4))
+        rewards[self.goal, :] = 0  # Entering the goal still costs one.
+        super().__init__(np.arange(n), actions, rewards, P, beta)
 
     def step(self, state, action, rng):
-        return self.next_states[state, action], self.rewards[state]
+        return self.next_states[state, action], self.rewards[state, action]
 
     def path(self, policy):
-        """Trace a deterministic policy from the start to the goal."""
+        """Trace the policy from start to goal; values in policy are action codes."""
         state, path = self.start, [self.start]
         for _ in self.states:
             if state == self.goal:
