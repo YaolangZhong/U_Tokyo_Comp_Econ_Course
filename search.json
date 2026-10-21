@@ -46,7 +46,7 @@
     "href": "weeks/week_03/lab/starter/lab_03.html#references",
     "title": "Lab 3: Value Function Iteration in VS Code",
     "section": "References",
-    "text": "References\n\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. Chapter 3: Finite Markov Decision Processes; Chapter 4: Dynamic Programming.\nThomas J. Sargent and John Stachurski, QuantEcon. Discrete State Dynamic Programming: Value Function Iteration; Job Search I: The McCall Search Model; Discrete State Dynamic Programming: Example—A Growth Model.\n\nThe consumption-saving model extends the bounded-storage example to continuous stock, saving, and uniform income."
+    "text": "References\n\nRichard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. Chapter 3: Finite Markov Decision Processes; Chapter 4: Dynamic Programming.\nThomas J. Sargent and John Stachurski, QuantEcon. Discrete State Dynamic Programming: Value Function Iteration; Job Search I: The McCall Search Model; Discrete State Dynamic Programming: Example—A Growth Model."
   },
   {
     "objectID": "weeks/week_01/lab/starter/markov_processes.html",
