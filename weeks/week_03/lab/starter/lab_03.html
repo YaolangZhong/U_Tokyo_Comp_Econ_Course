@@ -433,7 +433,7 @@ Numerical-MDP value error bound: 9.66462458507067e-06</code></pre>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>finer_values_at_old_points <span class="op">=</span> np.interp(saving.states, finer.states, finer_result[<span class="st">"values"</span>])</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Largest value difference on baseline points:"</span>,</span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>      np.<span class="bu">max</span>(np.<span class="bu">abs</span>(saving_result[<span class="st">"values"</span>] <span class="op">-</span> finer_values_at_old_points)))</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>plot_saving(saving, saving_result, finer, finer_result)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>plot_saving(finer, finer_result)</span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="text"><code>Largest value difference on baseline points: 0.0026763881026781178</code></pre>
 <div class="quarto-figure quarto-figure-center">
