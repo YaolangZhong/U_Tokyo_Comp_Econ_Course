@@ -64,14 +64,11 @@ def plot_mccall(model, result):
     return fig
 
 
-def plot_saving(model, result, finer_model=None, finer_result=None):
+def plot_saving(model, result):
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.4))
-    axes[0].plot(model.states, result["values"], color=BLUE, label="Baseline grid")
+    axes[0].plot(model.states, result["values"], color=BLUE, label="Value")
     axes[1].plot(model.states, result["policy"], color=TEAL, label="Saving")
     axes[1].plot(model.states, model.states - result["policy"], color=BLUE, label="Consumption")
-    if finer_model is not None:
-        axes[0].plot(finer_model.states, finer_result["values"], "--", color=RED, label="Finer grid")
-        axes[1].plot(finer_model.states, finer_result["policy"], "--", color=RED, label="Saving: finer grid")
     axes[0].set(xlabel="Stock s", ylabel="Expected discounted utility", title="Approximate value")
     axes[1].set(xlabel="Stock s", ylabel="Units of goods", title="Approximate policy")
     for ax in axes:
