@@ -232,22 +232,24 @@
 
 \begin{frame}{From Value Iteration to Policy Iteration}
 \small
-VFI chooses the best action at every state in each update:
-\[V_{k+1}(s)=\max_{a\in\Aset(s)}\{r(s,a)+\beta\E[V_k(s')\mid s,a]\}.\]
-We can separate the computation into two operations:
-\begin{itemize}
-\item \term{Policy evaluation}: hold \(\modelvar{\sigma}\) fixed and compute its value \(\modelvar{V^\sigma}\).
-\item \term{Policy improvement}: given \(\modelvar{V^\sigma}\), choose a policy greedy with respect to that value:
-\[\widetilde\sigma(s)\in\argmax_{a\in\Aset(s)}
-\{r(s,a)+\beta\E[V^\sigma(s')\mid s,a]\}.
-\]
-\end{itemize}
-\term{Policy function iteration (PFI)} alternates these operations:
+Given the current value estimate \(\modelvar{V_k}\), a VFI update separates into two steps:
+\begin{enumerate}
+\item \term{Policy improvement}: choose a policy greedy with respect to \(\modelvar{V_k}\):
 \[
-\sigma_k\ \xrightarrow{\text{policy evaluation}}\ V^{\sigma_k}
-\ \xrightarrow{\text{policy improvement}}\ \sigma_{k+1}\ \longrightarrow\ \cdots
+\sigma_{k+1}(s)\in\argmax_{a\in\Aset(s)}
+\{r(s,a)+\beta\E[V_k(s')\mid s,a]\}.
 \]
-\footnotesize We use stationary deterministic policies, with \(\modelvar{0<\beta<1}\) and \(\modelvar{|r(s,a)|\leq\bar r<\infty}\).
+\item \term{Policy evaluation update}: hold \(\modelvar{\sigma_{k+1}}\) fixed and update the value once:
+\[
+V_{k+1}(s)=r(s,\sigma_{k+1}(s))
++\beta\E[V_k(s')\mid s,a=\sigma_{k+1}(s)].
+\]
+\end{enumerate}
+Because the selected action is a maximizer, these steps give exactly the VFI update.
+\par\medskip
+\term{Policy evaluation} computes a fixed policy's value. VFI takes only one update; generally, \(\modelvar{V_{k+1}\ne V^{\sigma_{k+1}}}\).
+\par\medskip
+\term{Policy function iteration (PFI)} instead completes policy evaluation to obtain \(\modelvar{V^{\sigma_{k+1}}}\) before the next policy improvement.
 \end{frame}
 
 \begin{frame}{The Policy Evaluation Operator}
@@ -514,7 +516,7 @@ Setting \(\modelvar{m=1}\) therefore gives \(\modelvar{V_{k+1}=TV_k}\).
 \par\medskip
 \textbf{Full policy evaluation: PFI.} Continuing evaluation to its fixed point gives \(\modelvar{V^{\sigma_{k+1}}}\); the next policy improvement uses that policy's value.
 \par\medskip
-For a finite MDP under our discounted, bounded-reward assumptions, these exact updates converge to \(\modelvar{V^*}\), including any fixed \(\modelvar{m\geq1}\).
+For a finite discounted MDP with bounded rewards, these exact updates converge to \(\modelvar{V^*}\), including any fixed \(\modelvar{m\geq1}\).
 \par\smallskip
 The choice balances the cost of policy evaluation against the number of policy improvements.
 \end{frame}
