@@ -225,7 +225,7 @@
 \item \textbf{Computational Choices}
   \begin{itemize}
   \item Generalized and modified policy iteration
-  \item Computational cost and continuous states
+  \item Choosing the amount of policy evaluation
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -433,9 +433,23 @@ Thus \(\modelvar{V^{\sigma_k}=V^*}\), by uniqueness of the Bellman optimality fi
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Modified Policy Iteration (MPI)}
+\small
+\term{Modified policy iteration (MPI)} performs \(\modelvar{k\geq1}\) policy evaluation updates between policy improvements. Let \(\modelvar{i}\) index the improvement rounds.
+\begin{enumerate}
+\item \textbf{Policy improvement.} Choose a policy greedy with respect to the current candidate \(\modelvar{V_i}\):
+\[\sigma_{i+1}(s)\in\argmax_{a\in\Aset(s)}\{r(s,a)+\beta\E[V_i(s')\mid s,a]\}.\]
+\item \textbf{Policy evaluation.} Hold \(\modelvar{\sigma_{i+1}}\) fixed. Set \(\modelvar{V_{i,0}=V_i}\), then compute
+\[V_{i,j+1}=T_{\sigma_{i+1}}V_{i,j},\qquad j=0,\ldots,k-1.\]
+\item Set \(\modelvar{V_{i+1}=V_{i,k}}\) and repeat.
+\end{enumerate}
+\par\smallskip
+\(\modelvar{V_i}\) is an approximate value, so an unchanged greedy policy alone does not certify optimality. Check the Bellman residual \(\modelvar{\|TV_i-V_i\|_\infty}\), as in VFI.
+\end{frame}
+
 \begin{frame}{Generalized Policy Iteration}
 \small
-\term{Generalized policy iteration (GPI)} lets policy evaluation and policy improvement interact, allowing evaluation to stop before convergence.
+MPI illustrates \term{generalized policy iteration (GPI)}: alternate policy evaluation and policy improvement, without requiring evaluation to finish before improving the policy.
 \begin{figure}
 \centering
 \begin{tikzpicture}[x=.93cm,y=.93cm,
@@ -492,53 +506,19 @@ At the intersection, both conditions hold: \(\modelvar{V=T_\sigma V=TV}\), so \(
 \textcolor{SessionMuted}{Concept adapted from Sutton and Barto (2018), Section 4.6, pp. 86--87.}}
 \end{frame}
 
-\begin{frame}{Modified Policy Iteration}
-\small
-In GPI, the evaluation arrows may stop short of full consistency. \term{Modified policy iteration} implements this using a fixed number \(\modelvar{m\geq1}\) of policy evaluation updates between policy improvements.
-\begin{enumerate}
-\item \textbf{Policy improvement.} Choose a policy greedy with respect to the current candidate \(\modelvar{V_k}\):
-\[\sigma_{k+1}(s)\in\argmax_{a\in\Aset(s)}\{r(s,a)+\beta\E[V_k(s')\mid s,a]\}.\]
-\item \textbf{Policy evaluation.} Hold \(\modelvar{\sigma_{k+1}}\) fixed. Set \(\modelvar{V_{k,0}=V_k}\), then compute
-\[V_{k,j+1}=T_{\sigma_{k+1}}V_{k,j},\qquad j=0,\ldots,m-1.\]
-\item Set \(\modelvar{V_{k+1}=V_{k,m}}\) and repeat.
-\end{enumerate}
-\par\smallskip
-\(\modelvar{V_k}\) is an approximate value, so an unchanged greedy policy alone does not certify optimality. Check the Bellman residual \(\modelvar{\|TV_k-V_k\|_\infty}\), as in VFI.
-\end{frame}
-
 \begin{frame}{Choosing the Amount of Policy Evaluation}
 \small
-\textbf{One policy evaluation update: VFI.} Since \(\modelvar{\sigma_{k+1}}\) is greedy with respect to \(\modelvar{V_k}\),
-\[T_{\sigma_{k+1}}V_k=TV_k.\]
-Setting \(\modelvar{m=1}\) therefore gives \(\modelvar{V_{k+1}=TV_k}\).
+\textbf{One policy evaluation update: VFI.} Since \(\modelvar{\sigma_{i+1}}\) is greedy with respect to \(\modelvar{V_i}\),
+\[T_{\sigma_{i+1}}V_i=TV_i.\]
+Setting \(\modelvar{k=1}\) therefore gives \(\modelvar{V_{i+1}=TV_i}\).
 \par\medskip
 \textbf{Several policy evaluation updates: modified policy iteration.} Extra updates reuse the chosen actions. They avoid a new maximization while refining the value estimate.
 \par\medskip
-\textbf{Full policy evaluation: PFI.} Continuing evaluation to its fixed point gives \(\modelvar{V^{\sigma_{k+1}}}\); the next policy improvement uses that policy's value.
+\textbf{Full policy evaluation: PFI.} Continuing evaluation to its fixed point gives \(\modelvar{V^{\sigma_{i+1}}}\); the next policy improvement uses that policy's value.
 \par\medskip
-For a finite discounted MDP with bounded rewards, these exact updates converge to \(\modelvar{V^*}\), including any fixed \(\modelvar{m\geq1}\).
+For a finite discounted MDP with bounded rewards, these exact updates converge to \(\modelvar{V^*}\), including any fixed \(\modelvar{k\geq1}\).
 \par\smallskip
 The choice balances the cost of policy evaluation against the number of policy improvements.
-\end{frame}
-
-\begin{frame}{Policy Iteration with Continuous States}
-\small
-For the consumption--saving model, the state \(\modelvar{s}\) and saving choice \(\modelvar{a}\) are continuous:
-\[
-V^\sigma(s)=u(s-\sigma(s))+\beta\E[V^\sigma(\sigma(s)+y)],
-\]
-\[
-\widetilde\sigma(s)\in\argmax_{0\leq a\leq\min\{s,M\}}
-\{u(s-a)+\beta\E[V^\sigma(a+y)]\}.
-\]
-Here \(\modelvar{y}\) is income, and \(\modelvar{M}\) is the saving limit.
-\begin{itemize}
-\item \textbf{Represent the value function:} store values on a grid and interpolate between grid points.
-\item \textbf{Compute expectations:} approximate the income integral using quadrature or simulation.
-\item \textbf{Choose actions:} search an action grid or use continuous optimization.
-\end{itemize}
-\par\smallskip
-Solving the resulting finite MDP accurately does not eliminate its grid and integration errors.
 \end{frame}
 
 % BEGIN MANAGED READINGS: week4_pfi
