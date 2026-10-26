@@ -1,0 +1,500 @@
+% Topic content; common layout lives in the shared course preamble.
+\newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
+\input{\CourseTemplatePath course_preamble.tex}
+\title[Policy Function Iteration]{Lecture: Policy Function Iteration (PFI)}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Sset}{\mathcal S}
+\newcommand{\Aset}{\mathcal A}
+\tikzset{valueState/.style={draw=SessionTeal,fill=SessionTealLight,rounded corners=1mm,minimum width=15mm,minimum height=9mm,align=center},valueFlow/.style={-{Stealth[length=2mm]},draw=SessionCharcoal,line width=.8pt},stateCircle/.style={circle,draw=SessionTeal,fill=white,minimum size=6mm,inner sep=1pt},actionCircle/.style={circle,draw=SessionTeal,fill=SessionTeal,minimum size=3mm,inner sep=0pt}}
+% The maze geometry and reward convention match the Week 1 example.
+\definecolor{ValueMazeWall}{HTML}{928580}
+\definecolor{MazeStartFill}{HTML}{F5DEA2}
+\definecolor{MazeGoalFill}{HTML}{B5DDD5}
+\newcommand{\ValueMazeBase}{%
+  \fill[white] (0,0) rectangle (9,6);
+  \fill[MazeStartFill] (0,3) rectangle +(1,1);
+  \fill[MazeGoalFill] (8,5) rectangle +(1,1);
+  \foreach \x/\y in {2/2,2/3,2/4,7/3,7/4,7/5,5/1}
+    \fill[ValueMazeWall] (\x,\y) rectangle +(1,1);
+  \draw[SessionLine,line width=.3pt,step=1] (0,0) grid (9,6);
+  \draw[SessionCharcoal,line width=.7pt] (0,0) rectangle (9,6);
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,5.92) {1};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,5.92) {2};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,5.92) {3};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,5.92) {4};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,5.92) {5};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,5.92) {6};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,5.92) {7};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,5.92) {8};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,4.92) {9};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,4.92) {10};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,4.92) {11};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,4.92) {12};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,4.92) {13};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,4.92) {14};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,4.92) {15};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,3.92) {16};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,3.92) {17};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,3.92) {18};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,3.92) {19};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,3.92) {20};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,3.92) {21};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,3.92) {22};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,2.92) {23};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,2.92) {24};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,2.92) {25};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,2.92) {26};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,2.92) {27};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,2.92) {28};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,2.92) {29};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,2.92) {30};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,1.92) {31};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,1.92) {32};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,1.92) {33};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,1.92) {34};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,1.92) {35};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,1.92) {36};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,1.92) {37};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,1.92) {38};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (0.09,0.92) {39};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (1.09,0.92) {40};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (2.09,0.92) {41};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (3.09,0.92) {42};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (4.09,0.92) {43};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (5.09,0.92) {44};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (6.09,0.92) {45};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (7.09,0.92) {46};
+  \node[anchor=north west,inner sep=0pt,font=\sffamily\fontsize{6}{6}\selectfont,text=SessionMuted!65] at (8.09,0.92) {47};
+}
+\newcommand{\MazeLegend}{%
+\par\smallskip{\scriptsize
+\tikz[baseline=-.5ex]\draw[SessionLine,fill=MazeStartFill] (0,0) rectangle (.22,.16);\ Start (16)\qquad
+\tikz[baseline=-.5ex]\draw[SessionLine,fill=MazeGoalFill] (0,0) rectangle (.22,.16);\ Goal (8)}
+}
+
+% Centered arrows overlay cell text, matching the continuation diagram.
+\newcommand{\MazePolicyPath}{%
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (0.5,3.5) -- (0.5,2.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (0.5,2.5) -- (0.5,1.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (0.5,1.5) -- (1.5,1.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (1.5,1.5) -- (2.5,1.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (2.5,1.5) -- (3.5,1.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (3.5,1.5) -- (3.5,2.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (3.5,2.5) -- (3.5,3.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (3.5,3.5) -- (4.5,3.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (4.5,3.5) -- (5.5,3.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (5.5,3.5) -- (6.5,3.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (6.5,3.5) -- (6.5,2.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (6.5,2.5) -- (7.5,2.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (7.5,2.5) -- (8.5,2.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (8.5,2.5) -- (8.5,3.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (8.5,3.5) -- (8.5,4.5);
+  \draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (8.5,4.5) -- (8.5,5.5);
+}
+
+\newcommand{\MazeDiscountedValues}{%
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,5.5) {-7.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,5.5) {-7.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (2.5,5.5) {-7.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,5.5) {-6.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,5.5) {-6.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,5.5) {-6.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,5.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,5.5) {0.0};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,4.5) {-7.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,4.5) {-7.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,4.5) {-6.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,4.5) {-6.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,4.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,4.5) {-5.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,4.5) {-1.0};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,3.5) {-8.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,3.5) {-7.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,3.5) {-6.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,3.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,3.5) {-5.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,3.5) {-4.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,3.5) {-1.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,2.5) {-7.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,2.5) {-7.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,2.5) {-6.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,2.5) {-5.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,2.5) {-4.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,2.5) {-4.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (7.5,2.5) {-3.4};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,2.5) {-2.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,1.5) {-7.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,1.5) {-7.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (2.5,1.5) {-7.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,1.5) {-6.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,1.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,1.5) {-4.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (7.5,1.5) {-4.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,1.5) {-3.4};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,0.5) {-7.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,0.5) {-7.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (2.5,0.5) {-7.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,0.5) {-7.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,0.5) {-6.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,0.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,0.5) {-5.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (7.5,0.5) {-4.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,0.5) {-4.1};
+}
+\newcommand{\MazeImprovedValues}{%
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,5.5) {-7.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,5.5) {-7.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (2.5,5.5) {-7.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,5.5) {-6.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,5.5) {-6.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,5.5) {-6.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,5.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,5.5) {0.0};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,4.5) {-7.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,4.5) {-7.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,4.5) {-6.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,4.5) {-6.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,4.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,4.5) {-5.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,4.5) {-1.0};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,3.5) {-7.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,3.5) {-7.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,3.5) {-6.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,3.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,3.5) {-5.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,3.5) {-4.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,3.5) {-1.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,2.5) {-7.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,2.5) {-7.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,2.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,2.5) {-5.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,2.5) {-4.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,2.5) {-4.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (7.5,2.5) {-3.4};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,2.5) {-2.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,1.5) {-7.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,1.5) {-6.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (2.5,1.5) {-6.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,1.5) {-6.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,1.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,1.5) {-4.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (7.5,1.5) {-4.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,1.5) {-3.4};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (0.5,0.5) {-7.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (1.5,0.5) {-7.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (2.5,0.5) {-6.9};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (3.5,0.5) {-6.5};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (4.5,0.5) {-6.1};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (5.5,0.5) {-5.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (6.5,0.5) {-5.2};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (7.5,0.5) {-4.7};
+\node[font=\sffamily\footnotesize,text=SessionMuted!55,inner sep=0pt] at (8.5,0.5) {-4.1};
+}
+\newcommand{\MazeImprovedPath}{%
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (0.5,3.5) -- (0.5,2.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (0.5,2.5) -- (0.5,1.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (0.5,1.5) -- (1.5,1.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (1.5,1.5) -- (2.5,1.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (2.5,1.5) -- (3.5,1.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (3.5,1.5) -- (3.5,2.5);
+\draw[valueFlow,draw=SessionRed,shorten <=2pt,shorten >=2pt] (3.5,2.5) -- (4.5,2.5);
+\draw[valueFlow,draw=SessionRed,shorten <=2pt,shorten >=2pt] (4.5,2.5) -- (5.5,2.5);
+\draw[valueFlow,draw=SessionRed,shorten <=2pt,shorten >=2pt] (5.5,2.5) -- (6.5,2.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (6.5,2.5) -- (7.5,2.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (7.5,2.5) -- (8.5,2.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (8.5,2.5) -- (8.5,3.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (8.5,3.5) -- (8.5,4.5);
+\draw[valueFlow,draw=CourseVariableColor,shorten <=2pt,shorten >=2pt] (8.5,4.5) -- (8.5,5.5);
+}
+
+\begin{document}
+\makecoursetitle
+
+\begin{frame}{Lecture Overview}
+\begin{itemize}
+\item \textbf{Policy Evaluation}
+  \begin{itemize}
+  \item The policy evaluation operator
+  \item Repeated updates and a linear system
+  \end{itemize}
+\item \textbf{Policy Function Iteration}
+  \begin{itemize}
+  \item Evaluation and improvement in the maze
+  \item The algorithm and its optimality criterion
+  \end{itemize}
+\item \textbf{Computational Choices}
+  \begin{itemize}
+  \item Modified policy iteration
+  \item Computational cost and continuous states
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{From Value Iteration to Policy Iteration}
+\small
+VFI updates a candidate value function by choosing the best action at every state:
+\[V_{k+1}(s)=\max_{a\in\Aset(s)}\{r(s,a)+\beta\E[V_k(s')\mid s,a]\}.\]
+\begin{itemize}
+\item Every update requires a new search over actions, even where the preferred action has not changed.
+\item We can instead keep a policy fixed while computing its value, then use that value to improve the policy.
+\end{itemize}
+\par\medskip
+\term{Policy function iteration (PFI)} alternates these two computations:
+\[
+\sigma_k\ \xrightarrow{\text{evaluate}}\ V^{\sigma_k}
+\ \xrightarrow{\text{improve}}\ \sigma_{k+1}
+\ \xrightarrow{\text{evaluate}}\ V^{\sigma_{k+1}}\ \longrightarrow\ \cdots
+\]
+\par\smallskip
+We use stationary deterministic policies, with \(\modelvar{0<\beta<1}\) and \(\modelvar{|r(s,a)|\leq\bar r<\infty}\).
+\end{frame}
+
+\begin{frame}{The Policy Evaluation Operator}
+\small
+For a fixed policy \(\modelvar{\sigma}\), the \term{policy evaluation operator} \(\modelvar{T_\sigma}\) maps a candidate continuation-value function \(\modelvar{V}\) to an updated function:
+\[
+(T_\sigma V)(s)=r(s,\sigma(s))+\beta\E[V(s')\mid s,a=\sigma(s)].
+\]
+\begin{itemize}
+\item The action is supplied by \(\modelvar{\sigma(s)}\); this update does not choose a new action.
+\item The input \(\modelvar{V}\) may be any bounded candidate function. It need not equal \(\modelvar{V^\sigma}\).
+\end{itemize}
+\par\medskip
+\term{Policy evaluation} means finding the fixed point:
+\[V^\sigma=T_\sigma V^\sigma.\]
+One application \(\modelvar{T_\sigma V}\) is one update; repeated updates compute the policy's value.
+\end{frame}
+
+\begin{frame}{Iterative Policy Evaluation}
+\small
+Hold \(\modelvar{\sigma}\) fixed. Choose \(\modelvar{V_0}\), and update all states using the same previous function:
+\[
+V_{j+1}(s)=(T_\sigma V_j)(s)
+=r(s,\sigma(s))+\beta\sum_{s'\in\Sset}P(s'\mid s,\sigma(s))V_j(s').
+\]
+The index \(\modelvar{j}\) counts evaluation updates, not changes of policy.
+\par\medskip
+As with the Bellman optimality operator, discounting gives a contraction:
+\[\|T_\sigma V_1-T_\sigma V_2\|_\infty\leq\beta\|V_1-V_2\|_\infty.\]
+Hence \(\modelvar{V_j\to V^\sigma}\). For a target evaluation error \(\modelvar{\varepsilon_{\rm eval}>0}\), compute
+\[
+d_j=\|V_{j+1}-V_j\|_\infty,
+\qquad
+\|V_j-V^\sigma\|_\infty\leq\frac{d_j}{1-\beta}.
+\]
+Stop and return \(\modelvar{V_j}\) when \(\modelvar{d_j\leq(1-\beta)\varepsilon_{\rm eval}}\).
+\end{frame}
+
+\begin{frame}{Policy Evaluation as a Linear System}
+\small
+For finitely many states, collect the rewards and transition probabilities selected by \(\modelvar{\sigma}\):
+\[
+r^\sigma(s)=r(s,\sigma(s)),\qquad
+P^\sigma(s,s')=P(s'\mid s,\sigma(s)).
+\]
+Each row of \(\modelvar{P^\sigma}\) describes the next-state probabilities under the policy's chosen action.
+\par\medskip
+The policy's Bellman equation becomes
+\[
+V^\sigma=r^\sigma+\beta P^\sigma V^\sigma
+\qquad\Longleftrightarrow\qquad
+(I-\beta P^\sigma)V^\sigma=r^\sigma.
+\]
+\begin{itemize}
+\item \(\modelvar{I}\) is the identity matrix. There is one equation and one unknown value per state.
+\item Solve this linear system directly, or use repeated evaluation updates.
+\item A direct solve avoids an inner iteration; its cost grows with the number of states.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Evaluating the Maze Policy}
+\small
+Use the same policy \(\modelvar{\sigma}\) as before, now with \(\modelvar{\beta=0.9}\).
+\begin{columns}[c]
+\begin{column}{.58\textwidth}
+\begin{figure}\centering
+\begin{tikzpicture}[x=.71cm,y=.71cm]
+\ValueMazeBase\MazeDiscountedValues\MazePolicyPath
+\end{tikzpicture}\MazeLegend
+\caption{Discounted values under \(\sigma\).}
+\end{figure}
+\end{column}
+\begin{column}{.40\textwidth}
+\begin{itemize}
+\item Each move gives \(\modelvar{-1}\), including entry into cell 8; rewards afterward are zero.
+\item At cell 25, the policy chooses U to cell 18.
+\end{itemize}
+\[
+\begin{aligned}
+V^\sigma(8)&=0,\\
+V^\sigma(25)&=-1+0.9V^\sigma(18)\\
+&\approx -6.513.
+\end{aligned}
+\]
+\par\smallskip
+At the starting cell, \(\modelvar{V^\sigma(16)\approx-8.147}\).
+\par\smallskip
+\footnotesize Cell values are rounded to one decimal place.
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Example: Improving and Re-evaluating the Policy}
+\small
+Change only cell 25 to R: \(\modelvar{\widetilde\sigma(25)=\mathrm R}\); keep \(\modelvar{\widetilde\sigma(s)=\sigma(s)}\) elsewhere.
+\begin{columns}[c]
+\begin{column}{.58\textwidth}
+\begin{figure}\centering
+\begin{tikzpicture}[x=.71cm,y=.71cm]
+\ValueMazeBase
+\fill[CourseVariableColor!20] (3.01,2.01) rectangle (3.99,2.99);
+\node[anchor=north west,inner sep=0pt,font=\sffamily\bfseries\fontsize{6}{6}\selectfont,text=CourseVariableColor] at (3.09,2.92) {25};
+\MazeImprovedValues\MazeImprovedPath
+\end{tikzpicture}\MazeLegend
+\caption{Re-evaluated values under \(\widetilde\sigma\).}
+\end{figure}
+\end{column}
+\begin{column}{.40\textwidth}
+\textbf{Compare actions using \(\modelvar{V^\sigma}\):}
+\[
+\begin{aligned}
+Q^\sigma(25,\mathrm U)&\approx-6.513,\\
+Q^\sigma(25,\mathrm R)&\approx-5.695.
+\end{aligned}
+\]
+\textbf{Evaluate the new policy:}
+\[
+\begin{aligned}
+V^{\widetilde\sigma}(25)&\approx-5.695,\\
+V^{\widetilde\sigma}(16)&\approx-7.712.
+\end{aligned}
+\]
+The shortcut also improves values at states whose paths pass through cell 25.
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Policy Function Iteration (PFI) Algorithm}
+\small
+\begin{enumerate}
+\setcounter{enumi}{-1}
+\item \textbf{Input.} Finite state set \(\modelvar{\Sset}\), finite nonempty feasible action sets \(\modelvar{\Aset(s)}\), rewards \(\modelvar{r(s,a)}\), transition probabilities \(\modelvar{P(s'\mid s,a)}\), and discount factor \(\modelvar{\beta}\).
+\item \textbf{Initialize.} Choose a feasible policy \(\modelvar{\sigma_0(s)\in\Aset(s)}\) for every state. Set \(\modelvar{k=0}\).
+\item \textbf{Evaluate the policy.} Form \(\modelvar{r^{\sigma_k}}\) and \(\modelvar{P^{\sigma_k}}\), then solve
+\[(I-\beta P^{\sigma_k})V^{\sigma_k}=r^{\sigma_k}.\]
+\item \textbf{Compute action values.} For every feasible \(\modelvar{(s,a)}\), compute
+\[Q^{\sigma_k}(s,a)=r(s,a)+\beta\sum_{s'\in\Sset}P(s'\mid s,a)V^{\sigma_k}(s').\]
+Use this same evaluated \(\modelvar{V^{\sigma_k}}\) for every action comparison.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{PFI Algorithm (continued)}
+\small
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item \textbf{Improve the policy.} For every state, select
+\[\sigma_{k+1}(s)\in\argmax_{a\in\Aset(s)}Q^{\sigma_k}(s,a).\]
+Keep \(\modelvar{\sigma_k(s)}\) if it is already a maximizer; otherwise use a fixed action order to break ties.
+\item \textbf{Check the policy.}
+\begin{itemize}
+\item If \(\modelvar{\sigma_{k+1}(s)=\sigma_k(s)}\) at every state, continue to \textbf{Step 6}.
+\item Otherwise, set \(\modelvar{k\leftarrow k+1}\) and return to \textbf{Step 2}.
+\end{itemize}
+\item \textbf{Return and stop.} Output the policy and its evaluated value:
+\[\sigma^*=\sigma_k,\qquad V^*=V^{\sigma_k}.\]
+\end{enumerate}
+\par\smallskip
+\footnotesize The exact optimality statement uses exact policy evaluation. A numerical solve introduces rounding error; truncated evaluation introduces an additional approximation.
+\end{frame}
+
+\begin{frame}{Policy Improvement and Optimality}
+\small
+Every greedy improvement satisfies the policy improvement theorem:
+\[
+Q^{\sigma_k}(s,\sigma_{k+1}(s))\geq V^{\sigma_k}(s)\quad\forall s
+\quad\Longrightarrow\quad
+V^{\sigma_{k+1}}(s)\geq V^{\sigma_k}(s)\quad\forall s.
+\]
+\par\smallskip
+When the policy does not change, it is greedy with respect to its own value:
+\[
+V^{\sigma_k}(s)=\max_{a\in\Aset(s)}Q^{\sigma_k}(s,a)
+=(TV^{\sigma_k})(s).
+\]
+Thus \(\modelvar{V^{\sigma_k}=V^*}\), by uniqueness of the Bellman optimality fixed point.
+\par\medskip
+\begin{itemize}
+\item Retaining the current action in a tie prevents changes between equally good actions.
+\item If the policy changes, its value strictly increases at some state.
+\item With finitely many deterministic policies, exact PFI therefore terminates at an optimal policy after finitely many improvements.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Modified Policy Iteration}
+\small
+Full evaluation can be costly. \term{Modified policy iteration} performs a fixed number \(\modelvar{m\geq1}\) of evaluation updates between improvements.
+\begin{enumerate}
+\item Given a candidate \(\modelvar{V_k}\), choose a greedy policy:
+\[\sigma_{k+1}(s)\in\argmax_{a\in\Aset(s)}\{r(s,a)+\beta\E[V_k(s')\mid s,a]\}.\]
+\item Hold \(\modelvar{\sigma_{k+1}}\) fixed. Set \(\modelvar{V_{k,0}=V_k}\), then compute
+\[V_{k,j+1}=T_{\sigma_{k+1}}V_{k,j},\qquad j=0,\ldots,m-1.\]
+\item Set \(\modelvar{V_{k+1}=V_{k,m}}\) and repeat.
+\end{enumerate}
+\par\smallskip
+\(\modelvar{V_k}\) is an approximate value, so an unchanged greedy policy alone does not certify optimality. Check the Bellman residual \(\modelvar{\|TV_k-V_k\|_\infty}\), as in VFI.
+\end{frame}
+
+\begin{frame}{Choosing the Amount of Policy Evaluation}
+\small
+\textbf{One update: VFI.} Since \(\modelvar{\sigma_{k+1}}\) is greedy with respect to \(\modelvar{V_k}\),
+\[T_{\sigma_{k+1}}V_k=TV_k.\]
+Setting \(\modelvar{m=1}\) therefore gives \(\modelvar{V_{k+1}=TV_k}\).
+\par\medskip
+\textbf{Several updates: modified policy iteration.} Extra updates reuse the chosen actions. They avoid a new maximization while refining the value estimate.
+\par\medskip
+\textbf{Full evaluation: PFI.} Continuing evaluation to its fixed point gives \(\modelvar{V^{\sigma_{k+1}}}\); the next improvement uses that policy's value.
+\par\medskip
+\begin{itemize}
+\item More evaluation work can reduce the number of policy improvements.
+\item The fastest choice depends on the costs of action search, expectation calculation, and policy evaluation. Fewer outer iterations need not mean less computation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Policy Iteration with Continuous States}
+\small
+For the consumption--saving model, the state \(\modelvar{s}\) and saving choice \(\modelvar{a}\) are continuous:
+\[
+V^\sigma(s)=u(s-\sigma(s))+\beta\E[V^\sigma(\sigma(s)+y)],
+\]
+\[
+\widetilde\sigma(s)\in\argmax_{0\leq a\leq\min\{s,M\}}
+\{u(s-a)+\beta\E[V^\sigma(a+y)]\}.
+\]
+Here \(\modelvar{y}\) is income, and \(\modelvar{M}\) is the saving limit.
+\begin{itemize}
+\item \textbf{Represent the value function:} store values on a grid and interpolate between grid points.
+\item \textbf{Compute expectations:} approximate the income integral using quadrature or simulation.
+\item \textbf{Choose actions:} search an action grid or use continuous optimization.
+\end{itemize}
+\par\smallskip
+Solving the resulting finite MDP accurately does not eliminate its grid and integration errors.
+\end{frame}
+
+% BEGIN MANAGED READINGS: week4_pfi
+\begin{frame}{References and Further Reading}
+\coursereading{1}
+  {Richard S. Sutton and Andrew G. Barto (2018), Reinforcement Learning: An Introduction. 2nd ed. MIT Press. [Book]}
+  {https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf}
+  {\begin{itemize}
+\item \href{https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf\#page=95}{Chapter 4: Dynamic Programming}
+\end{itemize}}
+\coursereading{2}
+  {Thomas J. Sargent and John Stachurski, QuantEcon. [Online lectures]}
+  {https://quantecon.org/lectures/}
+  {\begin{itemize}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#policy-function-iteration}{Discrete State Dynamic Programming — Policy Function Iteration}
+\item \href{https://tools-techniques.quantecon.org/discrete_dp.html\#modified-policy-function-iteration}{Discrete State Dynamic Programming — Modified Policy Function Iteration}
+\end{itemize}}
+\end{frame}
+% END MANAGED READINGS: week4_pfi
+\end{document}

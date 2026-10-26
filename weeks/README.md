@@ -57,7 +57,7 @@
 
 - **Lecture**
 
-    - [Approximating Expectations](week_04/lecture/slides/pdf/Approximating_Expectations.pdf)
+    - [Policy Function Iteration (PFI)](week_04/lecture/slides/pdf/Policy_Function_Iteration.pdf)
 
 - **Lab**
 
