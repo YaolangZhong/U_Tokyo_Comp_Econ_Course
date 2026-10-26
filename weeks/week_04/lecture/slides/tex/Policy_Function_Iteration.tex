@@ -224,7 +224,7 @@
   \end{itemize}
 \item \textbf{Computational Choices}
   \begin{itemize}
-  \item Modified policy iteration
+  \item Generalized and modified policy iteration
   \item Computational cost and continuous states
   \end{itemize}
 \end{itemize}
@@ -232,21 +232,22 @@
 
 \begin{frame}{From Value Iteration to Policy Iteration}
 \small
-VFI updates a candidate value function by choosing the best action at every state:
+VFI chooses the best action at every state in each update:
 \[V_{k+1}(s)=\max_{a\in\Aset(s)}\{r(s,a)+\beta\E[V_k(s')\mid s,a]\}.\]
+We can separate the computation into two operations:
 \begin{itemize}
-\item Every update requires a new search over actions, even where the preferred action has not changed.
-\item We can instead keep a policy fixed while computing its value, then use that value to improve the policy.
-\end{itemize}
-\par\medskip
-\term{Policy function iteration (PFI)} alternates these two computations:
-\[
-\sigma_k\ \xrightarrow{\text{evaluate}}\ V^{\sigma_k}
-\ \xrightarrow{\text{improve}}\ \sigma_{k+1}
-\ \xrightarrow{\text{evaluate}}\ V^{\sigma_{k+1}}\ \longrightarrow\ \cdots
+\item \term{Policy evaluation}: hold \(\modelvar{\sigma}\) fixed and compute its value \(\modelvar{V^\sigma}\).
+\item \term{Policy improvement}: given \(\modelvar{V^\sigma}\), choose a policy greedy with respect to that value:
+\[\widetilde\sigma(s)\in\argmax_{a\in\Aset(s)}
+\{r(s,a)+\beta\E[V^\sigma(s')\mid s,a]\}.
 \]
-\par\smallskip
-We use stationary deterministic policies, with \(\modelvar{0<\beta<1}\) and \(\modelvar{|r(s,a)|\leq\bar r<\infty}\).
+\end{itemize}
+\term{Policy function iteration (PFI)} alternates these operations:
+\[
+\sigma_k\ \xrightarrow{\text{policy evaluation}}\ V^{\sigma_k}
+\ \xrightarrow{\text{policy improvement}}\ \sigma_{k+1}\ \longrightarrow\ \cdots
+\]
+\footnotesize We use stationary deterministic policies, with \(\modelvar{0<\beta<1}\) and \(\modelvar{|r(s,a)|\leq\bar r<\infty}\).
 \end{frame}
 
 \begin{frame}{The Policy Evaluation Operator}
@@ -355,14 +356,14 @@ Change only cell 25 to R: \(\modelvar{\widetilde\sigma(25)=\mathrm R}\); keep \(
 \end{figure}
 \end{column}
 \begin{column}{.40\textwidth}
-\textbf{Compare actions using \(\modelvar{V^\sigma}\):}
+\textbf{Policy improvement using \(\modelvar{V^\sigma}\):}
 \[
 \begin{aligned}
 Q^\sigma(25,\mathrm U)&\approx-6.513,\\
 Q^\sigma(25,\mathrm R)&\approx-5.695.
 \end{aligned}
 \]
-\textbf{Evaluate the new policy:}
+\textbf{Policy evaluation for the new policy:}
 \[
 \begin{aligned}
 V^{\widetilde\sigma}(25)&\approx-5.695,\\
@@ -380,7 +381,7 @@ The shortcut also improves values at states whose paths pass through cell 25.
 \setcounter{enumi}{-1}
 \item \textbf{Input.} Finite state set \(\modelvar{\Sset}\), finite nonempty feasible action sets \(\modelvar{\Aset(s)}\), rewards \(\modelvar{r(s,a)}\), transition probabilities \(\modelvar{P(s'\mid s,a)}\), and discount factor \(\modelvar{\beta}\).
 \item \textbf{Initialize.} Choose a feasible policy \(\modelvar{\sigma_0(s)\in\Aset(s)}\) for every state. Set \(\modelvar{k=0}\).
-\item \textbf{Evaluate the policy.} Form \(\modelvar{r^{\sigma_k}}\) and \(\modelvar{P^{\sigma_k}}\), then solve
+\item \textbf{Policy evaluation.} Form \(\modelvar{r^{\sigma_k}}\) and \(\modelvar{P^{\sigma_k}}\), then solve
 \[(I-\beta P^{\sigma_k})V^{\sigma_k}=r^{\sigma_k}.\]
 \item \textbf{Compute action values.} For every feasible \(\modelvar{(s,a)}\), compute
 \[Q^{\sigma_k}(s,a)=r(s,a)+\beta\sum_{s'\in\Sset}P(s'\mid s,a)V^{\sigma_k}(s').\]
@@ -392,7 +393,7 @@ Use this same evaluated \(\modelvar{V^{\sigma_k}}\) for every action comparison.
 \small
 \begin{enumerate}
 \setcounter{enumi}{3}
-\item \textbf{Improve the policy.} For every state, select
+\item \textbf{Policy improvement.} For every state, select
 \[\sigma_{k+1}(s)\in\argmax_{a\in\Aset(s)}Q^{\sigma_k}(s,a).\]
 Keep \(\modelvar{\sigma_k(s)}\) if it is already a maximizer; otherwise use a fixed action order to break ties.
 \item \textbf{Check the policy.}
@@ -430,13 +431,72 @@ Thus \(\modelvar{V^{\sigma_k}=V^*}\), by uniqueness of the Bellman optimality fi
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Generalized Policy Iteration}
+\small
+\term{Generalized policy iteration (GPI)} lets policy evaluation and policy improvement interact, allowing evaluation to stop before convergence.
+\begin{figure}
+\centering
+\begin{tikzpicture}[x=.93cm,y=.93cm,
+  gpiEval/.style={-{Stealth[length=1.5mm]},CourseVariableColor,line width=.8pt},
+  gpiImprove/.style={-{Stealth[length=1.5mm]},SessionTeal,line width=.8pt}]
+\begin{scope}[xshift=0cm]
+\node[font=\footnotesize\bfseries] at (2.45,2.65) {Full policy evaluation};
+\draw[SessionMuted,line width=.6pt] (0,2.1) -- (4.9,1.05) -- (0,0);
+\node[font=\scriptsize,anchor=south,fill=SessionPaper,inner sep=1pt] at (2.1,1.77) {\(V=V^\sigma\)};
+\node[font=\scriptsize,anchor=north] at (2.25,.34) {\(\sigma\) greedy w.r.t. \(V\)};
+\fill[SessionCharcoal] (4.9,1.05) circle (1.1pt);
+\node[font=\scriptsize,anchor=west] at (4.96,1.05) {\(V^*,\sigma^*\)};
+\fill[SessionCharcoal] (0.15,0.65) circle (1pt);
+\draw[gpiEval] (0.1500,0.6500) -- (0.8625,1.9152);
+\draw[gpiImprove] (0.8625,1.9152) -- (2.0738,0.4444);
+\draw[gpiEval] (2.0738,0.4444) -- (2.4977,1.5648);
+\draw[gpiImprove] (2.4977,1.5648) -- (3.2184,0.6897);
+\draw[gpiEval] (3.2184,0.6897) -- (3.4706,1.3563);
+\draw[gpiImprove] (3.4706,1.3563) -- (3.8994,0.8356);
+\draw[gpiEval] (3.8994,0.8356) -- (4.0495,1.2322);
+\draw[gpiImprove] (4.0495,1.2322) -- (4.3047,0.9224);
+\draw[gpiEval] (4.3047,0.9224) -- (4.3940,1.1584);
+\draw[gpiImprove] (4.3940,1.1584) -- (4.5458,0.9741);
+\end{scope}
+\begin{scope}[xshift=6.9cm]
+\node[font=\footnotesize\bfseries] at (2.45,2.65) {Partial policy evaluation};
+\draw[SessionMuted,line width=.6pt] (0,2.1) -- (4.9,1.05) -- (0,0);
+\node[font=\scriptsize,anchor=south,fill=SessionPaper,inner sep=1pt] at (2.1,1.77) {\(V=V^\sigma\)};
+\node[font=\scriptsize,anchor=north] at (2.25,.34) {\(\sigma\) greedy w.r.t. \(V\)};
+\fill[SessionCharcoal] (4.9,1.05) circle (1.1pt);
+\node[font=\scriptsize,anchor=west] at (4.96,1.05) {\(V^*,\sigma^*\)};
+\fill[SessionCharcoal] (0.15,0.65) circle (1pt);
+\draw[gpiEval] (0.1500,0.6500) -- (0.8625,1.3458);
+\draw[gpiImprove] (0.8625,1.3458) -- (2.0738,0.4444);
+\draw[gpiEval] (2.0738,0.4444) -- (2.4977,1.0606);
+\draw[gpiImprove] (2.4977,1.0606) -- (3.2184,0.6897);
+\draw[gpiEval] (3.2184,0.6897) -- (3.4706,1.0563);
+\draw[gpiImprove] (3.4706,1.0563) -- (3.8994,0.8356);
+\draw[gpiEval] (3.8994,0.8356) -- (4.0495,1.0538);
+\draw[gpiImprove] (4.0495,1.0538) -- (4.3047,0.9224);
+\draw[gpiEval] (4.3047,0.9224) -- (4.3940,1.0522);
+\draw[gpiImprove] (4.3940,1.0522) -- (4.5458,0.9741);
+\end{scope}
+\end{tikzpicture}
+\caption{Full and partial policy evaluation within GPI (schematic).}
+\end{figure}
+\vspace{-.15cm}
+{\footnotesize
+\textcolor{CourseVariableColor}{\textbf{Policy evaluation}} moves toward \(\modelvar{V=V^\sigma}\).
+\textcolor{SessionTeal}{\textbf{Policy improvement}} makes \(\modelvar{\sigma}\) greedy with respect to \(\modelvar{V}\).
+\par\smallskip
+At the intersection, both conditions hold: \(\modelvar{V=T_\sigma V=TV}\), so \(\modelvar{V=V^*}\) and \(\modelvar{\sigma}\) is optimal.
+\par\smallskip
+\textcolor{SessionMuted}{Concept adapted from Sutton and Barto (2018), Section 4.6, pp. 86--87.}}
+\end{frame}
+
 \begin{frame}{Modified Policy Iteration}
 \small
-Full evaluation can be costly. \term{Modified policy iteration} performs a fixed number \(\modelvar{m\geq1}\) of evaluation updates between improvements.
+In GPI, the evaluation arrows may stop short of full consistency. \term{Modified policy iteration} implements this using a fixed number \(\modelvar{m\geq1}\) of policy evaluation updates between policy improvements.
 \begin{enumerate}
-\item Given a candidate \(\modelvar{V_k}\), choose a greedy policy:
+\item \textbf{Policy improvement.} Choose a policy greedy with respect to the current candidate \(\modelvar{V_k}\):
 \[\sigma_{k+1}(s)\in\argmax_{a\in\Aset(s)}\{r(s,a)+\beta\E[V_k(s')\mid s,a]\}.\]
-\item Hold \(\modelvar{\sigma_{k+1}}\) fixed. Set \(\modelvar{V_{k,0}=V_k}\), then compute
+\item \textbf{Policy evaluation.} Hold \(\modelvar{\sigma_{k+1}}\) fixed. Set \(\modelvar{V_{k,0}=V_k}\), then compute
 \[V_{k,j+1}=T_{\sigma_{k+1}}V_{k,j},\qquad j=0,\ldots,m-1.\]
 \item Set \(\modelvar{V_{k+1}=V_{k,m}}\) and repeat.
 \end{enumerate}
@@ -446,18 +506,17 @@ Full evaluation can be costly. \term{Modified policy iteration} performs a fixed
 
 \begin{frame}{Choosing the Amount of Policy Evaluation}
 \small
-\textbf{One update: VFI.} Since \(\modelvar{\sigma_{k+1}}\) is greedy with respect to \(\modelvar{V_k}\),
+\textbf{One policy evaluation update: VFI.} Since \(\modelvar{\sigma_{k+1}}\) is greedy with respect to \(\modelvar{V_k}\),
 \[T_{\sigma_{k+1}}V_k=TV_k.\]
 Setting \(\modelvar{m=1}\) therefore gives \(\modelvar{V_{k+1}=TV_k}\).
 \par\medskip
-\textbf{Several updates: modified policy iteration.} Extra updates reuse the chosen actions. They avoid a new maximization while refining the value estimate.
+\textbf{Several policy evaluation updates: modified policy iteration.} Extra updates reuse the chosen actions. They avoid a new maximization while refining the value estimate.
 \par\medskip
-\textbf{Full evaluation: PFI.} Continuing evaluation to its fixed point gives \(\modelvar{V^{\sigma_{k+1}}}\); the next improvement uses that policy's value.
+\textbf{Full policy evaluation: PFI.} Continuing evaluation to its fixed point gives \(\modelvar{V^{\sigma_{k+1}}}\); the next policy improvement uses that policy's value.
 \par\medskip
-\begin{itemize}
-\item More evaluation work can reduce the number of policy improvements.
-\item The fastest choice depends on the costs of action search, expectation calculation, and policy evaluation. Fewer outer iterations need not mean less computation.
-\end{itemize}
+For a finite MDP under our discounted, bounded-reward assumptions, these exact updates converge to \(\modelvar{V^*}\), including any fixed \(\modelvar{m\geq1}\).
+\par\smallskip
+The choice balances the cost of policy evaluation against the number of policy improvements.
 \end{frame}
 
 \begin{frame}{Policy Iteration with Continuous States}
