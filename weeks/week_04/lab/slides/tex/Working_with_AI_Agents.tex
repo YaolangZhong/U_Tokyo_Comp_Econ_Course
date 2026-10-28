@@ -12,7 +12,7 @@
 \item \textbf{Choose and direct an agent}
   \begin{itemize}
   \item Model families, agent applications, and the harness
-  \item A task prompt and the tool execution loop
+  \item The tool execution loop and a concrete task prompt
   \end{itemize}
 \item \textbf{Manage the information it uses}
   \begin{itemize}
@@ -48,11 +48,6 @@ Examples: DeepSeek-V4-Pro, DeepSeek-V4.1-Flash.
 \begin{frame}{Agent Applications: LLM + Harness}
 \small
 An \term{agent harness} is the software surrounding an LLM. It provides \term{tools} and coordinates their use to complete a task.
-\[
-\underbrace{\text{LLM}}_{\text{selects actions}}
-+\underbrace{\text{harness}}_{\text{tools, context, and execution loop}}
-=\text{AI agent}
-\]
 Tools available through a harness can include:
 \begin{itemize}
 \setlength{\itemsep}{1mm}
@@ -62,7 +57,11 @@ Tools available through a harness can include:
 \item \textbf{External services:} access a database, cloud drive, or other connected service.
 \end{itemize}
 The harness prepares the model's context, handles permissions, executes requested tools, and returns their results to the model.
-\par\medskip
+\[
+\underbrace{\text{LLM}}_{\text{selects actions}}
++\underbrace{\text{harness}}_{\text{tools, context, and execution loop}}
+=\text{AI agent}
+\]
 \textbf{Agent applications:}
 \href{https://developers.openai.com/blog/codex-as-a-platform}{Codex} (OpenAI),
 \href{https://code.claude.com/docs/en/how-claude-code-works}{Claude Code} (Anthropic),
@@ -71,25 +70,10 @@ The harness prepares the model's context, handles permissions, executes requeste
 \href{https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github}{GitHub Copilot} (GitHub).
 \end{frame}
 
-\begin{frame}{Specify the Task with a Prompt}
+\begin{frame}{How an Agent Completes a Task}
 \small
-A \term{task prompt} tells the agent what to do now. Give the input, desired output, constraints, and a way to check completion.
-\par\medskip
-\courseexample{Our task: a temperature chart}\par
-The working folder contains \texttt{data.csv}, with columns \texttt{date} and \texttt{temperature\_c}.
-\begin{quote}\small
-Create \texttt{plot\_temperature.py} to plot daily temperature in date order. Label the axes Date and Temperature (Celsius), and save the chart to \texttt{results/temperature.png}.
-\par\smallskip
-Keep the input data unchanged. Use the project Python environment. Run the script, inspect the chart, and check the dates, values, and units. Report the files changed and the command used.
-\end{quote}
-\par\smallskip
-This gives the agent an observable target: a runnable script and a checked chart.
-\sourcehint{OpenAI, Prompt engineering}{https://developers.openai.com/api/docs/guides/prompt-engineering}
-\end{frame}
-
-\begin{frame}{From a Prompt to Tool Execution}
-\small
-The model requests an action; the harness runs the tool and returns its result for the next step.
+\setlength{\abovecaptionskip}{2pt}
+A \term{task prompt} states what you want done. The agent uses each tool result to decide its next step.
 \begin{figure}\centering
 \begin{tikzpicture}
 \node[agentNode] (m) {Model requests\\an action};
@@ -100,12 +84,31 @@ The model requests an action; the harness runs the tool and returns its result f
 \end{tikzpicture}
 \caption{Request, execute, and use the result.}
 \end{figure}
-\courseexample{Chart task:} read CSV $\rightarrow$ write script $\rightarrow$ run Python $\rightarrow$ inspect chart $\rightarrow$ revise if needed.
 \begin{itemize}
-\item A \term{CLI} accepts text commands, such as \texttt{python plot\_temperature.py}. The \term{terminal} hosts the session; the \term{shell} interprets commands.
+\item The model writes a \textbf{script}; a tool runs it and returns output or errors. The model checks the result and revises the code.
+\item A \term{CLI} accepts text commands, such as \texttt{python analysis.py}. The \term{terminal} hosts the session; the \term{shell} interprets commands.
 \end{itemize}
-\textbf{Use programs for repeatable rules; use the model for interpretation.} Once checked, the plotting script can run again on new data.
+\textbf{Use programs for repeatable work.} Reuse a checked script on new data; use the model to design, revise, and interpret it.
 \sourcehint{CarpeDiem, Code is the most handy tool for AI}{https://www.bilibili.com/video/BV1dQtx66E9K}
+\end{frame}
+
+\begin{frame}{From a Vague Request to a Concrete Task}
+\small
+To direct this workflow, specify the input, output, constraints, and checks in your prompt.
+\par\smallskip
+\courseexample{Suppose you receive a new temperature file each week.}\par
+Each \texttt{data.csv} contains \texttt{date} and \texttt{temperature\_c}. You want a chart now and a procedure you can reuse next week.
+\par\smallskip
+\textbf{Vague prompt}\par
+``Make a chart from my data.''
+\par\smallskip
+\textbf{Concrete prompt}\par
+``Write \texttt{plot\_temperature.py} to read \texttt{data.csv}, sort by date, and save a line chart to \texttt{results/temperature.png}. Label the axes Date and Temperature (Celsius).
+\par\smallskip
+Keep the input unchanged. Use the project Python environment. Run the script, check the dates, values, and units against the CSV, and inspect the chart. Report the files changed and the command used.''
+\par\smallskip
+\textbf{Result to check:} the chart and a reusable script. Next week, run the same script on the new file.
+\sourcehint{OpenAI, Prompt engineering}{https://developers.openai.com/api/docs/guides/prompt-engineering}
 \end{frame}
 
 \begin{frame}{The Prompt Is Part of the Context}
