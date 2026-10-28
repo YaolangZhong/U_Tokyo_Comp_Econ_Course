@@ -12,17 +12,18 @@
 \item \textbf{Choose and direct an agent}
   \begin{itemize}
   \item Model families, agent applications, and the harness
-  \item The tool execution loop and a concrete task prompt
+  \item Tool execution, CLI, and MCP
+  \item A concrete task prompt
   \end{itemize}
 \item \textbf{Manage the information it uses}
   \begin{itemize}
   \item Context, tokens, compaction, and caching
   \item Project instructions and reusable skills
   \end{itemize}
-\item \textbf{Connect, check, and reuse its work}
+\item \textbf{Check and reuse its work}
   \begin{itemize}
-  \item External tools through MCP
   \item Inspect the result and rerun the program
+  \item Practice with a reusable script
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -86,10 +87,34 @@ A \term{task prompt} states what you want done. The agent uses each tool result 
 \end{figure}
 \begin{itemize}
 \item The model writes a \textbf{script}; a tool runs it and returns output or errors. The model checks the result and revises the code.
-\item A \term{CLI} accepts text commands, such as \texttt{python analysis.py}. The \term{terminal} hosts the session; the \term{shell} interprets commands.
+\item A \term{command-line interface (CLI)} lets you operate software with text commands. For example, \texttt{git status} lists repository changes; the harness can run it and return the output.
 \end{itemize}
-\textbf{Use programs for repeatable work.} Reuse a checked script on new data; use the model to design, revise, and interpret it.
+\textbf{Use programs for repeatable work:} run a checked script again on new data.
 \sourcehint{CarpeDiem, Code is the most handy tool for AI}{https://www.bilibili.com/video/BV1dQtx66E9K}
+\end{frame}
+
+\begin{frame}{Connect Tools through MCP}
+\small
+\setlength{\abovecaptionskip}{2pt}
+The harness can also connect to tools supplied by another program, such as a cloud-drive connector.
+\par\smallskip
+\term{Model Context Protocol (MCP)} standardizes how an AI application communicates with servers exposing tools and context.
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[agentNode,text width=3.1cm] (h) {Agent application\\with an MCP client};
+\node[agentNode,right=9mm of h] (s) {MCP server};
+\node[agentNode,right=9mm of s] (d) {Cloud drive};
+\draw[agentArrow,<->] (h)--node[above,font=\scriptsize]{MCP}(s);
+\draw[agentArrow,<->] (s)--(d);
+\end{tikzpicture}
+\caption{The harness connects to a cloud-drive tool through MCP.}
+\end{figure}
+\begin{itemize}
+\item A server can offer \textbf{tools} to act, \textbf{resources} to read, and \textbf{prompt templates} to reuse.
+\item For example, the model requests a file; the harness calls the server's download tool and returns the result to the model.
+\item A \textbf{CLI} operates a program through text commands; \textbf{MCP} defines how applications discover and call tools supplied by servers.
+\end{itemize}
+\sourcehint{Model Context Protocol, Architecture overview}{https://modelcontextprotocol.io/docs/learn/architecture}
 \end{frame}
 
 \begin{frame}{From a Vague Request to a Concrete Task}
@@ -207,28 +232,7 @@ The agent discovers a skill by its name and description, then loads its instruct
 \sourcehint{Agent Skills, Overview}{https://agentskills.io/home}
 \end{frame}
 
-\begin{frame}{Connect External Tools with MCP}
-\small
-Suppose the CSV is stored in a shared cloud folder. The agent needs an authorized way to retrieve it.
-\par\smallskip
-\term{Model Context Protocol (MCP)} standardizes how an AI application communicates with servers exposing tools and context.
-\begin{figure}\centering
-\begin{tikzpicture}
-\node[agentNode,text width=3.1cm] (h) {Agent application\\with an MCP client};
-\node[agentNode,right=9mm of h] (s) {MCP server};
-\node[agentNode,right=9mm of s] (d) {Cloud drive};
-\draw[agentArrow,<->] (h)--node[above,font=\scriptsize]{MCP}(s);
-\draw[agentArrow,<->] (s)--(d);
-\end{tikzpicture}
-\caption{An external connection for the same chart task.}
-\end{figure}
-\begin{itemize}
-\item A server can offer \textbf{tools} to act, \textbf{resources} to read, and \textbf{prompt templates} to reuse.
-\item A drive tool could retrieve the CSV; the agent then uses its existing plotting workflow.
-\item Local files can use the application's file tools directly. Add an MCP connection when a needed service provides one.
-\end{itemize}
-\sourcehint{Model Context Protocol, Architecture overview}{https://modelcontextprotocol.io/docs/learn/architecture}
-\end{frame}
+
 
 \begin{frame}{Verify the Work Before Reusing It}
 \small
