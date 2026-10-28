@@ -82,57 +82,59 @@ Tools can be accessed through different interfaces:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{The Harness: Connecting Tools through MCP}
+\begin{frame}{How the Harness Accesses Tools}
 \small
 \setlength{\abovecaptionskip}{2pt}
-The harness can also connect to tools supplied by another program, such as a cloud-drive connector.
-\par\smallskip
-An \term{MCP client} in the harness sends requests to an \term{MCP server}, which exposes the available tools and information.
+The \term{harness} can access tools through \term{CLI} and \term{MCP} interfaces.
 \begin{figure}\centering
-\begin{tikzpicture}
-\node[agentNode,text width=3.1cm] (h) {Harness with\\an MCP client};
-\node[agentNode,right=9mm of h] (s) {MCP server};
-\node[agentNode,right=9mm of s] (d) {Cloud drive};
-\draw[agentArrow,<->] (h)--node[above,font=\scriptsize]{MCP}(s);
-\draw[agentArrow,<->] (s)--(d);
+\begin{tikzpicture}[x=1cm,y=1cm,scale=.94,transform shape]
+\draw[draw=SessionTeal,fill=SessionTealLight!35,rounded corners=2mm] (1.25,-1.45) rectangle (6.4,1.65);
+\node[font=\small\bfseries,text=SessionTeal] at (3.8,1.35) {Harness};
+\node[agentNode,text width=1.1cm] (llm) at (0,0) {LLM};
+\node[agentNode,text width=1.9cm] (h) at (2.4,0) {Context +\\permissions};
+\node[agentNode,text width=1.8cm] (cli) at (5,.65) {Command\\runner};
+\node[agentNode,text width=1.8cm] (client) at (5,-.75) {MCP client};
+\node[agentNode,text width=1.9cm] (program) at (8,.65) {CLI program\\Git / Python};
+\node[agentNode,text width=1.9cm] (server) at (8,-.75) {MCP server};
+\node[agentNode,text width=1.7cm] (drive) at (10.9,-.75) {Cloud drive};
+\draw[agentArrow,<->] (llm)--(h);
+\draw[agentArrow,<->] (h.east)--++(.3,0)|-(cli.west);
+\draw[agentArrow,<->] (h.east)--++(.3,0)|-(client.west);
+\draw[agentArrow,<->] (cli)--(program);
+\draw[agentArrow,<->] (client)--node[above,font=\scriptsize]{MCP}(server);
+\draw[agentArrow,<->] (server)--(drive);
 \end{tikzpicture}
-\caption{The harness connects to a cloud-drive tool through MCP.}
+\caption{Two routes for tool requests and results.}
 \end{figure}
 \begin{itemize}
-\item A server can offer \textbf{tools} to act, \textbf{resources} to read, and \textbf{prompt templates} to reuse.
-\item For example, the LLM requests a file; the harness calls the server's download tool and returns the result to the LLM.
-\item The same protocol lets different applications connect to compatible servers. Available actions still depend on the server and access permissions.
+\item \textbf{CLI route:} run \texttt{git status} through the command runner and capture its output.
+\item \textbf{MCP route:} call a server's download tool through the MCP client and receive the file.
 \end{itemize}
 \sourcehint{Model Context Protocol, Architecture overview}{https://modelcontextprotocol.io/docs/learn/architecture}
 \end{frame}
 
-\begin{frame}{The Agent: LLM + Harness}
+\begin{frame}{The Agent: Coordinating a Task}
 \small
-\setlength{\abovecaptionskip}{2pt}
 \[
-\underbrace{\text{LLM}}_{\text{selects actions}}
-+\underbrace{\text{harness}}_{\text{tools, context, and execution loop}}
+\underbrace{\text{LLM}}_{\text{interprets and selects actions}}
++\underbrace{\text{harness}}_{\text{context, tools, and execution}}
 =\text{AI agent}
 \]
+\courseexample{Task: turn a CSV in a shared drive into a checked chart.}
+\begin{enumerate}
+\setlength{\itemsep}{.8mm}
+\item \textbf{Receive the task.} The harness supplies the user's prompt, relevant context, and available tools to the LLM.
+\item \textbf{Get the data.} The LLM requests the file; the harness calls the download tool through MCP and returns the result.
+\item \textbf{Make the chart.} The LLM generates a script; the harness saves it with a file tool and runs it through Python's CLI.
+\item \textbf{Check and continue.} The harness returns output, errors, and the chart through available tools. The LLM inspects them, requests revisions if needed, and reports the result.
+\end{enumerate}
+\par\smallskip
 \textbf{Agent applications:}
 \href{https://developers.openai.com/blog/codex-as-a-platform}{Codex} (OpenAI),
 \href{https://code.claude.com/docs/en/how-claude-code-works}{Claude Code} (Anthropic),
 \href{https://cursor.com/docs/agent/overview}{Cursor Agent} (Cursor),
 \href{https://geminicli.com/docs/}{Gemini CLI} (Google), and
 \href{https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github}{GitHub Copilot} (GitHub).
-
-\par\smallskip
-A \term{task prompt} states what you want done. The LLM uses each tool result to decide its next step.
-\begin{figure}\centering
-\begin{tikzpicture}
-\node[agentNode] (m) {LLM requests\\an action};
-\node[agentNode,right=7mm of m] (t) {Harness executes\\the tool};
-\node[agentNode,right=7mm of t] (o) {Tool result\\returns to LLM};
-\draw[agentArrow](m)--(t);\draw[agentArrow](t)--(o);
-\draw[agentArrow](o.south)--++(0,-.3)-|(m.south);
-\end{tikzpicture}
-\caption{Request, execute, and use the result.}
-\end{figure}
 \end{frame}
 
 \begin{frame}{From a Vague Request to a Concrete Task}
