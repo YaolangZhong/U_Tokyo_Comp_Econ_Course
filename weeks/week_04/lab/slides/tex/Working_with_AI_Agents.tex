@@ -47,20 +47,28 @@ Examples: DeepSeek-V4-Pro, DeepSeek-V4.1-Flash.
 
 \begin{frame}{Agent Applications: LLM + Harness}
 \small
-An \term{agent harness} is the software around an LLM: it prepares the model's input, runs its requested \term{tools}, and returns the results to the model.
+An \term{agent harness} is the software surrounding an LLM. It provides \term{tools} and coordinates their use to complete a task.
 \[
 \underbrace{\text{LLM}}_{\text{selects actions}}
-+\underbrace{\text{harness}}_{\text{executes actions and manages context}}
++\underbrace{\text{harness}}_{\text{tools, context, and execution loop}}
 =\text{AI agent}
 \]
+Tools available through a harness can include:
 \begin{itemize}
-\setlength{\itemsep}{1.6mm}
-\item \href{https://developers.openai.com/blog/codex-as-a-platform}{\textbf{Codex}} (OpenAI): the \textbf{Codex harness} powers its app and command-line tool. A GPT model requests a file edit or command; the harness applies the edit or runs the command, subject to permissions.
-\item \href{https://code.claude.com/docs/en/how-claude-code-works}{\textbf{Claude Code}} (Anthropic): provides a harness around a Claude model. If the model requests a file, Claude Code reads it and sends its contents back to the model.
-\item \href{https://cursor.com/docs/agent/overview}{\textbf{Cursor Agent}} (Cursor): provides the agent workflow inside a code editor.
-\item \href{https://geminicli.com/docs/}{\textbf{Gemini CLI}} (Google): provides the agent workflow in a terminal.
-\item \href{https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github}{\textbf{GitHub Copilot}} (GitHub): provides agent features for coding and repository tasks.
+\setlength{\itemsep}{1mm}
+\item \textbf{Files and coding:} search, read, create, and edit files.
+\item \textbf{Execution:} run Python, terminal commands, and tests.
+\item \textbf{Web access:} search the web, retrieve pages, and operate a browser.
+\item \textbf{External services:} access a database, cloud drive, or other connected service.
 \end{itemize}
+The harness prepares the model's context, handles permissions, executes requested tools, and returns their results to the model.
+\par\medskip
+\textbf{Agent applications:}
+\href{https://developers.openai.com/blog/codex-as-a-platform}{Codex} (OpenAI),
+\href{https://code.claude.com/docs/en/how-claude-code-works}{Claude Code} (Anthropic),
+\href{https://cursor.com/docs/agent/overview}{Cursor Agent} (Cursor),
+\href{https://geminicli.com/docs/}{Gemini CLI} (Google), and
+\href{https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github}{GitHub Copilot} (GitHub).
 \end{frame}
 
 \begin{frame}{Specify the Task with a Prompt}
