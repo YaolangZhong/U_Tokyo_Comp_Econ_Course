@@ -4,10 +4,14 @@
 \title[Working with AI Agents]{Lab: Working with AI Agents}
 \tikzset{agentNode/.style={draw=SessionTeal,fill=SessionTealLight,rounded corners=1mm,align=center,font=\small,minimum height=9mm,text width=2.45cm,inner sep=4pt},agentArrow/.style={-{Stealth[length=1.5mm]},line width=.8pt,draw=SessionCharcoal}}
 \tikzset{agentRequest/.style={-{Stealth[length=1.5mm]},line width=.8pt,draw=SessionTeal},agentResult/.style={-{Stealth[length=1.5mm]},line width=.8pt,dashed,draw=SessionMuted}}
+\newif\ifShowExtendedAIContent
+\ShowExtendedAIContentfalse
 \begin{document}
 \makecoursetitle
 
+\ifShowExtendedAIContent
 \begin{frame}{Lab Overview}
+
 \begin{itemize}
 \item \textbf{Choose and direct an agent}
   \begin{itemize}
@@ -26,6 +30,27 @@
   \end{itemize}
 \end{itemize}
 \end{frame}
+\else
+\begin{frame}{Lab Overview}
+\begin{itemize}
+\item \textbf{Large language models}
+  \begin{itemize}
+  \item Model families and developers
+  \item Performance, reliability, cost, and capabilities
+  \end{itemize}
+\item \textbf{The harness}
+  \begin{itemize}
+  \item Tools and execution interfaces: CLI and MCP
+  \item Requests, results, context, and permissions
+  \end{itemize}
+\item \textbf{The agent}
+  \begin{itemize}
+  \item LLM + harness and agent applications
+  \item Coordinating a task from input to checked output
+  \end{itemize}
+\end{itemize}
+\end{frame}
+\fi
 
 \begin{frame}{LLM Families and Developers}
 \small
@@ -135,6 +160,8 @@ An \term{LLM-based AI agent} pursues a task by selecting actions, using tools, a
 \end{figure}
 \end{frame}
 
+% Retained material for a later session.
+\ifShowExtendedAIContent
 \begin{frame}{From a Vague Request to a Concrete Task}
 \small
 A concrete prompt makes the intended result and the criteria for success explicit.
@@ -316,4 +343,38 @@ A script that runs successfully can still produce the wrong chart.
   {}
 \end{frame}
 % END MANAGED READINGS: week4_ai_agents
+\else
+% BEGIN MANAGED READINGS: week4_ai_agents_intro
+\begin{frame}{References and Further Reading}
+\coursereading{1}
+  {OpenAI, Agent and Codex documentation. [Documentation]}
+  {https://developers.openai.com/blog/codex-as-a-platform}
+  {\begin{itemize}
+\item \href{https://developers.openai.com/blog/codex-as-a-platform}{Codex as a platform: build on the open agent harness}
+\end{itemize}}
+\coursereading{2}
+  {Anthropic, Claude model and Claude Code documentation. [Documentation]}
+  {https://platform.claude.com/docs/en/models/fable-5/overview}
+  {\begin{itemize}
+\item \href{https://code.claude.com/docs/en/overview}{Claude Code: Overview}
+\end{itemize}}
+\coursereading{3}
+  {Microsoft, Visual Studio Code: agent and terminal documentation. [Documentation]}
+  {https://code.visualstudio.com/docs/agents/concepts/agent-harnesses}
+  {\begin{itemize}
+\item \href{https://code.visualstudio.com/docs/agents/concepts/agent-harnesses}{Understand agent harnesses}
+\end{itemize}}
+\coursereading{4}
+  {Model Context Protocol contributors, Model Context Protocol documentation. [Documentation]}
+  {https://modelcontextprotocol.io/docs/learn/architecture}
+  {\begin{itemize}
+\item \href{https://modelcontextprotocol.io/docs/learn/architecture}{Architecture overview}
+\end{itemize}}
+\coursereading{5}
+  {Artificial Analysis, Benchmarking methodology. [Web resource]}
+  {https://artificialanalysis.ai/methodology}
+  {}
+\end{frame}
+% END MANAGED READINGS: week4_ai_agents_intro
+\fi
 \end{document}
