@@ -3,6 +3,7 @@
 \input{\CourseTemplatePath course_preamble.tex}
 \title[Working with AI Agents]{Lab: Working with AI Agents}
 \tikzset{agentNode/.style={draw=SessionTeal,fill=SessionTealLight,rounded corners=1mm,align=center,font=\small,minimum height=9mm,text width=2.45cm,inner sep=4pt},agentArrow/.style={-{Stealth[length=1.5mm]},line width=.8pt,draw=SessionCharcoal}}
+\tikzset{agentRequest/.style={-{Stealth[length=1.5mm]},line width=.8pt,draw=SessionTeal},agentResult/.style={-{Stealth[length=1.5mm]},line width=.8pt,dashed,draw=SessionMuted}}
 \newcommand{\sourcehint}[2]{\par\smallskip{\tiny\color{SessionMuted}Reading: \href{#2}{#1}.}}
 \begin{document}
 \makecoursetitle
@@ -85,49 +86,54 @@ Tools can be accessed through different interfaces:
 \begin{frame}{How the Harness Accesses Tools}
 \small
 \setlength{\abovecaptionskip}{2pt}
-The \term{harness} can access tools through \term{CLI} and \term{MCP} interfaces.
+The harness executes requests and supplies results as input to the next LLM call.
 \begin{figure}\centering
-\begin{tikzpicture}[x=1cm,y=1cm,scale=.94,transform shape]
-\draw[draw=SessionTeal,fill=SessionTealLight!35,rounded corners=2mm] (1.25,-1.45) rectangle (6.4,1.65);
-\node[font=\small\bfseries,text=SessionTeal] at (3.8,1.35) {Harness};
-\node[agentNode,text width=1.1cm] (llm) at (0,0) {LLM};
-\node[agentNode,text width=1.9cm] (h) at (2.4,0) {Context +\\permissions};
-\node[agentNode,text width=1.8cm] (cli) at (5,.65) {Command\\runner};
-\node[agentNode,text width=1.8cm] (client) at (5,-.75) {MCP client};
-\node[agentNode,text width=1.9cm] (program) at (8,.65) {CLI program\\Git / Python};
-\node[agentNode,text width=1.9cm] (server) at (8,-.75) {MCP server};
-\node[agentNode,text width=1.7cm] (drive) at (10.9,-.75) {Cloud drive};
-\draw[agentArrow,<->] (llm)--(h);
-\draw[agentArrow,<->] (h.east)--++(.3,0)|-(cli.west);
-\draw[agentArrow,<->] (h.east)--++(.3,0)|-(client.west);
-\draw[agentArrow,<->] (cli)--(program);
-\draw[agentArrow,<->] (client)--node[above,font=\scriptsize]{MCP}(server);
-\draw[agentArrow,<->] (server)--(drive);
+\begin{tikzpicture}[x=1cm,y=1cm]
+\node[agentNode,text width=1.1cm,minimum height=13mm] (l) at (0,0) {LLM};
+\node[agentNode,text width=3.0cm,minimum height=31mm] (h) at (4,0) {\textbf{Harness}\\[2mm]Prepare context\\Check permissions\\Execute tools};
+\node[agentNode,text width=2.8cm,minimum height=12mm] (c) at (9,.95) {CLI program\\Git / Python};
+\node[agentNode,text width=2.8cm,minimum height=12mm] (m) at (9,-.95) {MCP server\\Cloud-drive tools};
+\draw[agentRequest] ([yshift=3mm]l.east)--node[above,font=\scriptsize]{tool request}([yshift=3mm]h.west);
+\draw[agentResult] ([yshift=-3mm]h.west)--node[below,font=\scriptsize,align=center]{result +\\context}([yshift=-3mm]l.east);
+\draw[agentRequest] ([yshift=11.5mm]h.east)--node[above,font=\scriptsize]{command}([yshift=2mm]c.west);
+\draw[agentResult] ([yshift=-2mm]c.west)--node[below,font=\scriptsize]{output / errors}([yshift=7.5mm]h.east);
+\draw[agentRequest] ([yshift=-7.5mm]h.east)--node[above,font=\scriptsize]{tool call}([yshift=2mm]m.west);
+\draw[agentResult] ([yshift=-2mm]m.west)--node[below,font=\scriptsize]{returned data}([yshift=-11.5mm]h.east);
 \end{tikzpicture}
-\caption{Two routes for tool requests and results.}
+\caption{Solid arrows: requests. Dashed arrows: returned information.}
 \end{figure}
 \begin{itemize}
-\item \textbf{CLI route:} run \texttt{git status} through the command runner and capture its output.
-\item \textbf{MCP route:} call a server's download tool through the MCP client and receive the file.
+\item The \textbf{command runner} and \textbf{MCP client} are components used by the harness.
+\item CLI and MCP can work together in one task; an MCP server can itself run a CLI program. These are examples of tool access, not an exhaustive list.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{The Agent: Coordinating a Task}
 \small
-\[
-\underbrace{\text{LLM}}_{\text{interprets and selects actions}}
-+\underbrace{\text{harness}}_{\text{context, tools, and execution}}
-=\text{AI agent}
-\]
+\setlength{\abovecaptionskip}{2pt}
+{\centering\textbf{LLM + harness = AI agent}\par}\smallskip
 \courseexample{Task: turn a CSV in a shared drive into a checked chart.}
-\begin{enumerate}
-\setlength{\itemsep}{.8mm}
-\item \textbf{Receive the task.} The harness supplies the user's prompt, relevant context, and available tools to the LLM.
-\item \textbf{Get the data.} The LLM requests the file; the harness calls the download tool through MCP and returns the result.
-\item \textbf{Make the chart.} The LLM generates a script; the harness saves it with a file tool and runs it through Python's CLI.
-\item \textbf{Check and continue.} The harness returns output, errors, and the chart through available tools. The LLM inspects them, requests revisions if needed, and reports the result.
-\end{enumerate}
-\par\smallskip
+\begin{figure}\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\foreach \x/\label in {0/LLM,4.8/Harness,9.6/Tools}{
+ \node[agentNode,text width=2.0cm,minimum height=6mm,font=\small\bfseries] at (\x,.75){\label};
+ \draw[draw=SessionMuted!45] (\x,.4)--(\x,-2.85);
+}
+\draw[agentRequest] (0,0)--node[above,font=\scriptsize]{1.\ Retrieve CSV}(4.8,0);
+\draw[agentRequest] (4.8,0)--node[above,font=\scriptsize]{MCP: download tool}(9.6,0);
+\draw[agentResult] (9.6,-.45)--node[above,font=\scriptsize]{CSV file}(4.8,-.45);
+\draw[agentResult] (4.8,-.45)--node[above,font=\scriptsize]{CSV contents / path}(0,-.45);
+\draw[agentRequest] (0,-1.05)--node[above,font=\scriptsize]{2.\ Save and run script}(4.8,-1.05);
+\draw[agentRequest] (4.8,-1.05)--node[above,font=\scriptsize]{file tool + Python CLI}(9.6,-1.05);
+\draw[agentResult] (9.6,-1.5)--node[above,font=\scriptsize]{chart path; output / errors}(4.8,-1.5);
+\draw[agentResult] (4.8,-1.5)--node[above,font=\scriptsize]{execution results}(0,-1.5);
+\draw[agentRequest] (0,-2.1)--node[above,font=\scriptsize]{3.\ Open chart}(4.8,-2.1);
+\draw[agentRequest] (4.8,-2.1)--node[above,font=\scriptsize]{image-viewing tool}(9.6,-2.1);
+\draw[agentResult] (9.6,-2.55)--node[above,font=\scriptsize]{chart image}(4.8,-2.55);
+\draw[agentResult] (4.8,-2.55)--node[above,font=\scriptsize]{chart image}(0,-2.55);
+\end{tikzpicture}
+\caption{Download, run, and inspect; revise if needed, then report.}
+\end{figure}
 \textbf{Agent applications:}
 \href{https://developers.openai.com/blog/codex-as-a-platform}{Codex} (OpenAI),
 \href{https://code.claude.com/docs/en/how-claude-code-works}{Claude Code} (Anthropic),
