@@ -8,7 +8,7 @@
 
 - **Lab**
 
-    - [Working with AI Agents](lab/slides/pdf/Working_with_AI_Agents.pdf)
+    - [Introduction to AI Agents](lab/slides/pdf/Introduction_to_AI_Agents.pdf)
 
 - **Homework**
 

@@ -61,7 +61,7 @@
 
 - **Lab**
 
-    - [Working with AI Agents](week_04/lab/slides/pdf/Working_with_AI_Agents.pdf)
+    - [Introduction to AI Agents](week_04/lab/slides/pdf/Introduction_to_AI_Agents.pdf)
 
 - **Homework**
 
