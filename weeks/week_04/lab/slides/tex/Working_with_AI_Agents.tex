@@ -128,25 +128,25 @@ The requested output and checks make completion observable. If the environment i
 \sourcehint{Anthropic, Effective context engineering for AI agents}{https://www.anthropic.com/research/effective-context-engineering-for-ai-agents}
 \end{frame}
 
-\begin{frame}[fragile]{Tools, the Terminal, and CLI}
+\begin{frame}[fragile]{Programs, Tools, and CLI}
 \small
-A \term{tool} is a callable operation with inputs and a returned result: reading a file, editing code, or executing a command.
+A \term{tool} is an operation the agent can call, such as reading a file or running a program.
+\par\smallskip
+\textbf{Use programs for repeatable rules; use the model for interpretation and judgment.} An agent can write the program, run it, and inspect the result.
 \begin{itemize}
 \item A \term{CLI} (command-line interface) accepts text commands.
 \item The \term{terminal} hosts the session; the \term{shell} interprets commands.
 \end{itemize}
-\par\smallskip
-\courseexample{Commands in the chart project}
+\courseexample{Chart task: create once, reuse on new data}
 \begin{verbatim}
 python plot_temperature.py
-git diff
 \end{verbatim}
-Run the script after creating it; use \texttt{git diff} to review edits in a Git repository.
+The script reads the CSV, sorts dates, and draws the chart. Run it again when the data change; the model can help interpret the pattern.
 \par\smallskip
-The working directory and active Python environment determine which files and packages are used.
+The working directory and Python environment determine which files and packages are used.
 \par\smallskip
-An agent CLI accepts your tasks in a terminal. Agents in an IDE or app can also use shell tools.
-\sourcehint{VS Code, Terminal Basics}{https://code.visualstudio.com/docs/terminal/basics}
+Programs execute rules consistently; check that the rules and code are correct.
+\sourcehint{CarpeDiem, Code is the most handy tool for AI}{https://www.bilibili.com/video/BV1dQtx66E9K}
 \end{frame}
 
 \begin{frame}{MCP Connects an Agent to Capabilities}
@@ -256,12 +256,10 @@ date,temperature_c
 \begin{enumerate}
 \item Give the chart prompt to an agent with file and terminal access. In a chat-only workflow, attach the CSV and run the returned code yourself.
 \item Identify the model, the agent application, the context it reads, and one tool call with its result.
-\item Run \texttt{plot\_temperature.py}; inspect \texttt{results/temperature.png} and review the script.
+\item Run \texttt{plot\_temperature.py}; inspect the chart and review the script. Add one observation to the practice CSV and rerun the same script.
 \end{enumerate}
 \par\smallskip
 \textbf{Follow-up:} save the axis-unit convention as a project instruction. Package a repeated plotting procedure as a skill when supported.
-\par\smallskip
-File and shell tools are sufficient for this task. An MCP integration is useful when the CSV is stored in an external service.
 \end{frame}
 
 % BEGIN MANAGED READINGS: week4_ai_agents
@@ -311,6 +309,10 @@ File and shell tools are sufficient for this task. An MCP integration is useful 
 \item \href{https://agentskills.io/home}{Agent Skills Overview}
 \item \href{https://agentskills.io/specification}{Specification}
 \end{itemize}}
+\coursereading{7}
+  {CarpeDiem (2026), Code is the most handy tool for AI. [Video]}
+  {https://www.bilibili.com/video/BV1dQtx66E9K}
+  {}
 \end{frame}
 % END MANAGED READINGS: week4_ai_agents
 \end{document}

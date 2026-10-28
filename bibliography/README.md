@@ -28,31 +28,33 @@
 
 11. [**Jesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. \[Web resource\]**](https://www.sas.upenn.edu/~jesusfv/teaching.html)
 
+12. [**CarpeDiem (2026), Code is the most handy tool for AI. \[Video\]**](https://www.bilibili.com/video/BV1dQtx66E9K)
+
 ## Documentation and tools
 
-12. [**Git, Reference. \[Official documentation\]**](https://git-scm.com/docs)
+13. [**Git, Reference. \[Official documentation\]**](https://git-scm.com/docs)
 
-13. [**GitHub, GitHub Docs. \[Webpage\]**](https://docs.github.com/)
+14. [**GitHub, GitHub Docs. \[Webpage\]**](https://docs.github.com/)
 
-14. [**Microsoft, Visual Studio Code Documentation. \[Webpages\]**](https://code.visualstudio.com/docs)
+15. [**Microsoft, Visual Studio Code Documentation. \[Webpages\]**](https://code.visualstudio.com/docs)
 
-15. [**Python Software Foundation, Python.org and Python Documentation. \[Webpages\]**](https://www.python.org/)
+16. [**Python Software Foundation, Python.org and Python Documentation. \[Webpages\]**](https://www.python.org/)
 
-16. [**Google, Colaboratory. \[Online notebook service\]**](https://colab.research.google.com/)
+17. [**Google, Colaboratory. \[Online notebook service\]**](https://colab.research.google.com/)
 
-17. [**NumPy Developers, NumPy User Guide. \[Documentation\]**](https://numpy.org/doc/stable/user/absolute_beginners.html)
+18. [**NumPy Developers, NumPy User Guide. \[Documentation\]**](https://numpy.org/doc/stable/user/absolute_beginners.html)
 
-18. [**OpenAI, Agent and Codex documentation. \[Documentation\]**](https://developers.openai.com/blog/codex-as-a-platform)
+19. [**OpenAI, Agent and Codex documentation. \[Documentation\]**](https://developers.openai.com/blog/codex-as-a-platform)
 
-19. [**Anthropic (2025), Effective context engineering for AI agents. \[Technical article\]**](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents)
+20. [**Anthropic (2025), Effective context engineering for AI agents. \[Technical article\]**](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents)
 
-20. [**Microsoft, Visual Studio Code: agent and terminal documentation. \[Documentation\]**](https://code.visualstudio.com/docs/agents/concepts/agent-harnesses)
+21. [**Microsoft, Visual Studio Code: agent and terminal documentation. \[Documentation\]**](https://code.visualstudio.com/docs/agents/concepts/agent-harnesses)
 
-21. [**Model Context Protocol contributors, Model Context Protocol documentation. \[Documentation\]**](https://modelcontextprotocol.io/docs/learn/architecture)
+22. [**Model Context Protocol contributors, Model Context Protocol documentation. \[Documentation\]**](https://modelcontextprotocol.io/docs/learn/architecture)
 
-22. [**Agent Skills contributors, Agent Skills documentation. \[Documentation\]**](https://agentskills.io/home)
+23. [**Agent Skills contributors, Agent Skills documentation. \[Documentation\]**](https://agentskills.io/home)
 
-23. [**Anthropic, Claude model and Claude Code documentation. \[Documentation\]**](https://platform.claude.com/docs/en/models/fable-5/overview)
+24. [**Anthropic, Claude model and Claude Code documentation. \[Documentation\]**](https://platform.claude.com/docs/en/models/fable-5/overview)
 
 ## Papers
 
