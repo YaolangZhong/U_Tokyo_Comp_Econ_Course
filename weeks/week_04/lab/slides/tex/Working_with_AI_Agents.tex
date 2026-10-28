@@ -27,28 +27,25 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{The Large Language Model}
+\begin{frame}{LLM Families and Developers}
 \small
-A \term{large language model (LLM)} processes context and generates text, code, or structured tool requests.
+A \term{large language model (LLM)} processes context and generates text, code, or tool requests.
 \begin{itemize}
-\item \textbf{OpenAI} develops the \textbf{GPT} model family; for example, GPT-6 Astra.
-\item \textbf{Anthropic} develops the \textbf{Claude} model family; for example, Claude Fable 5.
+\setlength{\itemsep}{3mm}
+\item \href{https://developers.openai.com/api/docs/models}{\textbf{GPT family}} --- developed by \textbf{OpenAI}.\\
+Examples: GPT-6 Astra, GPT-6.1 Sol, GPT-6 Luna.
+\item \href{https://platform.claude.com/docs/en/models/overview}{\textbf{Claude family}} --- developed by \textbf{Anthropic}.\\
+Examples: Claude Fable 5, Claude Opus 5.5, Claude Sonnet 5.5.
+\item \href{https://ai.google.dev/gemini-api/docs/models}{\textbf{Gemini family}} --- developed by \textbf{Google DeepMind}.\\
+Examples: Gemini 4 Argon, Gemini 3.8 Flash.
+\item \href{https://docs.x.ai/developers/models}{\textbf{Grok family}} --- developed by \textbf{xAI}.\\
+Examples: Grok 4.20, Grok 4.7.
+\item \href{https://api-docs.deepseek.com/quick_start/pricing/}{\textbf{DeepSeek family}} --- developed by \textbf{DeepSeek}.\\
+Examples: DeepSeek-V4-Pro, DeepSeek-V4.1-Flash.
 \end{itemize}
-\par\medskip
-\begin{figure}\centering
-\begin{tikzpicture}
-\node[agentNode] (i) {Instructions\\and data};
-\node[agentNode,right=7mm of i] (m) {LLM};
-\node[agentNode,right=7mm of m] (o) {Text, code, or\\a tool request};
-\draw[agentArrow](i)--(m);\draw[agentArrow](m)--(o);
-\end{tikzpicture}
-\caption{One model call produces an output from its input.}
-\end{figure}
-\courseexample{A running example}\par
-``Read \texttt{data.csv} and create a chart of daily temperature.'' The model can generate Python code or request a file-reading tool.
 \end{frame}
 
-\begin{frame}{LLM + Harness = Agent}
+\begin{frame}{Agent Applications: LLM + Harness}
 \small
 An \term{agent harness} runs an LLM in a loop with tools, context, and execution controls.
 \[
@@ -56,21 +53,16 @@ An \term{agent harness} runs an LLM in a loop with tools, context, and execution
 +\underbrace{\text{harness}}_{\text{runs tools and manages context}}
 =\text{AI agent}
 \]
-\begin{figure}\centering
-\begin{tikzpicture}
-\node[agentNode] (m) {Model requests\\an action};
-\node[agentNode,right=7mm of m] (t) {Harness executes\\the tool};
-\node[agentNode,right=7mm of t] (o) {Result enters\\the next context};
-\draw[agentArrow](m)--(t);\draw[agentArrow](t)--(o);
-\draw[agentArrow](o.south)--++(0,-.3)-|(m.south);
-\end{tikzpicture}
-\caption{The agent loop repeats as work progresses.}
-\end{figure}
-\textbf{Agent applications: OpenAI’s Codex and Anthropic’s Claude Code.} Their harnesses manage tools, session state, and permissions around a supported model.
+\begin{itemize}
+\setlength{\itemsep}{2mm}
+\item \href{https://developers.openai.com/blog/codex-as-a-platform}{\textbf{Codex}} (OpenAI): an agent for coding and project work.
+\item \href{https://code.claude.com/docs/en/overview}{\textbf{Claude Code}} (Anthropic): an agent that reads files, edits code, and runs commands.
+\item \href{https://cursor.com/docs/agent/overview}{\textbf{Cursor Agent}} (Cursor): an agent integrated into the code editor.
+\item \href{https://geminicli.com/docs/}{\textbf{Gemini CLI}} (Google): an agent used through the terminal.
+\item \href{https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github}{\textbf{GitHub Copilot}} (GitHub): agent features for repository tasks and code review.
+\end{itemize}
 \par\smallskip
-\courseexample{Chart task:} read the CSV, write and run Python, inspect the chart, and revise it if needed.
-\par\smallskip
-A \term{sandbox} restricts execution; \term{approvals} authorize actions. Model choice and harness choice are separate decisions.
+An application may support several models. Choose the application and the model separately where supported.
 \end{frame}
 
 \begin{frame}{A Prompt Specifies the Task}

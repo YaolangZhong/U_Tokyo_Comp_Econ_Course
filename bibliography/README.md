@@ -56,6 +56,16 @@
 
 24. [**Anthropic, Claude model and Claude Code documentation. \[Documentation\]**](https://platform.claude.com/docs/en/models/fable-5/overview)
 
+25. [**Google, Gemini models and Gemini CLI documentation. \[Documentation\]**](https://ai.google.dev/gemini-api/docs/models)
+
+26. [**xAI, Grok model documentation. \[Documentation\]**](https://docs.x.ai/developers/models)
+
+27. [**DeepSeek, Model documentation. \[Documentation\]**](https://api-docs.deepseek.com/quick_start/pricing/)
+
+28. [**Cursor, Cursor Agent documentation. \[Documentation\]**](https://cursor.com/docs/agent/overview)
+
+29. [**GitHub, Copilot documentation. \[Documentation\]**](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github)
+
 ## Papers
 
 Research-paper readings will be announced here.
