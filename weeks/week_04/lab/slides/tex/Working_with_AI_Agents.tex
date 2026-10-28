@@ -46,19 +46,20 @@ Examples: DeepSeek-V4-Pro, DeepSeek-V4.1-Flash.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{How to Compare LLMs}
+\begin{frame}{How LLMs Are Evaluated}
 \small
-Compare several dimensions on the kind of task you want the model to perform.
+LLMs are commonly judged along the following dimensions.
 \begin{itemize}
 \setlength{\itemsep}{0mm}
 \item \term{Task performance}: accuracy or success on one attempt (\textbf{pass@1}). For example, Terminal-Bench tests tasks performed with terminal tools.
 \item \term{Reliability}: factual errors, instruction-following failures, and consistency across repeated runs.
-\item \term{Token use and cost}: a \textbf{token} is a unit of text, often part of a word. Count input and generated tokens, including reported reasoning. Compare price per million tokens and \textbf{cost per completed task}.
+\item \term{Token use and cost}: a \textbf{token} is a unit of text, often part of a word. Cost depends on token usage (including reported reasoning) and token prices; a useful measure is \textbf{cost per completed task}.
 \item \term{Speed}: time to the first answer token, output tokens per second, and total completion time. Longer reasoning can increase total time.
-\item \term{Task fit}: language and image support; context-window size and accuracy when using long documents.
+\item \term{Input capabilities}: supported languages and \textbf{multimodal inputs}, such as text, images, audio, and video.
+\item \term{Long-context performance}: context-window size and accuracy when using long documents.
 \end{itemize}
 \par\smallskip
-\textbf{Compare like with like:} check the tasks, prompts, tools, and reasoning settings. Test quality, cost, and time on your own workload.
+\textbf{Scores depend on the test setup:} extra attempts, additional tools, or more reasoning time can improve results while increasing cost.
 \sourcehint{Artificial Analysis, Benchmarking methodology}{https://artificialanalysis.ai/methodology}
 \end{frame}
 
