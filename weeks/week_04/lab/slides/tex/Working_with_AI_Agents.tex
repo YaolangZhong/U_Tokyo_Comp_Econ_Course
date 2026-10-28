@@ -63,10 +63,9 @@ LLMs are commonly judged along the following dimensions.
 \sourcehint{Artificial Analysis, Benchmarking methodology}{https://artificialanalysis.ai/methodology}
 \end{frame}
 
-\begin{frame}{Agent Applications: LLM + Harness}
+\begin{frame}{The Harness: Tools and Interfaces}
 \small
-An \term{agent harness} is the software surrounding an LLM. It provides \term{tools} and coordinates their use to complete a task.
-Tools available through a harness can include:
+A \term{harness} is the software surrounding an LLM. It supplies tools, manages context and permissions, and returns tool results to the LLM.
 \begin{itemize}
 \setlength{\itemsep}{1mm}
 \item \textbf{Files and coding:} search, read, create, and edit files.
@@ -74,7 +73,42 @@ Tools available through a harness can include:
 \item \textbf{Web access:} search the web, retrieve pages, and operate a browser.
 \item \textbf{External services:} access a database, cloud drive, or other connected service.
 \end{itemize}
-The harness prepares the model's context, handles permissions, executes requested tools, and returns their results to the model.
+\par\smallskip
+Tools can be accessed through different interfaces:
+\begin{itemize}
+\setlength{\itemsep}{1mm}
+\item A \term{command-line interface (CLI)} operates software through text commands. The harness can run \texttt{git status} to inspect repository changes.
+\item \term{Model Context Protocol (MCP)} standardizes how applications connect to servers providing tools and information.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Harness: Connecting Tools through MCP}
+\small
+\setlength{\abovecaptionskip}{2pt}
+The harness can also connect to tools supplied by another program, such as a cloud-drive connector.
+\par\smallskip
+An \term{MCP client} in the harness sends requests to an \term{MCP server}, which exposes the available tools and information.
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[agentNode,text width=3.1cm] (h) {Harness with\\an MCP client};
+\node[agentNode,right=9mm of h] (s) {MCP server};
+\node[agentNode,right=9mm of s] (d) {Cloud drive};
+\draw[agentArrow,<->] (h)--node[above,font=\scriptsize]{MCP}(s);
+\draw[agentArrow,<->] (s)--(d);
+\end{tikzpicture}
+\caption{The harness connects to a cloud-drive tool through MCP.}
+\end{figure}
+\begin{itemize}
+\item A server can offer \textbf{tools} to act, \textbf{resources} to read, and \textbf{prompt templates} to reuse.
+\item For example, the LLM requests a file; the harness calls the server's download tool and returns the result to the LLM.
+\item The same protocol lets different applications connect to compatible servers. Available actions still depend on the server and access permissions.
+\end{itemize}
+\sourcehint{Model Context Protocol, Architecture overview}{https://modelcontextprotocol.io/docs/learn/architecture}
+\end{frame}
+
+\begin{frame}{The Agent: LLM + Harness}
+\small
+\setlength{\abovecaptionskip}{2pt}
 \[
 \underbrace{\text{LLM}}_{\text{selects actions}}
 +\underbrace{\text{harness}}_{\text{tools, context, and execution loop}}
@@ -86,12 +120,9 @@ The harness prepares the model's context, handles permissions, executes requeste
 \href{https://cursor.com/docs/agent/overview}{Cursor Agent} (Cursor),
 \href{https://geminicli.com/docs/}{Gemini CLI} (Google), and
 \href{https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github}{GitHub Copilot} (GitHub).
-\end{frame}
 
-\begin{frame}{How an Agent Completes a Task}
-\small
-\setlength{\abovecaptionskip}{2pt}
-A \term{task prompt} states what you want done. The agent uses each tool result to decide its next step.
+\par\smallskip
+A \term{task prompt} states what you want done. The LLM uses each tool result to decide its next step.
 \begin{figure}\centering
 \begin{tikzpicture}
 \node[agentNode] (m) {LLM requests\\an action};
@@ -102,32 +133,6 @@ A \term{task prompt} states what you want done. The agent uses each tool result 
 \end{tikzpicture}
 \caption{Request, execute, and use the result.}
 \end{figure}
-\par\smallskip
-A \term{command-line interface (CLI)} lets you operate software with text commands. For example, \texttt{git status} lists repository changes; the harness can run it and return the output to the LLM.
-\end{frame}
-
-\begin{frame}{Connect Tools through MCP}
-\small
-\setlength{\abovecaptionskip}{2pt}
-The harness can also connect to tools supplied by another program, such as a cloud-drive connector.
-\par\smallskip
-\term{Model Context Protocol (MCP)} standardizes how an AI application communicates with servers exposing tools and context.
-\begin{figure}\centering
-\begin{tikzpicture}
-\node[agentNode,text width=3.1cm] (h) {Agent application\\with an MCP client};
-\node[agentNode,right=9mm of h] (s) {MCP server};
-\node[agentNode,right=9mm of s] (d) {Cloud drive};
-\draw[agentArrow,<->] (h)--node[above,font=\scriptsize]{MCP}(s);
-\draw[agentArrow,<->] (s)--(d);
-\end{tikzpicture}
-\caption{The harness connects to a cloud-drive tool through MCP.}
-\end{figure}
-\begin{itemize}
-\item A server can offer \textbf{tools} to act, \textbf{resources} to read, and \textbf{prompt templates} to reuse.
-\item For example, the LLM requests a file; the harness calls the server's download tool and returns the result to the LLM.
-\item A \textbf{CLI} operates a program through text commands; \textbf{MCP} defines how applications discover and call tools supplied by servers.
-\end{itemize}
-\sourcehint{Model Context Protocol, Architecture overview}{https://modelcontextprotocol.io/docs/learn/architecture}
 \end{frame}
 
 \begin{frame}{From a Vague Request to a Concrete Task}
