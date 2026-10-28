@@ -28,7 +28,7 @@
 
 11. [**Jesús Fernández-Villaverde, Teaching: Computation and Macroeconomics. \[Web resource\]**](https://www.sas.upenn.edu/~jesusfv/teaching.html)
 
-12. [**CarpeDiem (2026), Code is the most handy tool for AI. \[Video\]**](https://www.bilibili.com/video/BV1dQtx66E9K)
+12. [**CarpeDiem (2026), AI Learning from Zero: practical agent tutorials. \[Video series\]**](https://www.bilibili.com/video/BV1dQtx66E9K) Includes [Agent cost-saving tips (Part 1): tokens and context](https://www.bilibili.com/video/BV1fsbH6iEyq). Includes [Agent cost-saving tips (Part 2): context caching](https://www.bilibili.com/video/BV1ZUek6uE54).
 
 ## Documentation and tools
 

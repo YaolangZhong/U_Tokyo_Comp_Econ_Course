@@ -9,27 +9,29 @@
 
 \begin{frame}{Lab Overview}
 \begin{itemize}
-\item \textbf{How an agent works}
+\item \textbf{Choose and direct an agent}
   \begin{itemize}
-  \item The agent loop, the model, and the harness
-  \item Tools, CLI, and MCP
+  \item Model families, agent applications, and the harness
+  \item A task prompt and the tool execution loop
   \end{itemize}
-\item \textbf{How to direct its work}
+\item \textbf{Manage the information it uses}
   \begin{itemize}
-  \item Prompts, context, and persistent project instructions
-  \item Reusable procedures with skills
+  \item Context, tokens, compaction, and caching
+  \item Project instructions and reusable skills
   \end{itemize}
-\item \textbf{How to check the result}
+\item \textbf{Connect, check, and reuse its work}
   \begin{itemize}
-  \item Files, execution records, and reproducible outputs
-  \item One task throughout: turn a data file into a chart
+  \item External tools through MCP
+  \item Inspect the result and rerun the program
   \end{itemize}
 \end{itemize}
+\par\medskip
+\courseexample{One task throughout:} turn a CSV file into a temperature chart.
 \end{frame}
 
 \begin{frame}{LLM Families and Developers}
 \small
-A \term{large language model (LLM)} processes context and generates text, code, or tool requests.
+A \term{large language model (LLM)} processes context and generates text, code, or requests to perform actions.
 \begin{itemize}
 \setlength{\itemsep}{3mm}
 \item \href{https://developers.openai.com/api/docs/models}{\textbf{GPT family}} --- developed by \textbf{OpenAI}.\\
@@ -47,7 +49,7 @@ Examples: DeepSeek-V4-Pro, DeepSeek-V4.1-Flash.
 
 \begin{frame}{Agent Applications: LLM + Harness}
 \small
-An \term{agent harness} runs an LLM in a loop with tools, context, and execution controls.
+An \term{agent harness} supplies information to the model and executes its requested actions through \term{tools}, such as file readers and command runners.
 \[
 \underbrace{\text{LLM}}_{\text{selects actions}}
 +\underbrace{\text{harness}}_{\text{runs tools and manages context}}
@@ -65,180 +67,180 @@ An \term{agent harness} runs an LLM in a loop with tools, context, and execution
 An application may support several models. Choose the application and the model separately where supported.
 \end{frame}
 
-\begin{frame}{A Prompt Specifies the Task}
+\begin{frame}{Specify the Task with a Prompt}
 \small
-A \term{prompt} supplies instructions for the current task. Specify the result, inputs, constraints, and checks.
+A \term{task prompt} tells the agent what to do now. Give the input, desired output, constraints, and a way to check completion.
 \par\medskip
-\courseexample{A prompt for the chart task}
+\courseexample{Our task: a temperature chart}\par
+The working folder contains \texttt{data.csv}, with columns \texttt{date} and \texttt{temperature\_c}.
 \begin{quote}\small
-Read \texttt{data.csv}, which contains \texttt{date} and \texttt{temperature\_c}. Create \texttt{plot\_temperature.py} to plot daily temperature in date order.
+Create \texttt{plot\_temperature.py} to plot daily temperature in date order. Label the axes Date and Temperature (Celsius), and save the chart to \texttt{results/temperature.png}.
 \par\smallskip
-Label the axes Date and Temperature (Celsius). Save the chart to \texttt{results/temperature.png}. Keep the input data unchanged.
-\par\smallskip
-Run the script in the project environment and inspect the image. Check the dates, values, and units. Report the changed files, command used, and checks performed.
+Keep the input data unchanged. Use the project Python environment. Run the script, inspect the chart, and check the dates, values, and units. Report the files changed and the command used.
 \end{quote}
 \par\smallskip
-The requested output and checks make completion observable. If the environment is unavailable, ask the agent to report the blocker.
+This gives the agent an observable target: a runnable script and a checked chart.
 \sourcehint{OpenAI, Prompt engineering}{https://developers.openai.com/api/docs/guides/prompt-engineering}
 \end{frame}
 
-\begin{frame}{Context Is What the Model Can Use Now}
+\begin{frame}{From a Prompt to Tool Execution}
 \small
-\term{Context} is the input available to a model for its next response.
+The model requests an action; the harness runs the tool and returns its result for the next step.
 \begin{figure}\centering
 \begin{tikzpicture}
-\node[agentNode,text width=3.3cm] (a) {Task and project\\instructions};
-\node[agentNode,text width=3.3cm,right=6mm of a] (b) {Relevant code\\and documentation};
-\node[agentNode,text width=3.3cm,right=6mm of b] (c) {Recent conversation\\and tool results};
-\node[agentNode,text width=4cm,below=7mm of b] (m) {Input to the next model call};
-\draw[agentArrow](a.south)--++(0,-.25)-|(m.north);
-\draw[agentArrow](b)--(m);
-\draw[agentArrow](c.south)--++(0,-.25)-|(m.north);
+\node[agentNode] (m) {Model requests\\an action};
+\node[agentNode,right=7mm of m] (t) {Harness executes\\the tool};
+\node[agentNode,right=7mm of t] (o) {Tool result\\returns to model};
+\draw[agentArrow](m)--(t);\draw[agentArrow](t)--(o);
+\draw[agentArrow](o.south)--++(0,-.3)-|(m.south);
 \end{tikzpicture}
-\caption{Context assembled for the next model call.}
+\caption{Request, execute, and use the result.}
 \end{figure}
+\courseexample{Chart task:} read CSV $\rightarrow$ write script $\rightarrow$ run Python $\rightarrow$ inspect chart $\rightarrow$ revise if needed.
 \begin{itemize}
-\item Files become useful context when their relevant contents are loaded or retrieved.
-\item A \term{token} is a unit used to encode input and output. The \term{context window} limits how much a model call can accommodate.
+\item A \term{CLI} accepts text commands, such as \texttt{python plot\_temperature.py}. The \term{terminal} hosts the session; the \term{shell} interprets commands.
 \end{itemize}
-\courseexample{Chart detail:} reading \texttt{data.csv} reveals the column names; \texttt{temperature\_c} records Celsius.
-\end{frame}
-
-\begin{frame}{Keeping Context Useful}
-\small
-\term{Context engineering} means selecting and maintaining the information an agent needs as the task progresses.
-\begin{itemize}
-\item \textbf{Retrieve relevant material.} Read the CSV header and plotting script; retrieve errors after a failed run.
-\item \textbf{Keep durable decisions.} Save column meanings, units, and the run command in project files.
-\item \textbf{Summarize long sessions.} \term{Compaction} condenses earlier context; summaries can omit details, so retain important facts in files.
-\end{itemize}
-\par\medskip
-\courseexample{Handoff note}\par
-``The CSV uses Celsius. The script sorts dates and saves the chart. Next: inspect the axes and plotted values.''
-\par\medskip
-\term{Memory} stores information for retrieval across sessions; its scope depends on the application.
-\sourcehint{Anthropic, Effective context engineering for AI agents}{https://www.anthropic.com/research/effective-context-engineering-for-ai-agents}
-\end{frame}
-
-\begin{frame}[fragile]{Programs, Tools, and CLI}
-\small
-A \term{tool} is an operation the agent can call, such as reading a file or running a program.
-\par\smallskip
-\textbf{Use programs for repeatable rules; use the model for interpretation and judgment.} An agent can write the program, run it, and inspect the result.
-\begin{itemize}
-\item A \term{CLI} (command-line interface) accepts text commands.
-\item The \term{terminal} hosts the session; the \term{shell} interprets commands.
-\end{itemize}
-\courseexample{Chart task: create once, reuse on new data}
-\begin{verbatim}
-python plot_temperature.py
-\end{verbatim}
-The script reads the CSV, sorts dates, and draws the chart. Run it again when the data change; the model can help interpret the pattern.
-\par\smallskip
-The working directory and Python environment determine which files and packages are used.
-\par\smallskip
-Programs execute rules consistently; check that the rules and code are correct.
+\textbf{Use programs for repeatable rules; use the model for interpretation.} Once checked, the plotting script can run again on new data.
 \sourcehint{CarpeDiem, Code is the most handy tool for AI}{https://www.bilibili.com/video/BV1dQtx66E9K}
 \end{frame}
 
-\begin{frame}{MCP Connects an Agent to Capabilities}
+\begin{frame}{The Prompt Is Part of the Context}
 \small
-\term{Model Context Protocol (MCP)} is a standard for communication between an AI application and servers that expose tools and context.
+\setlength{\abovecaptionskip}{2pt}
+\term{Context} is the input the harness supplies to the model for its next response.
 \begin{figure}\centering
 \begin{tikzpicture}
-\node[agentNode,text width=3.1cm] (h) {AI application (host)\\with an MCP client};
-\node[agentNode,right=9mm of h] (s) {MCP server};
-\node[agentNode,right=9mm of s] (d) {Cloud drive\\or other service};
-\draw[agentArrow,<->] (h)--node[above,font=\scriptsize]{MCP}(s);
-\draw[agentArrow,<->] (s)--(d);
+\node[agentNode,text width=3.2cm] (a) {Instructions\\and task prompt};
+\node[agentNode,text width=3.2cm,right=5mm of a] (b) {Tool definitions\\and retrieved files};
+\node[agentNode,text width=3.2cm,right=5mm of b] (c) {Conversation\\and tool results};
+\node[agentNode,text width=4cm,below=3mm of b] (m) {Input to the next model call};
+\draw[agentArrow](a.south)--++(0,-.2)-|(m.north);
+\draw[agentArrow](b)--(m);
+\draw[agentArrow](c.south)--++(0,-.2)-|(m.north);
 \end{tikzpicture}
-\caption{Connecting an application to a service through MCP.}
+\caption{The harness assembles the model input.}
 \end{figure}
 \begin{itemize}
-\item \term{Tools} perform operations; \term{resources} expose data; \term{prompts} provide reusable message templates.
-\item Servers run locally or remotely, with explicitly configured access.
+\item A \term{token} is a unit of input or output. The \term{context window} limits how much a call can accommodate.
+\item The harness loads relevant files and selects or summarizes earlier history.
 \end{itemize}
-\courseexample{Chart task:} a cloud-drive MCP server could retrieve the CSV from a shared folder.
-\par\smallskip
-MCP standardizes the connection; the harness coordinates its use.
-\sourcehint{Model Context Protocol, Architecture overview}{https://modelcontextprotocol.io/docs/learn/architecture}
+\courseexample{``Fix the axis label''} can accompany the CSV, script, and history: a short message can have a large input.
 \end{frame}
 
-\begin{frame}[fragile]{Skills Package Reusable Procedures}
+\begin{frame}{Keep the Working Context Relevant}
 \small
-A \term{skill} packages task instructions and optional scripts, references, or templates. In the Agent Skills format, its entry point is \texttt{SKILL.md}.
+\term{Context engineering} selects and maintains relevant information. Even a large context can contain details the model overlooks.
+\begin{itemize}
+\item \textbf{Load what helps.} For a plotting error, retrieve the relevant code and error message.
+\item \textbf{Keep related work together.} Revise the chart in one session; start a new one for unrelated work.
+\item \textbf{Preserve decisions.} \term{Compaction} replaces earlier detail with a shorter summary. Check that essential requirements survive.
+\item \textbf{Separate lengthy side tasks.} A \term{subagent} can investigate in a separate context and return a concise result.
+\end{itemize}
+\par\smallskip
+\courseexample{A handoff to a fresh session}\par
+``The plotting script runs. Keep dates sorted and use Celsius. Next: compare the chart with \texttt{data.csv}.''
+\par\smallskip
+Saved notes or \term{memory} help later sessions only when retrieved into their context.
+\sourcehint{CarpeDiem, Agent cost-saving tips (Part 1)}{https://www.bilibili.com/video/BV1fsbH6iEyq}
+\end{frame}
+
+\begin{frame}{Context Caching Reuses Computation}
+\small
+\setlength{\abovecaptionskip}{2pt}
+\term{Context caching} reuses computation for an unchanged input prefix when a compatible cache is available.
+\begin{figure}\centering
+\begin{tikzpicture}[x=1cm,y=.6cm]
+\node[anchor=east,font=\small] at(0,1){Previous call};
+\node[anchor=east,font=\small] at(0,0){Next call};
+\foreach \y in {0,1}{\node[agentNode,text width=2cm,minimum height=6mm] at(1.3,\y){A};}
+\foreach \y in {0,1}{\node[agentNode,text width=2cm,minimum height=6mm] at(3.7,\y){B};}
+\node[agentNode,text width=2cm,minimum height=6mm] at(6.1,0){C};
+\end{tikzpicture}
+\caption{Reuse A + B; process the new C.}
+\end{figure}
+\begin{itemize}
+\item Eligible cached input can cost less to process. Retention and prices depend on the provider.
+\item Changing earlier instructions or history can invalidate reuse. Cached text still occupies context space.
+\item Cache expiry requires recomputation; compaction changes which information the model receives.
+\end{itemize}
+\textbf{Judge the completed task:} a high cache-hit rate alone does not imply low cost or good results.
+\sourcehint{CarpeDiem, Agent cost-saving tips (Part 2)}{https://www.bilibili.com/video/BV1ZUek6uE54}
+\end{frame}
+
+\begin{frame}[fragile]{Reuse Instructions and Procedures}
+\small
+Keep recurring guidance in files the agent can load.
+\par\smallskip
 \begin{columns}[T]
-\begin{column}{.56\textwidth}
-\courseexample{Example skill: plot a data file}
+\begin{column}{.48\textwidth}
+\term{Project instructions}\par
+Rules for work in this project. Codex uses \texttt{AGENTS.md}; filenames and scope vary across applications.
+\par\smallskip
+\courseexample{Chart project rules}
+\begin{itemize}
+\item Keep input data unchanged.
+\item Include units on axes.
+\item Save figures in \texttt{results/}.
+\end{itemize}
+\end{column}
+\begin{column}{.48\textwidth}
+A \term{skill}\par
+A reusable procedure, with optional code and references. In the Agent Skills format:
 \begin{verbatim}
 plot-data/
   SKILL.md
   scripts/
   references/
 \end{verbatim}
-\textbf{Procedure in the skill:}
-\begin{enumerate}
-\item Read column names and units.
-\item Choose axes and create the plot.
-\item Save and inspect the figure.
-\item Report the command and checks.
-\end{enumerate}
-\end{column}
-\begin{column}{.41\textwidth}
-\textbf{When the chart task matches:}
-\begin{itemize}
-\item The agent discovers the skill through its name and description.
-\item It loads the full instructions when relevant.
-\item It uses available tools to carry out the procedure.
-\end{itemize}
-\par\smallskip
-The same procedure can guide other figures. Skills provide instructions; tools and permissions determine which actions can run.
+\courseexample{Plotting procedure:} read columns and units, create the figure, inspect it, and report checks.
 \end{column}
 \end{columns}
-\sourcehint{Agent Skills, Overview and Specification}{https://agentskills.io/home}
+\par\smallskip
+The agent discovers a skill by its name and description, then loads its instructions when relevant. The skill guides tool use.
+\sourcehint{Agent Skills, Overview}{https://agentskills.io/home}
 \end{frame}
 
-\begin{frame}[fragile]{Project Instructions Keep Conventions Consistent}
+\begin{frame}{Connect External Tools with MCP}
 \small
-\term{Project instructions} store guidance for work in a particular project. For example, Codex reads \texttt{AGENTS.md}; supported filenames and scope vary by tool.
+Suppose the CSV is stored in a shared cloud folder. The agent needs an authorized way to retrieve it.
 \par\smallskip
-\courseexample{Possible project guidance for charts}
-\begin{verbatim}
-Use the existing project Python environment.
-Keep input data unchanged.
-Include units in axis labels.
-Save generated images under results/.
-Run the affected example after editing.
-\end{verbatim}
+\term{Model Context Protocol (MCP)} standardizes how an AI application communicates with servers exposing tools and context.
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[agentNode,text width=3.1cm] (h) {Agent application\\with an MCP client};
+\node[agentNode,right=9mm of h] (s) {MCP server};
+\node[agentNode,right=9mm of s] (d) {Cloud drive};
+\draw[agentArrow,<->] (h)--node[above,font=\scriptsize]{MCP}(s);
+\draw[agentArrow,<->] (s)--(d);
+\end{tikzpicture}
+\caption{An external connection for the same chart task.}
+\end{figure}
 \begin{itemize}
-\item The \textbf{task prompt} asks for this figure now.
-\item \textbf{Project instructions} describe conventions across tasks.
-\item A \textbf{skill} supplies a reusable procedure when the task calls for it.
+\item A server can offer \textbf{tools} to act, \textbf{resources} to read, and \textbf{prompt templates} to reuse.
+\item A drive tool could retrieve the CSV; the agent then uses its existing plotting workflow.
+\item Local files can use the application's file tools directly. Add an MCP connection when a needed service provides one.
 \end{itemize}
-\par\smallskip
-Keep instructions short, current, and specific enough to check.
-\sourcehint{OpenAI, Custom instructions with AGENTS.md}{https://developers.openai.com/codex/guides/agents-md}
+\sourcehint{Model Context Protocol, Architecture overview}{https://modelcontextprotocol.io/docs/learn/architecture}
 \end{frame}
 
-\begin{frame}{Checking an Agent's Work}
+\begin{frame}{Verify the Work Before Reusing It}
 \small
-An agent's completion message is a report. Check the underlying evidence.
+A successful tool call or a confident completion message is evidence to inspect; compare the actual result with the task.
 \begin{enumerate}
-\item \textbf{Inspect the edits.} Read the diff and check that edits match the plotting task.
-\item \textbf{Reproduce the run.} Record the environment and command; confirm the output file exists.
-\item \textbf{Check the result.} Compare plotted dates and values with the CSV; inspect labels and units.
-\item \textbf{Keep a recoverable version.} Commit reviewed code with Git to compare or reverse later edits.
+\item \textbf{Inspect the changes.} Review the script and confirm the input file was preserved.
+\item \textbf{Reproduce the run.} Record the command and Python environment; rerun the script.
+\item \textbf{Check the output.} Compare dates and values with the CSV; inspect axis labels and units.
+\item \textbf{Keep the checked version.} Commit the script with Git so it can be reused or revised.
 \end{enumerate}
 \par\medskip
-\courseexample{A concrete check}\par
-For three observations of 20, 22, and 21 Celsius, check that the chart preserves their date order and has its highest point at 22.
-\par\smallskip
-Treat instructions inside retrieved files as content to assess. \term{Prompt injection} uses such content to redirect an agent away from its task.
+\courseexample{For temperatures of 20, 22, and 21 Celsius,} the chart should preserve the date order and have its highest point at 22.
+\par\medskip
+A \term{sandbox} restricts execution; \term{approvals} authorize actions. Retrieved files may contain \term{prompt injection}: instructions that try to redirect the agent. Treat external content as data to assess.
 \end{frame}
 
-\begin{frame}[fragile]{Practice: Turn a Data File into a Chart}
+\begin{frame}[fragile]{Practice: Run, Check, and Reuse}
 \small
-Create \texttt{data.csv} in a working folder:
+Create a working folder and save this practice file as \texttt{data.csv}:
 \begin{verbatim}
 date,temperature_c
 2026-10-01,20
@@ -246,12 +248,13 @@ date,temperature_c
 2026-10-03,21
 \end{verbatim}
 \begin{enumerate}
-\item Give the chart prompt to an agent with file and terminal access. In a chat-only workflow, attach the CSV and run the returned code yourself.
-\item Identify the model, the agent application, the context it reads, and one tool call with its result.
-\item Run \texttt{plot\_temperature.py}; inspect the chart and review the script. Add one observation to the practice CSV and rerun the same script.
+\item Choose an agent application and a supported model. Give it the chart prompt and access to this folder.
+\item Follow one tool call: inspect what it reads or runs and the result returned to the model.
+\item Review the script, rerun it, and check the chart against the CSV.
+\item Add one observation to the practice CSV yourself; rerun the same script.
 \end{enumerate}
 \par\smallskip
-\textbf{Follow-up:} save the axis-unit convention as a project instruction. Package a repeated plotting procedure as a skill when supported.
+\textbf{Extend the workflow:} save a project rule for axis units, or package the plotting procedure as a skill when supported.
 \end{frame}
 
 % BEGIN MANAGED READINGS: week4_ai_agents
@@ -260,51 +263,50 @@ date,temperature_c
   {OpenAI, Agent and Codex documentation. [Documentation]}
   {https://developers.openai.com/blog/codex-as-a-platform}
   {\begin{itemize}
-\item \href{https://developers.openai.com/api/docs/models/gpt-6-astra}{GPT-6 Astra Model}
 \item \href{https://developers.openai.com/blog/codex-as-a-platform}{Codex as a platform: build on the open agent harness}
 \item \href{https://developers.openai.com/api/docs/guides/prompt-engineering}{Prompt engineering}
-\item \href{https://developers.openai.com/codex/guides/agents-md}{Custom instructions with AGENTS.md}
+\item \href{https://developers.openai.com/api/docs/guides/prompt-caching}{Prompt caching}
 \end{itemize}}
 \coursereading{2}
   {Anthropic, Claude model and Claude Code documentation. [Documentation]}
   {https://platform.claude.com/docs/en/models/fable-5/overview}
   {\begin{itemize}
-\item \href{https://platform.claude.com/docs/en/models/fable-5/overview}{Claude Fable 5}
 \item \href{https://code.claude.com/docs/en/overview}{Claude Code: Overview}
 \end{itemize}}
 \coursereading{3}
-  {Anthropic (2025), Effective context engineering for AI agents. [Technical article]}
-  {https://www.anthropic.com/research/effective-context-engineering-for-ai-agents}
-  {\begin{itemize}
-\item \href{https://www.anthropic.com/research/effective-context-engineering-for-ai-agents}{Context engineering vs. prompt engineering}
-\end{itemize}}
-\end{frame}
-\begin{frame}{References and Further Reading}
-\coursereading{4}
   {Microsoft, Visual Studio Code: agent and terminal documentation. [Documentation]}
   {https://code.visualstudio.com/docs/agents/concepts/agent-harnesses}
   {\begin{itemize}
 \item \href{https://code.visualstudio.com/docs/agents/concepts/agent-harnesses}{Understand agent harnesses}
-\item \href{https://code.visualstudio.com/docs/terminal/basics}{Terminal Basics}
-\item \href{https://code.visualstudio.com/docs/agents/run/security}{Secure AI-assisted development in VS Code}
 \end{itemize}}
-\coursereading{5}
+\coursereading{4}
   {Model Context Protocol contributors, Model Context Protocol documentation. [Documentation]}
   {https://modelcontextprotocol.io/docs/learn/architecture}
   {\begin{itemize}
 \item \href{https://modelcontextprotocol.io/docs/learn/architecture}{Architecture overview}
+\end{itemize}}
+\end{frame}
+\begin{frame}{References and Further Reading}
+\coursereading{5}
+  {Anthropic (2025), Effective context engineering for AI agents. [Technical article]}
+  {https://www.anthropic.com/research/effective-context-engineering-for-ai-agents}
+  {\begin{itemize}
+\item \href{https://www.anthropic.com/research/effective-context-engineering-for-ai-agents}{Context engineering vs. prompt engineering}
 \end{itemize}}
 \coursereading{6}
   {Agent Skills contributors, Agent Skills documentation. [Documentation]}
   {https://agentskills.io/home}
   {\begin{itemize}
 \item \href{https://agentskills.io/home}{Agent Skills Overview}
-\item \href{https://agentskills.io/specification}{Specification}
 \end{itemize}}
 \coursereading{7}
-  {CarpeDiem (2026), Code is the most handy tool for AI. [Video]}
+  {CarpeDiem (2026), AI Learning from Zero: practical agent tutorials. [Video series]}
   {https://www.bilibili.com/video/BV1dQtx66E9K}
-  {}
+  {\begin{itemize}
+\item \href{https://www.bilibili.com/video/BV1dQtx66E9K}{Code is the most handy tool for AI}
+\item \href{https://www.bilibili.com/video/BV1fsbH6iEyq}{Agent cost-saving tips (Part 1): tokens and context}
+\item \href{https://www.bilibili.com/video/BV1ZUek6uE54}{Agent cost-saving tips (Part 2): context caching}
+\end{itemize}}
 \end{frame}
 % END MANAGED READINGS: week4_ai_agents
 \end{document}
