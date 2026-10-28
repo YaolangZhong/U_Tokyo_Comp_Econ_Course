@@ -66,6 +66,8 @@
 
 29. [**GitHub, Copilot documentation. \[Documentation\]**](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github)
 
+30. [**Artificial Analysis, Benchmarking methodology. \[Web resource\]**](https://artificialanalysis.ai/methodology)
+
 ## Papers
 
 Research-paper readings will be announced here.

@@ -11,7 +11,7 @@
 \begin{itemize}
 \item \textbf{Choose and direct an agent}
   \begin{itemize}
-  \item Model families, agent applications, and the harness
+  \item Model families, evaluation criteria, and agent applications
   \item Tool execution, CLI, and MCP
   \item A concrete task prompt
   \end{itemize}
@@ -44,6 +44,22 @@ Examples: Grok 4.20, Grok 4.7.
 \item \href{https://api-docs.deepseek.com/quick_start/pricing/}{\textbf{DeepSeek family}} --- developed by \textbf{DeepSeek}.\\
 Examples: DeepSeek-V4-Pro, DeepSeek-V4.1-Flash.
 \end{itemize}
+\end{frame}
+
+\begin{frame}{How to Compare LLMs}
+\small
+Compare several dimensions on the kind of task you want the model to perform.
+\begin{itemize}
+\setlength{\itemsep}{0mm}
+\item \term{Task performance}: accuracy or success on one attempt (\textbf{pass@1}). For example, Terminal-Bench tests tasks performed with terminal tools.
+\item \term{Reliability}: factual errors, instruction-following failures, and consistency across repeated runs.
+\item \term{Token use and cost}: a \textbf{token} is a unit of text, often part of a word. Count input and generated tokens, including reported reasoning. Compare price per million tokens and \textbf{cost per completed task}.
+\item \term{Speed}: time to the first answer token, output tokens per second, and total completion time. Longer reasoning can increase total time.
+\item \term{Task fit}: language and image support; context-window size and accuracy when using long documents.
+\end{itemize}
+\par\smallskip
+\textbf{Compare like with like:} check the tasks, prompts, tools, and reasoning settings. Test quality, cost, and time on your own workload.
+\sourcehint{Artificial Analysis, Benchmarking methodology}{https://artificialanalysis.ai/methodology}
 \end{frame}
 
 \begin{frame}{Agent Applications: LLM + Harness}
@@ -318,6 +334,10 @@ date,temperature_c
 \item \href{https://www.bilibili.com/video/BV1fsbH6iEyq}{Agent cost-saving tips (Part 1): tokens and context}
 \item \href{https://www.bilibili.com/video/BV1ZUek6uE54}{Agent cost-saving tips (Part 2): context caching}
 \end{itemize}}
+\coursereading{8}
+  {Artificial Analysis, Benchmarking methodology. [Web resource]}
+  {https://artificialanalysis.ai/methodology}
+  {}
 \end{frame}
 % END MANAGED READINGS: week4_ai_agents
 \end{document}
