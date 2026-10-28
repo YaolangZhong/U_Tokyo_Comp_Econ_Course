@@ -4,82 +4,6 @@
 \title[Working with AI Agents]{Lab: Working with AI Agents}
 \tikzset{agentNode/.style={draw=SessionTeal,fill=SessionTealLight,rounded corners=1mm,align=center,font=\small,minimum height=9mm,text width=2.45cm,inner sep=4pt},agentArrow/.style={-{Stealth[length=1.5mm]},line width=.8pt,draw=SessionCharcoal}}
 \newcommand{\sourcehint}[2]{\par\smallskip{\tiny\color{SessionMuted}Reading: \href{#2}{#1}.}}
-\newcommand{\AgentMaze}{%
-\begin{tikzpicture}[x=.38cm,y=.38cm]
-\fill[white] (0,0) rectangle (9,6);
-\fill[SessionGold!30] (0,3) rectangle +(1,1);
-\fill[SessionTeal!25] (8,5) rectangle +(1,1);
-\fill[SessionMuted!65] (2,2) rectangle +(1,1);
-\fill[SessionMuted!65] (2,3) rectangle +(1,1);
-\fill[SessionMuted!65] (2,4) rectangle +(1,1);
-\fill[SessionMuted!65] (5,1) rectangle +(1,1);
-\fill[SessionMuted!65] (7,3) rectangle +(1,1);
-\fill[SessionMuted!65] (7,4) rectangle +(1,1);
-\fill[SessionMuted!65] (7,5) rectangle +(1,1);
-\draw[SessionLine,step=1,line width=.25pt] (0,0) grid (9,6);
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (0,6) {1};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (1,6) {2};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (2,6) {3};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (3,6) {4};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (4,6) {5};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (5,6) {6};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (6,6) {7};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (8,6) {8};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (0,5) {9};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (1,5) {10};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (3,5) {11};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (4,5) {12};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (5,5) {13};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (6,5) {14};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (8,5) {15};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (0,4) {16};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (1,4) {17};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (3,4) {18};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (4,4) {19};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (5,4) {20};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (6,4) {21};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (8,4) {22};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (0,3) {23};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (1,3) {24};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (3,3) {25};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (4,3) {26};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (5,3) {27};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (6,3) {28};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (7,3) {29};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (8,3) {30};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (0,2) {31};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (1,2) {32};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (2,2) {33};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (3,2) {34};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (4,2) {35};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (6,2) {36};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (7,2) {37};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (8,2) {38};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (0,1) {39};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (1,1) {40};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (2,1) {41};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (3,1) {42};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (4,1) {43};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (5,1) {44};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (6,1) {45};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (7,1) {46};
-\node[font=\tiny,text=SessionMuted!65,anchor=north west,inner sep=.5pt] at (8,1) {47};
-\draw[agentArrow,CourseVariableColor] (0.5,3.5) -- (0.5,2.5);
-\draw[agentArrow,CourseVariableColor] (0.5,2.5) -- (0.5,1.5);
-\draw[agentArrow,CourseVariableColor] (0.5,1.5) -- (1.5,1.5);
-\draw[agentArrow,CourseVariableColor] (1.5,1.5) -- (2.5,1.5);
-\draw[agentArrow,CourseVariableColor] (2.5,1.5) -- (3.5,1.5);
-\draw[agentArrow,CourseVariableColor] (3.5,1.5) -- (3.5,2.5);
-\draw[agentArrow,CourseVariableColor] (3.5,2.5) -- (4.5,2.5);
-\draw[agentArrow,CourseVariableColor] (4.5,2.5) -- (5.5,2.5);
-\draw[agentArrow,CourseVariableColor] (5.5,2.5) -- (6.5,2.5);
-\draw[agentArrow,CourseVariableColor] (6.5,2.5) -- (7.5,2.5);
-\draw[agentArrow,CourseVariableColor] (7.5,2.5) -- (8.5,2.5);
-\draw[agentArrow,CourseVariableColor] (8.5,2.5) -- (8.5,3.5);
-\draw[agentArrow,CourseVariableColor] (8.5,3.5) -- (8.5,4.5);
-\draw[agentArrow,CourseVariableColor] (8.5,4.5) -- (8.5,5.5);
-\end{tikzpicture}}
-
 \begin{document}
 \makecoursetitle
 
@@ -98,73 +22,68 @@
 \item \textbf{How to check the result}
   \begin{itemize}
   \item Files, execution records, and reproducible outputs
-  \item One task throughout: reproduce the maze figure
+  \item One task throughout: turn a data file into a chart
   \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{An Agent Working on the Maze Project}
+\begin{frame}{The Large Language Model}
 \small
-An \term{AI agent} uses a model to choose actions and tools, then uses the results to continue the task.\par\smallskip
-\begin{columns}[c]
-\begin{column}{.68\textwidth}
-\courseexample{Our task}\par
-``Reproduce the maze solution and save a figure with clear start and goal labels.''
+A \term{large language model (LLM)} processes context and generates text, code, or structured tool requests.
 \begin{itemize}
-\item Read the model and plotting code.
-\item Run the solver; inspect errors or outputs.
-\item Revise the plotting code, then check the saved figure.
+\item \textbf{OpenAI} develops the \textbf{GPT} model family; for example, GPT-6 Astra.
+\item \textbf{Anthropic} develops the \textbf{Claude} model family; for example, Claude Fable 5.
 \end{itemize}
-\end{column}
-\begin{column}{.30\textwidth}
-\centering\AgentMaze\par
-{\scriptsize Yellow: start (16)\quad Teal: goal (8)}
-\end{column}
-\end{columns}
-\medskip
+\par\medskip
 \begin{figure}\centering
 \begin{tikzpicture}
-\node[agentNode] (m) {Model selects\\the next action};
-\node[agentNode,right=7mm of m] (t) {Tool executes\\the action};
-\node[agentNode,right=7mm of t] (o) {Result enters\\the context};
-\draw[agentArrow] (m)--(t);\draw[agentArrow] (t)--(o);
-\draw[agentArrow] (o.south)--++(0,-.35)-|(m.south);
+\node[agentNode] (i) {Instructions\\and data};
+\node[agentNode,right=7mm of i] (m) {LLM};
+\node[agentNode,right=7mm of m] (o) {Text, code, or\\a tool request};
+\draw[agentArrow](i)--(m);\draw[agentArrow](m)--(o);
 \end{tikzpicture}
-\caption{The agent loop repeats until completion or intervention.}
+\caption{One model call produces an output from its input.}
 \end{figure}
-{\footnotesize The AI agent operates the project; VFI computes the maze policy.}
+\courseexample{A running example}\par
+``Read \texttt{data.csv} and create a chart of daily temperature.'' The model can generate Python code or request a file-reading tool.
 \end{frame}
 
-\begin{frame}{The Model and the Harness}
+\begin{frame}{LLM + Harness = Agent}
 \small
-The \term{large language model (LLM)} generates responses and tool requests from its input. The \term{harness} is the software that runs the agent around that model.
-\begin{itemize}
-\item It assembles context, executes tool calls, and returns their results.
-\item It manages the session and enforces configured permissions.
-\item A \term{sandbox} restricts execution; an \term{approval} lets a person authorize a particular action.
-\end{itemize}
-\par\medskip
-\courseexample{In the maze task}
-\begin{itemize}
-\item The model requests: read \texttt{maze.py}, then run Python.
-\item The harness checks access, runs the command in a working directory, and supplies the output.
-\end{itemize}
-\par\medskip
-Codex and Claude Code are agent applications. Desktop apps, IDE extensions, and CLI provide ways to interact with agents. Capabilities depend on the model and harness.
-\sourcehint{OpenAI, Codex as a platform}{https://developers.openai.com/blog/codex-as-a-platform}
+An \term{agent harness} runs an LLM in a loop with tools, context, and execution controls.
+\[
+\underbrace{\text{LLM}}_{\text{selects actions}}
++\underbrace{\text{harness}}_{\text{runs tools and manages context}}
+=\text{AI agent}
+\]
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[agentNode] (m) {Model requests\\an action};
+\node[agentNode,right=7mm of m] (t) {Harness executes\\the tool};
+\node[agentNode,right=7mm of t] (o) {Result enters\\the next context};
+\draw[agentArrow](m)--(t);\draw[agentArrow](t)--(o);
+\draw[agentArrow](o.south)--++(0,-.3)-|(m.south);
+\end{tikzpicture}
+\caption{The agent loop repeats as work progresses.}
+\end{figure}
+\textbf{Agent applications: OpenAI’s Codex and Anthropic’s Claude Code.} Their harnesses manage tools, session state, and permissions around a supported model.
+\par\smallskip
+\courseexample{Chart task:} read the CSV, write and run Python, inspect the chart, and revise it if needed.
+\par\smallskip
+A \term{sandbox} restricts execution; \term{approvals} authorize actions. Model choice and harness choice are separate decisions.
 \end{frame}
 
 \begin{frame}{A Prompt Specifies the Task}
 \small
-A \term{prompt} supplies instructions for the current task. Specify the result, relevant inputs, constraints, and checks.
+A \term{prompt} supplies instructions for the current task. Specify the result, inputs, constraints, and checks.
 \par\medskip
-\courseexample{A prompt for the maze project}
+\courseexample{A prompt for the chart task}
 \begin{quote}\small
-Read \texttt{README.md}, \texttt{maze.py}, \texttt{vfi.py}, and \texttt{figures.py}. Reproduce the maze solution with \(\modelvar{\beta=0.9}\).
+Read \texttt{data.csv}, which contains \texttt{date} and \texttt{temperature\_c}. Create \texttt{plot\_temperature.py} to plot daily temperature in date order.
 \par\smallskip
-Add a script \texttt{run\_maze.py} that saves \texttt{results/maze.png}. Label start cell 16 and goal cell 8 clearly. Preserve the model and solver.
+Label the axes Date and Temperature (Celsius). Save the chart to \texttt{results/temperature.png}. Keep the input data unchanged.
 \par\smallskip
-Run the script in the project environment. Check that the path reaches the goal and inspect the image. Report the changed files, command used, and checks performed.
+Run the script in the project environment and inspect the image. Check the dates, values, and units. Report the changed files, command used, and checks performed.
 \end{quote}
 \par\smallskip
 The requested output and checks make completion observable. If the environment is unavailable, ask the agent to report the blocker.
@@ -190,20 +109,20 @@ The requested output and checks make completion observable. If the environment i
 \item Files become useful context when their relevant contents are loaded or retrieved.
 \item A \term{token} is a unit used to encode input and output. The \term{context window} limits how much a model call can accommodate.
 \end{itemize}
-\courseexample{Maze detail:} reading \texttt{maze.py} reveals that cell 16 is Python index 15.
+\courseexample{Chart detail:} reading \texttt{data.csv} reveals the column names; \texttt{temperature\_c} records Celsius.
 \end{frame}
 
 \begin{frame}{Keeping Context Useful}
 \small
 \term{Context engineering} means selecting and maintaining the information an agent needs as the task progresses.
 \begin{itemize}
-\item \textbf{Retrieve relevant material.} Read the maze code when needed; retrieve errors after a failed run.
-\item \textbf{Keep durable decisions.} Save parameters, indexing conventions, and the run command in project files.
+\item \textbf{Retrieve relevant material.} Read the CSV header and plotting script; retrieve errors after a failed run.
+\item \textbf{Keep durable decisions.} Save column meanings, units, and the run command in project files.
 \item \textbf{Summarize long sessions.} \term{Compaction} condenses earlier context; summaries can omit details, so retain important facts in files.
 \end{itemize}
 \par\medskip
 \courseexample{Handoff note}\par
-``Maze reproduced at \(\modelvar{\beta=0.9}\). Cell labels are one-based. Next: inspect the saved image.''
+``The CSV uses Celsius. The script sorts dates and saves the chart. Next: inspect the axes and plotted values.''
 \par\medskip
 \term{Memory} stores information for retrieval across sessions; its scope depends on the application.
 \sourcehint{Anthropic, Effective context engineering for AI agents}{https://www.anthropic.com/research/effective-context-engineering-for-ai-agents}
@@ -217,9 +136,9 @@ A \term{tool} is a callable operation with inputs and a returned result: reading
 \item The \term{terminal} hosts the session; the \term{shell} interprets commands.
 \end{itemize}
 \par\smallskip
-\courseexample{Commands in the maze working folder}
+\courseexample{Commands in the chart project}
 \begin{verbatim}
-python run_maze.py
+python plot_temperature.py
 git diff
 \end{verbatim}
 Run the script after creating it; use \texttt{git diff} to review edits in a Git repository.
@@ -237,7 +156,7 @@ An agent CLI accepts your tasks in a terminal. Agents in an IDE or app can also 
 \begin{tikzpicture}
 \node[agentNode,text width=3.1cm] (h) {AI application (host)\\with an MCP client};
 \node[agentNode,right=9mm of h] (s) {MCP server};
-\node[agentNode,right=9mm of s] (d) {Repository\\or other service};
+\node[agentNode,right=9mm of s] (d) {Cloud drive\\or other service};
 \draw[agentArrow,<->] (h)--node[above,font=\scriptsize]{MCP}(s);
 \draw[agentArrow,<->] (s)--(d);
 \end{tikzpicture}
@@ -247,7 +166,7 @@ An agent CLI accepts your tasks in a terminal. Agents in an IDE or app can also 
 \item \term{Tools} perform operations; \term{resources} expose data; \term{prompts} provide reusable message templates.
 \item Servers run locally or remotely, with explicitly configured access.
 \end{itemize}
-\courseexample{Maze task:} a repository MCP server could retrieve an issue describing the requested labels.
+\courseexample{Chart task:} a cloud-drive MCP server could retrieve the CSV from a shared folder.
 \par\smallskip
 MCP standardizes the connection; the harness coordinates its use.
 \sourcehint{Model Context Protocol, Architecture overview}{https://modelcontextprotocol.io/docs/learn/architecture}
@@ -258,23 +177,23 @@ MCP standardizes the connection; the harness coordinates its use.
 A \term{skill} packages task instructions and optional scripts, references, or templates. In the Agent Skills format, its entry point is \texttt{SKILL.md}.
 \begin{columns}[T]
 \begin{column}{.56\textwidth}
-\courseexample{Example skill: reproduce a figure}
+\courseexample{Example skill: plot a data file}
 \begin{verbatim}
-reproduce-figure/
+plot-data/
   SKILL.md
   scripts/
   references/
 \end{verbatim}
 \textbf{Procedure in the skill:}
 \begin{enumerate}
-\item Identify the model and parameters.
-\item Run the existing computation.
+\item Read column names and units.
+\item Choose axes and create the plot.
 \item Save and inspect the figure.
 \item Report the command and checks.
 \end{enumerate}
 \end{column}
 \begin{column}{.41\textwidth}
-\textbf{When the maze task matches:}
+\textbf{When the chart task matches:}
 \begin{itemize}
 \item The agent discovers the skill through its name and description.
 \item It loads the full instructions when relevant.
@@ -291,11 +210,11 @@ The same procedure can guide other figures. Skills provide instructions; tools a
 \small
 \term{Project instructions} store guidance for work in a particular project. For example, Codex reads \texttt{AGENTS.md}; supported filenames and scope vary by tool.
 \par\smallskip
-\courseexample{Possible project guidance for the maze}
+\courseexample{Possible project guidance for charts}
 \begin{verbatim}
 Use the existing project Python environment.
-Keep model definitions separate from solver code.
-Use one-based cell labels in figures.
+Keep input data unchanged.
+Include units in axis labels.
 Save generated images under results/.
 Run the affected example after editing.
 \end{verbatim}
@@ -315,30 +234,34 @@ An agent's completion message is a report. Check the underlying evidence.
 \begin{enumerate}
 \item \textbf{Inspect the edits.} Read the diff and check that edits match the plotting task.
 \item \textbf{Reproduce the run.} Record the environment and command; confirm the output file exists.
-\item \textbf{Check the result.} Verify that the path reaches cell 8; open the saved image and inspect the labels.
+\item \textbf{Check the result.} Compare plotted dates and values with the CSV; inspect labels and units.
 \item \textbf{Keep a recoverable version.} Commit reviewed code with Git to compare or reverse later edits.
 \end{enumerate}
 \par\medskip
 \courseexample{A concrete check}\par
-The maze's \texttt{path} method detects cycles. Opening the saved PNG checks that labels are visible and correct.
+For three observations of 20, 22, and 21 Celsius, check that the chart preserves their date order and has its highest point at 22.
 \par\smallskip
 Treat instructions inside retrieved files as content to assess. \term{Prompt injection} uses such content to redirect an agent away from its task.
 \end{frame}
 
-\begin{frame}{Practice: Reproduce the Maze Figure}
+\begin{frame}[fragile]{Practice: Turn a Data File into a Chart}
 \small
+Create \texttt{data.csv} in a working folder:
+\begin{verbatim}
+date,temperature_c
+2026-10-01,20
+2026-10-02,22
+2026-10-03,21
+\end{verbatim}
 \begin{enumerate}
-\item Open a copy of the Lab 3 working folder. Use an agent with file and terminal access, or attach the relevant files to a chat and run the returned code yourself.
-\item Use the maze prompt. Let the agent inspect the files before editing, then review its tool actions and outputs.
-\item Find one example of each: prompt, retrieved context, tool call, and tool result. Identify which application supplies the harness.
-\item Run the new script and inspect \texttt{results/maze.png}. Review the changes before accepting them.
+\item Give the chart prompt to an agent with file and terminal access. In a chat-only workflow, attach the CSV and run the returned code yourself.
+\item Identify the model, the agent application, the context it reads, and one tool call with its result.
+\item Run \texttt{plot\_temperature.py}; inspect \texttt{results/temperature.png} and review the script.
 \end{enumerate}
-\par\medskip
-\textbf{Result:} a reproducible script, a labelled maze figure, and a short record of the command and checks.
 \par\smallskip
-\textbf{Follow-up:} save a recurring convention as a project instruction; turn a repeated procedure into a skill when your agent supports it.
+\textbf{Follow-up:} save the axis-unit convention as a project instruction. Package a repeated plotting procedure as a skill when supported.
 \par\smallskip
-The local maze task can be completed with file and shell tools. Add an MCP integration when the task needs an external service.
+File and shell tools are sufficient for this task. An MCP integration is useful when the CSV is stored in an external service.
 \end{frame}
 
 % BEGIN MANAGED READINGS: week4_ai_agents
@@ -347,11 +270,19 @@ The local maze task can be completed with file and shell tools. Add an MCP integ
   {OpenAI, Agent and Codex documentation. [Documentation]}
   {https://developers.openai.com/blog/codex-as-a-platform}
   {\begin{itemize}
+\item \href{https://developers.openai.com/api/docs/models/gpt-6-astra}{GPT-6 Astra Model}
 \item \href{https://developers.openai.com/blog/codex-as-a-platform}{Codex as a platform: build on the open agent harness}
 \item \href{https://developers.openai.com/api/docs/guides/prompt-engineering}{Prompt engineering}
 \item \href{https://developers.openai.com/codex/guides/agents-md}{Custom instructions with AGENTS.md}
 \end{itemize}}
 \coursereading{2}
+  {Anthropic, Claude model and Claude Code documentation. [Documentation]}
+  {https://platform.claude.com/docs/en/models/fable-5/overview}
+  {\begin{itemize}
+\item \href{https://platform.claude.com/docs/en/models/fable-5/overview}{Claude Fable 5}
+\item \href{https://code.claude.com/docs/en/overview}{Claude Code: Overview}
+\end{itemize}}
+\coursereading{3}
   {Anthropic (2025), Effective context engineering for AI agents. [Technical article]}
   {https://www.anthropic.com/research/effective-context-engineering-for-ai-agents}
   {\begin{itemize}
@@ -359,7 +290,7 @@ The local maze task can be completed with file and shell tools. Add an MCP integ
 \end{itemize}}
 \end{frame}
 \begin{frame}{References and Further Reading}
-\coursereading{3}
+\coursereading{4}
   {Microsoft, Visual Studio Code: agent and terminal documentation. [Documentation]}
   {https://code.visualstudio.com/docs/agents/concepts/agent-harnesses}
   {\begin{itemize}
@@ -367,13 +298,13 @@ The local maze task can be completed with file and shell tools. Add an MCP integ
 \item \href{https://code.visualstudio.com/docs/terminal/basics}{Terminal Basics}
 \item \href{https://code.visualstudio.com/docs/agents/run/security}{Secure AI-assisted development in VS Code}
 \end{itemize}}
-\coursereading{4}
+\coursereading{5}
   {Model Context Protocol contributors, Model Context Protocol documentation. [Documentation]}
   {https://modelcontextprotocol.io/docs/learn/architecture}
   {\begin{itemize}
 \item \href{https://modelcontextprotocol.io/docs/learn/architecture}{Architecture overview}
 \end{itemize}}
-\coursereading{5}
+\coursereading{6}
   {Agent Skills contributors, Agent Skills documentation. [Documentation]}
   {https://agentskills.io/home}
   {\begin{itemize}

@@ -52,6 +52,8 @@
 
 22. [**Agent Skills contributors, Agent Skills documentation. \[Documentation\]**](https://agentskills.io/home)
 
+23. [**Anthropic, Claude model and Claude Code documentation. \[Documentation\]**](https://platform.claude.com/docs/en/models/fable-5/overview)
+
 ## Papers
 
 Research-paper readings will be announced here.
