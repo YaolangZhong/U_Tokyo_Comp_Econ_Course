@@ -4,7 +4,6 @@
 \title[Working with AI Agents]{Lab: Working with AI Agents}
 \tikzset{agentNode/.style={draw=SessionTeal,fill=SessionTealLight,rounded corners=1mm,align=center,font=\small,minimum height=9mm,text width=2.45cm,inner sep=4pt},agentArrow/.style={-{Stealth[length=1.5mm]},line width=.8pt,draw=SessionCharcoal}}
 \tikzset{agentRequest/.style={-{Stealth[length=1.5mm]},line width=.8pt,draw=SessionTeal},agentResult/.style={-{Stealth[length=1.5mm]},line width=.8pt,dashed,draw=SessionMuted}}
-\newcommand{\sourcehint}[2]{\par\smallskip{\tiny\color{SessionMuted}Reading: \href{#2}{#1}.}}
 \begin{document}
 \makecoursetitle
 
@@ -24,7 +23,6 @@
 \item \textbf{Check and reuse its work}
   \begin{itemize}
   \item Inspect the result and rerun the program
-  \item Practice with a reusable script
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -61,7 +59,6 @@ LLMs are commonly judged along the following dimensions.
 \end{itemize}
 \par\smallskip
 \textbf{Scores depend on the test setup:} extra attempts, additional tools, or more reasoning time can improve results while increasing cost.
-\sourcehint{Artificial Analysis, Benchmarking methodology}{https://artificialanalysis.ai/methodology}
 \end{frame}
 
 \begin{frame}{The Harness: Tools and Interfaces}
@@ -110,55 +107,50 @@ The harness executes requests and supplies results as input to the next LLM call
 
 \begin{frame}{The Agent: Coordinating a Task}
 \small
-\setlength{\abovecaptionskip}{2pt}
-{\centering\textbf{LLM + harness = AI agent}\par}\smallskip
-\courseexample{Task: turn a CSV in a shared drive into a checked chart.}
-\begin{figure}\centering
-\begin{tikzpicture}[x=1cm,y=1cm]
-\foreach \x/\label in {0/LLM,4.8/Harness,9.6/Tools}{
- \node[agentNode,text width=2.0cm,minimum height=6mm,font=\small\bfseries] at (\x,.75){\label};
- \draw[draw=SessionMuted!45] (\x,.4)--(\x,-2.85);
-}
-\draw[agentRequest] (0,0)--node[above,font=\scriptsize]{1.\ Retrieve CSV}(4.8,0);
-\draw[agentRequest] (4.8,0)--node[above,font=\scriptsize]{MCP: download tool}(9.6,0);
-\draw[agentResult] (9.6,-.45)--node[above,font=\scriptsize]{CSV file}(4.8,-.45);
-\draw[agentResult] (4.8,-.45)--node[above,font=\scriptsize]{CSV contents / path}(0,-.45);
-\draw[agentRequest] (0,-1.05)--node[above,font=\scriptsize]{2.\ Save and run script}(4.8,-1.05);
-\draw[agentRequest] (4.8,-1.05)--node[above,font=\scriptsize]{file tool + Python CLI}(9.6,-1.05);
-\draw[agentResult] (9.6,-1.5)--node[above,font=\scriptsize]{chart path; output / errors}(4.8,-1.5);
-\draw[agentResult] (4.8,-1.5)--node[above,font=\scriptsize]{execution results}(0,-1.5);
-\draw[agentRequest] (0,-2.1)--node[above,font=\scriptsize]{3.\ Open chart}(4.8,-2.1);
-\draw[agentRequest] (4.8,-2.1)--node[above,font=\scriptsize]{image-viewing tool}(9.6,-2.1);
-\draw[agentResult] (9.6,-2.55)--node[above,font=\scriptsize]{chart image}(4.8,-2.55);
-\draw[agentResult] (4.8,-2.55)--node[above,font=\scriptsize]{chart image}(0,-2.55);
-\end{tikzpicture}
-\caption{Download, run, and inspect; revise if needed, then report.}
-\end{figure}
+\setlength{\abovecaptionskip}{0pt}
+An \term{LLM-based AI agent} pursues a task by selecting actions, using tools, and adapting its next actions to the results.
+\par\smallskip
+{\centering\textbf{LLM + harness = AI agent}\par}
+\par\smallskip
 \textbf{Agent applications:}
 \href{https://developers.openai.com/blog/codex-as-a-platform}{Codex} (OpenAI),
 \href{https://code.claude.com/docs/en/how-claude-code-works}{Claude Code} (Anthropic),
 \href{https://cursor.com/docs/agent/overview}{Cursor Agent} (Cursor),
 \href{https://geminicli.com/docs/}{Gemini CLI} (Google), and
 \href{https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github}{GitHub Copilot} (GitHub).
+
+\par\smallskip
+\courseexample{Example: a weekly temperature chart}\par
+\textbf{You have:} a shared-drive \texttt{data.csv} with \texttt{date} and \texttt{temperature\_c}.\par
+\textbf{You want:} a checked chart in date order, with Celsius units, and a reusable Python script.
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[agentNode,text width=2.65cm,minimum height=18mm,font=\scriptsize] (a) {\textbf{1. Fetch data}\\LLM requests the CSV;\\harness downloads it\\through MCP.};
+\node[agentNode,text width=2.65cm,minimum height=18mm,font=\scriptsize,right=3mm of a] (b) {\textbf{2. Write script}\\LLM generates code;\\harness saves it\\with a file tool.};
+\node[agentNode,text width=2.65cm,minimum height=18mm,font=\scriptsize,right=3mm of b] (c) {\textbf{3. Run script}\\Harness runs Python\\through its CLI; returns\\output or errors.};
+\node[agentNode,text width=2.65cm,minimum height=18mm,font=\scriptsize,right=3mm of c] (d) {\textbf{4. Check output}\\LLM inspects values\\and chart through tools;\\revises or reports.};
+\draw[agentRequest] (a)--(b);\draw[agentRequest] (b)--(c);\draw[agentRequest] (c)--(d);
+\end{tikzpicture}
+\caption{Read left to right: each step uses the previous step's result.}
+\end{figure}
 \end{frame}
 
 \begin{frame}{From a Vague Request to a Concrete Task}
 \small
 A concrete prompt makes the intended result and the criteria for success explicit.
 \par\smallskip
-\courseexample{Suppose you receive a new temperature file each week.}\par
-Each \texttt{data.csv} contains \texttt{date} and \texttt{temperature\_c}. You want a chart now and a procedure you can reuse next week.
+\courseexample{The same weekly temperature-chart task}\par
+The CSV is in the shared drive; the desired outputs are a checked chart and a reusable script.
 \par\smallskip
 \textbf{Vague prompt}\par
 ``Make a chart from my data.''
 \par\smallskip
 \textbf{Concrete prompt}\par
-``Write \texttt{plot\_temperature.py} to read \texttt{data.csv}, sort by date, and save a line chart to \texttt{results/temperature.png}. Label the axes Date and Temperature (Celsius).
+``Download the shared-drive \texttt{data.csv} into the working folder. Write \texttt{plot\_temperature.py} to read it, sort by date, and save a line chart to \texttt{results/temperature.png}. Label the axes Date and Temperature (Celsius).
 \par\smallskip
 Keep the input unchanged. Use the project Python environment. Run the script, check the dates, values, and units against the CSV, and inspect the chart. Report the files changed and the command used.''
 \par\smallskip
 \textbf{Reuse the checked script} next week to plot the new file.
-\par\smallskip{\tiny\color{SessionMuted}Reading: \href{https://developers.openai.com/api/docs/guides/prompt-engineering}{OpenAI, Prompt engineering}; \href{https://www.bilibili.com/video/BV1dQtx66E9K}{CarpeDiem, Programs as AI tools}.}
 \end{frame}
 
 \begin{frame}{The Prompt Is Part of the Context}
@@ -198,7 +190,6 @@ Keep the input unchanged. Use the project Python environment. Run the script, ch
 ``The plotting script runs. Keep dates sorted and use Celsius. Next: compare the chart with \texttt{data.csv}.''
 \par\smallskip
 Saved notes or \term{memory} help later sessions only when retrieved into their context.
-\sourcehint{CarpeDiem, Agent cost-saving tips (Part 1)}{https://www.bilibili.com/video/BV1fsbH6iEyq}
 \end{frame}
 
 \begin{frame}{Context Caching Reuses Computation}
@@ -221,7 +212,6 @@ Saved notes or \term{memory} help later sessions only when retrieved into their 
 \item Cache expiry requires recomputation; compaction changes which information the model receives.
 \end{itemize}
 \textbf{Judge the completed task:} a high cache-hit rate alone does not imply low cost or good results.
-\sourcehint{CarpeDiem, Agent cost-saving tips (Part 2)}{https://www.bilibili.com/video/BV1ZUek6uE54}
 \end{frame}
 
 \begin{frame}[fragile]{Reuse Instructions and Procedures}
@@ -254,7 +244,6 @@ plot-data/
 \end{columns}
 \par\smallskip
 The agent discovers a skill by its name and description, then loads its instructions when relevant. The skill guides tool use.
-\sourcehint{Agent Skills, Overview}{https://agentskills.io/home}
 \end{frame}
 
 
@@ -274,24 +263,7 @@ A successful tool call or a confident completion message is evidence to inspect;
 A \term{sandbox} restricts execution; \term{approvals} authorize actions. Retrieved files may contain \term{prompt injection}: instructions that try to redirect the agent. Treat external content as data to assess.
 \end{frame}
 
-\begin{frame}[fragile]{Practice: Run, Check, and Reuse}
-\small
-Create a working folder and save this practice file as \texttt{data.csv}:
-\begin{verbatim}
-date,temperature_c
-2026-10-01,20
-2026-10-02,22
-2026-10-03,21
-\end{verbatim}
-\begin{enumerate}
-\item Choose an agent application and a supported model. Give it the chart prompt and access to this folder.
-\item Follow one tool call: inspect what it reads or runs and the result returned to the model.
-\item Review the script, rerun it, and check the chart against the CSV.
-\item Add one observation to the practice CSV yourself; rerun the same script.
-\end{enumerate}
-\par\smallskip
-\textbf{Extend the workflow:} save a project rule for axis units, or package the plotting procedure as a skill when supported.
-\end{frame}
+
 
 % BEGIN MANAGED READINGS: week4_ai_agents
 \begin{frame}{References and Further Reading}
