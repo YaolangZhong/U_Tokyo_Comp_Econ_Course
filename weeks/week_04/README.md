@@ -8,7 +8,7 @@
 
 - **Lab**
 
-    - Materials to be announced.
+    - [Working with AI Agents](lab/slides/pdf/Working_with_AI_Agents.pdf)
 
 - **Homework**
 

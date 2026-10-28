@@ -1,5 +1,7 @@
-# Research tools lab
+# Working with AI Agents
 
-This lab will explore LLM-agent tools for research alongside Git and other research tools. The activity, setup instructions, and deliverable will be announced on the weekly course page.
+[Slides](slides/pdf/Working_with_AI_Agents.pdf)
 
-Tool requirements and activities will be announced on the weekly page.
+Use the maze project to learn how agents, harnesses, prompts, context, CLI tools, MCP, skills, and project instructions fit together. The practice task reproduces the maze solution and saves a labelled figure.
+
+Open a copy of the [Lab 3 working folder](../../week_03/lab/starter/). Use an agent with file and terminal access, or attach the relevant files to a chat and run the returned code yourself. Review the changes and verify the saved figure.

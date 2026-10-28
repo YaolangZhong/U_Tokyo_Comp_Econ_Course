@@ -1,3 +1,3 @@
-# Lab PDF slides
+# Lab slides
 
-Lecture slides will be available here. See the weekly page for session details.
+[Working with AI Agents](Working_with_AI_Agents.pdf)

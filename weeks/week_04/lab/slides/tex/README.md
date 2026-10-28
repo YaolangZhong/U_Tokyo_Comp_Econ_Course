@@ -1,3 +1,3 @@
-# Lab TEX slides
+# Lab slide source
 
-LaTeX slide sources will be available here.
+[Working with AI Agents](Working_with_AI_Agents.tex) uses the shared course Beamer template.

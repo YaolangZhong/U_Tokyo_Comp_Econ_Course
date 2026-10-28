@@ -42,6 +42,16 @@
 
 17. [**NumPy Developers, NumPy User Guide. \[Documentation\]**](https://numpy.org/doc/stable/user/absolute_beginners.html)
 
+18. [**OpenAI, Agent and Codex documentation. \[Documentation\]**](https://developers.openai.com/blog/codex-as-a-platform)
+
+19. [**Anthropic (2025), Effective context engineering for AI agents. \[Technical article\]**](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents)
+
+20. [**Microsoft, Visual Studio Code: agent and terminal documentation. \[Documentation\]**](https://code.visualstudio.com/docs/agents/concepts/agent-harnesses)
+
+21. [**Model Context Protocol contributors, Model Context Protocol documentation. \[Documentation\]**](https://modelcontextprotocol.io/docs/learn/architecture)
+
+22. [**Agent Skills contributors, Agent Skills documentation. \[Documentation\]**](https://agentskills.io/home)
+
 ## Papers
 
 Research-paper readings will be announced here.

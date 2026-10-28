@@ -61,7 +61,7 @@
 
 - **Lab**
 
-    - Materials to be announced.
+    - [Working with AI Agents](week_04/lab/slides/pdf/Working_with_AI_Agents.pdf)
 
 - **Homework**
 
