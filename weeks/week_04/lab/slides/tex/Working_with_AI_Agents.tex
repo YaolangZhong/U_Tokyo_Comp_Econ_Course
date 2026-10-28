@@ -17,8 +17,8 @@
   \end{itemize}
 \item \textbf{Manage the information it uses}
   \begin{itemize}
-  \item Context, tokens, compaction, and caching
-  \item Project instructions and reusable skills
+  \item Context, project instructions, and reusable skills
+  \item Retrieval, compaction, saved notes, and caching
   \end{itemize}
 \item \textbf{Check and reuse its work}
   \begin{itemize}
@@ -139,131 +139,126 @@ An \term{LLM-based AI agent} pursues a task by selecting actions, using tools, a
 \small
 A concrete prompt makes the intended result and the criteria for success explicit.
 \par\smallskip
-\courseexample{The same weekly temperature-chart task}\par
-The CSV is in the shared drive; the desired outputs are a checked chart and a reusable script.
+\courseexample{The weekly temperature-chart task}\par
+\textbf{Vague prompt:} ``Make a chart from my data.''
+\par\medskip
+\textbf{Concrete prompt}
+\begin{itemize}
+\item \term{Input}: download the shared-drive \texttt{data.csv}, containing \texttt{date} and \texttt{temperature\_c}, into the working folder.
+\item \term{Output}: create \texttt{plot\_temperature.py} and save a line chart to \texttt{results/temperature.png}, with dates in order and Celsius units.
+\item \term{Constraints}: keep the input file unchanged and use the project Python environment.
+\item \term{Checks}: run the script, compare plotted dates and values with the CSV, inspect the chart, and report the command used.
+\end{itemize}
 \par\smallskip
-\textbf{Vague prompt}\par
-``Make a chart from my data.''
-\par\smallskip
-\textbf{Concrete prompt}\par
-``Download the shared-drive \texttt{data.csv} into the working folder. Write \texttt{plot\_temperature.py} to read it, sort by date, and save a line chart to \texttt{results/temperature.png}. Label the axes Date and Temperature (Celsius).
-\par\smallskip
-Keep the input unchanged. Use the project Python environment. Run the script, check the dates, values, and units against the CSV, and inspect the chart. Report the files changed and the command used.''
-\par\smallskip
-\textbf{Reuse the checked script} next week to plot the new file.
+These details give the agent an observable target. The checked script can be reused when next week's CSV arrives.
 \end{frame}
 
 \begin{frame}{The Prompt Is Part of the Context}
 \small
 \setlength{\abovecaptionskip}{2pt}
-\term{Context} is the input the harness supplies to the model for its next response.
+\term{Context} is the input supplied to an LLM call, including more than the latest user message.
+\par\smallskip
+\courseexample{The chart exists; the user now says ``Fix the axis label.''}
 \begin{figure}\centering
 \begin{tikzpicture}
-\node[agentNode,text width=3.2cm] (a) {Instructions\\and task prompt};
-\node[agentNode,text width=3.2cm,right=5mm of a] (b) {Tool definitions\\and retrieved files};
-\node[agentNode,text width=3.2cm,right=5mm of b] (c) {Conversation\\and tool results};
-\node[agentNode,text width=4cm,below=3mm of b] (m) {Input to the next model call};
-\draw[agentArrow](a.south)--++(0,-.2)-|(m.north);
-\draw[agentArrow](b)--(m);
-\draw[agentArrow](c.south)--++(0,-.2)-|(m.north);
+\node[agentNode,text width=3.1cm] (a) {\textbf{Current request}\\``Fix the axis label''};
+\node[agentNode,text width=3.1cm,right=5mm of a] (b) {\textbf{Earlier instructions}\\Celsius;\\CSV unchanged};
+\node[agentNode,text width=3.1cm,right=5mm of b] (c) {\textbf{Retrieved material}\\Script; chart; tool results};
+\node[agentNode,text width=4cm,below=10mm of b] (m) {Input to the next LLM call};
+\coordinate (join) at ([yshift=-5mm]b.south);
+\draw[draw=SessionCharcoal,line width=.8pt] (a.south)|-(join);
+\draw[draw=SessionCharcoal,line width=.8pt] (c.south)|-(join);
+\draw[draw=SessionCharcoal,line width=.8pt] (b.south)--(join);
+\draw[agentArrow] (join)--node[right,font=\scriptsize]{assembled by the harness}(m.north);
 \end{tikzpicture}
-\caption{The harness assembles the model input.}
+\caption{Selected instructions and material accompany the new request.}
 \end{figure}
 \begin{itemize}
-\item The \term{context window} limits the number of tokens a model call can accommodate.
-\item The harness loads relevant files and selects or summarizes earlier history.
+\item Tool definitions and selected conversation history may also be included.
+\item The \term{context window} limits tokens per call; the full input may greatly exceed the new message.
 \end{itemize}
-\courseexample{``Fix the axis label''} can accompany the CSV, script, and history: a short message can have a large input.
 \end{frame}
 
-\begin{frame}{Keep the Working Context Relevant}
+\begin{frame}{Reuse Instructions and Procedures}
 \small
-\term{Context engineering} selects and maintains relevant information. Even a large context can contain details the model overlooks.
+Recurring guidance can be stored once and loaded into context when it applies.
 \begin{itemize}
-\item \textbf{Load what helps.} For a plotting error, retrieve the relevant code and error message.
-\item \textbf{Keep related work together.} Revise the chart in one session; start a new one for unrelated work.
-\item \textbf{Preserve decisions.} \term{Compaction} replaces earlier detail with a shorter summary. Check that essential requirements survive.
-\item \textbf{Separate lengthy side tasks.} A \term{subagent} can investigate in a separate context and return a concise result.
+\setlength{\itemsep}{2mm}
+\item \term{Task prompt}: the current request.\\
+\courseexample{Example:} ``Create this week's chart from the shared-drive CSV.''
+\item \term{Project instructions}: standing rules for work in the project.\\
+\courseexample{Example:} preserve input data, label units, and save figures in \texttt{results/}. Codex supports \texttt{AGENTS.md}; conventions vary by application.
+\item \term{Skill}: a reusable procedure, with optional scripts and reference material.\\
+\courseexample{Example:} a plotting skill describes how to read columns, choose axes, produce the chart, and check it. In the Agent Skills format, instructions live in \texttt{SKILL.md}.
 \end{itemize}
 \par\smallskip
-\courseexample{A handoff to a fresh session}\par
-``The plotting script runs. Keep dates sorted and use Celsius. Next: compare the chart with \texttt{data.csv}.''
+Skill metadata helps the agent discover a relevant procedure; its instructions can then be loaded into context.
 \par\smallskip
-Saved notes or \term{memory} help later sessions only when retrieved into their context.
+\textbf{Skills guide the procedure; tools perform its operations.} The plotting skill can guide the use of file tools and Python execution.
+\end{frame}
+
+\begin{frame}{Managing Limited Context}
+\small
+Conversation history and tool outputs accumulate as work continues. \term{Context engineering} determines which information accompanies the next LLM call.
+\begin{itemize}
+\setlength{\itemsep}{2mm}
+\item \term{Retrieval}: load material relevant to the current step.\\
+For an axis-label fix, retrieve the plotting code and current chart; a full execution log may add little.
+\item \term{Compaction}: replace earlier conversation detail with a shorter summary.\\
+For the chart task, preserve the input location, Celsius units, script path, completed checks, and remaining work. A summary can omit useful details.
+\item \term{Saved notes}: retain decisions across sessions.\\
+A note influences a later LLM call when the harness retrieves it into context.
+\end{itemize}
+\par\smallskip
+\courseexample{A concise handoff}\par
+``Shared-drive CSV downloaded. Script: \texttt{plot\_temperature.py}. Keep dates sorted and use Celsius. Script runs; next check plotted values against the CSV.''
 \end{frame}
 
 \begin{frame}{Context Caching Reuses Computation}
 \small
-\setlength{\abovecaptionskip}{2pt}
-\term{Context caching} reuses computation for an unchanged input prefix when a compatible cache is available.
+\setlength{\abovecaptionskip}{0pt}
+\term{Context caching} reuses computation for an unchanged beginning of the input---its \textbf{prefix}---when a compatible cache is available.
 \begin{figure}\centering
-\begin{tikzpicture}[x=1cm,y=.6cm]
-\node[anchor=east,font=\small] at(0,1){Previous call};
-\node[anchor=east,font=\small] at(0,0){Next call};
-\foreach \y in {0,1}{\node[agentNode,text width=2cm,minimum height=6mm] at(1.3,\y){A};}
-\foreach \y in {0,1}{\node[agentNode,text width=2cm,minimum height=6mm] at(3.7,\y){B};}
-\node[agentNode,text width=2cm,minimum height=6mm] at(6.1,0){C};
+\begin{tikzpicture}[x=1cm,y=1cm]
+\node[anchor=east,font=\small] at (0,.7) {Previous call};
+\node[anchor=east,font=\small] at (0,-.25) {Next call};
+\foreach \y in {.7,-.25}{
+ \node[agentNode,text width=2cm,minimum height=8mm] at (1.35,\y) {Instructions};
+ \node[agentNode,text width=3cm,minimum height=8mm] at (4.25,\y) {History so far};
+}
+\node[agentNode,text width=2.8cm,minimum height=8mm,fill=white] at (7.55,-.25) {New messages\\reply + request};
 \end{tikzpicture}
-\caption{Reuse A + B; process the new C.}
+\caption{Unchanged prefix: reuse computation. New messages: process normally.}
 \end{figure}
 \begin{itemize}
-\item Eligible cached input can cost less to process. Retention and prices depend on the provider.
-\item Changing earlier instructions or history can invalidate reuse. Cached text still occupies context space.
-\item Cache expiry requires recomputation; compaction changes which information the model receives.
+\setlength{\itemsep}{0pt}
+\item Cached input can reduce cost and processing time; eligibility, prices, and retention depend on the provider.
+\item Changing the prefix can reduce reuse. Cached input still occupies context space; an expired cache requires recomputation.
 \end{itemize}
-\textbf{Judge the completed task:} a high cache-hit rate alone does not imply low cost or good results.
+\par
+\textbf{Caching reuses computation; compaction changes the input.} A summary may shorten context but invalidate a cached prefix.
 \end{frame}
 
-\begin{frame}[fragile]{Reuse Instructions and Procedures}
+\begin{frame}{Verify the Result}
 \small
-Keep recurring guidance in files the agent can load.
-\par\smallskip
-\begin{columns}[T]
-\begin{column}{.48\textwidth}
-\term{Project instructions}\par
-Rules for work in this project. Codex uses \texttt{AGENTS.md}; filenames and scope vary across applications.
-\par\smallskip
-\courseexample{Chart project rules}
+A script that runs successfully can still produce the wrong chart.
+\par\medskip
+\courseexample{Example check: three observations in the CSV}
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Date} & \textbf{Temperature (Celsius)} \\
+2026-10-01 & 20 \\
+2026-10-02 & 22 \\
+2026-10-03 & 21 \\
+\end{tabular}
+\end{center}
 \begin{itemize}
-\item Keep input data unchanged.
-\item Include units on axes.
-\item Save figures in \texttt{results/}.
+\item \textbf{Data agreement}: three points in date order, with a peak of 22 on October 2; axis labels show dates and Celsius.
+\item \textbf{Input preservation}: the original CSV is unchanged.
+\item \textbf{Reproducibility}: rerunning \texttt{python plot\_temperature.py} in the recorded environment regenerates the saved chart.
+\item \textbf{Reusable work}: the checked script and its run instructions are saved in the Git project.
 \end{itemize}
-\end{column}
-\begin{column}{.48\textwidth}
-A \term{skill}\par
-A reusable procedure, with optional code and references. In the Agent Skills format:
-\begin{verbatim}
-plot-data/
-  SKILL.md
-  scripts/
-  references/
-\end{verbatim}
-\courseexample{Plotting procedure:} read columns and units, create the figure, inspect it, and report checks.
-\end{column}
-\end{columns}
-\par\smallskip
-The agent discovers a skill by its name and description, then loads its instructions when relevant. The skill guides tool use.
 \end{frame}
-
-
-
-\begin{frame}{Verify the Work Before Reusing It}
-\small
-A successful tool call or a confident completion message is evidence to inspect; compare the actual result with the task.
-\begin{enumerate}
-\item \textbf{Inspect the changes.} Review the script and confirm the input file was preserved.
-\item \textbf{Reproduce the run.} Record the command and Python environment; rerun the script.
-\item \textbf{Check the output.} Compare dates and values with the CSV; inspect axis labels and units.
-\item \textbf{Keep the checked version.} Commit the script with Git so it can be reused or revised.
-\end{enumerate}
-\par\medskip
-\courseexample{For temperatures of 20, 22, and 21 Celsius,} the chart should preserve the date order and have its highest point at 22.
-\par\medskip
-A \term{sandbox} restricts execution; \term{approvals} authorize actions. Retrieved files may contain \term{prompt injection}: instructions that try to redirect the agent. Treat external content as data to assess.
-\end{frame}
-
-
 
 % BEGIN MANAGED READINGS: week4_ai_agents
 \begin{frame}{References and Further Reading}

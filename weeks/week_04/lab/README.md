@@ -2,4 +2,4 @@
 
 [Slides](slides/pdf/Working_with_AI_Agents.pdf)
 
-Follow one data-to-chart task from choosing a model and agent application to writing a prompt, running tools, managing context and caching, and reusing instructions and skills. Extend the workflow with MCP when external services are needed, then verify and reuse the result.
+Follow a shared-drive CSV-to-chart task through LLM selection, harness tools, CLI and MCP, and agent execution. Then examine concrete prompts, context, project instructions and skills, retrieval and compaction, caching, and checks for a reproducible result.
