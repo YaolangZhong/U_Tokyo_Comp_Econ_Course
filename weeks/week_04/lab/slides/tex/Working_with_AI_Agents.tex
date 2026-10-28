@@ -93,20 +93,16 @@ The harness prepares the model's context, handles permissions, executes requeste
 A \term{task prompt} states what you want done. The agent uses each tool result to decide its next step.
 \begin{figure}\centering
 \begin{tikzpicture}
-\node[agentNode] (m) {Model requests\\an action};
+\node[agentNode] (m) {LLM requests\\an action};
 \node[agentNode,right=7mm of m] (t) {Harness executes\\the tool};
-\node[agentNode,right=7mm of t] (o) {Tool result\\returns to model};
+\node[agentNode,right=7mm of t] (o) {Tool result\\returns to LLM};
 \draw[agentArrow](m)--(t);\draw[agentArrow](t)--(o);
 \draw[agentArrow](o.south)--++(0,-.3)-|(m.south);
 \end{tikzpicture}
 \caption{Request, execute, and use the result.}
 \end{figure}
-\begin{itemize}
-\item The model writes a \textbf{script}; a tool runs it and returns output or errors. The model checks the result and revises the code.
-\item A \term{command-line interface (CLI)} lets you operate software with text commands. For example, \texttt{git status} lists repository changes; the harness can run it and return the output.
-\end{itemize}
-\textbf{Use programs for repeatable work:} run a checked script again on new data.
-\sourcehint{CarpeDiem, Code is the most handy tool for AI}{https://www.bilibili.com/video/BV1dQtx66E9K}
+\par\smallskip
+A \term{command-line interface (CLI)} lets you operate software with text commands. For example, \texttt{git status} lists repository changes; the harness can run it and return the output to the LLM.
 \end{frame}
 
 \begin{frame}{Connect Tools through MCP}
@@ -127,7 +123,7 @@ The harness can also connect to tools supplied by another program, such as a clo
 \end{figure}
 \begin{itemize}
 \item A server can offer \textbf{tools} to act, \textbf{resources} to read, and \textbf{prompt templates} to reuse.
-\item For example, the model requests a file; the harness calls the server's download tool and returns the result to the model.
+\item For example, the LLM requests a file; the harness calls the server's download tool and returns the result to the LLM.
 \item A \textbf{CLI} operates a program through text commands; \textbf{MCP} defines how applications discover and call tools supplied by servers.
 \end{itemize}
 \sourcehint{Model Context Protocol, Architecture overview}{https://modelcontextprotocol.io/docs/learn/architecture}
@@ -148,8 +144,8 @@ Each \texttt{data.csv} contains \texttt{date} and \texttt{temperature\_c}. You w
 \par\smallskip
 Keep the input unchanged. Use the project Python environment. Run the script, check the dates, values, and units against the CSV, and inspect the chart. Report the files changed and the command used.''
 \par\smallskip
-\textbf{Result to check:} the chart and a reusable script. Next week, run the same script on the new file.
-\sourcehint{OpenAI, Prompt engineering}{https://developers.openai.com/api/docs/guides/prompt-engineering}
+\textbf{Reuse the checked script} next week to plot the new file.
+\par\smallskip{\tiny\color{SessionMuted}Reading: \href{https://developers.openai.com/api/docs/guides/prompt-engineering}{OpenAI, Prompt engineering}; \href{https://www.bilibili.com/video/BV1dQtx66E9K}{CarpeDiem, Programs as AI tools}.}
 \end{frame}
 
 \begin{frame}{The Prompt Is Part of the Context}
