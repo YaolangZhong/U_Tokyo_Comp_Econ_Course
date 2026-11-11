@@ -14,5 +14,4 @@
 
 - **Homework**
 
-    - [Copilot exercise prompt](lab/starter/copilot_prompt.md)
-    - [Homework project (ZIP)](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_06/week_06-lab.zip)
+    - [Copilot exercise (ZIP)](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_06/copilot-exercise.zip)
