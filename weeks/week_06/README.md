@@ -8,7 +8,8 @@
 
 - **Lab**
 
-    - Materials to be announced.
+    - [Download working folder (ZIP)](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_06/week_06-lab.zip)
+    - [Lab exercise files](lab/starter)
 
 - **Homework**
 
