@@ -1,3 +1,3 @@
-# Implementing dynamic programming with an AI agent
+# Week 6 lab: AI Agents, Context, and Skills
 
-Open `starter/` as a folder in VS Code and paste the full contents of [copilot_prompt.md](starter/copilot_prompt.md) into the Copilot agent. The prompt asks it to read the algorithm and model specifications, generate the three Python files, and compare their solutions.
+[AI Agents, Context, and Skills — slides](../../week_05/lab/slides/pdf/Project_Instructions_and_Agent_Skills.pdf)

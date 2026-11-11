@@ -1,3 +1,5 @@
-# Research-agent workflows
+# AI Agents, Context, and Skills
 
-Explore LLM-agent tools, Git, and reproducible research workflows. Slides and activities will be available here.
+[Current slide source](Project_Instructions_and_Agent_Skills.tex)
+
+The descriptive title and stable source filename refer to the same conceptual deck.

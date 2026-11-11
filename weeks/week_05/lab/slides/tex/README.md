@@ -1,3 +1,3 @@
-# Lab TEX slides
+# AI Agents, Context, and Skills
 
-LaTeX slide sources will be available here.
+[LaTeX source](Project_Instructions_and_Agent_Skills.tex)

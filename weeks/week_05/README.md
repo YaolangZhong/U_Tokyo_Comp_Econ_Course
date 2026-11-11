@@ -1,15 +1,3 @@
-# Week 5 (Nov 4): Simulation-based methods
+# Week 5 (Nov 4): No class
 
-[Open this week on the course website](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/weeks/week_05/)
-
-- **Lecture**
-
-    - [Simulation-Based Learning](lecture/slides/pdf/Simulation_Based_Learning.pdf)
-
-- **Lab**
-
-    - Materials to be announced.
-
-- **Homework**
-
-    - Materials to be announced.
+**No class on November 4.** The lecture and lab materials have moved to [Week 6 (November 11)](../week_06/).

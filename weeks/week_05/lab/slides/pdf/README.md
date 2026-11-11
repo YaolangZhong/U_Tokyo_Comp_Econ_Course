@@ -1,3 +1,3 @@
-# Lab PDF slides
+# AI Agents, Context, and Skills
 
-Lecture slides will be available here. See the weekly page for session details.
+[Slides](Project_Instructions_and_Agent_Skills.pdf)

@@ -69,31 +69,24 @@
 
 ## [Week 5 (Nov 4)](week_05/)
 
-- **Lecture**
-
-    - [Simulation-Based Learning](week_05/lecture/slides/pdf/Simulation_Based_Learning.pdf)
-
-- **Lab**
-
-    - Materials to be announced.
-
-- **Homework**
-
-    - Materials to be announced.
+**No class on November 4.** The lecture and lab materials have moved to [Week 6 (November 11)](week_06/).
 
 ## [Week 6 (Nov 11)](week_06/)
 
 - **Lecture**
 
-    - [Parameterization and Neural Networks](week_06/lecture/slides/pdf/Parameterization_and_Neural_Networks.pdf)
+    - [Maze Example: Value and Policy Updates](week_05/lecture/slides/pdf/Maze_Value_and_Policy_Updates.pdf)
+    - [Simulation-Based Learning](week_05/lecture/slides/pdf/Simulation_Based_Learning.pdf)
+    - [Interactive maze example (browser)](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_06/lecture/Maze_Value_and_Policy_Updates.html)
 
 - **Lab**
 
-    - Materials to be announced.
+    - [AI Agents, Context, and Skills](week_05/lab/slides/pdf/Project_Instructions_and_Agent_Skills.pdf)
 
 - **Homework**
 
-    - Materials to be announced.
+    - [Copilot exercise prompt](week_06/lab/starter/copilot_prompt.md)
+    - [Homework project (ZIP)](https://yaolangzhong.github.io/U_Tokyo_Comp_Econ_Course/downloads/week_06/week_06-lab.zip)
 
 ## [Week 7 (Nov 18)](week_07/)
 

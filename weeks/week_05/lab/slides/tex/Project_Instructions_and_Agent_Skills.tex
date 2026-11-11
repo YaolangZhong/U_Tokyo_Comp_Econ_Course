@@ -1,0 +1,434 @@
+% Standalone AI-agent introduction; editable conceptual figures, no experiments.
+\newcommand{\CourseTemplatePath}{../../../../../templates/slides/}
+\input{\CourseTemplatePath course_preamble.tex}
+\title[AI Agents, Context, and Skills]{Lab: AI Agents, Context, and Skills}
+\tikzset{box/.style={draw=SessionTeal,fill=SessionTealLight,rounded corners=1mm,align=center,font=\small,inner sep=6pt,minimum height=12mm},flow/.style={-{Stealth[length=2mm]},draw=SessionCharcoal,line width=.8pt},mutedbox/.style={box,draw=SessionMuted,fill=SessionBlueGrayLight},warnbox/.style={box,draw=SessionRed,fill=SessionRedLight}}
+\begin{document}
+\makecoursetitle
+
+\begin{frame}{Lab Overview}
+\small
+\begin{itemize}
+\item \textbf{Give the agent useful information}
+\begin{itemize}\item Clear requests, relevant files, and short results\item Context limits and caching in everyday use\end{itemize}
+\item \textbf{Reuse instructions instead of repeating them}
+\begin{itemize}\item Project rules in \texttt{AGENTS.md}\item Task procedures in skills\end{itemize}
+\item \textbf{Keep longer tasks manageable}
+\begin{itemize}\item Small delegated tasks\item Short notes and a fresh conversation when needed\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Agent Loop: Roles and Responsibilities}
+\small
+An \term{AI agent} combines a model with an application that can run tools.
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[box,text width=2.8cm] (a) {\textbf{User}\\Sets the task\\Provides facts\\Checks the result};
+\node[box,text width=3.7cm,right=6mm of a] (b) {\textbf{Agent application}\\The desktop application\\Assembles the model input\\Runs tools\\Returns tool results};
+\node[mutedbox,text width=3cm,right=6mm of b] (c) {\textbf{Model service}\\Runs the model\\Generates a response\\or a tool request};
+\draw[flow](a)--(b);\draw[flow](b)--(c);
+\draw[flow](c.south)--++(0,-.65)-|node[pos=.25,below,font=\small]{response or requested action}(b.south);
+\end{tikzpicture}
+\end{figure}
+\begin{itemize}
+\item \textbf{Tool loop (Lab 4 recap):} the model requests an action; the agent application runs it and returns the result for the model to inspect.
+\item \textbf{Your role:} give a clear goal and relevant facts, then check the outcome. The application and model service carry out the processing.
+\end{itemize}
+\end{frame}
+
+% Opening sequence: one learning objective per page. Inputs and outputs must
+% be visually separate; advice belongs in the worked prompt, not definitions.
+\begin{frame}{Tokens: Units of Text}
+\small
+\courseexample{Example sentence: ``Please revise my email.''}\par\smallskip
+Before processing text, the model's tokenizer breaks it into small pieces called \term{tokens}.
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[box,minimum width=2cm] (a) {Please};
+\node[box,minimum width=2cm,right=2mm of a] (b) {revise};
+\node[box,minimum width=1.3cm,right=2mm of b] (c) {my};
+\node[box,minimum width=2cm,right=2mm of c] (d) {email};
+\node[mutedbox,minimum width=.8cm,right=2mm of d] (e) {.};
+\end{tikzpicture}
+\caption{Illustrative split; exact pieces depend on the tokenizer.}
+\end{figure}
+\begin{itemize}
+\item A token can be a word, part of a word, or punctuation. A token count is therefore different from a word count.
+\item Both the text supplied to the model and the text it generates are counted in tokens.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Context: Input for One Response}
+\small
+\courseexample{Example: the information supplied before the first email revision}\par\smallskip
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[box,text width=7.2cm,align=left] (a) {
+\textbf{Context for this response (input)}\\[4pt]
+\textbf{Draft:} ``Hi Professor Lee, can I send the essay Friday? Thanks, Mei.''\\[4pt]
+\textbf{Facts:} the current deadline is Wednesday.\\[4pt]
+\textbf{Instruction:} make the request polite; do not invent a reason.};
+\node[mutedbox,text width=2.5cm,right=9mm of a] (b) {\textbf{Output}\\The revised\\email};
+\draw[flow](a)--(b);
+\end{tikzpicture}
+\end{figure}
+\term{Context} is the input available to the model for this response. Here, the draft, facts, and instruction \textbf{together} form the example context; the revised email is the output.
+\par\medskip
+The \term{context window} is the available capacity, measured in tokens. The input and generated response must fit within the applicable limits.
+\end{frame}
+
+\begin{frame}{Your Message and the Full Model Input}
+\small
+\courseexample{Example: your first request has already produced an email revision}\par\smallskip
+First request: draft + facts + instruction.\quad Model output: the first revision.
+\begin{figure}\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\node[box,text width=3.1cm] (u) at (5.2,2.1){\textbf{What you type next}\\``Under 80 words.''};
+\node[font=\small] at (5.2,1.15){Agent application: combines the new message with earlier messages};
+\draw[flow](u.south)--(5.2,1.4);
+\filldraw[draw=SessionTeal,fill=SessionTealLight] (0,0) rectangle (4.1,.95);
+\node[font=\small,align=center] at (2.05,.475){Original draft + facts\\+ instruction};
+\filldraw[draw=SessionMuted,fill=SessionBlueGrayLight] (4.1,0) rectangle (7.3,.95);
+\node[font=\small,align=center] at (5.7,.475){Model's first\\revision};
+\filldraw[draw=SessionGold,fill=SessionGold!20] (7.3,0) rectangle (10.4,.95);
+\node[font=\small,align=center] at (8.85,.475){New message:\\``Under 80 words''};
+\node[font=\small] at (5.2,-.45){Combined input sent to the model service};
+\end{tikzpicture}
+\end{figure}
+Your new message is short, but the \textbf{full prompt sent to the model} is the combined input shown above. That is the context used to produce the next revision.
+\par\smallskip
+This example assumes the earlier messages are retained; the agent application can also select or summarize history.
+\end{frame}
+
+\begin{frame}{Conversation Growth and Context Capacity}
+\small
+\courseexample{Example: ``Under 80 words'' followed by ``Make it warmer''}\par\smallskip
+Each retained reply and follow-up adds text to the next combined input.
+\begin{figure}\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\foreach \y/\label in {1.9/First call,.95/Next call,0/Later call}{
+\node[anchor=east,font=\small] at (-.2,\y+.4){\label};
+\draw[draw=SessionLine,fill=SessionPaper] (0,\y) rectangle (10,\y+.8);}
+\foreach \y in {0,.95,1.9}{\filldraw[draw=SessionTeal,fill=SessionTealLight] (0,\y) rectangle (2.8,\y+.8);\node[font=\small,align=center] at (1.4,\y+.4){Original\\request};}
+\foreach \y in {0,.95}{\filldraw[draw=SessionMuted,fill=SessionBlueGrayLight] (2.8,\y) rectangle (6,\y+.8);\node[font=\small,align=center] at (4.4,\y+.4){First revision +\\``Under 80 words''};}
+\filldraw[draw=SessionGold,fill=SessionGold!20] (6,0) rectangle (9.2,.8);
+\node[font=\small,align=center] at (7.6,.4){Shorter revision +\\``Make it warmer''};
+\node[font=\small,align=center] at (7.2,2.3){Room for more text};
+\node[font=\small,align=center] at (8,1.35){Less room};
+\end{tikzpicture}
+\caption{Schematic context capacity; widths are not measured token counts.}
+\end{figure}
+\begin{itemize}
+\item More retained conversation leaves less room for further input and generation.
+\item Repeated text also means repeated processing. \term{Caching} can reduce that work; reducing the amount of context is a separate task.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Caching: Reuse by the Model Service}
+\small
+\courseexample{Example: processing the next email revision}\par\smallskip
+The \textbf{agent application} assembles the input. The \textbf{model service} manages cached calculations and checks whether it can reuse them.
+\begin{figure}\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\filldraw[draw=SessionTeal,fill=SessionTealLight] (0,0) rectangle (6.2,1.2);
+\node[font=\small,align=center] at (3.1,.6){Identical beginning of the input\\e.g., original draft + facts + instruction};
+\filldraw[draw=SessionMuted,fill=SessionBlueGrayLight] (6.2,0) rectangle (10.6,1.2);
+\node[font=\small,align=center] at (8.4,.6){Remaining input\\including ``Under 80 words''};
+\node[font=\small,align=center] at (3.1,-.65){Matching calculations still available?\\Reuse them: a \textbf{cache hit}};
+\node[font=\small,align=center] at (8.4,-.65){Process any\\uncached text};
+\end{tikzpicture}
+\end{figure}
+\begin{itemize}
+\item A \term{key--value (KV) cache} stores internal calculations for reuse while generating text. Reuse \textbf{across calls} is called \term{prompt/prefix caching} and requires service support.
+\item A cache hit is a system outcome, not a user command or an agent skill. It can save processing time and, under some pricing plans, input cost.
+\end{itemize}
+\par\smallskip
+Cached text \textbf{still occupies context space}; caching does not shorten the input.
+\end{frame}
+
+\begin{frame}{Cache Hits: Unchanged and Edited History}
+\small
+\courseexample{Example: the same ``Under 80 words'' follow-up as before}\par\smallskip
+The follow-up needs no special wording. Reuse depends on the beginning of the \textbf{full input} assembled by the agent application.
+\par\medskip
+\begin{columns}[T,onlytextwidth]
+\begin{column}{.48\textwidth}
+\begin{conceptbox}\raggedright \textbf{Append the follow-up}\par\smallskip
+Keep the first request unchanged.\par
+Send: ``Under 80 words.''\par\medskip
+The original beginning can still match the cached input.
+\end{conceptbox}
+\end{column}
+\begin{column}{.48\textwidth}
+\begin{conceptbox}\raggedright \textbf{Rewrite an earlier message}\par\smallskip
+Change ``make the request polite'' to ``rewrite the email politely.''\par\medskip
+The match with the old input stops at the first changed token.
+\end{conceptbox}
+\end{column}
+\end{columns}
+\par\smallskip
+\begin{itemize}
+\item \textbf{User practice:} append new requirements; avoid needless edits to correct history. Correct mistakes whenever needed, even if this reduces reuse.
+\item \textbf{Model service:} may reuse a matching prefix if caching is supported and an eligible entry exists. This short email may be too small to qualify.
+\end{itemize}
+\end{frame}
+
+% Explain the mechanism and its practical consequence without repeating
+% a takeaway. Keep the final user-requested instruction summary.
+\begin{frame}{AGENTS.md: Instructions Across Tasks}
+\small
+\courseexample{Example: revising more than one email}\par\smallskip
+\begin{columns}[T,onlytextwidth]
+\begin{column}{.48\textwidth}
+\begin{conceptbox}\raggedright \textbf{Save standing rules in AGENTS.md}\par\medskip
+Use a polite, concise tone.\par
+Preserve names, dates, and facts.\par
+Do not invent reasons.
+\end{conceptbox}
+\end{column}
+\begin{column}{.48\textwidth}
+\begin{conceptbox}\raggedright \textbf{Put today's details in the request}\par\medskip
+Recipient: Professor Lee.\par
+Purpose: an extension to Friday.\par
+Length: fewer than 80 words.
+\end{conceptbox}
+\end{column}
+\end{columns}
+\par\medskip
+\begin{itemize}
+\item \textbf{Agent application:} where supported, it loads applicable \texttt{AGENTS.md} instructions alongside the current request.
+\item \textbf{Your practice:} keep these rules short and current; supply the draft and task-specific details each time. Follow the agent application's file-location rules.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Agent Skills: Instructions for a Repeated Task}
+\small
+\courseexample{Instructor's example: my PDF-extraction workflow}\par\smallskip
+For each research PDF, I need the same sequence: run extraction, check the output files, and report the results. I saved that procedure in a \term{skill}.
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[box,text width=3cm] (a) {\textbf{Skill file}\\Instructions for\\PDF extraction};
+\node[box,text width=3cm,right=6mm of a] (b) {\textbf{Agent}\\Reads the guide;\\chooses tool calls};
+\node[mutedbox,text width=3cm,right=6mm of b] (c) {\textbf{MinerU tool}\\Performs the\\extraction};
+\draw[flow](a)--(b);\draw[flow](b)--(c);
+\end{tikzpicture}
+\end{figure}
+My file is \texttt{Research/agent-skills/skills/pdf-extraction/SKILL.md}.
+\par\smallskip
+\begin{itemize}
+\item \textbf{Writing a skill:} save a repeatable procedure with inputs, steps, checks, and expected outputs.
+\item \textbf{Using it:} supply the PDF path and desired destination. The agent needs access to the named tool; the skill file does not install it.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{SKILL.md: Description and Procedure}
+\small
+\courseexample{Two parts of my PDF-extraction skill}\par\smallskip
+\textbf{1. Description: helps the agent choose the skill (actual metadata)}
+\begin{verbatim}
+---
+name: pdf-extraction
+description: >-
+  Run local MinerU to extract PDFs into Markdown,
+  structured data, and assets, with structural checks only.
+---
+\end{verbatim}
+\textbf{2. Main body: guides the agent's actions (summarized)}
+\begin{enumerate}
+\item Choose the output location and run the extraction tool.
+\item Check output files, page coverage, and linked images.
+\item Return paths and check results; identify anything unverified.
+\end{enumerate}
+\textbf{Your skill:} specify when to use it; write concrete steps and checks.
+\end{frame}
+
+\begin{frame}{Progressive Disclosure: Loading a Skill in Stages}
+\small
+\courseexample{Example: what enters context when PDF extraction is needed}\par\smallskip
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[box,text width=3cm] (a) {\textbf{Before selection}\\Name + description\\of available skills};
+\node[box,text width=3cm,right=6mm of a] (b) {\textbf{PDF task selected}\\Full body of\\\texttt{pdf-extraction}};
+\node[mutedbox,text width=3cm,right=6mm of b] (c) {\textbf{Extra detail needed}\\Relevant supporting\\files or resources};
+\draw[flow](a)--(b);\draw[flow](b)--(c);
+\end{tikzpicture}
+\end{figure}
+\begin{itemize}
+\item \textbf{Agent loading:} \term{progressive disclosure} makes names and descriptions visible first; the body is read on activation, supporting files only as needed.
+\item \textbf{Skill design:} keep the description brief and specific. Put core steps in the body; link lengthy reference material separately.
+\item \textbf{In your request:} name the needed skill rather than pasting every guide. An email task need not load the extraction procedure.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Skill Selection: From Request to Procedure}
+\small
+\courseexample{Example: selecting the PDF-extraction guide}\par\smallskip
+\begin{columns}[T,onlytextwidth]
+\begin{column}{.48\textwidth}
+\begin{conceptbox}\raggedright \textbf{A matching task}\par\medskip
+``Extract \texttt{paper.pdf} to Markdown.''
+\par\medskip
+The agent may recognize that the task matches the skill's description.
+\end{conceptbox}
+\end{column}
+\begin{column}{.48\textwidth}
+\begin{conceptbox}\raggedright \textbf{An explicit selection}\par\medskip
+``Use \texttt{pdf-extraction} on \texttt{paper.pdf}.''
+\par\medskip
+The request names the intended skill.
+\end{conceptbox}
+\end{column}
+\end{columns}
+\par\medskip
+\begin{itemize}
+\item \textbf{Agent sequence:} select the skill $\rightarrow$ read its body $\rightarrow$ use tools and check results. Selection alone is not execution.
+\item \textbf{Your request:} name the skill when you want a specific procedure. If discovery is unavailable, give its path: ``Read this \texttt{SKILL.md}, then follow it.''
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tool Results: Files and Returned Information}
+\small
+\courseexample{Example: what my extraction skill returns (illustrative)}\par\smallskip
+\begin{columns}[T,onlytextwidth]
+\begin{column}{.48\textwidth}
+\begin{conceptbox}\raggedright \textbf{Full outputs on disk}\par\medskip
+Extracted Markdown\par
+Images and structured data\par
+Detailed execution log
+\par\medskip
+The original PDF is preserved.
+\end{conceptbox}
+\end{column}
+\begin{column}{.48\textwidth}
+\begin{conceptbox}\raggedright \textbf{Report returned to the agent}\par\medskip
+File: \texttt{notes/paper.md}\par
+Pages accounted for: 12 of 12\par
+Referenced images missing: 1\par
+Image check: failed
+\end{conceptbox}
+\end{column}
+\end{columns}
+\par\medskip
+\begin{itemize}
+\item \textbf{Agent input:} the short report enters the next context. This skill keeps the full extracted content and logs on disk during extraction.
+\item \textbf{Your check:} ask for output paths, coverage, and failures. Here, one missing image needs follow-up; ``12 of 12 pages'' is not an all-clear.
+\item \textbf{Content review:} request it separately when needed. File checks do not establish that the extracted equations are correct.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Subagents: Delegating a Separate Review}
+\small
+\courseexample{Example: drafting a reply to a long email thread}\par\smallskip
+A \term{subagent} handles a separate task in its own context and reports back (where supported).
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[box,text width=3.2cm] (a) at (0,0) {\textbf{Main agent}\\Drafts the reply\\using the findings};
+\node[mutedbox,text width=4cm] (b) at (6.2,0) {\textbf{Subagent}\\Finds agreed dates\\and commitments};
+\draw[flow](a.north east) to[bend left=20] node[above,font=\small]{thread + request for dates and commitments} (b.north west);
+\draw[flow](b.south west) to[bend left=20] node[below,font=\small]{short findings + message references} (a.south east);
+\end{tikzpicture}
+\end{figure}
+\begin{itemize}
+\item \textbf{For a long thread:} supply the thread and a focused task: ``Find agreed dates and commitments; return message references.''
+\item \textbf{Before drafting:} ask the main agent to verify the findings against those references.
+\item \textbf{For a short email:} use one agent; delegation adds work.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Compaction: A Shorter Conversation History}
+\small
+\courseexample{Example: several revisions of the email to Professor Lee}\par\smallskip
+\begin{figure}\centering
+\begin{tikzpicture}
+\node[mutedbox,text width=4.8cm,align=left] (a) {\textbf{Earlier history}\\[4pt]
+Ask for Friday, not Wednesday.\\
+Too formal, then too long.\\
+Use polite, natural wording.\\
+Keep it under 80 words.\\
+Do not invent a reason.};
+\node[box,text width=4.8cm,align=left,right=8mm of a] (b) {\textbf{Summary retained}\\[4pt]
+Request: Wednesday to Friday.\\
+Tone: polite and natural.\\
+Length: under 80 words.\\
+No invented reason.};
+\draw[flow](a)--(b);
+\end{tikzpicture}
+\end{figure}
+\begin{itemize}
+\item \textbf{Agent application:} \term{compaction} replaces history with a shorter summary, automatically or on request where supported.
+\item \textbf{Before compaction:} save the current draft and important facts. A summary can omit details or keep an old mistake.
+\item \textbf{When continuing:} check dates, tone and length; restore missing requirements.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Fresh Sessions: Saved Notes as New Input}
+\small
+\courseexample{Example: finishing the email in a new conversation}\par\smallskip
+\textbf{Agent application:} adds file contents to context when they are read. A fresh session need not contain the full earlier conversation.
+\begin{verbatim}
+# RUN_NOTES.md (illustrative)
+Draft: drafts/extension_email.txt
+Recipient: Professor Lee; request Wednesday to Friday.
+Style: polite and natural; under 80 words; no invented reason.
+Next: check the final wording and word count.
+\end{verbatim}
+\begin{itemize}
+\item \textbf{Before restarting:} save the latest draft, current requirements and next step.
+\item \textbf{First request:} ``Read \texttt{RUN\_NOTES.md} and the saved draft, then check the wording and word count.'' Attach the files if the agent application cannot read their paths.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Practical Instructions for Agent Tasks}
+\small
+\begin{enumerate}
+\item \textbf{State the task clearly.} Provide the input, desired output, and constraints: audience, tone, length, or file destination.
+\item \textbf{Reuse the right instructions.} Keep standing rules in \texttt{AGENTS.md}; name a suitable skill for a recurring procedure. Make the files available to the agent.
+\item \textbf{Keep the context relevant.} Supply needed material and request short reports. Delegate only a clearly bounded task. Caching does not free context space.
+\item \textbf{Check the result.} Compare it with the request. Inspect changed facts, generated files, completed checks, and unresolved errors.
+\item \textbf{Save enough to continue.} Record current decisions, output paths, and the next step before compaction or a fresh conversation.
+\end{enumerate}
+\end{frame}
+
+% BEGIN MANAGED READINGS: week5_agent_skills
+\begin{frame}{References and Further Reading}
+\coursereading{1}
+  {Hugging Face, Agents Course: the agent loop.}
+  {https://huggingface.co/learn/agents-course/unit1/agent-steps-and-structure}
+  {}
+\coursereading{2}
+  {Hugging Face, Tokenizers.}
+  {https://huggingface.co/learn/llm-course/en/chapter2/4}
+  {}
+\coursereading{3}
+  {Hugging Face, How caching works.}
+  {https://huggingface.co/docs/transformers/cache_explanation}
+  {}
+\coursereading{4}
+  {vLLM contributors, Automatic Prefix Caching.}
+  {https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/}
+  {}
+\coursereading{5}
+  {Anthropic (2025), Effective context engineering for AI agents.}
+  {https://www.anthropic.com/research/effective-context-engineering-for-ai-agents}
+  {}
+\end{frame}
+\begin{frame}{References and Further Reading}
+\coursereading{6}
+  {Anthropic, Prompt caching.}
+  {https://platform.claude.com/docs/en/build-with-claude/prompt-caching}
+  {}
+\coursereading{7}
+  {Agent Skills contributors, Agent Skills specification.}
+  {https://agentskills.io/specification}
+  {}
+\coursereading{8}
+  {AGENTS.md contributors, Project instructions for coding agents.}
+  {https://github.com/agentsmd/agents.md}
+  {}
+\coursereading{9}
+  {CarpeDiem (2026), What should I do if the model feels less capable? [Video, Chinese]}
+  {https://www.bilibili.com/video/BV1Gu4L6iEdc/}
+  {}
+\end{frame}
+% END MANAGED READINGS: week5_agent_skills
+\end{document}

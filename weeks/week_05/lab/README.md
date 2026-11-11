@@ -1,5 +1,3 @@
-# Research tools lab
+# Lab rescheduled to Week 6
 
-This lab will explore LLM-agent tools for research alongside Git and other research tools. The activity, setup instructions, and deliverable will be announced on the weekly course page.
-
-Tool requirements and activities will be announced on the weekly page.
+There was no class on November 4. See the [Week 6 lab](../../week_06/lab/) for the AI Agents, Context, and Skills slides and current activities.
